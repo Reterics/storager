@@ -1,5 +1,6 @@
 import { User } from 'firebase/auth';
 import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from "react";
+import { GeoPoint} from "firebase/firestore";
 
 
 export interface LoginFormValues {
@@ -77,21 +78,21 @@ export interface TableViewArguments extends TSXComponentArgument {
 
 export interface GeneralModalArguments extends TSXComponentArgument{
     visible?:boolean
-    onClose?: Function
+    onClose?: ()=>void
     title?: string
-    onSave?: Function
+    onSave?: ()=>void
     buttons?: GeneralModalButtons[]
 }
 
 export interface ModalArguments {
     visible?:boolean
     title?: string
-    onClose?: Function
+    onClose?: ()=>void
     selected?: null|Template
 }
 export interface GeneralModalButtons {
     value: string
-    onClick: Function
+    onClick: ()=>void
     primary: boolean
 }
 
@@ -120,4 +121,13 @@ export interface StyledSelectArgs {
     name?: string,
     label?: string|number,
     options: StyledSelectOption[]
+}
+
+export interface Shop {
+    id: string,
+    name?: string,
+    address?: string,
+    phone?: string,
+    description?: string,
+    coordinates?: GeoPoint
 }

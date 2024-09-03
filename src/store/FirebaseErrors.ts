@@ -9,5 +9,6 @@ export const FIREBASE_ERRORS = {
     "auth/too-many-requests	": "The number of requests exceeds the maximum allowed.",
     "auth/user-not-found": "There is no existing user record corresponding to the provided identifier.",
     "auth/unauthorized-continue-uri": "The domain of the continue URL is not whitelisted. Whitelist the domain in the Firebase Console.",
-    "auth/invalid-credential": "Invalid Credentials"
+    "auth/invalid-credential": "Invalid Credentials",
+    "auth/permission-denied": "Missing or insufficient permissions."
 };
