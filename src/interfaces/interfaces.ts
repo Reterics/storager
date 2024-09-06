@@ -131,3 +131,12 @@ export interface Shop {
     description?: string,
     coordinates?: GeoPoint
 }
+
+export interface ShopModalInput {
+    visible: boolean,
+    onClose: ()=>void,
+    currentShop: Shop,
+    setCurrentShop: (currentShop: Shop) => unknown,
+    onSave: ()=>void
+
+}
