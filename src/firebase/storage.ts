@@ -45,7 +45,7 @@ export const deleteFile = (path: string): Promise<void> => {
 }
 
 export const getFileFromStorage = async (id: string) => {
-    const template = await getById(id, firebaseCollections.templates) as Template;
+    const template = await getById(id, firebaseCollections.shops) as Template;
     if (template) {
 
         const url = template.path;

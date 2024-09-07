@@ -92,7 +92,7 @@ export interface ModalArguments {
 }
 export interface GeneralModalButtons {
     value: string
-    onClick: ()=>void
+    onClick: (e?: React.MouseEvent)=>void
     primary: boolean
 }
 
@@ -133,10 +133,9 @@ export interface Shop {
 }
 
 export interface ShopModalInput {
-    visible: boolean,
     onClose: ()=>void,
-    currentShop: Shop,
-    setCurrentShop: (currentShop: Shop) => unknown,
-    onSave: ()=>void
-
+    shop: Shop | null,
+    onSave: (currentShop: Shop) => unknown
+    setShop: (shop: Shop) => void
+    inPlace?: boolean
 }
