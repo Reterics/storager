@@ -24,3 +24,19 @@ export const downloadAsFile = (name: string, body: string, fileType = 'text/plai
         console.error(e.message);
     }
 };
+
+
+export const fileToDataURL = (file: File) => {
+    return new Promise((resolve) => {
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = e => {
+                resolve(e.target?.result);
+            };
+
+            // Convert the file to a data URL
+            reader.readAsDataURL(file);
+        }
+    })
+};

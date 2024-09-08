@@ -6,6 +6,7 @@ import './index.css'
 import AuthProvider from './store/AuthContext.tsx'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import SignInComponent from "./components/SignIn.tsx";
+import Items from "./pages/items.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
           <AuthProvider>
               <Routes>
                   <Route path="/" element={<App />}/>
+                  <Route path="/items" element={<Items />}/>
                   <Route path="/signin" element={<SignInComponent />}/>
               </Routes>
           </AuthProvider>
