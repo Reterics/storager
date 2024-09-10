@@ -31,7 +31,7 @@ const TableViewHeader = ({header}: { header?: string[] }) => {
 const TableViewLine = ({line, index}: TableViewLineArguments) => {
     return (line.map((column, columnIndex) => (
         <th scope="row" key={'column_' + columnIndex + '_' + index}
-            className={"px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white p-2" +
+            className={"px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white p-2" +
                 (columnIndex === line.length - 1 ? " text-right" : "")}>
             {column}
         </th>

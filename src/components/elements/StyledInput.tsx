@@ -10,7 +10,8 @@ export default function StyledInput({
     pattern,
     maxLength,
     min,
-    max
+    max,
+    className
 }: StyledInputArgs) {
     // TODO: Pattern validation
 
@@ -25,7 +26,7 @@ export default function StyledInput({
 
     };
     return (
-        <div className="relative z-0 w-full group mt-3">
+        <div className={"relative z-0 w-full group mt-3 " + (className || '')}>
             <input type={type} name={name}
                    id={name}
                    value={value === undefined ? '' : value}

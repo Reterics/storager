@@ -109,6 +109,7 @@ export interface StyledInputArgs {
     min?: string,
     max?: string,
     step?: string,
+    className?: string,
 }
 export interface StyledSelectOption {
     name: string,
@@ -119,8 +120,8 @@ export interface StyledSelectArgs {
     onSelect?: ReactEventHandler<HTMLSelectElement> | undefined,
     type?: string,
     name?: string,
-    label?: string|number,
-    options: StyledSelectOption[]
+    label?: string|number|boolean,
+    options: StyledSelectOption[],
 }
 
 export interface Shop {
@@ -148,7 +149,8 @@ export interface StoreItem {
     image?: string,
     storage?: number,
     price?: number,
-    type?: 'roller'
+    type?: 'roller',
+    store?: string
 }
 
 export interface ItemModalInput {
