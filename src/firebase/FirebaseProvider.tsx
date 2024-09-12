@@ -4,6 +4,7 @@ import {firebaseCollections, getCollection} from "./BaseConfig.ts";
 import {Shop, StoreItem} from "../interfaces/interfaces.ts";
 import {FirebaseContext} from "./FirebaseContext.ts";
 import PageLoading from "../components/PageLoading.tsx";
+import {getFileURL} from "./storage.ts";
 
 
 export const FirebaseProvider = ({children}: {
@@ -17,6 +18,15 @@ export const FirebaseProvider = ({children}: {
         const shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
         const items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
         const parts = await getCollection(firebaseCollections.parts).catch(setError) as unknown[];
+
+        if (Array.isArray(items)) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].name && items[i].image && items[i].image?.startsWith('screenshots/')) {
+                    items[i].image = await getFileURL(items[i].image || '');
+                }
+            }
+        }
+
         setCtxData({
             shops,
             items,

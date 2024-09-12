@@ -3,7 +3,7 @@ import {SignUp} from "../firebase/services/AuthService.ts";
 import {UserFormValues} from "../interfaces/interfaces.ts";
 import {useContext, useState} from "react";
 import {AuthContext} from "../store/AuthContext.tsx";
-import '../App.css';
+import '../pages/Shops.css';
 import AlertBox from "./AlertBox.tsx";
 
 const SignInComponent = () => {
