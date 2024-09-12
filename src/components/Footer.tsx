@@ -1,9 +1,21 @@
 import StyledSelect from "./elements/StyledSelect.tsx";
 import {useTranslation} from "react-i18next";
-import {SyntheticEvent} from "react";
+import {SyntheticEvent, useEffect, useState} from "react";
 
 export const Footer = () => {
+    const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
     const { t, i18n } = useTranslation();
+
+    // Toggle dark mode class on the <html> or <body> tag
+    useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+        }
+    }, [darkMode]);
 
     return (
         <footer className="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
@@ -26,8 +38,13 @@ export const Footer = () => {
                         label={false}
                         />
                     </li>
-                    <li className="hidden">
-                        <a href="#" className="hover:underline">{t('Contact')}</a>
+                    <li className="">
+                        <a
+                            href="#"
+                            className="hover:underline"
+                            onClick={() => setDarkMode(!darkMode)}
+                        >{(darkMode ? t('Light Mode') : t('Dark Mode'))}</a>
+
                     </li>
                 </ul>
             </div>

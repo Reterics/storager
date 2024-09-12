@@ -13,11 +13,13 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
       <BrowserRouter>
           <AuthProvider>
-              <Routes>
-                  <Route path="/" element={<InAppLayout><Shops /></InAppLayout>}/>
-                  <Route path="/items" element={<InAppLayout><Items /></InAppLayout>}/>
-                  <Route path="/signin" element={<SignInComponent />}/>
-              </Routes>
+              <div className="w-full h-full m-auto flex flex-col text-black dark:text-white bg-[#ebebeb] dark:bg-black">
+                  <Routes>
+                      <Route path="/" element={<InAppLayout><Shops /></InAppLayout>}/>
+                      <Route path="/items" element={<InAppLayout><Items /></InAppLayout>}/>
+                      <Route path="/signin" element={<SignInComponent />}/>
+                  </Routes>
+              </div>
           </AuthProvider>
       </BrowserRouter>
   </StrictMode>,

@@ -2,16 +2,23 @@ import {useEffect, useState} from "react";
 
 
 export const useThemeDetector = () => {
-    const getCurrentTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const getCurrentTheme = () => document.documentElement.classList.contains("dark");
     const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());
-    const mqListener = ((e: { matches: boolean | ((prevState: boolean) => boolean); }) => {
-        setIsDarkTheme(e.matches);
-    });
 
     useEffect(() => {
-        const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-        darkThemeMq.addEventListener("change", mqListener);
-        return () => darkThemeMq.removeEventListener("change", mqListener);
+        const observer = new MutationObserver(() => {
+            setIsDarkTheme(getCurrentTheme());
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["class"],
+        });
+
+        return () => {
+            observer.disconnect();
+        };
     }, []);
+
     return isDarkTheme;
 }
