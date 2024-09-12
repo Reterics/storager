@@ -100,7 +100,10 @@ function Shops() {
                 }
             ]}/>
 
-            <TableViewComponent lines={tableLines} header={['ID', 'Name', 'Address', 'Action']}/>
+            <TableViewComponent lines={tableLines} header={['ID', {
+                value: 'Name',
+                sortable: true
+            }, 'Address', 'Action']}/>
             <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1 flex-row">
                 <ShopModal
                     onClose={()=>setModalTemplate(null)}

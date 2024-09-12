@@ -91,7 +91,8 @@ function App() {
                 </span>
                 <BsArrowRightSquare onClick={() => changeType({target: {value: Number(item.storage) + 1}} as unknown  as ChangeEvent<HTMLInputElement>, 'storage', item)}/>
             </div>,
-            <div className="flex flex-row text-xl items-center cursor-pointer"><StyledInput type="number" value={item.price || 0} className="mt-0 w-auto me-1"/> Ft</div>,
+            <div className="flex flex-row text-xl items-center cursor-pointer">
+                <StyledInput type="number" value={item.price || 0} className="mt-0 w-auto me-1"/> Ft</div>,
             <StyledSelect
                 type="text" name="Shop"
                 options={typeOptions}

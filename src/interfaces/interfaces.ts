@@ -73,7 +73,7 @@ export interface TableViewActionArguments extends TSXComponentArgument {
 }
 export interface TableViewArguments extends TSXComponentArgument {
     lines: TableLineType[]
-    header?: string[]
+    header?: (string|TableHead)[]
 }
 
 export interface GeneralModalArguments extends TSXComponentArgument{
@@ -167,3 +167,10 @@ export interface GeneralButtons {
     onClick: (e?: React.MouseEvent)=>void
     primary?: boolean
 }
+
+export interface TableHead {
+    sortable?: boolean,
+    value: string
+}
+
+export type OrderType = 'ASC'|'DSC';

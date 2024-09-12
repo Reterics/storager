@@ -26,7 +26,7 @@ export default function StyledInput({
 
     };
     return (
-        <div className={"relative z-0 w-full group mt-3 " + (className || '')}>
+        <div className={"relative z-0 w-full group " + (className || '')}>
             <input type={type} name={name}
                    id={name}
                    value={value === undefined ? '' : value}
