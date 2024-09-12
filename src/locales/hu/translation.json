@@ -1,0 +1,22 @@
+{
+  "Shops": "Boltok",
+  "Shop": "Bolt",
+  "ID": "ID",
+  "Name": "Név",
+  "Address": "Cím",
+  "Actions": "Műveletek",
+  "Are you sure you wish to delete this Shop?": "Biztosan törlöd az alábbi boltot?",
+  "Items": "Termékek",
+  "Item": "Termék",
+  "Image": "Kép",
+  "Storage": "Raktár",
+  "Price": "Ár",
+  "Are you sure you wish to delete this Item?": "Biztosan törlöd az alábbi terméket?",
+  "Please Select": "Kérlek válassz",
+  "All Rights Reserved": "Minden jog fenntartva",
+  "Contact": "Kapcsolat",
+  "Parts": "Alkatrészek",
+  "Logout": "Kijelentkezés",
+  "Welcome": "Üdvözöllek",
+  "Loading": "Betöltés"
+}

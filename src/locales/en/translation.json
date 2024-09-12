@@ -1,0 +1,22 @@
+{
+  "Shops": "Shops",
+  "Shop": "Shop",
+  "ID": "ID",
+  "Name": "Name",
+  "Address": "Address",
+  "Actions": "Actions",
+  "Are you sure you wish to delete this Shop?": "Are you sure you wish to delete this Shop?",
+  "Items": "Items",
+  "Item": "Item",
+  "Image": "Image",
+  "Storage": "Storage",
+  "Price": "Price",
+  "Are you sure you wish to delete this Item?": "Are you sure you wish to delete this Item?",
+  "Please Select": "Please Select",
+  "All Rights Reserved": "All Rights Reserved",
+  "Contact": "Contact",
+  "Parts": "Parts",
+  "Logout": "Logout",
+  "Welcome": "Welcome",
+  "Loading": "Loading"
+}

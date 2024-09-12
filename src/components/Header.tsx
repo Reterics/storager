@@ -2,12 +2,14 @@ import {NavLink, useLocation} from "react-router-dom";
 import {AuthContext} from "../store/AuthContext.tsx";
 import {useContext} from "react";
 import {useThemeDetector} from "../utils/reactUtils.ts";
+import {useTranslation} from "react-i18next";
 
 
 const Header = () => {
     const pathname = useLocation().pathname;
     const  {SignOut, user} = useContext(AuthContext);
     const isDarkTheme = useThemeDetector();
+    const { t } = useTranslation();
 
     return (
         <header>
@@ -36,25 +38,25 @@ const Header = () => {
                                          className={pathname === '/' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
-                                         aria-current="page">Shops</NavLink>
+                                         aria-current="page">{t('Shops')}</NavLink>
                             </li>
                             <li>
                                 <NavLink to='/items'
                                          className={pathname === '/items' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
-                                >Items</NavLink>
+                                >{t('Items')}</NavLink>
                             </li>
                             <li>
                                 <NavLink to='/templates'
                                          className={pathname === '/parts' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
-                                >Parts</NavLink>
+                                >{t('Parts')}</NavLink>
                             </li>
                             <li className="font-normal">
-                                Welcome {user?.displayName || user?.email}
-                                <button onClick={() => SignOut()} className="font-medium ml-3">Logout</button>
+                                {t('Welcome')} {user?.displayName || user?.email}
+                                <button onClick={() => SignOut()} className="font-medium ml-3">{t('Logout')}</button>
                             </li>
                         </ul>
                     </div>

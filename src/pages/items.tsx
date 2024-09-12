@@ -10,9 +10,11 @@ import StyledInput from "../components/elements/StyledInput.tsx";
 import StyledSelect from "../components/elements/StyledSelect.tsx";
 import {FirebaseContext} from "../firebase/FirebaseContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
+import { useTranslation } from 'react-i18next';
 
-function App() {
+function Items() {
     const firebaseContext = useContext(FirebaseContext);
+    const { t } = useTranslation();
 
     const [items, setItems] = useState<StoreItem[]>(firebaseContext?.data.items || []);
     const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
@@ -27,7 +29,7 @@ function App() {
     });
 
     const deleteItem = async (item: StoreItem) => {
-        if (item.id && window.confirm('Are you sure you wish to delete this Item?')) {
+        if (item.id && window.confirm(t('Are you sure you wish to delete this Item?'))) {
             await deleteDoc(doc(db, firebaseCollections.items, item.id));
 
             setItems(items.filter(i => i !== item))
@@ -94,7 +96,7 @@ function App() {
             <div className="flex flex-row text-xl items-center cursor-pointer">
                 <StyledInput type="number" value={item.price || 0} className="mt-0 w-auto me-1"/> Ft</div>,
             <StyledSelect
-                type="text" name="Shop"
+                type="text" name={t('Shop')}
                 options={typeOptions}
                 value={item.store || ''}
                 onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'store', item)}
@@ -108,7 +110,7 @@ function App() {
 
     return (
         <>
-            <PageHead title={'Items'} buttons={[
+            <PageHead title={t('Items')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
@@ -117,7 +119,15 @@ function App() {
                 }
             ]}/>
 
-            <TableViewComponent lines={tableLines} header={['Image', 'ID', 'Name', 'Storage', 'Price', 'Shop', 'Action']}/>
+            <TableViewComponent lines={tableLines}
+                                header={[
+                                    t('Image'),
+                                    t('ID'),
+                                    t('Name'),
+                                    t('Storage'),
+                                    t('Price'),
+                                    t('Shop'),
+                                    t('Actions')]}/>
 
             <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <ItemModal
@@ -132,4 +142,4 @@ function App() {
     )
 }
 
-export default App
+export default Items

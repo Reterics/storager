@@ -41,7 +41,7 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
             {header.map((head, index) => (
                 <th
                     scope="col"
-                    className={index === header.length-1 ? "px-3 py-2 text-right" : "px-3 py-2"}
+                    className={index === header.length-1 ? "px-3 py-2 text-right flex justify-end" : "px-3 py-2"}
                 >
                     <div className="flex items-center">
                         {typeof head === "string" ? (head) : head.value}

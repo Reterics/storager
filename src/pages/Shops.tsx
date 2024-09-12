@@ -13,16 +13,17 @@ import ShopModal from "../components/modals/ShopModal.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {FirebaseContext} from "../firebase/FirebaseContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
+import { useTranslation } from 'react-i18next';
 
 function Shops() {
     const firebaseContext = useContext(FirebaseContext);
+    const { t } = useTranslation();
 
     const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
     const center = [46.840399, 16.8279712, 0] as LatLngTuple;
-
 
 
     const ref = (map: Map|null) => {
@@ -43,7 +44,7 @@ function Shops() {
     }
 
     const deleteShop = async (shop: Shop) => {
-        if (shop.id && window.confirm('Are you sure you wish to delete this Shop?')) {
+        if (shop.id && window.confirm(t('Are you sure you wish to delete this Shop?'))) {
             await deleteDoc(doc(db, firebaseCollections.shops, shop.id));
 
             setShops(shops.filter(s => s !== shop))
@@ -91,7 +92,7 @@ function Shops() {
 
     return (
         <>
-            <PageHead title={'Shops'} buttons={[
+            <PageHead title={t('Shops')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
@@ -100,10 +101,10 @@ function Shops() {
                 }
             ]}/>
 
-            <TableViewComponent lines={tableLines} header={['ID', {
-                value: 'Name',
+            <TableViewComponent lines={tableLines} header={[t('ID'), {
+                value: t('Name'),
                 sortable: true
-            }, 'Address', 'Action']}/>
+            }, t('Address'), t('Actions')]}/>
             <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1 flex-row">
                 <ShopModal
                     onClose={()=>setModalTemplate(null)}

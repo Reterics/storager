@@ -4,6 +4,7 @@ import {AuthContext} from "../store/AuthContext.tsx";
 import SignInComponent from "../components/SignIn.tsx";
 import PageLoading from "../components/PageLoading.tsx";
 import Header from "../components/Header.tsx";
+import {Footer} from "../components/Footer.tsx";
 
 
 export const InAppLayout = ({children}: {
@@ -21,7 +22,7 @@ export const InAppLayout = ({children}: {
 
                 {!loading && children}
             </div>
-
+            <Footer />
         </FirebaseProvider>
 )
 };

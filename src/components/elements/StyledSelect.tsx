@@ -1,4 +1,5 @@
 import {StyledSelectArgs, StyledSelectOption} from "../../interfaces/interfaces.ts";
+import {useTranslation} from "react-i18next";
 
 export const textToOptions = (strings: string[], names: string[]|undefined):  StyledSelectOption[] => {
     return strings.map((string, index) => {
@@ -7,6 +8,8 @@ export const textToOptions = (strings: string[], names: string[]|undefined):  St
 }
 
 export default function StyledSelect({ value, onSelect, name, label, options }: StyledSelectArgs) {
+    const { t } = useTranslation();
+
     return (
         <div className={label !== false ? "relative z-0 w-full group mt-4" : "relative z-0 w-full group"}>
             <select name={name}
@@ -18,7 +21,7 @@ export default function StyledSelect({ value, onSelect, name, label, options }: 
                                    dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600
                                    dark:bg-gray-800 dark:placeholder-gray-400 peer"
                     required >
-                <option defaultChecked={true}>Please Select</option>
+                <option defaultChecked={true}>{t('Please Select')}</option>
                 {options.map((option, index) =>
                     <option key={name + '_' + option.value + '_' + index} value={option.value}>{option.name}</option>
                 )}
