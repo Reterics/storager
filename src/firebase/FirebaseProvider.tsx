@@ -3,23 +3,20 @@ import {FirebaseContextData, FirebaseContextDataType} from "../interfaces/fireba
 import {firebaseCollections, getCollection} from "./BaseConfig.ts";
 import {Shop, StoreItem} from "../interfaces/interfaces.ts";
 import {FirebaseContext} from "./FirebaseContext.ts";
+import PageLoading from "../components/PageLoading.tsx";
 
 
 export const FirebaseProvider = ({children}: {
     children: ReactNode
 }) => {
 
-    const [ctxData, setCtxData] = useState<FirebaseContextData>({
-        shops: [],
-        items: [],
-        parts: []
-    });
-
+    const [ctxData, setCtxData] = useState<FirebaseContextData|null>(null);
+    const [error, setError] = useState<Error | null>(null);
 
     const getContextData = async () => {
-        const shops = await getCollection(firebaseCollections.shops) as Shop[];
-        const items = await getCollection(firebaseCollections.items) as StoreItem[];
-        const parts = await getCollection(firebaseCollections.parts) as unknown[];
+        const shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
+        const items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
+        const parts = await getCollection(firebaseCollections.parts).catch(setError) as unknown[];
         setCtxData({
             shops,
             items,
@@ -42,12 +39,17 @@ export const FirebaseProvider = ({children}: {
     };
 
     useEffect(() => {
+        console.error('Load context data');
         void getContextData();
     }, []);
 
     return <FirebaseContext.Provider value={{
-        data: ctxData,
+        data: ctxData as FirebaseContextData,
         setData: updateContextData,
         use: use
-    }}>{children}</FirebaseContext.Provider>;
+    }}>
+        {!error && ctxData && children}
+        {!error && !ctxData && <PageLoading/>}
+        {error && <div>Error: {error.message}</div>}
+    </FirebaseContext.Provider>;
 };

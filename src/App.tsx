@@ -1,11 +1,7 @@
-import {useContext, useEffect, useState} from 'react'
+import {useContext, useState} from 'react'
 import './App.css'
-import {AuthContext} from "./store/AuthContext.tsx";
-import PageLoading from "./components/PageLoading.tsx";
-import Header from "./components/Header.tsx";
-import SignInComponent from "./components/SignIn.tsx";
-import {db, firebaseCollections, getCollection} from "./firebase/BaseConfig.ts";
-import {doc, deleteDoc, collection, setDoc, GeoPoint} from "firebase/firestore";
+import {db, firebaseCollections} from "./firebase/BaseConfig.ts";
+import {doc, deleteDoc, collection, setDoc, addDoc, GeoPoint} from "firebase/firestore";
 import TableViewComponent, {TableViewActions} from "./components/elements/TableViewComponent.tsx";
 import {MapContainer, TileLayer} from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
@@ -15,24 +11,20 @@ import {Marker, Popup} from "react-leaflet";
 import {LatLngTuple, Map} from "leaflet";
 import ShopModal from "./components/modals/ShopModal.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
+import {FirebaseContext} from "./firebase/FirebaseContext.ts";
 
 function App() {
-    const {user, loading} = useContext(AuthContext);
+    const firebaseContext = useContext(FirebaseContext);
 
-    const [shops, setShops] = useState<Shop[]>([]);
+    console.error(firebaseContext);
+
+    const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
     const center = [46.840399, 16.8279712, 0] as LatLngTuple;
 
-    const refreshCollections = async () => {
-        const shops = await getCollection(firebaseCollections.shops);
-        setShops(shops as Shop[]);
-    };
-    useEffect(() => {
-        void refreshCollections();
 
-    }, []);
 
     const ref = (map: Map|null) => {
         if (map !== null) {
@@ -51,29 +43,37 @@ function App() {
         }
     }
 
-    if (!user) return <SignInComponent/>;
-
     const deleteShop = async (shop: Shop) => {
-        if (shop.id && window.confirm('Are you sure you wish to delete this Template?')) {
+        if (shop.id && window.confirm('Are you sure you wish to delete this Shop?')) {
             await deleteDoc(doc(db, firebaseCollections.shops, shop.id));
 
-            await refreshCollections();
+            setShops(shops.filter(s => s !== shop))
         }
     };
 
     const closeShop = async (shop?: Shop)=> {
         let modelRef;
-        if (shop && shop.id) {
-            modelRef = doc(db, firebaseCollections.shops, shop.id);
-        } else if (shop) {
-            modelRef = doc(collection(db, firebaseCollections.shops));
-        }
 
-        if (shop && modelRef) {
-            await setDoc(modelRef, shop, { merge: true }).catch(e=>{
+        if (shop && shop.id) {
+            // For updating an existing document
+            modelRef = doc(db, firebaseCollections.shops, shop.id);
+            await setDoc(modelRef, shop, { merge: true }).catch(e => {
                 console.error(e);
             });
-            await refreshCollections();
+            console.log('Updated document ID:', modelRef.id);
+        } else if (shop) {
+            // For creating a new document with an auto-generated ID
+            modelRef = await addDoc(collection(db, firebaseCollections.shops), shop).catch(e => {
+                console.error(e);
+            });
+            if (modelRef) {
+                console.log('Created new document with ID:', modelRef.id);
+
+                shop.id = modelRef.id;
+                const updatedShops = [...shops];
+                updatedShops.push(shop);
+                setShops(updatedShops);
+            }
         }
 
         setModalTemplate(null);
@@ -92,9 +92,6 @@ function App() {
 
     return (
         <>
-            <Header/>
-            {loading && <PageLoading/>}
-            <div className="main-container p-2 flex flex-col h-full">
                 <div className="flex justify-center overflow-x-auto shadow-md sm:rounded-lg w-full m-auto">
                     <div className="flex justify-between max-w-screen-xl m-2 p-2 w-full">
                         <h1 className="text-2xl font-bold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white">
@@ -147,8 +144,6 @@ function App() {
                         }
                     </MapContainer>
                 </div>
-            </div>
-
         </>
     )
 }
