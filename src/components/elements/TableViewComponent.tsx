@@ -78,7 +78,7 @@ export const TableViewActions = ({
 
 const TableViewComponent = ({header, lines, children}: TableViewArguments) => {
     return (
-        <table className="text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full">
+        <table className="text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
             <TableViewHeader header={header}/>
             <tbody>
             {lines.map((line, index) =>

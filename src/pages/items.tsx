@@ -9,6 +9,7 @@ import ItemModal from "../components/modals/ItemModal.tsx";
 import StyledInput from "../components/elements/StyledInput.tsx";
 import StyledSelect from "../components/elements/StyledSelect.tsx";
 import {FirebaseContext} from "../firebase/FirebaseContext.ts";
+import {PageHead} from "../components/elements/PageHead.tsx";
 
 function App() {
     const firebaseContext = useContext(FirebaseContext);
@@ -106,26 +107,17 @@ function App() {
 
     return (
         <>
-            <div className="flex justify-center overflow-x-auto shadow-md sm:rounded-lg w-full m-auto">
-                <div className="flex justify-between max-w-screen-xl m-1 p-2 w-full">
-                    <h1 className="text-2xl font-bold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white">
-                        Items
-                    </h1>
-                    <button type="button"
-                            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none
-                        focus:ring-4 focus:ring-gray-300 font-medium rounded-lg px-5 py-2.5 mr-2
-                        dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                            onClick={() => setModalTemplate(modalTemplate ? null : {
-                                id: ''
-                            })}
-                    >
-                        <BsFillPlusCircleFill/>
-                    </button>
-                </div>
-            </div>
-            <div className="flex justify-center overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 mb-2">
-                <TableViewComponent lines={tableLines} header={['Image', 'ID', 'Name', 'Storage', 'Price', 'Shop', 'Action']}/>
-            </div>
+            <PageHead title={'Items'} buttons={[
+                {
+                    value: <BsFillPlusCircleFill/>,
+                    onClick:() => setModalTemplate(modalTemplate ? null : {
+                        id: ''
+                    })
+                }
+            ]}/>
+
+            <TableViewComponent lines={tableLines} header={['Image', 'ID', 'Name', 'Storage', 'Price', 'Shop', 'Action']}/>
+
             <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <ItemModal
                     onClose={()=>setModalTemplate(null)}

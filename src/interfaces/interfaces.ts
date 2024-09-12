@@ -160,3 +160,10 @@ export interface ItemModalInput {
     setItem: (item: StoreItem) => void
     inPlace?: boolean
 }
+
+
+export interface GeneralButtons {
+    value: string|React.ReactNode,
+    onClick: (e?: React.MouseEvent)=>void
+    primary?: boolean
+}
