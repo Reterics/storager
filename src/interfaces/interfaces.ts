@@ -1,6 +1,6 @@
-import { User } from 'firebase/auth';
+import {User} from 'firebase/auth';
 import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from "react";
-import { GeoPoint} from "firebase/firestore";
+import {GeoPoint} from "firebase/firestore";
 
 
 export interface LoginFormValues {
@@ -15,12 +15,12 @@ export interface UserFormValues {
 }
 
 //IAuth context
-export  interface  IAuth {
-    user:  User  |  null;  //type User comes from firebase
-    loading:  boolean;
-    SignIn: (credentials:  LoginFormValues) =>  void;
-    SignUp: (credentials:  UserFormValues) =>  void;
-    SignOut: () =>  void;
+export interface IAuth {
+    user: User | null;  //type User comes from firebase
+    loading: boolean;
+    SignIn: (credentials: LoginFormValues) => void;
+    SignUp: (credentials: UserFormValues) => void;
+    SignOut: () => void;
     error: string | null
 }
 
@@ -30,6 +30,7 @@ export interface Template {
     path?: string
     content?: string
 }
+
 export interface GeneralStringObject {
     [key: string]: string
 }
@@ -57,8 +58,10 @@ export type TableLineElementType = string | React.ReactNode;
 export type TableLineType = TableLineElementType[];
 
 export interface TableViewLineArguments {
-    line: TableLineType
-    index: number
+    line: TableLineType,
+    index: number,
+    header?: TableViewHeader,
+    onChange?: TableOnChaneMethod
 }
 
 export interface TableViewActionArguments extends TSXComponentArgument {
@@ -71,28 +74,35 @@ export interface TableViewActionArguments extends TSXComponentArgument {
     onSave?: MouseEventHandler<HTMLButtonElement>
     onCode?: MouseEventHandler<HTMLButtonElement>
 }
+
+export type TableViewHeader = (string | TableHead)[];
+
+export type TableOnChaneMethod = (index: number, key: string | number, value: unknown) => void
+
 export interface TableViewArguments extends TSXComponentArgument {
     lines: TableLineType[]
-    header?: (string|TableHead)[]
+    header?: TableViewHeader,
+    onChange?: TableOnChaneMethod
 }
 
-export interface GeneralModalArguments extends TSXComponentArgument{
-    visible?:boolean
-    onClose?: ()=>void
+export interface GeneralModalArguments extends TSXComponentArgument {
+    visible?: boolean
+    onClose?: () => void
     title?: string
-    onSave?: ()=>void
+    onSave?: () => void
     buttons?: GeneralModalButtons[]
 }
 
 export interface ModalArguments {
-    visible?:boolean
+    visible?: boolean
     title?: string
-    onClose?: ()=>void
-    selected?: null|Template
+    onClose?: () => void
+    selected?: null | Template
 }
+
 export interface GeneralModalButtons {
     value: string
-    onClick: (e?: React.MouseEvent)=>void
+    onClick: (e?: React.MouseEvent) => void
     primary: boolean
 }
 
@@ -102,7 +112,7 @@ export interface StyledInputArgs {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined,
     type?: string,
     name?: string,
-    label?: string|number,
+    label?: string | number,
     placeholder?: string,
     pattern?: string,
     maxLength?: number,
@@ -111,16 +121,18 @@ export interface StyledInputArgs {
     step?: string,
     className?: string,
 }
+
 export interface StyledSelectOption {
     name: string,
     value: string
 }
+
 export interface StyledSelectArgs {
     value?: string | number | readonly string[]
     onSelect?: ReactEventHandler<HTMLSelectElement> | undefined,
     type?: string,
     name?: string,
-    label?: string|number|boolean,
+    label?: string | number | boolean,
     options: StyledSelectOption[],
 }
 
@@ -134,7 +146,7 @@ export interface Shop {
 }
 
 export interface ShopModalInput {
-    onClose: ()=>void,
+    onClose: () => void,
     shop: Shop | null,
     onSave: (currentShop: Shop) => unknown
     setShop: (shop: Shop) => void
@@ -154,7 +166,7 @@ export interface StoreItem {
 }
 
 export interface ItemModalInput {
-    onClose: ()=>void,
+    onClose: () => void,
     item: StoreItem | null,
     onSave: (currentItem: StoreItem) => unknown
     setItem: (item: StoreItem) => void
@@ -163,14 +175,20 @@ export interface ItemModalInput {
 
 
 export interface GeneralButtons {
-    value: string|React.ReactNode,
-    onClick: (e?: React.MouseEvent)=>void
+    value: string | React.ReactNode,
+    onClick: (e?: React.MouseEvent) => void
     primary?: boolean
 }
 
+export type TableRowType = 'steps'|'text' | 'number' | 'checkbox' | 'select';
+
 export interface TableHead {
     sortable?: boolean,
-    value: string
+    value: string,
+    editable?: boolean,
+    type?: TableRowType,
+    options?: StyledSelectOption[],
+    postFix?: string,
 }
 
-export type OrderType = 'ASC'|'DSC';
+export type OrderType = 'ASC' | 'DSC';

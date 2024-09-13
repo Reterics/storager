@@ -1,13 +1,11 @@
-import {ChangeEvent, useContext, useState} from 'react'
+import {useContext, useState} from 'react'
 import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
 import {doc, deleteDoc, collection, setDoc, addDoc} from "firebase/firestore";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 
 import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
-import {BsArrowLeftSquare, BsArrowRightSquare, BsFillPlusCircleFill} from "react-icons/bs";
+import {BsFillPlusCircleFill} from "react-icons/bs";
 import ItemModal from "../components/modals/ItemModal.tsx";
-import StyledInput from "../components/elements/StyledInput.tsx";
-import StyledSelect from "../components/elements/StyledSelect.tsx";
 import {FirebaseContext} from "../firebase/FirebaseContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
@@ -63,7 +61,7 @@ function Items() {
         setModalTemplate(null);
     }
 
-    const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string, item: StoreItem) => {
+    const changeType = (e: React.ChangeEvent<HTMLInputElement> | {target: {value: unknown}}, key: string, item: StoreItem) => {
         const value = e.target.value;
 
         const obj = {...item};
@@ -80,28 +78,30 @@ function Items() {
             })
         });
     };
+
+    const tableKeyOrder = ['image', 'inventory_id', 'name', 'storage', 'price', 'store'];
+
+    const changeTableElement = (index: number, col: string | number, value: unknown) => {
+        const key = tableKeyOrder[col as number];
+        const item = items[index] as StoreItem;
+
+        if (item && key) {
+            changeType({
+                target: {
+                    value: value
+                }
+            }, key, item);
+        }
+    };
+
     const tableLines = items.map(item => {
         return [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.inventory_id,
             item.name || '',
-            <div className="flex flex-row text-xl items-center cursor-pointer">
-                <BsArrowLeftSquare onClick={() => changeType({target: {value: Number(item.storage) - 1}} as unknown  as ChangeEvent<HTMLInputElement>, 'storage', item)}/>
-                <span className="m-1">
-                    <StyledInput type="number" value={item.storage || 0} className="mt-0 w-[24px] me-1 hide-arrows"
-                                 onChange={(e) => changeType(e, 'storage', item)}/>
-                </span>
-                <BsArrowRightSquare onClick={() => changeType({target: {value: Number(item.storage) + 1}} as unknown  as ChangeEvent<HTMLInputElement>, 'storage', item)}/>
-            </div>,
-            <div className="flex flex-row text-xl items-center cursor-pointer">
-                <StyledInput type="number" value={item.price || 0} className="mt-0 w-auto me-1"/> Ft</div>,
-            <StyledSelect
-                type="text" name={t('Shop')}
-                options={typeOptions}
-                value={item.store || ''}
-                onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'store', item)}
-                label={false}
-            />,
+            item.storage || 0,
+            item.price || 0,
+            item.store || '',
             TableViewActions({
                 onRemove: () => deleteItem(item),
             })
@@ -123,11 +123,34 @@ function Items() {
                                 header={[
                                     t('Image'),
                                     t('ID'),
-                                    t('Name'),
-                                    t('Storage'),
-                                    t('Price'),
-                                    t('Shop'),
-                                    t('Actions')]}/>
+                                    {
+                                        value: t('Name'),
+                                        type: 'text',
+                                        sortable: true,
+                                        editable: true
+                                    },
+                                    {
+                                        value: t('Storage'),
+                                        type: 'steps',
+                                        sortable: true,
+                                        editable: true
+                                    },
+                                    {
+                                        value: t('Price'),
+                                        type: 'number',
+                                        postFix: ' Ft',
+                                        sortable: true,
+                                        editable: true
+                                    },
+                                    {
+                                        value: t('Shop'),
+                                        type: 'select',
+                                        editable: true,
+                                        options: typeOptions
+                                    },
+                                    t('Actions')]}
+                                onChange={(index, col, value) => changeTableElement(index, col, value)}
+            />
 
             <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <ItemModal
