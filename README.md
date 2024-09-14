@@ -1,50 +1,36 @@
-# React + TypeScript + Vite
+# StorageR
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![build](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml/badge.svg)](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml)
 
-Currently, two official plugins are available:
+This is a Storage Manager application for small businesses
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Preparing Cloud Environment
 
-## Expanding the ESLint configuration
+In order to have Denarius application functional we need to create a .env file based on our available .env.template
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+We need to create a Google Firebase Project in Google Console for this here: https://console.firebase.google.com/project/
 
-- Configure the top-level `parserOptions` property like this:
+After you have the access to Firebase Dashboard use the following steps:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- Create a Web App
+    - Open **Project settings**
+    - Under Your apps section click the **Add app** button and click to the third **Web App** button
+    - On the next page Add a nickname to your app and click to **Register app** button and then **Continue to console**
+    - Now in the **Your apps** section you can see all of the details you need to put in your **.env** file
+- Create Collections
+    - Open Firestore Database in Build Menu
+    - Create an empty **shops**  **items** and **parts** collection
+      - _Note:_ You can customize collection names in the .env file
+
+### Install NodeJS Project
+
+For the latest stable version
+
+```bash
+npm install
+npm run build
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+It will automatically open [http://localhost:5173](http://localhost:5173) with your primary browser.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
