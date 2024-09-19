@@ -18,5 +18,11 @@
   "Parts": "Parts",
   "Logout": "Logout",
   "Welcome": "Welcome",
-  "Loading": "Loading"
+  "Loading": "Loading",
+  "item_status_01": "Accepted",
+  "item_status_02": "Processing",
+  "item_status_03": "Waiting for parts",
+  "item_status_04": "Waiting to customer",
+  "item_status_05": "Ready",
+  "item_status_06": "Done"
 }

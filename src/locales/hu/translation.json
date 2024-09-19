@@ -18,5 +18,11 @@
   "Parts": "Alkatrészek",
   "Logout": "Kijelentkezés",
   "Welcome": "Üdvözöllek",
-  "Loading": "Betöltés"
+  "Loading": "Betöltés",
+  "item_status_01": "Átvéve",
+  "item_status_02": "Feldolgozás alatt",
+  "item_status_03": "Alkatrészre vár",
+  "item_status_04": "Válaszra vár",
+  "item_status_05": "Kész",
+  "item_status_06": "Átadva"
 }
