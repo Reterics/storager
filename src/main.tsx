@@ -6,8 +6,11 @@ import AuthProvider from './store/AuthContext.tsx'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import SignInComponent from "./components/SignIn.tsx";
 import Items from "./pages/items.tsx";
+import Service from "./pages/Service.tsx";
+import Settings from "./pages/Settings.tsx";
 import {InAppLayout} from "./layouts/InAppLayout.tsx";
 import './i18n';
+import Parts from "./pages/Parts.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,6 +20,9 @@ createRoot(document.getElementById('root')!).render(
                   <Routes>
                       <Route path="/" element={<InAppLayout><Shops /></InAppLayout>}/>
                       <Route path="/items" element={<InAppLayout><Items /></InAppLayout>}/>
+                      <Route path="/parts" element={<InAppLayout><Parts /></InAppLayout>}/>
+                      <Route path="/service" element={<InAppLayout><Service /></InAppLayout>}/>
+                      <Route path="/settings" element={<InAppLayout><Settings /></InAppLayout>}/>
                       <Route path="/signin" element={<SignInComponent />}/>
                   </Routes>
               </div>

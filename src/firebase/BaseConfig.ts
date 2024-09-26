@@ -32,6 +32,10 @@ export const getCollection = (type: string): Promise<object[]> => {
             });
             resolve(receivedData);
             return () => unsubscribe()
+        }, (error) => {
+            console.error('Error happened during Firebase connection: ', error);
+            resolve([]);
+            return () => unsubscribe()
         })
     });
 };
