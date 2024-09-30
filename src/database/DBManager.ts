@@ -2,7 +2,7 @@ import {DBManagerOptions, DBType} from "../interfaces/db.ts";
 
 
 export default class DBManager {
-    private _type: DBType;
+    protected _type: DBType;
     constructor(options?: DBManagerOptions) {
         this._type = options?.db || this.detectConfig();
     }
