@@ -3,6 +3,8 @@ import {FirebaseContext} from "../firebase/FirebaseContext.ts";
 import {useTranslation} from "react-i18next";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {PageHead} from "../components/elements/PageHead.tsx";
+import {ServiceData} from "../interfaces/interfaces.ts";
+import ServiceModal from "../components/modals/ServiceModal.tsx";
 
 
 function Service() {
@@ -18,15 +20,35 @@ function Service() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [servicedItems] = useState<unknown[]>([]);
 
+    const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null)
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const closeItem = (serviceData) => {
+        // TODO: TBD
+    };
 
     return (
         <>
             <PageHead title={t('Serviced Items')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
-                    onClick:() => console.log('To be implemented')
+                    onClick: () => setModalTemplate(modalTemplate ? null : {
+                        id: ''
+                    })
                 }
             ]}/>
+
+            <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
+                <ServiceModal
+                    onClose={() => setModalTemplate(null)}
+                    onSave={(item: ServiceData) => closeItem(item)}
+                    setService={(item: ServiceData) => setModalTemplate(item)}
+                    service={modalTemplate}
+                    inPlace={true}
+                />
+            </div>
         </>
     )
 }

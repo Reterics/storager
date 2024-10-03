@@ -173,6 +173,25 @@ export interface ItemModalInput {
     inPlace?: boolean
 }
 
+export interface ServiceData {
+    id: string,
+    client_name?: string,
+    client_email?: string,
+    client_phone?: string,
+    address?: string,
+    phone?: string,
+    description?: string,
+    coordinates?: GeoPoint
+}
+
+export interface ServiceModalInput {
+    onClose: () => void,
+    service: ServiceData | null,
+    onSave: (currentService: ServiceData) => unknown
+    setService: (shop: Shop) => void
+    inPlace?: boolean
+}
+
 
 export interface GeneralButtons {
     value: string | React.ReactNode,

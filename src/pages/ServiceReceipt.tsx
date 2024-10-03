@@ -38,6 +38,7 @@ function ServiceReceipt() {
             signaturePad.minWidth = 5;
             signaturePad.maxWidth = 10;
             signaturePad.penColor = 'rgb(66, 133, 244)';
+            signaturePad.dotSize
         }
     }, []);
 
