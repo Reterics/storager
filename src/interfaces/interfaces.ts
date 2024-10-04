@@ -87,10 +87,12 @@ export interface TableViewArguments extends TSXComponentArgument {
 
 export interface GeneralModalArguments extends TSXComponentArgument {
     visible?: boolean
+    id?: string
     onClose?: () => void
     title?: string
     onSave?: () => void
     buttons?: GeneralModalButtons[]
+    inPlace?: boolean
 }
 
 export interface ModalArguments {
@@ -103,7 +105,7 @@ export interface ModalArguments {
 export interface GeneralModalButtons {
     value: string
     onClick: (e?: React.MouseEvent) => void
-    primary: boolean
+    primary?: boolean
 }
 
 
