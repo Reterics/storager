@@ -1,6 +1,6 @@
 import StyledInput from "../elements/StyledInput.tsx";
 import {GeneralModalButtons, ItemModalInput, StoreItem, StyledSelectOption} from "../../interfaces/interfaces.ts";
-import {ChangeEvent, useEffect, useRef, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import StyledFile from "../elements/StyledFile.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import {fileToDataURL} from "../../utils/general.ts";
@@ -12,7 +12,6 @@ import {useTranslation} from "react-i18next";
 export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: ItemModalInput) {
     const { t } = useTranslation();
 
-    const previewImage = useRef<HTMLImageElement|null>(null)
     const [file, setFile] = useState<File|null>(null)
 
     const typeOptions: StyledSelectOption[] = ["roller"].map((key)=>{
@@ -21,13 +20,6 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
             "value": key
         } as StyledSelectOption
     });
-
-    const handleOnClose = (e: React.MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (target.id === 'ItemModal') {
-            onClose();
-        }
-    };
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
@@ -39,18 +31,6 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
 
         setItem(obj as StoreItem);
     };
-
-    const reloadPreview = async (file: File) => {
-        const screenshot = await fileToDataURL(file) as string;
-        if (screenshot && previewImage.current) {
-            previewImage.current.src = screenshot;
-        }
-    };
-
-    const handleOnChangeFile = (file: File) => {
-        setFile(file);
-        void reloadPreview(file);
-    }
 
     const uploadAndSave = async (item: StoreItem) => {
         let screenshot;
@@ -78,12 +58,6 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
         // await uploadFile(assetToSave.path, file);
         onSave(assetToSave);
     };
-
-    useEffect(() => {
-        if (item && previewImage.current && item.image) {
-            previewImage.current.src = item.image;
-        }
-    }, []);
 
     if (!item) return null;
 
@@ -124,19 +98,20 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
             </div>
 
             <div className="grid md:grid-cols-2 md:gap-6">
-                <StyledFile name="model" label="Image" onChange={handleOnChangeFile}/>
-                <div>
-                    <img ref={previewImage} alt={'preview'}/>
-                </div>
+                <StyledInput
+                    type="textarea" name="description"
+                    value={item.description}
+                    onChange={(e) => changeType(e, 'description')}
+                    label="Description"
+                />
+
+                <StyledFile name="model" label="Image"
+                            onChange={setFile} preview={true}
+                            defaultPreview={item?.image}/>
+
             </div>
 
 
-            <StyledInput
-                type="text" name="description"
-                value={item.description}
-                onChange={(e) => changeType(e, 'description')}
-                label="Description"
-            />
 
             <div className="grid md:grid-cols-2 md:gap-6">
                 <StyledInput

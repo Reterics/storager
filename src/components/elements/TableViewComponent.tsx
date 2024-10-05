@@ -85,9 +85,9 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                 <div className="flex flex-row text-xl items-center cursor-pointer">
                     <BsArrowLeftSquare
                         onClick={() => setValue(Number(value) - 1)} />
-                    <span className="m-1 w-[24px]">
-                    <StyledInput type="number" value={value as number || 0} className="mt-0 w-[24px] me-1 hide-arrows"
-                                 onChange={(e) => setValue(e.target.value)}/>
+                    <span className="m-0 w-[50] ms-1">
+                        <StyledInput type="number" value={value as number || 0} className="mt-0 w-[50px] me-1 hide-arrows"
+                                     onChange={(e) => setValue(e.target.value)}/>
                     </span>
                     <BsArrowRightSquare
                         onClick={() => setValue(Number(value) + 1)} />
