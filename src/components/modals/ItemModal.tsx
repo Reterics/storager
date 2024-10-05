@@ -7,6 +7,7 @@ import {fileToDataURL} from "../../utils/general.ts";
 import {uploadFileDataURL} from "../../firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
+import FormRow from "../elements/FormRow.tsx";
 
 
 export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: ItemModalInput) {
@@ -73,8 +74,9 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
         }
     ];
     return (
-        <GeneralModal buttons={buttons} inPlace={inPlace} title={t('Edit Item')} >
-            <div className="grid md:grid-cols-3 md:gap-6">
+        <GeneralModal buttons={buttons} inPlace={inPlace}
+                      title={t('Edit Item')} id="ItemModal" >
+            <FormRow>
                 <StyledInput
                     type="text" name="inventory_id"
                     value={item.inventory_id}
@@ -95,9 +97,9 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                     onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'type')}
                     label="Type"
                 />
-            </div>
+            </FormRow>
 
-            <div className="grid md:grid-cols-2 md:gap-6">
+            <FormRow>
                 <StyledInput
                     type="textarea" name="description"
                     value={item.description}
@@ -109,11 +111,11 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                             onChange={setFile} preview={true}
                             defaultPreview={item?.image}/>
 
-            </div>
+            </FormRow>
 
 
 
-            <div className="grid md:grid-cols-2 md:gap-6">
+            <FormRow>
                 <StyledInput
                     type="number" name="storage"
                     value={item.storage}
@@ -130,7 +132,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                     pattern="[0-9]+"
                     maxLength={11}
                 />
-            </div>
+            </FormRow>
         </GeneralModal>
     )
 }

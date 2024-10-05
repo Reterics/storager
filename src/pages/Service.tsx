@@ -40,7 +40,7 @@ function Service() {
                 }
             ]}/>
 
-            <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
+            <div className="relative flex justify-center w-full m-auto mt-1">
                 <ServiceModal
                     onClose={() => setModalTemplate(null)}
                     onSave={(item: ServiceData) => closeItem(item)}

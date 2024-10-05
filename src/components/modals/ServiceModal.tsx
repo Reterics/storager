@@ -1,20 +1,16 @@
-import {ServiceModalInput, Shop} from "../../interfaces/interfaces.ts";
+import {GeneralModalButtons, ServiceModalInput, Shop} from "../../interfaces/interfaces.ts";
 import StyledInput from "../elements/StyledInput.tsx";
 import {useTranslation} from "react-i18next";
 import SignaturePad from "react-signature-pad-wrapper";
-import {useRef} from "react";
+import {ChangeEvent, useRef} from "react";
+import GeneralModal from "./GeneralModal.tsx";
+import FormRow from "../elements/FormRow.tsx";
+import StyledSelect from "../elements/StyledSelect.tsx";
 
 
 export default function ServiceModal({ onClose, service, setService, onSave, inPlace }: ServiceModalInput) {
     const { t } = useTranslation();
     const signaturePadRef = useRef<SignaturePad>(null);
-
-    const handleOnClose = (e: React.MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (target.id === 'ServiceModal') {
-            onClose();
-        }
-    };
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
@@ -29,81 +25,156 @@ export default function ServiceModal({ onClose, service, setService, onSave, inP
 
     if (!service) return null;
 
+    const buttons: GeneralModalButtons[] = [
+        {
+            primary: true,
+            onClick: ()=>onSave(service),
+            value: t('Save')
+        },
+        {
+            onClick: onClose,
+            value: t('Cancel')
+        }
+    ];
+
+
     return (
-        <div
-            id="ShopModal"
-            onClick={handleOnClose}
-            className={
-                inPlace ?
-                    "flex justify-center items-center" :
-                    "fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center"
-            }
-            style={{zIndex: 999}}
+        <GeneralModal buttons={buttons} inPlace={inPlace}
+                      title={t('Service Form')} id="ServiceModal"
         >
-            <div className="bg-white p-4 rounded w-full dark:bg-gray-900">
-                <h1 className="font-semibold text-center text-xl text-gray-700 mb-4">
-                    Edit Shop
-                </h1>
+            <h3 className="font-semibold text-center text-xl text-gray-700 mt-2 mb-1">
+                {t('Client')}
+            </h3>
+            <FormRow>
+                <StyledInput
+                    type="text" name="client_name"
+                    value={service.client_name}
+                    onChange={(e) => changeType(e, 'client_name')}
+                    label={t('Name')}
+                />
+            </FormRow>
 
-                <form>
-                    <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
-                        {t('Client')}
-                    </h3>
-                    <StyledInput
-                        type="text" name="client_name"
-                        value={service.client_name}
-                        onChange={(e) => changeType(e, 'client_name')}
-                        label={t('Name')}
-                    />
+            <FormRow>
+                <StyledInput
+                    type="text" name="client_phone"
+                    value={service.client_phone}
+                    onChange={(e) => changeType(e, 'client_phone')}
+                    label={t("Phone")}
+                />
+                <StyledInput
+                    type="text" name="client_email"
+                    value={service.client_email}
+                    onChange={(e) => changeType(e, 'client_email')}
+                    label={t('Email')}
+                />
+            </FormRow>
+
+            <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
+                {t('Service')}
+            </h3>
+
+            <FormRow>
+                <StyledInput
+                    type="text" name="service_name"
+                    value={service.service_name}
+                    onChange={(e) => changeType(e, 'service_name')}
+                    label={t('Name')}
+                />
+            </FormRow>
+
+            <FormRow>
+                <StyledInput
+                    type="text" name="client_address"
+                    value={service.client_address}
+                    onChange={(e) => changeType(e, 'client_address')}
+                    label="Address"
+                />
+                <StyledInput
+                    type="text" name="service_email"
+                    value={service.service_email}
+                    onChange={(e) => changeType(e, 'service_email')}
+                    label={t('Email')}
+                />
+            </FormRow>
+
+            <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
+                {t('Item and service details')}
+            </h3>
+
+            <FormRow>
+                <StyledInput
+                    type="text" name="type"
+                    value={service.type}
+                    onChange={(e) => changeType(e, 'type')}
+                    label={t("Type")}
+                />
+            </FormRow>
+            <FormRow>
+                <StyledInput
+                    type="textarea" name="description"
+                    value={service.description}
+                    onChange={(e) => changeType(e, 'description')}
+                    label={t("Description")}
+                />
+            </FormRow>
+
+            <FormRow>
+                <StyledInput
+                    type="text" name="accessories"
+                    value={service.accessories}
+                    onChange={(e) => changeType(e, 'accessories')}
+                    label={t("Accessories")}
+                />
+                <StyledSelect
+                    options={[{name: 'Yes', value: 'yes'}, {name: 'No', value: 'no'}]}
+                    name="guaranteed"
+                    value={service.guaranteed}
+                    onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'guaranteed')}
+                    label={t("Guaranteed")}
+                />
+            </FormRow>
+
+            <FormRow>
+                <StyledInput
+                    type="textarea" name="repair_description"
+                    value={service.repair_description}
+                    onChange={(e) => changeType(e, 'repair_description')}
+                    label={t("Repair Description")}
+                />
+            </FormRow>
+            <FormRow>
+                <StyledInput
+                    type="text" name="expected_cost"
+                    value={service.expected_cost}
+                    onChange={(e) => changeType(e, 'expected_cost')}
+                    label={t("Expected cost")}
+                />
+                <StyledInput
+                    type="text" name="note"
+                    value={service.note}
+                    onChange={(e) => changeType(e, 'note')}
+                    label={t("Note")}
+                />
+            </FormRow>
 
 
-                    <div className="grid md:grid-cols-2 md:gap-6">
-                        <StyledInput
-                            type="text" name="client_email"
-                            value={service.client_email}
-                            onChange={(e) => changeType(e, 'client_email')}
-                            label={t('Email')}
-                        />
-                        <StyledInput
-                            type="text" name="client_phone"
-                            value={service.client_phone}
-                            onChange={(e) => changeType(e, 'client_phone')}
-                            label="Phone"
-                        />
-                    </div>
-
-                    <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
-                        {t('Signature')}
-                    </h3>
+            <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
+                {t('Signature')}
+            </h3>
+            <FormRow>
+                <div
+                    className="relative w-96 h-48 border border-gray-200 rounded-lg self-center mb-2 justify-self-center">
                     <SignaturePad ref={signaturePadRef}
-                                  redrawOnResize
+                                  debounceInterval={500}
                                   options={{
                                       minWidth: 0.5,
                                       maxWidth: 2.5,
                                       //dotSize: 1,
                                       backgroundColor: 'white',
-                                      penColor: 'rgb(76,76,76)'}} />
-                </form>
-
-                <div className="flex justify-between">
-                    <button type="button"
-                            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none
-                            focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2
-                            dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                            onClick={() => onSave(service)}
-                    >Save
-                    </button>
-                    <button type="button"
-                            className="text-gray-900 bg-white border border-gray-300 focus:outline-none
-                            hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg
-                            text-sm px-5 py-2.5 mr-2 dark:bg-gray-800 dark:text-white dark:border-gray-600
-                            dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                            onClick={() => onClose()}
-                    >Cancel
-                    </button>
-
+                                      penColor: 'rgb(76,76,76)'
+                                  }}/>
                 </div>
-            </div>
-        </div>
+            </FormRow>
+        </GeneralModal>
     )
 }
