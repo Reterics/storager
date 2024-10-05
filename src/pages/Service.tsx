@@ -40,6 +40,7 @@ function Service() {
                 }
             ]}/>
 
+            <div className="flex-1"></div>
             <div className="relative flex justify-center w-full m-auto mt-1">
                 <ServiceModal
                     onClose={() => setModalTemplate(null)}

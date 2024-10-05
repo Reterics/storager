@@ -24,5 +24,27 @@
   "item_status_03": "Alkatrészre vár",
   "item_status_04": "Válaszra vár",
   "item_status_05": "Kész",
-  "item_status_06": "Átadva"
+  "item_status_06": "Átadva",
+
+  "Service": "Szervíz",
+  "Recipient": "Átvevő",
+  "Settings": "Beállítások",
+  "Serviced Items": "Szervizelt Eszközök",
+  "Dark Mode": "Sötét mód",
+  "Light Mode": "Világos mód",
+  "Save": "Mentés",
+  "Cancel": "Vissza",
+  "Service Acceptance Form": "Szerviz Átvételi Űrlap",
+  "Client": "Ügyfél",
+  "Phone": "Telefon",
+  "Email": "Email",
+  "Item and service details": "Készülék és javítás adatai adatai",
+  "Type": "Típus",
+  "Description": "Leírás",
+  "Accessories": "Átvett tartozékok",
+  "Guaranteed": "Garanciális",
+  "Repair Description": "Javítás leírása",
+  "Expected cost": "Várható költség",
+  "Note": "Megjegyzés",
+  "Signature": "Aláírás"
 }

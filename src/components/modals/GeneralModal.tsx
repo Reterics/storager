@@ -1,5 +1,5 @@
 import {GeneralModalArguments} from "../../interfaces/interfaces.ts";
-
+import './GeneralModal.css';
 
 export default function GeneralModal({
                                          visible,
@@ -30,7 +30,7 @@ export default function GeneralModal({
                     {title || ''}
                 </h1>
 
-                <form className="flex flex-col">
+                <form className="flex flex-col max-h-[60vh] overflow-y-auto modalForm pe-1">
                     {children}
                 </form>
                 <div className="flex justify-between mt-2">

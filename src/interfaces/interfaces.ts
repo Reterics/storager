@@ -181,7 +181,7 @@ export interface ServiceData {
     client_email?: string,
     client_phone?: string,
     service_name?: string,
-    client_address?: string,
+    service_address?: string,
     service_email?: string,
     type?: string,
     accessories?: string,

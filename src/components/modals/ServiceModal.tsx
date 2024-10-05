@@ -40,7 +40,7 @@ export default function ServiceModal({ onClose, service, setService, onSave, inP
 
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace}
-                      title={t('Service Form')} id="ServiceModal"
+                      title={t('Service Acceptance Form')} id="ServiceModal"
         >
             <h3 className="font-semibold text-center text-xl text-gray-700 mt-2 mb-1">
                 {t('Client')}
@@ -70,7 +70,7 @@ export default function ServiceModal({ onClose, service, setService, onSave, inP
             </FormRow>
 
             <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
-                {t('Service')}
+                {t('Recipient')}
             </h3>
 
             <FormRow>
@@ -84,10 +84,10 @@ export default function ServiceModal({ onClose, service, setService, onSave, inP
 
             <FormRow>
                 <StyledInput
-                    type="text" name="client_address"
-                    value={service.client_address}
+                    type="text" name="service_address"
+                    value={service.service_address}
                     onChange={(e) => changeType(e, 'client_address')}
-                    label="Address"
+                    label={t('Address')}
                 />
                 <StyledInput
                     type="text" name="service_email"

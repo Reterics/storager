@@ -24,5 +24,26 @@
   "item_status_03": "Waiting for parts",
   "item_status_04": "Waiting to customer",
   "item_status_05": "Ready",
-  "item_status_06": "Done"
+  "item_status_06": "Done",
+
+  "Service": "Service",
+  "Recipient": "Recipient",
+  "Settings": "Settings",
+  "Serviced Items": "Serviced Items",
+  "Dark Mode": "Dark Mode",
+  "Save": "Save",
+  "Cancel": "Cancel",
+  "Service Acceptance Form": "Service Acceptance Form",
+  "Client": "Client",
+  "Phone": "Phone",
+  "Email": "Email",
+  "Item and service details": "Item and service details",
+  "Type": "Type",
+  "Description": "Description",
+  "Accessories": "Accessories",
+  "Guaranteed": "Guaranteed",
+  "Repair Description": "Repair Description",
+  "Expected cost": "Expected cost",
+  "Note": "Note",
+  "Signature": "Signature"
 }
