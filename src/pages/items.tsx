@@ -6,12 +6,12 @@ import TableViewComponent, {TableViewActions} from "../components/elements/Table
 import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import ItemModal from "../components/modals/ItemModal.tsx";
-import {FirebaseContext} from "../firebase/FirebaseContext.ts";
+import {DBContext} from "../database/DBContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 
 function Items() {
-    const firebaseContext = useContext(FirebaseContext);
+    const firebaseContext = useContext(DBContext);
     const { t } = useTranslation();
 
     const [items, setItems] = useState<StoreItem[]>(firebaseContext?.data.items || []);

@@ -1,14 +1,14 @@
 import {NavLink, useLocation} from "react-router-dom";
 import {AuthContext} from "../store/AuthContext.tsx";
 import {useContext} from "react";
-import {useThemeDetector} from "../utils/reactUtils.ts";
 import {useTranslation} from "react-i18next";
+import {useTheme} from "../store/ThemeContext.tsx";
 
 
 const Header = () => {
     const pathname = useLocation().pathname;
     const  {SignOut, user} = useContext(AuthContext);
-    const isDarkTheme = useThemeDetector();
+    const isDarkTheme = useTheme()?.theme === 'dark';
     const { t } = useTranslation();
 
     return (

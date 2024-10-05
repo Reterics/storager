@@ -1,7 +1,6 @@
-import DBModel from "./DBModel.ts";
+import DBModel from "../DBModel.ts";
 import {FirebaseApp, initializeApp} from "firebase/app";
 import {collection, getFirestore, onSnapshot, query, Firestore, doc, getDoc} from "firebase/firestore";
-
 
 
 export default class FirebaseDBModel extends DBModel {

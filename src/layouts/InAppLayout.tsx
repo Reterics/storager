@@ -1,4 +1,4 @@
-import {FirebaseProvider} from "../firebase/FirebaseProvider.tsx";
+import {FirebaseProvider} from "../database/firebase/FirebaseProvider.tsx";
 import {ReactNode, useContext} from "react";
 import {AuthContext} from "../store/AuthContext.tsx";
 import SignInComponent from "../components/SignIn.tsx";

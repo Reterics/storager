@@ -1,17 +1,17 @@
 import {ReactNode, useEffect, useState} from "react";
-import {FirebaseContextData, FirebaseContextDataType} from "../interfaces/firebase.ts";
-import {firebaseCollections, getCollection} from "./BaseConfig.ts";
-import {Shop, StoreItem} from "../interfaces/interfaces.ts";
-import {FirebaseContext} from "./FirebaseContext.ts";
-import PageLoading from "../components/PageLoading.tsx";
-import {getFileURL} from "./storage.ts";
+import {ContextDataType, ContextData} from "../../interfaces/firebase.ts";
+import {firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
+import {Shop, StoreItem} from "../../interfaces/interfaces.ts";
+import PageLoading from "../../components/PageLoading.tsx";
+import {getFileURL} from "../../firebase/storage.ts";
+import {DBContext} from "../DBContext.ts";
 
 
 export const FirebaseProvider = ({children}: {
     children: ReactNode
 }) => {
 
-    const [ctxData, setCtxData] = useState<FirebaseContextData|null>(null);
+    const [ctxData, setCtxData] = useState<ContextData|null>(null);
     const [error, setError] = useState<Error | null>(null);
 
     const getContextData = async () => {
@@ -44,7 +44,7 @@ export const FirebaseProvider = ({children}: {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const use = (id: number, type: FirebaseContextDataType) => {
+    const use = (id: number, type: ContextDataType) => {
         // TODO: To be implemented
     };
 
@@ -53,13 +53,13 @@ export const FirebaseProvider = ({children}: {
         void getContextData();
     }, []);
 
-    return <FirebaseContext.Provider value={{
-        data: ctxData as FirebaseContextData,
+    return <DBContext.Provider value={{
+        data: ctxData as ContextData,
         setData: updateContextData,
         use: use
     }}>
         {!error && ctxData && children}
         {!error && !ctxData && <PageLoading/>}
         {error && <div>Error: {error.message}</div>}
-    </FirebaseContext.Provider>;
+    </DBContext.Provider>;
 };

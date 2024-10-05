@@ -1,12 +1,12 @@
 import {useContext, useState} from "react";
-import {FirebaseContext} from "../firebase/FirebaseContext.ts";
+import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 
 
 function Parts() {
-    const firebaseContext = useContext(FirebaseContext);
+    const firebaseContext = useContext(DBContext);
     const { t } = useTranslation();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

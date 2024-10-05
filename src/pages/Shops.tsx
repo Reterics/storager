@@ -11,12 +11,12 @@ import {Marker, Popup} from "react-leaflet";
 import {LatLngTuple, Map} from "leaflet";
 import ShopModal from "../components/modals/ShopModal.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
-import {FirebaseContext} from "../firebase/FirebaseContext.ts";
+import {DBContext} from "../database/DBContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 
 function Shops() {
-    const firebaseContext = useContext(FirebaseContext);
+    const firebaseContext = useContext(DBContext);
     const { t } = useTranslation();
 
     const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
