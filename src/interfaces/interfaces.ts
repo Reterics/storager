@@ -282,3 +282,21 @@ export interface TableHead {
 }
 
 export type OrderType = 'ASC' | 'DSC';
+
+
+export interface SettingsItems {
+    id?: string,
+    companyName: string,
+    address: string,
+    taxId: string,
+    bankAccount: string,
+    phone: string,
+    email: string,
+    smtpServer: string,
+    port: string,
+    username: string,
+    password: string,
+    useSSL: boolean,
+
+    serviceAgreement: string
+}

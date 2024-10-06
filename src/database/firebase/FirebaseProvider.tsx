@@ -1,7 +1,14 @@
 import {ReactNode, useEffect, useState} from "react";
 import {ContextDataType, ContextData} from "../../interfaces/firebase.ts";
 import {firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
-import {ServiceCompleteData, ServiceData, Shop, StoreItem, StorePart} from "../../interfaces/interfaces.ts";
+import {
+    ServiceCompleteData,
+    ServiceData,
+    SettingsItems,
+    Shop,
+    StoreItem,
+    StorePart
+} from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "../../firebase/storage.ts";
 import {DBContext} from "../DBContext.ts";
@@ -30,6 +37,7 @@ export const FirebaseProvider = ({children}: {
         const parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
         const services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
         const completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
+        const settings = await getCollection(firebaseCollections.settings).catch(setError) as SettingsItems[];
 
         await refreshImagePointers(items);
         await refreshImagePointers(parts);
@@ -39,7 +47,8 @@ export const FirebaseProvider = ({children}: {
             items,
             parts,
             services,
-            completions
+            completions,
+            settings: settings[0]
         })
     }
 
