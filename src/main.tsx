@@ -13,6 +13,7 @@ import './i18n';
 import Parts from "./pages/Parts.tsx";
 import {ThemeProvider} from "./store/ThemeContext.tsx";
 import {ShopProvider} from "./store/ShopContext.tsx";
+import UsersPage from "./pages/Users.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')!).render(
                               <Route path="/parts" element={<InAppLayout><Parts /></InAppLayout>}/>
                               <Route path="/service" element={<InAppLayout><Service /></InAppLayout>}/>
                               <Route path="/settings" element={<InAppLayout><Settings /></InAppLayout>}/>
+                              <Route path="/users" element={<InAppLayout><UsersPage /></InAppLayout>}/>
                               <Route path="/signin" element={<SignInComponent />}/>
                           </Routes>
                       </div>

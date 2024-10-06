@@ -176,6 +176,7 @@ function Service() {
                         setService={(item: ServiceData) => setModalTemplate(item)}
                         service={modalTemplate}
                         inPlace={true}
+                        settings={firebaseContext?.data.settings}
                     />
                     <ServiceCompletionModal
                         onClose={() => setCompletedModalTemplate(null)}

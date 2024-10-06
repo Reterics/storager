@@ -23,9 +23,14 @@ export const shopItemTypeOptions = [
 ]
 
 
-
 export const shopPartCategoryOptions = [
     {"value": "part", "name": "Alkatrész"},
+]
+
+
+export const userRoleOptions = [
+    {"value": "member", "name": "Felhasználó"},
+    {"value": "admin", "name": "Admin"},
 ]
 
 

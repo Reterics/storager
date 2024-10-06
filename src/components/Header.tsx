@@ -4,11 +4,14 @@ import {useContext, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useTheme} from "../store/ThemeContext.tsx";
 import {ShopContext} from "../store/ShopContext.tsx";
+import {DBContext} from "../database/DBContext.ts";
 
 
 const Header = () => {
     const pathname = useLocation().pathname;
     const {SignOut, user} = useContext(AuthContext);
+    const dbContext = useContext(DBContext);
+    const isAdmin = dbContext?.data.currentUser?.role === 'admin';
     const {shop} = useContext(ShopContext);
     const isDarkTheme = useTheme()?.theme === 'dark';
     const { t } = useTranslation();
@@ -84,14 +87,22 @@ const Header = () => {
                                 {dropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800">
                                         <ul className="py-1">
-                                            <li>
+                                            {isAdmin && <li>
                                                 <NavLink
                                                     to="/settings"
                                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
                                                     {t('Settings')}
                                                 </NavLink>
-                                            </li>
+                                            </li>}
+                                            {isAdmin && <li>
+                                                <NavLink
+                                                    to="/users"
+                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                >
+                                                    {t('Users')}
+                                                </NavLink>
+                                            </li>}
                                             <li>
                                                 <button
                                                     onClick={() => SignOut()}

@@ -8,9 +8,9 @@ import FormRow from "../elements/FormRow.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import StyledMultiSelect from "../elements/StyledMultiSelect.tsx";
 import {serviceTypeOptions} from "../../interfaces/constants.ts";
+import './ServiceModal.css';
 
-
-export default function ServiceModal({ id, onClose, service, setService, onSave, inPlace }: ServiceModalInput) {
+export default function ServiceModal({ id, onClose, service, setService, onSave, inPlace, settings }: ServiceModalInput) {
     const { t } = useTranslation();
     const signaturePadRef = useRef<SignaturePad>(null);
 
@@ -57,9 +57,9 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace}
                       title={
-            service.onUpdate ? t('Service Form') :
-            t('Service Acceptance Form')
-        } id={id || "ServiceModal"}
+                          service.onUpdate ? t('Service Form') :
+                              t('Service Acceptance Form')
+                      } id={id || "ServiceModal"}
         >
             <h3 className="font-semibold text-center text-xl text-gray-700 mt-2 mb-1">
                 {t('Client')}
@@ -90,7 +90,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
 
             {!service.onUpdate && <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
                 {t('Recipient')}
-            </h3> }
+            </h3>}
 
             {!service.onUpdate && <FormRow>
                 <StyledInput
@@ -99,7 +99,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     onChange={() => false}
                     label={t('Name')}
                 />
-            </FormRow> }
+            </FormRow>}
 
             {!service.onUpdate && <FormRow>
                 <StyledInput
@@ -114,7 +114,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     onChange={() => false}
                     label={t('Email')}
                 />
-            </FormRow> }
+            </FormRow>}
 
             <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
                 {t('Item and service details')}
@@ -140,15 +140,17 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             <FormRow>
                 <StyledSelect
                     options={
-                    [
-                        'status_accepted',
-                        'status_in_progress',
-                        'status_waiting_parts',
-                        'status_waiting_feedback',
-                        'status_ready',
-                        'status_delivered',
-                    ]
-                        .map(text => {return {name: t(text), value: text}})
+                        [
+                            'status_accepted',
+                            'status_in_progress',
+                            'status_waiting_parts',
+                            'status_waiting_feedback',
+                            'status_ready',
+                            'status_delivered',
+                        ]
+                            .map(text => {
+                                return {name: t(text), value: text}
+                            })
                     }
                     name="serviceStatus"
                     value={service.serviceStatus}
@@ -194,7 +196,9 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     onChange={(e) => changeType(e, 'note')}
                     label={t("Note")}
                 />
-            </FormRow> }
+            </FormRow>}
+
+            <pre className={settings?.serviceAgreement ? 'mt-2 mb-2 max-w-[80vw]' : ''}>{settings?.serviceAgreement}</pre>
 
 
             {!service.onUpdate && <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
@@ -202,18 +206,18 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             </h3>}
             {!service.onUpdate && <FormRow>
                 <div
-                    className="relative w-96 h-48 border border-gray-200 rounded-lg self-center mb-2 justify-self-center">
+                    className="relative w-[48rem] h-96 border border-gray-200 rounded-lg self-center justify-self-center">
                     <SignaturePad ref={signaturePadRef}
-                        debounceInterval={500}
-                        options={{
-                          minWidth: 0.5,
-                          maxWidth: 2.5,
-                          //dotSize: 1,
-                          backgroundColor: 'white',
-                          penColor: 'rgb(76,76,76)'
-                        }}/>
+                                  debounceInterval={500}
+                                  options={{
+                                      minWidth: 0.5,
+                                      maxWidth: 2.5,
+                                      //dotSize: 1,
+                                      backgroundColor: 'white',
+                                      penColor: 'rgb(76,76,76)'
+                                  }}/>
                 </div>
-            </FormRow> }
+            </FormRow>}
         </GeneralModal>
     )
 }

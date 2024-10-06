@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useState} from "react";
+import {ReactNode, useContext, useEffect, useRef, useState} from "react";
 import {ContextDataType, ContextData} from "../../interfaces/firebase.ts";
 import {firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
 import {
@@ -7,19 +7,22 @@ import {
     SettingsItems,
     Shop,
     StoreItem,
-    StorePart
+    StorePart, UserData
 } from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "../../firebase/storage.ts";
 import {DBContext} from "../DBContext.ts";
+import {AuthContext} from "../../store/AuthContext.tsx";
 
 
 export const FirebaseProvider = ({children}: {
     children: ReactNode
 }) => {
 
+    const authContext = useContext(AuthContext);
     const [ctxData, setCtxData] = useState<ContextData|null>(null);
     const [error, setError] = useState<Error | null>(null);
+    const renderAfterCalled = useRef(false);
 
     const refreshImagePointers = async (array: StoreItem[]|StorePart[]) => {
         if (Array.isArray(array)) {
@@ -32,12 +35,49 @@ export const FirebaseProvider = ({children}: {
     };
 
     const getContextData = async () => {
-        const shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
-        const items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
-        const parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
-        const services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
-        const completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
-        const settings = await getCollection(firebaseCollections.settings).catch(setError) as SettingsItems[];
+        let shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
+        let items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
+        let parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
+        let users = await getCollection(firebaseCollections.users).catch(setError) as UserData[];
+        let services: ServiceData[] = [];
+        let completions: ServiceCompleteData[] = [];
+        let settings: SettingsItems[] = [];
+        let user;
+
+        if (authContext.user && authContext.user.email) {
+            user = users.find(user => user.email === authContext.user?.email);
+            if (!user) {
+                console.error('User is not found in the Firestore settings');
+            } else if (user.role !== 'admin') {
+                console.log('User is not an admin, hence we do not load settings');
+                users = [user];
+                settings = await getCollection(firebaseCollections.settings).catch(setError) as SettingsItems[];
+                if (settings && settings[0]) {
+                    for(let i = 0; i < settings.length; i++) {
+                        settings[i] = {
+                            serviceAgreement: settings[i].serviceAgreement,
+                            companyName: settings[i].companyName,
+                            address: settings[i].address,
+                            email: settings[i].email,
+                        }
+                    }
+                }
+            } else {
+                settings = await getCollection(firebaseCollections.settings).catch(setError) as SettingsItems[];
+            }
+        }
+
+        if (user) {
+            services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
+            completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
+        }
+
+        // TODO: move the filter server side
+        if (user && user.shop_id) {
+            shops = shops.filter(shop => shop.id === user.shop_id);
+            items = items.filter(item => item.id === user.shop_id);
+            parts = parts.filter(part => part.id === user.shop_id);
+        }
 
         await refreshImagePointers(items);
         await refreshImagePointers(parts);
@@ -48,7 +88,9 @@ export const FirebaseProvider = ({children}: {
             parts,
             services,
             completions,
-            settings: settings[0]
+            settings: settings[0],
+            users: users,
+            currentUser: user
         })
     }
 
@@ -67,8 +109,12 @@ export const FirebaseProvider = ({children}: {
     };
 
     useEffect(() => {
-        console.error('Load context data');
-        void getContextData();
+        if (!renderAfterCalled.current) {
+            console.error('Load context data');
+            void getContextData();
+        }
+
+        renderAfterCalled.current = true;
     }, []);
 
     return <DBContext.Provider value={{

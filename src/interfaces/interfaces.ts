@@ -231,7 +231,8 @@ export interface ServiceModalInput {
     service: ServiceData | null,
     onSave: (currentService: ServiceData) => unknown
     setService: (shop: ServiceData) => void
-    inPlace?: boolean
+    inPlace?: boolean,
+    settings?: SettingsItems
 }
 
 export interface ServiceCompleteData {
@@ -288,15 +289,35 @@ export interface SettingsItems {
     id?: string,
     companyName: string,
     address: string,
-    taxId: string,
-    bankAccount: string,
-    phone: string,
+    taxId?: string,
+    bankAccount?: string,
+    phone?: string,
     email: string,
-    smtpServer: string,
-    port: string,
-    username: string,
-    password: string,
-    useSSL: boolean,
+    smtpServer?: string,
+    port?: string,
+    username?: string,
+    password?: string,
+    useSSL?: boolean,
 
     serviceAgreement: string
+}
+
+
+export interface UserData {
+    username?: string,
+    email?: string,
+    shop_id?: string,
+    role?: string,
+    id?: string
+    password?: string
+    password_confirmation?: string
+}
+
+export interface UserModalInput {
+    onClose: () => void,
+    user: UserData | null,
+    onSave: (currentUser: UserData) => unknown
+    setUser: (user: UserData) => void
+    inPlace?: boolean,
+    shops?: Shop[]
 }
