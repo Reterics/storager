@@ -1,17 +1,22 @@
-import StyledInput from "../elements/StyledInput.tsx";
-import {GeneralModalButtons, ItemModalInput, StoreItem} from "../../interfaces/interfaces.ts";
+import {
+    GeneralModalButtons,
+    PartModalInput,
+    StoreItem
+} from "../../interfaces/interfaces.ts";
+import {useTranslation} from "react-i18next";
 import {ChangeEvent, useState} from "react";
-import StyledFile from "../elements/StyledFile.tsx";
-import StyledSelect from "../elements/StyledSelect.tsx";
 import {fileToDataURL} from "../../utils/general.ts";
 import {uploadFileDataURL} from "../../firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
-import {useTranslation} from "react-i18next";
 import FormRow from "../elements/FormRow.tsx";
-import {shopItemTypeOptions} from "../../interfaces/constants.ts";
+import StyledInput from "../elements/StyledInput.tsx";
+import StyledSelect from "../elements/StyledSelect.tsx";
+import {shopPartCategoryOptions} from "../../interfaces/constants.ts";
+import StyledFile from "../elements/StyledFile.tsx";
 
 
-export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: ItemModalInput) {
+
+export default function PartModal({ onClose, part, setPart, onSave, inPlace }: PartModalInput) {
     const { t } = useTranslation();
 
     const [file, setFile] = useState<File|null>(null)
@@ -20,12 +25,12 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
 
-        const obj = {...item};
+        const obj = {...part};
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         obj[key] = value;
 
-        setItem(obj as StoreItem);
+        setPart(obj as StoreItem);
     };
 
     const uploadAndSave = async (item: StoreItem) => {
@@ -45,7 +50,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
 
 
         if (screenshot) {
-            assetToSave.image = 'screenshots/item_' + (item?.id || new Date().getTime()) + '.png';
+            assetToSave.image = 'screenshots/part_' + (item?.id || new Date().getTime()) + '.png';
         }
 
         if (assetToSave.image && screenshot) {
@@ -55,12 +60,12 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
         onSave(assetToSave);
     };
 
-    if (!item) return null;
+    if (!part) return null;
 
     const buttons: GeneralModalButtons[] = [
         {
             primary: true,
-            onClick: ()=>uploadAndSave(item),
+            onClick: ()=>uploadAndSave(part),
             value: t('Save')
         },
         {
@@ -74,37 +79,37 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
             <FormRow>
                 <StyledInput
                     type="text" name="sku"
-                    value={item.sku}
+                    value={part.sku}
                     onChange={(e) => changeType(e, 'sku')}
                     label={t('SKU')}
                 />
                 <StyledInput
                     type="text" name="name"
-                    value={item.name}
+                    value={part.name}
                     onChange={(e) => changeType(e, 'name')}
                     label={t("Name")}
                 />
 
                 <StyledSelect
                     type="text" name="Type"
-                    options={shopItemTypeOptions}
-                    value={item.type || shopItemTypeOptions[0].value}
+                    options={shopPartCategoryOptions}
+                    value={part.category || shopPartCategoryOptions[0].value}
                     onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'type')}
-                    label={t("Type")}
+                    label={t("Category")}
                 />
             </FormRow>
 
             <FormRow>
                 <StyledInput
                     type="textarea" name="description"
-                    value={item.description}
+                    value={part.description}
                     onChange={(e) => changeType(e, 'description')}
                     label="Description"
                 />
 
                 <StyledFile name="model" label="Image"
                             onChange={setFile} preview={true}
-                            defaultPreview={item?.image}/>
+                            defaultPreview={part?.image}/>
 
             </FormRow>
 
@@ -113,7 +118,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
             <FormRow>
                 <StyledInput
                     type="number" name="storage"
-                    value={item.storage}
+                    value={part.storage}
                     onChange={(e) => changeType(e, 'storage')}
                     label="Storage"
                     pattern="[0-9\.]+"
@@ -121,7 +126,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                 />
                 <StyledInput
                     type="number" name="price"
-                    value={item.price}
+                    value={part.price}
                     onChange={(e) => changeType(e, 'price')}
                     label="Price"
                     pattern="[0-9]+"

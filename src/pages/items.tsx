@@ -86,7 +86,7 @@ function Items() {
         });
     };
 
-    const tableKeyOrder = ['image', 'inventory_id', 'name', 'storage', 'price', 'shop'];
+    const tableKeyOrder = ['image', 'sku', 'name', 'storage', 'price', 'shop'];
 
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
         const key = tableKeyOrder[col as number];
@@ -106,7 +106,7 @@ function Items() {
 
         return [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
-            item.inventory_id,
+            item.sku,
             item.name || '',
             item.storage || 0,
             item.price || 0,
@@ -124,7 +124,8 @@ function Items() {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
                         id: '',
-                        shop_id: shopContext.shop?.id
+                        shop_id: shopContext.shop?.id,
+                        storage: 1
                     })
                 }
             ]}/>
@@ -132,7 +133,7 @@ function Items() {
             <TableViewComponent lines={tableLines}
                                 header={[
                                     t('Image'),
-                                    t('ID'),
+                                    t('SKU'),
                                     {
                                         value: t('Name'),
                                         type: 'text',

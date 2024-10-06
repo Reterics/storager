@@ -1,10 +1,10 @@
-import {ServiceCompleteData, ServiceData, Shop, StoreItem} from "./interfaces.ts";
+import {ServiceCompleteData, ServiceData, Shop, StoreItem, StorePart} from "./interfaces.ts";
 
 
 export interface ContextData {
     shops: Shop[],
     items: StoreItem[],
-    parts: unknown[],
+    parts: StorePart[],
     services: ServiceData[],
     completions: ServiceCompleteData[]
 }

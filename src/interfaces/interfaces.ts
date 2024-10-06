@@ -161,12 +161,12 @@ export interface ShopModalInput {
 export interface StoreItem {
     id: string,
     name?: string,
-    inventory_id?: string,
+    sku?: string,
     description?: string,
     image?: string,
     storage?: number,
     price?: number,
-    type?: 'roller',
+    type?: string,
     shop_id?: string
 }
 
@@ -175,6 +175,26 @@ export interface ItemModalInput {
     item: StoreItem | null,
     onSave: (currentItem: StoreItem) => unknown
     setItem: (item: StoreItem) => void
+    inPlace?: boolean
+}
+
+export interface StorePart {
+    id: string,
+    name?: string,
+    sku?: string,
+    description?: string,
+    image?: string,
+    storage?: number,
+    price?: number,
+    category?: string,
+    shop_id?: string
+}
+
+export interface PartModalInput {
+    onClose: () => void,
+    part: StorePart | null,
+    onSave: (currentPart: StorePart) => unknown
+    setPart: (part: StorePart) => void
     inPlace?: boolean
 }
 
