@@ -14,12 +14,14 @@ import {BsFillPlusCircleFill} from "react-icons/bs";
 import {DBContext} from "../database/DBContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
+import {ShopContext} from "../store/ShopContext.tsx";
 
 function Shops() {
     const firebaseContext = useContext(DBContext);
     const { t } = useTranslation();
 
     const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
+    const shopContext = useContext(ShopContext);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
@@ -81,7 +83,6 @@ function Shops() {
 
     const tableLines = shops.map(shop => {
         return [
-            shop.id,
             shop.name || '',
             shop.address || '',
             TableViewActions({
@@ -92,7 +93,7 @@ function Shops() {
 
     return (
         <>
-            <PageHead title={t('Shops')} buttons={[
+            <PageHead title={t('Select a Shop')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
@@ -101,10 +102,19 @@ function Shops() {
                 }
             ]}/>
 
-            <TableViewComponent lines={tableLines} header={[t('ID'), {
+            <TableViewComponent lines={tableLines} header={[{
                 value: t('Name'),
                 sortable: true
-            }, t('Address'), t('Actions')]}/>
+            }, t('Address'), t('Actions')]}
+            onClick={(index) => {
+                if (shops[index]) {
+                    if (shopContext.shop && shops[index].id === shopContext.shop?.id) {
+                        shopContext.setShop(null)
+                    } else {
+                        shopContext.setShop(shops[index]);
+                    }
+                }
+            }}/>
             <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1 flex-row">
                 <ShopModal
                     onClose={()=>setModalTemplate(null)}

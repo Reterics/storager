@@ -9,12 +9,19 @@ import ItemModal from "../components/modals/ItemModal.tsx";
 import {DBContext} from "../database/DBContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
+import {ShopContext} from "../store/ShopContext.tsx";
 
 function Items() {
     const firebaseContext = useContext(DBContext);
+    const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    const [items, setItems] = useState<StoreItem[]>(firebaseContext?.data.items || []);
+    let initialItems = firebaseContext?.data.items || [];
+    if (shopContext.shop) {
+        initialItems = initialItems.filter((item) => shopContext.shop?.id === item.shop_id);
+    }
+
+    const [items, setItems] = useState<StoreItem[]>(initialItems);
     const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
 
     const [modalTemplate, setModalTemplate] = useState<StoreItem|null>(null)
@@ -79,7 +86,7 @@ function Items() {
         });
     };
 
-    const tableKeyOrder = ['image', 'inventory_id', 'name', 'storage', 'price', 'store'];
+    const tableKeyOrder = ['image', 'inventory_id', 'name', 'storage', 'price', 'shop'];
 
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
         const key = tableKeyOrder[col as number];
@@ -95,13 +102,15 @@ function Items() {
     };
 
     const tableLines = items.map(item => {
+        const assignedShop = item.shop_id ? shops.find(i => i.id === item.shop_id) : null;
+
         return [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.inventory_id,
             item.name || '',
             item.storage || 0,
             item.price || 0,
-            item.store || '',
+            assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
                 onRemove: () => deleteItem(item),
             })
@@ -114,7 +123,8 @@ function Items() {
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
-                        id: ''
+                        id: '',
+                        shop_id: shopContext.shop?.id
                     })
                 }
             ]}/>

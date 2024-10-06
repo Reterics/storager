@@ -80,7 +80,7 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
                 <StyledInput
                     type="text" name="service_name"
                     value={formData.service_name}
-                    onChange={(e) => changeType(e, 'service_name')}
+                    onChange={() => false}
                     label={t('Name')}
                 />
             </FormRow>
@@ -89,13 +89,13 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
                 <StyledInput
                     type="text" name="service_address"
                     value={formData.service_address}
-                    onChange={(e) => changeType(e, 'client_address')}
+                    onChange={() => false}
                     label={t('Address')}
                 />
                 <StyledInput
                     type="text" name="service_email"
                     value={formData.service_email}
-                    onChange={(e) => changeType(e, 'service_email')}
+                    onChange={() => false}
                     label={t('Email')}
                 />
             </FormRow>

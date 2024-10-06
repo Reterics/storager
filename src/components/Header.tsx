@@ -3,11 +3,13 @@ import {AuthContext} from "../store/AuthContext.tsx";
 import {useContext} from "react";
 import {useTranslation} from "react-i18next";
 import {useTheme} from "../store/ThemeContext.tsx";
+import {ShopContext} from "../store/ShopContext.tsx";
 
 
 const Header = () => {
     const pathname = useLocation().pathname;
-    const  {SignOut, user} = useContext(AuthContext);
+    const {SignOut, user} = useContext(AuthContext);
+    const {shop} = useContext(ShopContext);
     const isDarkTheme = useTheme()?.theme === 'dark';
     const { t } = useTranslation();
 
@@ -40,27 +42,27 @@ const Header = () => {
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                          aria-current="page">{t('Shops')}</NavLink>
                             </li>
-                            <li>
+                            {shop && <li>
                                 <NavLink to='/items'
                                          className={pathname === '/items' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Items')}</NavLink>
-                            </li>
-                            <li>
+                            </li>}
+                            {shop && <li>
                                 <NavLink to='/parts'
                                          className={pathname === '/parts' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Parts')}</NavLink>
-                            </li>
-                            <li>
+                            </li>}
+                            {shop && <li>
                                 <NavLink to='/service'
                                          className={pathname === '/service' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Service')}</NavLink>
-                            </li>
+                            </li>}
                             <li>
                                 <NavLink to='/settings'
                                          className={pathname === '/settings' ?

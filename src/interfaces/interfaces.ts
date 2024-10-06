@@ -61,7 +61,8 @@ export interface TableViewLineArguments {
     line: TableLineType,
     index: number,
     header?: TableViewHeader,
-    onChange?: TableOnChaneMethod
+    onChange?: TableOnChangeMethod,
+    onClick?: (index: number) => void
 }
 
 export interface TableViewActionArguments extends TSXComponentArgument {
@@ -77,12 +78,13 @@ export interface TableViewActionArguments extends TSXComponentArgument {
 
 export type TableViewHeader = (string | TableHead)[];
 
-export type TableOnChaneMethod = (index: number, key: string | number, value: unknown) => void
+export type TableOnChangeMethod = (index: number, key: string | number, value: unknown) => void
 
 export interface TableViewArguments extends TSXComponentArgument {
     lines: TableLineType[]
     header?: TableViewHeader,
-    onChange?: TableOnChaneMethod
+    onChange?: TableOnChangeMethod,
+    onClick?: (index: number) => void
 }
 
 export interface GeneralModalArguments extends TSXComponentArgument {
@@ -143,6 +145,7 @@ export interface Shop {
     name?: string,
     address?: string,
     phone?: string,
+    email?: string,
     description?: string,
     coordinates?: GeoPoint
 }
@@ -164,7 +167,7 @@ export interface StoreItem {
     storage?: number,
     price?: number,
     type?: 'roller',
-    store?: string
+    shop_id?: string
 }
 
 export interface ItemModalInput {

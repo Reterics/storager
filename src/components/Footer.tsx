@@ -28,7 +28,7 @@ export const Footer = () => {
                         label={false}
                         />
                     </li>
-                    <li className="">
+                    <li className="ms-2">
                         <a
                             href="#"
                             className="hover:underline"

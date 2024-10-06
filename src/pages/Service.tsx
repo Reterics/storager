@@ -9,10 +9,12 @@ import {collection, doc, setDoc} from "firebase/firestore";
 import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import ServiceCompletionModal from "../components/modals/ServiceCompletionModal.tsx";
+import {ShopContext} from "../store/ShopContext.tsx";
 
 
 function Service() {
     const firebaseContext = useContext(DBContext);
+    const {shop} = useContext(ShopContext);
     const { t } = useTranslation();
 
     const [servicedItems, setServicedItems] = useState<ServiceData[]>(firebaseContext?.data.services || []);
@@ -85,7 +87,10 @@ function Service() {
                             id: item.id + '_cd',
                             service_id: item.id,
                             service_date: item.date,
-                            date: new Date().toISOString().split('T')[0]
+                            date: new Date().toISOString().split('T')[0],
+                            service_address: shop?.address,
+                            service_name: shop?.name,
+                            service_email: shop?.email
                         });
                     } else {
                         // TODO: Print Data
@@ -104,7 +109,10 @@ function Service() {
                     onClick: () => setModalTemplate(modalTemplate ? null : {
                         id: (servicedItems.length + 1).toString().padStart(6, '0'),
                         serviceStatus: 'in_progress',
-                        date: new Date().toISOString().split('T')[0]
+                        date: new Date().toISOString().split('T')[0],
+                        service_address: shop?.address,
+                        service_name: shop?.name,
+                        service_email: shop?.email
                     })
                 }
             ]}/>

@@ -27,7 +27,6 @@ export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: S
         if (lat && lon && !Number.isNaN(lat) && !Number.isNaN(lon)) {
             setShop({...shop, coordinates: new GeoPoint(Number(lat), Number(lon))} as Shop);
         }
-
     }
 
 
@@ -81,6 +80,13 @@ export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: S
                 value={shop.address}
                 onChange={(e) => changeType(e, 'address')}
                 label="Address"
+            />
+
+            <StyledInput
+                type="text" name="email"
+                value={shop.email}
+                onChange={(e) => changeType(e, 'email')}
+                label="Email"
             />
         </FormRow>
     </GeneralModal>)

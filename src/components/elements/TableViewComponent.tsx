@@ -1,7 +1,7 @@
-import {ChangeEvent, MouseEventHandler, useState} from "react";
+import {ChangeEvent, MouseEvent, MouseEventHandler, useState} from "react";
 import {
     OrderType, StyledSelectOption,
-    TableHead, TableLineElementType, TableOnChaneMethod,
+    TableHead, TableLineElementType, TableOnChangeMethod,
     TableViewActionArguments,
     TableViewArguments,
     TableViewLineArguments
@@ -20,11 +20,11 @@ import StyledInput from "./StyledInput.tsx";
 import StyledSelect from "./StyledSelect.tsx";
 
 const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}: {
-    header?: (string|TableHead)[],
-    orderBy: null|number,
+    header?: (string | TableHead)[],
+    orderBy: null | number,
     orderType: OrderType,
-    setOrderBy: (orderBy: number)=>void,
-    setOrderType: (orderType: OrderType)=>void,
+    setOrderBy: (orderBy: number) => void,
+    setOrderType: (orderType: OrderType) => void,
 }) => {
     if (!header || !header.length) {
         return null;
@@ -32,7 +32,7 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
 
     const updateOrderBy = (index: number) => {
         if (orderBy === index) {
-            setOrderType(orderType === 'ASC' ? 'DSC': 'ASC')
+            setOrderType(orderType === 'ASC' ? 'DSC' : 'ASC')
         } else {
             setOrderBy(index);
         }
@@ -44,13 +44,13 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
             {header.map((head, index) => (
                 <th
                     scope="col"
-                    className={index === header.length-1 ? "px-3 py-2 text-right flex justify-end" : "px-3 py-2"}
+                    className={index === header.length - 1 ? "px-3 py-2 text-right flex justify-end" : "px-3 py-2"}
                 >
                     <div className="flex items-center">
                         {typeof head === "string" ? (head) : head.value}
 
                         {typeof head !== "string" && head.sortable && orderType === 'DSC' &&
-                            <div className="text-xl ms-1"><BsSortUp onClick={()=>updateOrderBy(index)}/></div>}
+                            <div className="text-xl ms-1"><BsSortUp onClick={() => updateOrderBy(index)}/></div>}
 
                         {typeof head !== "string" && head.sortable && orderType === 'ASC' &&
                             <div className="text-xl ms-1"><BsSortDown onClick={() => updateOrderBy(index)}/></div>}
@@ -63,13 +63,13 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
 };
 
 
-const TableViewEditableElement = (element: TableLineElementType, options: TableHead, onChange: TableOnChaneMethod, index: number, col: number) => {
+const TableViewEditableElement = (element: TableLineElementType, options: TableHead, onChange: TableOnChangeMethod, index: number, col: number) => {
 
     const [editMode, setEditMode] = useState<boolean>(false);
     const [value, setValue] = useState<TableLineElementType>(element);
 
     if (!editMode) {
-        return <div onClick={()=>setEditMode(true)}>{element}</div>;
+        return <div onClick={() => setEditMode(true)}>{element}</div>;
     }
 
     const closeEditMode = () => {
@@ -77,20 +77,21 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
         setEditMode(false);
     };
 
-    const closeButton = <div className="text-sm ms-1" onClick={()=>closeEditMode()}><BsFillXCircleFill /></div>
+    const closeButton = <div className="text-sm ms-1" onClick={() => closeEditMode()}><BsFillXCircleFill/></div>
 
     switch (options.type) {
         case 'steps':
             return (
                 <div className="flex flex-row text-xl items-center cursor-pointer">
                     <BsArrowLeftSquare
-                        onClick={() => setValue(Number(value) - 1)} />
+                        onClick={() => setValue(Number(value) - 1)}/>
                     <span className="m-0 w-[50] ms-1">
-                        <StyledInput type="number" value={value as number || 0} className="mt-0 w-[50px] me-1 hide-arrows"
+                        <StyledInput type="number" value={value as number || 0}
+                                     className="mt-0 w-[50px] me-1 hide-arrows"
                                      onChange={(e) => setValue(e.target.value)}/>
                     </span>
                     <BsArrowRightSquare
-                        onClick={() => setValue(Number(value) + 1)} />
+                        onClick={() => setValue(Number(value) + 1)}/>
                     {options.postFix}
                     {closeButton}
                 </div>
@@ -132,11 +133,19 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
 }
 
 
-const TableViewLine = ({line, index, header, onChange}: TableViewLineArguments) => {
+const TableViewLine = ({line, index, header, onChange, onClick}: TableViewLineArguments) => {
+
+    const onSelect = (e: MouseEvent<HTMLTableHeaderCellElement>) => {
+        e.preventDefault();
+        if (typeof onClick === 'function') {
+            onClick(index);
+        }
+    };
+
     return (line.map((column, columnIndex) => (
         <th scope="row" key={'column_' + columnIndex + '_' + index}
             className={"px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white p-2" +
-                (columnIndex === line.length - 1 ? " text-right" : "")}>
+                (columnIndex === line.length - 1 ? " text-right" : "")} onClick={(e)=>onSelect(e)}>
             {header && typeof header[columnIndex] !== 'string' && header[columnIndex].editable ?
                 TableViewEditableElement(column, header[columnIndex], onChange || (() => false), index,
                     columnIndex) : column}
@@ -182,7 +191,7 @@ export const TableViewActions = ({
     );
 }
 
-const TableViewComponent = ({header, lines, children, onChange}: TableViewArguments) => {
+const TableViewComponent = ({header, lines, children, onChange, onClick}: TableViewArguments) => {
 
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
@@ -208,7 +217,7 @@ const TableViewComponent = ({header, lines, children, onChange}: TableViewArgume
             <tbody>
             {orderedLines.map((line, index) =>
                 <tr key={'key' + index} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                    <TableViewLine line={line} index={index} header={header} onChange={onChange}/>
+                    <TableViewLine line={line} index={index} header={header} onChange={onChange} onClick={onClick}/>
                 </tr>
             )}
             {children}

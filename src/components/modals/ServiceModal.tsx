@@ -77,7 +77,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                 <StyledInput
                     type="text" name="service_name"
                     value={service.service_name}
-                    onChange={(e) => changeType(e, 'service_name')}
+                    onChange={() => false}
                     label={t('Name')}
                 />
             </FormRow>
@@ -86,13 +86,13 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                 <StyledInput
                     type="text" name="service_address"
                     value={service.service_address}
-                    onChange={(e) => changeType(e, 'client_address')}
+                    onChange={() => false}
                     label={t('Address')}
                 />
                 <StyledInput
                     type="text" name="service_email"
                     value={service.service_email}
-                    onChange={(e) => changeType(e, 'service_email')}
+                    onChange={() => false}
                     label={t('Email')}
                 />
             </FormRow>
