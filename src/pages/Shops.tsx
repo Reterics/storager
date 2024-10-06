@@ -20,8 +20,8 @@ function Shops() {
     const firebaseContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
-    const isAdmin = firebaseContext?.data.currentUser?.role === 'admin';
-
+    const isAdmin = firebaseContext && firebaseContext.data && firebaseContext.data.currentUser &&
+        firebaseContext.data.currentUser.role === 'admin';
     const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
