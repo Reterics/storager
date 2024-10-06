@@ -14,5 +14,6 @@ export type ContextDataType = 'shop'|'item'|'part';
 export interface DBContextType {
     data: ContextData,
     setData: (key: string, value: unknown) => void,
-    use: (id: number, type: ContextDataType) => void
+    use: (id: number, type: ContextDataType) => void,
+    refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
 }

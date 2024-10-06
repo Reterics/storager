@@ -59,6 +59,7 @@ function Items() {
                 console.log('Created new document with ID:', modelRef.id);
 
                 item.id = modelRef.id;
+                await firebaseContext?.refreshImagePointers([item]);
                 const updatedItems = [...items];
                 updatedItems.push(item);
                 setItems(updatedItems);

@@ -1,7 +1,7 @@
 import {ReactNode, useEffect, useState} from "react";
 import {ContextDataType, ContextData} from "../../interfaces/firebase.ts";
 import {firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
-import {ServiceCompleteData, ServiceData, Shop, StoreItem} from "../../interfaces/interfaces.ts";
+import {ServiceCompleteData, ServiceData, Shop, StoreItem, StorePart} from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "../../firebase/storage.ts";
 import {DBContext} from "../DBContext.ts";
@@ -14,20 +14,25 @@ export const FirebaseProvider = ({children}: {
     const [ctxData, setCtxData] = useState<ContextData|null>(null);
     const [error, setError] = useState<Error | null>(null);
 
-    const getContextData = async () => {
-        const shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
-        const items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
-        const parts = await getCollection(firebaseCollections.parts).catch(setError) as unknown[];
-        const services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
-        const completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
-
-        if (Array.isArray(items)) {
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].name && items[i].image && items[i].image?.startsWith('screenshots/')) {
-                    items[i].image = await getFileURL(items[i].image || '');
+    const refreshImagePointers = async (array: StoreItem[]|StorePart[]) => {
+        if (Array.isArray(array)) {
+            for (let i = 0; i < array.length; i++) {
+                if (array[i].name && array[i].image && array[i].image?.startsWith('screenshots/')) {
+                    array[i].image = await getFileURL(array[i].image || '');
                 }
             }
         }
+    };
+
+    const getContextData = async () => {
+        const shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
+        const items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
+        const parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
+        const services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
+        const completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
+
+        await refreshImagePointers(items);
+        await refreshImagePointers(parts);
 
         setCtxData({
             shops,
@@ -60,7 +65,8 @@ export const FirebaseProvider = ({children}: {
     return <DBContext.Provider value={{
         data: ctxData as ContextData,
         setData: updateContextData,
-        use: use
+        use: use,
+        refreshImagePointers:refreshImagePointers
     }}>
         {!error && ctxData && children}
         {!error && !ctxData && <PageLoading/>}
