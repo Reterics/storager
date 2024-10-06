@@ -50,7 +50,6 @@ const AuthProvider = ({children}: { children: React.ReactNode }) => {
     }
 
     const SignInMethod = async (creds: LoginFormValues) => {
-        console.log('Sign via', creds)
         setIsLoading(true);
         SignIn(creds)
             .then(userCredential => {
