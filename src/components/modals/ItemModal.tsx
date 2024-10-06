@@ -99,10 +99,10 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                     type="textarea" name="description"
                     value={item.description}
                     onChange={(e) => changeType(e, 'description')}
-                    label="Description"
+                    label={t('Description')}
                 />
 
-                <StyledFile name="model" label="Image"
+                <StyledFile name="model" label={t('Image')}
                             onChange={setFile} preview={true}
                             defaultPreview={item?.image}/>
 
@@ -115,7 +115,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                     type="number" name="storage"
                     value={item.storage}
                     onChange={(e) => changeType(e, 'storage')}
-                    label="Storage"
+                    label={t('Storage')}
                     pattern="[0-9\.]+"
                     maxLength={11}
                 />
@@ -123,7 +123,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                     type="number" name="price"
                     value={item.price}
                     onChange={(e) => changeType(e, 'price')}
-                    label="Price"
+                    label={t('Price')}
                     pattern="[0-9]+"
                     maxLength={11}
                 />

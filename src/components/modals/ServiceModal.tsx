@@ -198,8 +198,9 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                 />
             </FormRow>}
 
-            <pre className={settings?.serviceAgreement ? 'mt-2 mb-2 max-w-[80vw]' : ''}>{settings?.serviceAgreement}</pre>
-
+            {!service.onUpdate && <pre
+                className={settings?.serviceAgreement ? 'mt-2 mb-2 max-w-[80vw]' : ''}>{settings?.serviceAgreement}</pre>
+            }
 
             {!service.onUpdate && <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
                 {t('Signature')}

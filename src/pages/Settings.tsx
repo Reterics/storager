@@ -84,11 +84,11 @@ function Service() {
             <div className="bg-white p-4 rounded dark:bg-gray-900 min-w-[60vw] m-auto">
                 <form onSubmit={handleSubmit} className="max-h-[60vh] overflow-y-scroll pe-2 ps-1">
                     {/* Company Details */}
-                    <h2 className="text-2xl font-bold mb-4">Company Details</h2>
+                    <h2 className="text-2xl font-bold mb-4">{t('Company Details')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Company Name */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Company Name</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Company Name')}</label>
                             <input
                                 type="text"
                                 name="companyName"
@@ -99,7 +99,7 @@ function Service() {
                         </div>
                         {/* Address */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Address</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Address')}</label>
                             <input
                                 type="text"
                                 name="address"
@@ -110,7 +110,7 @@ function Service() {
                         </div>
                         {/* Tax ID */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Tax ID</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Tax ID')}</label>
                             <input
                                 type="text"
                                 name="taxId"
@@ -121,7 +121,7 @@ function Service() {
                         </div>
                         {/* Bank Account Number */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Bank Account Number</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Bank Account Number')}</label>
                             <input
                                 type="text"
                                 name="bankAccount"
@@ -132,7 +132,7 @@ function Service() {
                         </div>
                         {/* Phone */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Phone</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Phone')}</label>
                             <input
                                 type="tel"
                                 name="phone"
@@ -143,7 +143,7 @@ function Service() {
                         </div>
                         {/* Email */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Email')}</label>
                             <input
                                 type="email"
                                 name="email"
@@ -155,11 +155,11 @@ function Service() {
                     </div>
 
                     {/* SMTP Data */}
-                    <h2 className="text-2xl font-bold mt-8 mb-4">SMTP Settings</h2>
+                    <h2 className="text-2xl font-bold mt-8 mb-4">{t('SMTP Settings')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
                         {/* SMTP Server */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">SMTP Server</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('SMTP Server')}</label>
                             <input
                                 type="text"
                                 name="smtpServer"
@@ -170,7 +170,7 @@ function Service() {
                         </div>
                         {/* Port */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Port</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Port')}</label>
                             <input
                                 type="number"
                                 name="port"
@@ -181,7 +181,7 @@ function Service() {
                         </div>
                         {/* Username */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Username</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Username')}</label>
                             <input
                                 type="text"
                                 name="username"
@@ -192,7 +192,7 @@ function Service() {
                         </div>
                         {/* Password */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Password</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('Password')}</label>
                             <input
                                 type="password"
                                 name="password"
@@ -210,7 +210,7 @@ function Service() {
                                 onChange={changeType}
                                 className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                             />
-                            <label className="ml-2 block text-sm text-gray-700">Use SSL</label>
+                            <label className="ml-2 block text-sm text-gray-700">{t('Use SSL')}</label>
                         </div>
                     </div>
 
@@ -230,7 +230,7 @@ function Service() {
                             type="submit"
                             className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                         >
-                            Save Settings
+                            {t('Save Settings')}
                         </button> }
                     </div>
                 </form>

@@ -104,10 +104,10 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
                     type="textarea" name="description"
                     value={part.description}
                     onChange={(e) => changeType(e, 'description')}
-                    label="Description"
+                    label={t('Description')}
                 />
 
-                <StyledFile name="model" label="Image"
+                <StyledFile name="model" label={t('Image')}
                             onChange={setFile} preview={true}
                             defaultPreview={part?.image}/>
 
@@ -120,7 +120,7 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
                     type="number" name="storage"
                     value={part.storage}
                     onChange={(e) => changeType(e, 'storage')}
-                    label="Storage"
+                    label={t('Storage')}
                     pattern="[0-9\.]+"
                     maxLength={11}
                 />
@@ -128,7 +128,7 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
                     type="number" name="price"
                     value={part.price}
                     onChange={(e) => changeType(e, 'price')}
-                    label="Price"
+                    label={t('Price')}
                     pattern="[0-9]+"
                     maxLength={11}
                 />
