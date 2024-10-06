@@ -24,6 +24,12 @@ function Parts() {
     const [parts, setParts] = useState<StorePart[]>(initialParts);
     const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
 
+    let error;
+    const storageWarnings = parts.filter(item => !item.storage || item.storage < 5);
+    if (storageWarnings.length) {
+        error = storageWarnings.length + t(' low storage alert');
+    }
+
     const [modalTemplate, setModalTemplate] = useState<StorePart|null>(null)
 
     const typeOptions: StyledSelectOption[] = shops.map((key)=>{
@@ -100,6 +106,11 @@ function Parts() {
                 }
             }, key, item);
         }
+
+        firebaseContext?.setData('parts', {
+            id: item.id,
+            [key]: value
+        });
     };
 
     const tableLines = parts.map(item => {
@@ -129,7 +140,7 @@ function Parts() {
                         storage: 1
                     })
                 }
-            ]}/>
+            ]} error={error}/>
 
             <TableViewComponent lines={tableLines}
                                 header={[

@@ -1,9 +1,8 @@
 import {GeneralButtons} from "../../interfaces/interfaces.ts";
+import AlertBox from "../AlertBox.tsx";
 
 
-export const PageHead = ({buttons, title}: {buttons?: GeneralButtons[], title?: string}) => {
-
-
+export const PageHead = ({buttons, title, error}: {buttons?: GeneralButtons[], title?: string, error?: string}) => {
     return (
         <div className="flex justify-center overflow-x-auto sm:rounded-lg w-full m-auto">
             <div className="flex justify-between max-w-screen-xl m-2 p-2 w-full">
@@ -11,6 +10,7 @@ export const PageHead = ({buttons, title}: {buttons?: GeneralButtons[], title?: 
                     {title}
                 </h1>
 
+                {error && <AlertBox message={error} role={"warning"} /> }
                 {
                     (buttons||[]).map(button=> (
                         <button type="button"

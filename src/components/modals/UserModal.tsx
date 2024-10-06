@@ -134,7 +134,7 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
 
             </FormRow>
 
-            {error && <div className={'mt-4'}><AlertBox message={error} role={"warning"}/></div>}
+            {error && <div className={'mt-4 mb-4'}><AlertBox message={error} role={"warning"}/></div>}
         </GeneralModal>
     )
 }

@@ -1,6 +1,6 @@
 import {ReactNode, useContext, useEffect, useRef, useState} from "react";
-import {ContextDataType, ContextData} from "../../interfaces/firebase.ts";
-import {firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
+import {ContextDataType, ContextData, ContextDataValueType} from "../../interfaces/firebase.ts";
+import {db, firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
 import {
     ServiceCompleteData,
     ServiceData,
@@ -13,6 +13,8 @@ import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "../../firebase/storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
+import {doc, setDoc} from "firebase/firestore";
+import {ShopContext} from "../../store/ShopContext.tsx";
 
 
 export const FirebaseProvider = ({children}: {
@@ -20,6 +22,7 @@ export const FirebaseProvider = ({children}: {
 }) => {
 
     const authContext = useContext(AuthContext);
+    const shopContext = useContext(ShopContext);
     const [ctxData, setCtxData] = useState<ContextData|null>(null);
     const [error, setError] = useState<Error | null>(null);
     const renderAfterCalled = useRef(false);
@@ -75,8 +78,11 @@ export const FirebaseProvider = ({children}: {
         // TODO: move the filter server side
         if (user && user.shop_id) {
             shops = shops.filter(shop => shop.id === user.shop_id);
-            items = items.filter(item => item.id === user.shop_id);
-            parts = parts.filter(part => part.id === user.shop_id);
+            items = items.filter(item => item.shop_id === user.shop_id);
+            parts = parts.filter(part => part.shop_id === user.shop_id);
+            if (shopContext.shop?.id !== user.shop_id) {
+                shopContext.setShop(shops[0])
+            }
         }
 
         await refreshImagePointers(items);
@@ -94,11 +100,14 @@ export const FirebaseProvider = ({children}: {
         })
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const updateContextData = async (key: string, value: unknown)=> {
-        // TODO: To be implemented
+
+    const updateContextData = async (key: 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users', item: ContextDataValueType)=> {
+        if (item && item.id) {
+            const modelRef = doc(db, firebaseCollections[key], item.id);
+            await setDoc(modelRef, item, { merge: true }).catch(e => {
+                console.error(e);
+            });
+        }
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

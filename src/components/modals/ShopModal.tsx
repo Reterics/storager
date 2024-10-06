@@ -45,7 +45,7 @@ export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: S
     ];
 
     return (<GeneralModal  buttons={buttons} inPlace={inPlace}
-                           title={t('Edit Shop')} id={'ShopModal'}>
+                           title={shop.id ? t('Edit Shop') : t('Add Shop')} id={'ShopModal'}>
 
         <FormRow>
             <StyledInput

@@ -6,7 +6,7 @@ import TableViewComponent, {TableViewActions} from "../components/elements/Table
 import {MapContainer, TileLayer} from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
 
-import {Shop} from "../interfaces/interfaces.ts";
+import {Shop, TableViewActionArguments} from "../interfaces/interfaces.ts";
 import {Marker, Popup} from "react-leaflet";
 import {LatLngTuple, Map} from "leaflet";
 import ShopModal from "../components/modals/ShopModal.tsx";
@@ -18,10 +18,11 @@ import {ShopContext} from "../store/ShopContext.tsx";
 
 function Shops() {
     const firebaseContext = useContext(DBContext);
+    const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
+    const isAdmin = firebaseContext?.data.currentUser?.role === 'admin';
 
     const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
-    const shopContext = useContext(ShopContext);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
@@ -82,25 +83,29 @@ function Shops() {
     }
 
     const tableLines = shops.map(shop => {
+        const actions: TableViewActionArguments = {
+            onRemove: () => deleteShop(shop)
+        };
+        if (firebaseContext?.data.currentUser?.role === 'admin') {
+            actions.onEdit = () => setModalTemplate(shop)
+        }
         return [
             shop.name || '',
             shop.address || '',
-            TableViewActions({
-                onRemove: () => deleteShop(shop),
-            })
+            TableViewActions(actions)
         ];
     });
 
     return (
         <>
-            <PageHead title={t('Select a Shop')} buttons={[
+            <PageHead title={t('Select a Shop')} buttons={isAdmin ? [
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
                         id: ''
                     })
                 }
-            ]}/>
+            ] : undefined}/>
 
             <TableViewComponent lines={tableLines} header={[{
                 value: t('Name'),
@@ -115,7 +120,7 @@ function Shops() {
                     }
                 }
             }}/>
-            <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1 flex-row">
+            <div className="mt-4 h-80 flex flex-row text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
                 <ShopModal
                     onClose={()=>setModalTemplate(null)}
                     onSave={(shop: Shop) => closeShop(shop)}
@@ -147,6 +152,7 @@ function Shops() {
                     }
                 </MapContainer>
             </div>
+            <div className="flex-1 flex"></div>
         </>
     )
 }

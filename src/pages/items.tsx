@@ -24,6 +24,12 @@ function Items() {
     const [items, setItems] = useState<StoreItem[]>(initialItems);
     const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
 
+    let error;
+    const storageWarnings = items.filter(item=> !item.storage || item.storage < 5);
+    if (storageWarnings.length) {
+        error = storageWarnings.length + t(' low storage alert');
+    }
+
     const [modalTemplate, setModalTemplate] = useState<StoreItem|null>(null)
 
     const typeOptions: StyledSelectOption[] = shops.map((key)=>{
@@ -99,6 +105,11 @@ function Items() {
                     value: value
                 }
             }, key, item);
+
+            firebaseContext?.setData('items', {
+                id: item.id,
+                [key]: value
+            });
         }
     };
 
@@ -129,7 +140,7 @@ function Items() {
                         storage: 1
                     })
                 }
-            ]}/>
+            ]} error={error}/>
 
             <TableViewComponent lines={tableLines}
                                 header={[

@@ -13,10 +13,11 @@ export interface ContextData {
 }
 
 export type ContextDataType = 'shop'|'item'|'part'|'services'|'completions'|'settings';
+export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData;
 
 export interface DBContextType {
     data: ContextData,
-    setData: (key: string, value: unknown) => void,
+    setData: (key: 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users', value: ContextDataValueType) => void,
     use: (id: number, type: ContextDataType) => void,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
 }
