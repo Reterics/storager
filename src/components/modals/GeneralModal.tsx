@@ -13,6 +13,11 @@ export default function GeneralModal({
 
     const modalId = id || "GeneralModal";
 
+    const formClasses = {
+        inPlace: "flex flex-col max-h-[45vh] overflow-y-auto modalForm pe-1",
+        default: "flex flex-col max-h-[60vh] overflow-y-auto modalForm pe-1"
+    }
+
     if (visible === false) return null;
 
     return (
@@ -30,7 +35,7 @@ export default function GeneralModal({
                     {title || ''}
                 </h1>
 
-                <form className="flex flex-col max-h-[60vh] overflow-y-auto modalForm pe-1">
+                <form className={inPlace ? formClasses.inPlace : formClasses.default}>
                     {children}
                 </form>
                 <div className="flex justify-between mt-2">

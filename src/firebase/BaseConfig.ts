@@ -16,6 +16,8 @@ export const firebaseCollections = {
     shops: import.meta.env.VITE_FIREBASE_DB_SHOPS || 'shops',
     items: import.meta.env.VITE_FIREBASE_DB_ITEMS || 'items',
     parts: import.meta.env.VITE_FIREBASE_DB_PARTS || 'parts',
+    services: import.meta.env.VITE_FIREBASE_DB_SERVICES || 'services',
+    completions: import.meta.env.VITE_FIREBASE_DB_COMPLETIONS || 'completions',
 };
 
 export const firebaseAuth = getAuth(app);

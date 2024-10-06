@@ -175,6 +175,8 @@ export interface ItemModalInput {
     inPlace?: boolean
 }
 
+export type ServiceStatus = 'in_progress'|'completed';
+
 export interface ServiceData {
     id: string,
     client_name?: string,
@@ -192,17 +194,49 @@ export interface ServiceData {
     address?: string,
     phone?: string,
     description?: string,
-    coordinates?: GeoPoint
+    coordinates?: GeoPoint,
+    serviceStatus: ServiceStatus,
+    date: string
 }
 
 export interface ServiceModalInput {
+    id?: string,
     onClose: () => void,
     service: ServiceData | null,
     onSave: (currentService: ServiceData) => unknown
-    setService: (shop: Shop) => void
+    setService: (shop: ServiceData) => void
     inPlace?: boolean
 }
 
+export interface ServiceCompleteData {
+    service_id: string,
+    id: string,
+    client_name?: string,
+    client_email?: string,
+    client_phone?: string,
+    service_name?: string,
+    service_address?: string,
+    service_email?: string,
+    type?: string,
+    accessories?: string,
+    service_date: string,
+    guaranteed?: 'yes'|'no',
+
+    description?: string,
+    repair_cost?: string,
+    repair_description?: string,
+
+    date: string
+}
+
+export interface ServiceCompletionModalInput {
+    id?: string,
+    onClose: () => void,
+    formData: ServiceCompleteData | null,
+    onSave: (currentService: ServiceCompleteData) => unknown
+    setFromData: (shop: ServiceCompleteData) => void
+    inPlace?: boolean
+}
 
 export interface GeneralButtons {
     value: string | React.ReactNode,
