@@ -32,13 +32,11 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             primary: true,
             onClick: () => {
                 const signaturePad = signaturePadRef.current;
-                if (!signaturePad) {
+                if (signaturePad && signaturePad.isEmpty()) {
                     return;
+                } else if (signaturePad) {
+                    service.signature = signaturePad.toDataURL("image/jpeg");
                 }
-                if (signaturePad.isEmpty()) {
-                    return;
-                }
-                service.signature = signaturePad.toDataURL("image/jpeg");
                 onSave(service)
             },
             value: t('Save')
@@ -58,7 +56,10 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
 
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace}
-                      title={t('Service Acceptance Form')} id={id || "ServiceModal"}
+                      title={
+            service.onUpdate ? t('Service Form') :
+            t('Service Acceptance Form')
+        } id={id || "ServiceModal"}
         >
             <h3 className="font-semibold text-center text-xl text-gray-700 mt-2 mb-1">
                 {t('Client')}
@@ -87,20 +88,20 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                 />
             </FormRow>
 
-            <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
+            {!service.onUpdate && <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
                 {t('Recipient')}
-            </h3>
+            </h3> }
 
-            <FormRow>
+            {!service.onUpdate && <FormRow>
                 <StyledInput
                     type="text" name="service_name"
                     value={service.service_name}
                     onChange={() => false}
                     label={t('Name')}
                 />
-            </FormRow>
+            </FormRow> }
 
-            <FormRow>
+            {!service.onUpdate && <FormRow>
                 <StyledInput
                     type="text" name="service_address"
                     value={service.service_address}
@@ -113,7 +114,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     onChange={() => false}
                     label={t('Email')}
                 />
-            </FormRow>
+            </FormRow> }
 
             <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
                 {t('Item and service details')}
@@ -137,18 +138,38 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             </FormRow>
 
             <FormRow>
+                <StyledSelect
+                    options={
+                    [
+                        'status_accepted',
+                        'status_in_progress',
+                        'status_waiting_parts',
+                        'status_waiting_feedback',
+                        'status_ready',
+                        'status_delivered',
+                    ]
+                        .map(text => {return {name: t(text), value: text}})
+                    }
+                    name="serviceStatus"
+                    value={service.serviceStatus}
+                    onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'serviceStatus')}
+                    label={t("status")}
+                />
+                <StyledSelect
+                    options={[{name: t('Yes'), value: 'yes'}, {name: t('No'), value: 'no'}]}
+                    name="guaranteed"
+                    value={service.guaranteed}
+                    onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'guaranteed')}
+                    label={t("Guaranteed")}
+                />
+            </FormRow>
+
+            <FormRow>
                 <StyledInput
                     type="text" name="accessories"
                     value={service.accessories}
                     onChange={(e) => changeType(e, 'accessories')}
                     label={t("Accessories")}
-                />
-                <StyledSelect
-                    options={[{name: 'Yes', value: 'yes'}, {name: 'No', value: 'no'}]}
-                    name="guaranteed"
-                    value={service.guaranteed}
-                    onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'guaranteed')}
-                    label={t("Guaranteed")}
                 />
             </FormRow>
 
@@ -160,7 +181,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     label={t("Repair Description")}
                 />
             </FormRow>
-            <FormRow>
+            {!service.onUpdate && <FormRow>
                 <StyledInput
                     type="text" name="expected_cost"
                     value={service.expected_cost}
@@ -173,26 +194,26 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     onChange={(e) => changeType(e, 'note')}
                     label={t("Note")}
                 />
-            </FormRow>
+            </FormRow> }
 
 
-            <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
+            {!service.onUpdate && <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
                 {t('Signature')}
-            </h3>
-            <FormRow>
+            </h3>}
+            {!service.onUpdate && <FormRow>
                 <div
                     className="relative w-96 h-48 border border-gray-200 rounded-lg self-center mb-2 justify-self-center">
                     <SignaturePad ref={signaturePadRef}
-                                  debounceInterval={500}
-                                  options={{
-                                      minWidth: 0.5,
-                                      maxWidth: 2.5,
-                                      //dotSize: 1,
-                                      backgroundColor: 'white',
-                                      penColor: 'rgb(76,76,76)'
-                                  }}/>
+                        debounceInterval={500}
+                        options={{
+                          minWidth: 0.5,
+                          maxWidth: 2.5,
+                          //dotSize: 1,
+                          backgroundColor: 'white',
+                          penColor: 'rgb(76,76,76)'
+                        }}/>
                 </div>
-            </FormRow>
+            </FormRow> }
         </GeneralModal>
     )
 }

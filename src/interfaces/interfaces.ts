@@ -178,7 +178,7 @@ export interface ItemModalInput {
     inPlace?: boolean
 }
 
-export type ServiceStatus = 'in_progress'|'completed';
+export type ServiceStatus = 'status_accepted'|'status_in_progress'|'status_waiting_parts'|'status_waiting_feedback'|'status_ready'|'status_delivered';
 
 export interface ServiceData {
     id: string,
@@ -200,7 +200,9 @@ export interface ServiceData {
     coordinates?: GeoPoint,
     serviceStatus: ServiceStatus,
     signature?: string,
-    date: string
+    date: string,
+
+    onUpdate?: boolean
 }
 
 export interface ServiceModalInput {

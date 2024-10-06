@@ -69,7 +69,7 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
     const [value, setValue] = useState<TableLineElementType>(element);
 
     if (!editMode) {
-        return <div onClick={() => setEditMode(true)}>{element}</div>;
+        return <div onClick={() => setEditMode(true)}>{element} {options.postFix}</div>;
     }
 
     const closeEditMode = () => {
@@ -149,6 +149,10 @@ const TableViewLine = ({line, index, header, onChange, onClick}: TableViewLineAr
             {header && typeof header[columnIndex] !== 'string' && header[columnIndex].editable ?
                 TableViewEditableElement(column, header[columnIndex], onChange || (() => false), index,
                     columnIndex) : column}
+
+            {header && typeof header[columnIndex] !== 'string' &&
+                !header[columnIndex].editable && header[columnIndex].postFix
+            }
         </th>
     )));
 }

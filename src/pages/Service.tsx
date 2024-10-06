@@ -93,6 +93,15 @@ function Service() {
         }
         setCompletionForms(updatedItems);
         setCompletedModalTemplate(null);
+
+        if (serviceCompleteData.service_id) {
+            const serviceData = servicedItems.find(existingItem => existingItem.id === serviceCompleteData.service_id);
+            if (serviceData) {
+                // TODO: TBD
+                serviceData.serviceStatus = "status_delivered";
+                await addServiceItem(serviceData);
+            }
+        }
     };
     // const tableKeyOrder = ['id', 'client_name', 'type', 'guaranteed', 'expected_cost', 'date'];
 
@@ -100,11 +109,15 @@ function Service() {
         return [
             item.id,
             item.client_name,
-            item.type || '',
-            item.guaranteed || 'no',
+            (item.type || '').split(',').join(', '),
+            t(item.serviceStatus || 'status_accepted'),
+            t(item.guaranteed || 'no'),
             item.expected_cost || 0,
             item.date || '',
             TableViewActions({
+                onEdit: () => {
+                    setModalTemplate({...item, onUpdate: true})
+                },
                 onPrint: () => {
                     // TODO: Print Service Data
                 },
@@ -113,24 +126,27 @@ function Service() {
                     const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
                     const sourceItem = completionForm || item;
 
-                    setCompletedModalTemplate({
-                        id: item.id + '_cd',
-                        service_id: item.id,
-                        service_date: item.date,
-                        date: new Date().toISOString().split('T')[0],
-                        service_address: sourceItem.service_address || shop?.address || '',
-                        service_name: sourceItem.service_name || shop?.name || '',
-                        service_email: sourceItem.service_email || shop?.email || '',
-                        client_name: sourceItem.client_name || '',
-                        client_email: sourceItem.client_email || '',
-                        client_phone: sourceItem.client_phone || '',
-                        type: sourceItem.type,
-                        accessories: sourceItem.accessories || '',
-                        repair_cost: completionForm ? completionForm.repair_cost : item.expected_cost,
-                        guaranteed: sourceItem.guaranteed || 'no',
-                        repair_description: sourceItem.repair_description || ''
-                    });
-
+                    if (!completionForm) {
+                        setCompletedModalTemplate({
+                            id: item.id + '_cd',
+                            service_id: item.id,
+                            service_date: item.date,
+                            date: new Date().toISOString().split('T')[0],
+                            service_address: sourceItem.service_address || shop?.address || '',
+                            service_name: sourceItem.service_name || shop?.name || '',
+                            service_email: sourceItem.service_email || shop?.email || '',
+                            client_name: sourceItem.client_name || '',
+                            client_email: sourceItem.client_email || '',
+                            client_phone: sourceItem.client_phone || '',
+                            type: sourceItem.type,
+                            accessories: sourceItem.accessories || '',
+                            repair_cost: item.expected_cost,
+                            guaranteed: sourceItem.guaranteed || 'no',
+                            repair_description: sourceItem.repair_description || ''
+                        });
+                    } else {
+                        alert(t('You already completed the form'))
+                    }
                 }
             })
         ];
@@ -142,12 +158,12 @@ function Service() {
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => setModalTemplate(modalTemplate ? null : {
-                        id: (servicedItems.length + 1).toString().padStart(6, '0'),
-                        serviceStatus: 'in_progress',
+                        id: (servicedItems.length + 1).toString().padStart(5, '0'),
+                        serviceStatus: 'status_accepted',
                         date: new Date().toISOString().split('T')[0],
                         service_address: shop?.address || '',
                         service_name: shop?.name || '',
-                        service_email: shop?.email || ''
+                        service_email: shop?.email || '',
                     })
                 }
             ]}/>
@@ -183,13 +199,19 @@ function Service() {
                                             editable: false
                                         },
                                         {
-                                            value: t('guaranteed'),
+                                            value: t('status'),
                                             type: 'text',
                                             sortable: true,
                                             editable: false
                                         },
                                         {
-                                            value: t('Expected Cost'),
+                                            value: t('Guaranteed'),
+                                            type: 'text',
+                                            sortable: true,
+                                            editable: false
+                                        },
+                                        {
+                                            value: t('Expected cost'),
                                             type: 'number',
                                             postFix: ' Ft',
                                             sortable: true,
