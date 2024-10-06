@@ -199,6 +199,7 @@ export interface ServiceData {
     description?: string,
     coordinates?: GeoPoint,
     serviceStatus: ServiceStatus,
+    signature?: string,
     date: string
 }
 

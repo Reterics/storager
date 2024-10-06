@@ -18,7 +18,7 @@ function Service() {
     const { t } = useTranslation();
 
     const [servicedItems, setServicedItems] = useState<ServiceData[]>(firebaseContext?.data.services || []);
-    const [completionForms] = useState<ServiceCompleteData[]>(firebaseContext?.data.completions || []);
+    const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(firebaseContext?.data.completions || []);
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
@@ -64,6 +64,35 @@ function Service() {
         if (!serviceCompleteData || !serviceCompleteData.service_id) {
             return;
         }
+
+        let modelRef;
+
+        if (serviceCompleteData.id) {
+            // If item has an ID, update the existing document
+            modelRef = doc(db, firebaseCollections.completions, serviceCompleteData.id);
+        } else {
+            // Generate a new document reference with an auto-generated ID
+            modelRef = doc(collection(db, firebaseCollections.completions));
+            serviceCompleteData.id = modelRef.id; // Assign the generated ID to your item
+        }
+
+
+        // Use setDoc with { merge: true } to update or create the document
+        await setDoc(modelRef, serviceCompleteData, { merge: true }).catch(e => {
+            console.error(e);
+        });
+
+
+        // Update  local state
+        const updatedItems = [...completionForms];
+        const index = updatedItems.findIndex(existingItem => existingItem.id === serviceCompleteData.id);
+        if (index !== -1) {
+            updatedItems[index] = serviceCompleteData; // Update existing item
+        } else {
+            updatedItems.push(serviceCompleteData); // Add new item
+        }
+        setCompletionForms(updatedItems);
+        setCompletedModalTemplate(null);
     };
     // const tableKeyOrder = ['id', 'client_name', 'type', 'guaranteed', 'expected_cost', 'date'];
 
@@ -82,19 +111,25 @@ function Service() {
                 onCode: () => {
                     const completionFormId = item.id + '_cd';
                     const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
-                    if(!completionForm) {
-                        setCompletedModalTemplate({
-                            id: item.id + '_cd',
-                            service_id: item.id,
-                            service_date: item.date,
-                            date: new Date().toISOString().split('T')[0],
-                            service_address: shop?.address,
-                            service_name: shop?.name,
-                            service_email: shop?.email
-                        });
-                    } else {
-                        // TODO: Print Data
-                    }
+                    const sourceItem = completionForm || item;
+
+                    setCompletedModalTemplate({
+                        id: item.id + '_cd',
+                        service_id: item.id,
+                        service_date: item.date,
+                        date: new Date().toISOString().split('T')[0],
+                        service_address: sourceItem.service_address || shop?.address || '',
+                        service_name: sourceItem.service_name || shop?.name || '',
+                        service_email: sourceItem.service_email || shop?.email || '',
+                        client_name: sourceItem.client_name || '',
+                        client_email: sourceItem.client_email || '',
+                        client_phone: sourceItem.client_phone || '',
+                        type: sourceItem.type,
+                        accessories: sourceItem.accessories || '',
+                        repair_cost: completionForm ? completionForm.repair_cost : item.expected_cost,
+                        guaranteed: sourceItem.guaranteed || 'no',
+                        repair_description: sourceItem.repair_description || ''
+                    });
 
                 }
             })
@@ -110,9 +145,9 @@ function Service() {
                         id: (servicedItems.length + 1).toString().padStart(6, '0'),
                         serviceStatus: 'in_progress',
                         date: new Date().toISOString().split('T')[0],
-                        service_address: shop?.address,
-                        service_name: shop?.name,
-                        service_email: shop?.email
+                        service_address: shop?.address || '',
+                        service_name: shop?.name || '',
+                        service_email: shop?.email || ''
                     })
                 }
             ]}/>
@@ -136,37 +171,39 @@ function Service() {
                 </div>
             </div>
 
-            <TableViewComponent lines={tableLines}
-                                header={[
-                                    t('ID'),
-                                    t('Name'),
-                                    {
-                                        value: t('Type'),
-                                        type: 'text',
-                                        sortable: true,
-                                        editable: false
-                                    },
-                                    {
-                                        value: t('guaranteed'),
-                                        type: 'text',
-                                        sortable: true,
-                                        editable: false
-                                    },
-                                    {
-                                        value: t('Expected Cost'),
-                                        type: 'number',
-                                        postFix: ' Ft',
-                                        sortable: true,
-                                        editable: false
-                                    },
-                                    {
-                                        value: t('Date'),
-                                        type: 'text',
-                                        sortable: true,
-                                        editable: false
-                                    },
-                                    t('Actions')]}
-            />
+            {!modalTemplate && !completedModalTemplate &&
+                <TableViewComponent lines={tableLines}
+                                    header={[
+                                        t('ID'),
+                                        t('Name'),
+                                        {
+                                            value: t('Type'),
+                                            type: 'text',
+                                            sortable: true,
+                                            editable: false
+                                        },
+                                        {
+                                            value: t('guaranteed'),
+                                            type: 'text',
+                                            sortable: true,
+                                            editable: false
+                                        },
+                                        {
+                                            value: t('Expected Cost'),
+                                            type: 'number',
+                                            postFix: ' Ft',
+                                            sortable: true,
+                                            editable: false
+                                        },
+                                        {
+                                            value: t('Date'),
+                                            type: 'text',
+                                            sortable: true,
+                                            editable: false
+                                        },
+                                        t('Actions')]}
+                />
+            }
 
             <div className="relative flex justify-center w-full m-auto mt-1 flex-1">
             </div>

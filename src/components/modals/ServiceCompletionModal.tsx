@@ -9,6 +9,8 @@ import {ChangeEvent, useRef} from "react";
 import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
+import StyledMultiSelect from "../elements/StyledMultiSelect.tsx";
+import {serviceTypeOptions} from "../../interfaces/constants.ts";
 
 
 export default function ServiceCompletionModal({ id, onClose, formData, setFromData, onSave, inPlace }: ServiceCompletionModalInput) {
@@ -39,6 +41,10 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
             value: t('Cancel')
         }
     ];
+
+    const selectMultiType = (type: string[])=>{
+        setFromData({...formData, type: type.join(',')});
+    };
 
 
     return (
@@ -105,14 +111,14 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
             </h3>
 
             <FormRow>
-                <StyledInput
-                    type="text" name="type"
-                    value={formData.type}
-                    onChange={(e) => changeType(e, 'type')}
+                <StyledMultiSelect
+                    name="type"
+                    options={serviceTypeOptions}
+                    value={(formData.type || '').split(',')}
+                    onSelect={selectMultiType}
                     label={t("Type")}
                 />
-            </FormRow>
-            <FormRow>
+
                 <StyledInput
                     type="textarea" name="description"
                     value={formData.description}

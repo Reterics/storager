@@ -6,6 +6,8 @@ import {ChangeEvent, useRef} from "react";
 import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
+import StyledMultiSelect from "../elements/StyledMultiSelect.tsx";
+import {serviceTypeOptions} from "../../interfaces/constants.ts";
 
 
 export default function ServiceModal({ id, onClose, service, setService, onSave, inPlace }: ServiceModalInput) {
@@ -28,7 +30,17 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
     const buttons: GeneralModalButtons[] = [
         {
             primary: true,
-            onClick: ()=>onSave(service),
+            onClick: () => {
+                const signaturePad = signaturePadRef.current;
+                if (!signaturePad) {
+                    return;
+                }
+                if (signaturePad.isEmpty()) {
+                    return;
+                }
+                service.signature = signaturePad.toDataURL("image/jpeg");
+                onSave(service)
+            },
             value: t('Save')
         },
         {
@@ -36,6 +48,12 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             value: t('Cancel')
         }
     ];
+
+
+
+    const selectMultiType = (type: string[])=>{
+        setService({...service, type: type.join(',')} as ServiceData);
+    }
 
 
     return (
@@ -102,14 +120,14 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             </h3>
 
             <FormRow>
-                <StyledInput
-                    type="text" name="type"
-                    value={service.type}
-                    onChange={(e) => changeType(e, 'type')}
+                <StyledMultiSelect
+                    name="type"
+                    options={serviceTypeOptions}
+                    value={(service.type || '').split(',')}
+                    onSelect={selectMultiType}
                     label={t("Type")}
                 />
-            </FormRow>
-            <FormRow>
+
                 <StyledInput
                     type="textarea" name="description"
                     value={service.description}
