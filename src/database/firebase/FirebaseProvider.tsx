@@ -13,7 +13,7 @@ import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "../../firebase/storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
-import {doc, setDoc} from "firebase/firestore";
+import {addDoc, collection, doc, setDoc} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 
 
@@ -58,6 +58,7 @@ export const FirebaseProvider = ({children}: {
                 if (settings && settings[0]) {
                     for(let i = 0; i < settings.length; i++) {
                         settings[i] = {
+                            id: settings[i].id,
                             serviceAgreement: settings[i].serviceAgreement,
                             companyName: settings[i].companyName,
                             address: settings[i].address,
@@ -102,12 +103,47 @@ export const FirebaseProvider = ({children}: {
 
 
     const updateContextData = async (key: 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users', item: ContextDataValueType)=> {
+        let modelRef;
+        let isNew = false;
         if (item && item.id) {
-            const modelRef = doc(db, firebaseCollections[key], item.id);
+            modelRef = doc(db, firebaseCollections[key], item.id);
             await setDoc(modelRef, item, { merge: true }).catch(e => {
                 console.error(e);
             });
+        } else if (item) {
+            modelRef = await addDoc(collection(db, firebaseCollections[key]), item).catch(e => {
+                console.error(e);
+            });
+            if (modelRef) {
+                isNew = true;
+                console.log('Created new document with ID:', modelRef.id, ' in ', key);
+
+                item.id = modelRef.id;
+            }
         }
+
+        if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
+            if (isNew) {
+                ctxData[key].unshift(item);
+            } else {
+                ctxData[key] = ctxData[key].map((ctx: ContextDataValueType) => {
+                    if (item.id && ctx && ctx.id === item.id) {
+                        return item;
+                    }
+                    return ctx;
+                }) as ContextDataValueType[];
+            }
+
+
+        } else if (ctxData && key === 'settings') {
+            ctxData[key] = item;
+        }
+
+        setCtxData(ctxData ? {
+            ...ctxData,
+        } : null);
+
+        return ctxData ? ctxData[key] : null;
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

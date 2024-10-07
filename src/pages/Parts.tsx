@@ -5,7 +5,7 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {ShopContext} from "../store/ShopContext.tsx";
 import {Shop, StoreItem, StorePart, StyledSelectOption} from "../interfaces/interfaces.ts";
-import {addDoc, collection, deleteDoc, doc, setDoc} from "firebase/firestore";
+import {deleteDoc, doc} from "firebase/firestore";
 import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import PartModal from "../components/modals/PartModal.tsx";
@@ -48,30 +48,16 @@ function Parts() {
     };
 
     const closePart = async (item?: StorePart)=> {
-        let modelRef;
-        if (item && item.id) {
-            modelRef = doc(db, firebaseCollections.parts, item.id);
-            await setDoc(modelRef, item, { merge: true }).catch(e => {
-                console.error(e);
-            });
-            console.log('Updated document ID:', modelRef.id);
-        } else if (item) {
-            // For creating a new document with an auto-generated ID
-            modelRef = await addDoc(collection(db, firebaseCollections.parts), item).catch(e => {
-                console.error(e);
-            });
-
-            if (modelRef) {
-                console.log('Created new document with ID:', modelRef.id);
-
-                item.id = modelRef.id;
-                await firebaseContext?.refreshImagePointers([item]);
-                const updatedItems = [...parts];
-                updatedItems.push(item);
-                setParts(updatedItems);
-            }
+        let updatedParts = await firebaseContext?.setData('parts', item as StorePart);
+        if (item) {
+            await firebaseContext?.refreshImagePointers([item]);
         }
 
+        if (shopContext.shop) {
+            updatedParts = (updatedParts as StorePart[])
+                .filter((item) => shopContext.shop?.id === item.shop_id);
+        }
+        setParts(updatedParts as StorePart[]);
         setModalTemplate(null);
     }
 

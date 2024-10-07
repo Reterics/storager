@@ -6,8 +6,6 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import StyledInput from "../components/elements/StyledInput.tsx";
 import FormRow from "../components/elements/FormRow.tsx";
 import {SettingsItems} from "../interfaces/interfaces.ts";
-import {addDoc, collection, doc, setDoc} from "firebase/firestore";
-import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
 
 
 function Service() {
@@ -15,6 +13,7 @@ function Service() {
     const { t } = useTranslation();
 
     const initialSettings = firebaseContext?.data.settings || {
+        id: '',
         companyName: '',
         address: '',
         taxId: '',
@@ -43,29 +42,10 @@ function Service() {
     };
 
     const saveFirebaseSettings = async () => {
-        let modelRef;
-        if (settingsItems && settingsItems.id) {
-            modelRef = doc(db, firebaseCollections.settings, settingsItems.id);
-            await setDoc(modelRef, settingsItems, { merge: true }).catch(e => {
-                console.error(e);
-            });
-            console.log('Updated document ID:', modelRef.id);
-        } else if (settingsItems) {
-            // For creating a new document with an auto-generated ID
-            modelRef = await addDoc(collection(db, firebaseCollections.settings), settingsItems).catch(e => {
-                console.error(e);
-            });
-
-            if (modelRef) {
-                console.log('Created new document with ID:', modelRef.id);
-
-                settingsItems.id = modelRef.id;
-                const updatedItems = {...settingsItems};
-                setSettingsItems(updatedItems);
-            }
-        }
+        await firebaseContext?.setData('settings', settingsItems);
         setShouldSave(false);
     }
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 

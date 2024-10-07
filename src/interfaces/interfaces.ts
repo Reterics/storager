@@ -218,9 +218,9 @@ export interface ServiceData {
     phone?: string,
     description?: string,
     coordinates?: GeoPoint,
-    serviceStatus: ServiceStatus,
+    serviceStatus?: ServiceStatus,
     signature?: string,
-    date: string,
+    date?: string,
 
     onUpdate?: boolean
 }
@@ -236,7 +236,7 @@ export interface ServiceModalInput {
 }
 
 export interface ServiceCompleteData {
-    service_id: string,
+    service_id?: string,
     id: string,
     client_name?: string,
     client_email?: string,
@@ -246,14 +246,14 @@ export interface ServiceCompleteData {
     service_email?: string,
     type?: string,
     accessories?: string,
-    service_date: string,
+    service_date?: string,
     guaranteed?: 'yes'|'no',
 
     description?: string,
     repair_cost?: string,
     repair_description?: string,
 
-    date: string
+    date?: string
 }
 
 export interface ServiceCompletionModalInput {
@@ -286,20 +286,20 @@ export type OrderType = 'ASC' | 'DSC';
 
 
 export interface SettingsItems {
-    id?: string,
-    companyName: string,
-    address: string,
+    id: string,
+    companyName?: string,
+    address?: string,
     taxId?: string,
     bankAccount?: string,
     phone?: string,
-    email: string,
+    email?: string,
     smtpServer?: string,
     port?: string,
     username?: string,
     password?: string,
     useSSL?: boolean,
 
-    serviceAgreement: string
+    serviceAgreement?: string
 }
 
 
@@ -308,7 +308,7 @@ export interface UserData {
     email?: string,
     shop_id?: string,
     role?: string,
-    id?: string
+    id: string
     password?: string
     password_confirmation?: string
 }

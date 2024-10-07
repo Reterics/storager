@@ -1,6 +1,6 @@
 import {useContext, useState} from 'react'
 import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
-import {doc, deleteDoc, collection, setDoc, addDoc} from "firebase/firestore";
+import {doc, deleteDoc} from "firebase/firestore";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 
 import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
@@ -48,30 +48,16 @@ function Items() {
     };
 
     const closeItem = async (item?: StoreItem)=> {
-        let modelRef;
-        if (item && item.id) {
-            modelRef = doc(db, firebaseCollections.items, item.id);
-            await setDoc(modelRef, item, { merge: true }).catch(e => {
-                console.error(e);
-            });
-            console.log('Updated document ID:', modelRef.id);
-        } else if (item) {
-            // For creating a new document with an auto-generated ID
-            modelRef = await addDoc(collection(db, firebaseCollections.items), item).catch(e => {
-                console.error(e);
-            });
-
-            if (modelRef) {
-                console.log('Created new document with ID:', modelRef.id);
-
-                item.id = modelRef.id;
-                await firebaseContext?.refreshImagePointers([item]);
-                const updatedItems = [...items];
-                updatedItems.push(item);
-                setItems(updatedItems);
-            }
+        let updatedItems = await firebaseContext?.setData('items', item as StoreItem);
+        if (item) {
+            await firebaseContext?.refreshImagePointers([item]);
         }
 
+        if (shopContext.shop) {
+            updatedItems = (updatedItems as StoreItem[])
+                .filter((item) => shopContext.shop?.id === item.shop_id);
+        }
+        setItems(updatedItems as StoreItem[]);
         setModalTemplate(null);
     }
 
