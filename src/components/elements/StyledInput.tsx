@@ -2,18 +2,19 @@ import { StyledInputArgs } from "../../interfaces/interfaces.ts";
 import {ChangeEvent} from "react";
 
 export default function StyledInput({
-                                        value,
-                                        onChange,
-                                        type = "text",
-                                        name,
-                                        label,
-                                        placeholder,
-                                        pattern,
-                                        maxLength,
-                                        min,
-                                        max,
-                                        className,
-                                    }: StyledInputArgs) {
+    value,
+    onChange,
+    onEnter,
+    type = "text",
+    name,
+    label,
+    placeholder,
+    pattern,
+    maxLength,
+    min,
+    max,
+    className,
+}: StyledInputArgs) {
     // TODO: Pattern validation
 
     const validateOnFocusLoss = () => {
@@ -23,6 +24,12 @@ export default function StyledInput({
                 return;
             }
             console.warn("Value is not matching with " + pattern);
+        }
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' && onEnter) {
+            onEnter();
         }
     };
 
@@ -43,6 +50,7 @@ export default function StyledInput({
                     id={name}
                     value={value === undefined ? "" : value}
                     onChange={onChange}
+                    onKeyDown={onEnter ? handleKeyDown : undefined}
                     onBlur={validateOnFocusLoss}
                     className="block w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm
                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700

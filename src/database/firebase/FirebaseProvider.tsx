@@ -182,7 +182,7 @@ export const FirebaseProvider = ({children}: {
 
     useEffect(() => {
         if (!renderAfterCalled.current) {
-            console.error('Load context data');
+            console.log('Load context data');
             void getContextData();
         }
 

@@ -44,6 +44,7 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
             {header.map((head, index) => (
                 <th
                     scope="col"
+                    key={"table_header_" + index}
                     className={index === header.length - 1 ? "px-3 py-2 text-right flex justify-end" : "px-3 py-2"}
                 >
                     <div className="flex items-center">
@@ -83,7 +84,11 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
         setEditMode(false);
     };
 
-    const closeButton = <div className="text-sm ms-1" onClick={() => closeEditMode()}><BsFillXCircleFill/></div>
+    const closeButton = <div
+        className="text-sm ms-1"
+        onClick={() => closeEditMode()}
+
+    ><BsFillXCircleFill/></div>
 
     switch (options.type) {
         case 'steps':
@@ -91,10 +96,12 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                 <div className="flex flex-row text-xl items-center cursor-pointer">
                     <BsArrowLeftSquare
                         onClick={() => setValue(Number(value) - 1)}/>
-                    <span className="m-0 w-[50] ms-1">
+                    <span className="m-0 w-[50] ms-1 me-1">
                         <StyledInput type="number" value={value as number || 0}
                                      className="mt-0 w-[50px] me-1 hide-arrows"
-                                     onChange={(e) => setValue(e.target.value)}/>
+                                     onChange={(e) => setValue(e.target.value)}
+                                     onEnter={() => closeEditMode()}
+                        />
                     </span>
                     <BsArrowRightSquare
                         onClick={() => setValue(Number(value) + 1)}/>
@@ -107,7 +114,8 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                 <StyledInput
                     type="number"
                     value={value as number || 0}
-                    className="mt-0 w-auto me-1"
+                    className="mt-0 w-auto me-1 max-w-28"
+                    onEnter={() => closeEditMode()}
                     onChange={(e) => setValue(e.target.value)}
                 />{options.postFix}
                 {closeButton}</div>;
@@ -117,6 +125,7 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                     type="text"
                     value={value as string || ''}
                     className="mt-0 w-auto me-1"
+                    onEnter={() => closeEditMode()}
                     onChange={(e) => setValue(e.target.value)}
                 />
                 {closeButton}</div>;

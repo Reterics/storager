@@ -3,7 +3,7 @@ import {
     GeneralModalButtons,
     StoreItem,
     StyledSelectOption,
-    UserData, UserFormValues,
+    UserData,
     UserModalInput
 } from "../../interfaces/interfaces.ts";
 import {ChangeEvent, useState} from "react";
@@ -59,7 +59,11 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
                 setError(t('Passwords mismatch'));
                 return;
             }
-            await SignUp(item as UserFormValues)
+            await SignUp({
+                displayName: item.username || item.email,
+                email: item.email,
+                password: item.password || '',
+            })
         }
 
         onSave(assetToSave);

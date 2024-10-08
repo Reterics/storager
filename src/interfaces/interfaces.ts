@@ -114,6 +114,7 @@ export interface GeneralModalButtons {
 export interface StyledInputArgs {
     value?: string | number | readonly string[]
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined,
+    onEnter?: ()=>void,
     type?: string,
     name?: string,
     label?: string | number,

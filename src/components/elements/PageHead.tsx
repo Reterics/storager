@@ -12,8 +12,9 @@ export const PageHead = ({buttons, title, error}: {buttons?: GeneralButtons[], t
 
                 {error && <AlertBox message={error} role={"warning"} /> }
                 {
-                    (buttons||[]).map(button=> (
+                    (buttons||[]).map((button, index,) => (
                         <button type="button"
+                                key={"heading-"+index}
                                 className={
                                     button.primary ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +
                                         "focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-5 py-2.5 " +
