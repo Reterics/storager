@@ -10,6 +10,7 @@ import ServiceCompletionModal from "../components/modals/ServiceCompletionModal.
 import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import PrintableVersionModal from "../components/modals/PrintableVersionModal.tsx";
+import {PDFData} from "../interfaces/pdf.ts";
 
 
 function Service() {
@@ -22,7 +23,10 @@ function Service() {
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
-    const [printViewData, setPrintViewData] = useState<unknown|null>(null);
+    const [printViewData, setPrintViewData] = useState<{
+        data: PDFData,
+        signature?: string
+    }|null>(null);
 
 
     const addServiceItem = async (serviceData?: ServiceData) => {
@@ -45,7 +49,6 @@ function Service() {
         if (serviceCompleteData.service_id) {
             const serviceData = servicedItems.find(existingItem => existingItem.id === serviceCompleteData.service_id);
             if (serviceData) {
-                // TODO: TBD
                 serviceData.serviceStatus = "status_delivered";
                 await addServiceItem(serviceData);
             }
@@ -66,8 +69,7 @@ function Service() {
                     setModalTemplate({...item, onUpdate: true})
                 },
                 onPrint: () => {
-                    // TODO: Print Service Data
-                    setPrintViewData([
+                    setPrintViewData({data:[
                         {'': t('Client')},
                         [{ [t('Name')]: item.client_name }],
                         [{ [t('Phone')]: item.client_phone }],
@@ -96,7 +98,7 @@ function Service() {
                         [{ Address: '7474 New York' }],
                         {'': 'Recipient'},
                         ['Content'],*/
-                    ])
+                    ], signature: item.signature})
                 },
                 onCode: () => {
                     const completionFormId = item.id + '_cd';
@@ -167,7 +169,6 @@ function Service() {
                         inPlace={true}
                     />
                     <PrintableVersionModal
-                        inPlace={true}
                         formData={printViewData}
                         onClose={() => setPrintViewData(null)}
                     />

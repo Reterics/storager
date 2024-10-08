@@ -1,6 +1,7 @@
 import {User} from 'firebase/auth';
 import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from "react";
 import {GeoPoint} from "firebase/firestore";
+import {PDFData} from "./pdf.ts";
 
 
 export interface LoginFormValues {
@@ -324,8 +325,6 @@ export interface UserModalInput {
 }
 
 export interface PrintableModalInput {
-    id?: string,
     onClose: () => void,
-    formData: unknown | null,
-    inPlace?: boolean
+    formData: { data: PDFData, signature?: string } | null,
 }

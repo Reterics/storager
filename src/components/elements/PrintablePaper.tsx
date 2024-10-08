@@ -1,6 +1,10 @@
+import {RefObject} from "react";
+import {PDFData} from "../../interfaces/pdf.ts";
 
 
-const PrintablePaper = ({ data, ref, children}) => {
+const PrintablePaper = ({ data, ref, children}: {
+    data: PDFData, ref: RefObject<HTMLDivElement>, children: React.ReactNode
+}) => {
     return (
         <div
             ref={ref}
@@ -9,6 +13,7 @@ const PrintablePaper = ({ data, ref, children}) => {
                 minHeight: '297mm',
                 margin: '0 auto',
                 padding: '20mm',
+                paddingTop: '0mm',
                 boxSizing: 'border-box',
                 fontFamily: 'Arial, sans-serif',
                 fontSize: '12pt',
