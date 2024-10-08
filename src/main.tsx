@@ -21,7 +21,7 @@ createRoot(document.getElementById('root')!).render(
           <AuthProvider>
               <ThemeProvider>
                   <ShopProvider>
-                      <div className="w-full h-full m-auto flex flex-col text-black dark:text-white bg-[#ebebeb] dark:bg-black">
+                      <div className="w-full h-full m-auto flex flex-col text-black dark:text-white bg-[#ebebeb] dark:bg-black flex-1 min-h-[100vh]">
                           <Routes>
                               <Route path="/" element={<InAppLayout><Shops /></InAppLayout>}/>
                               <Route path="/items" element={<InAppLayout><Items /></InAppLayout>}/>

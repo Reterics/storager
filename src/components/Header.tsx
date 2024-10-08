@@ -25,7 +25,7 @@ const Header = () => {
     };
 
     return (
-        <header>
+        <header className="no-print">
             <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <a href="https://reterics.com/" className="flex items-center">

@@ -4,7 +4,7 @@ import AlertBox from "../AlertBox.tsx";
 
 export const PageHead = ({buttons, title, error}: {buttons?: GeneralButtons[], title?: string, error?: string}) => {
     return (
-        <div className="flex justify-center overflow-x-auto sm:rounded-lg w-full m-auto">
+        <div className="flex justify-center overflow-x-auto sm:rounded-lg w-full m-auto no-print">
             <div className="flex justify-between max-w-screen-xl m-2 p-2 w-full">
                 <h1 className="text-2xl font-bold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-3xl dark:text-white">
                     {title}

@@ -17,7 +17,7 @@ export const InAppLayout = ({children}: {
     return (
         <FirebaseProvider>
             <Header/>
-            <div className="main-container p-2 flex flex-col h-full">
+            <div className="main-container p-2 flex flex-col h-full flex-1">
                 {loading && <PageLoading/>}
 
                 {!loading && children}

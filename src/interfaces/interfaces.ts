@@ -322,3 +322,10 @@ export interface UserModalInput {
     inPlace?: boolean,
     shops?: Shop[]
 }
+
+export interface PrintableModalInput {
+    id?: string,
+    onClose: () => void,
+    formData: unknown | null,
+    inPlace?: boolean
+}

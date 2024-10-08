@@ -83,5 +83,6 @@
   "Role": "Szerepkör",
   "Password Confirmation": "Jelszó megerősítése",
   "Assigned Shop": "Bolt hozzárendelése",
-  "401 Unauthorized - Your privileges has been revoked": "401 Hozzáférés megtagadva - A jogosultságaid megvonásra kerültek"
+  "401 Unauthorized - Your privileges has been revoked": "401 Hozzáférés megtagadva - A jogosultságaid megvonásra kerültek",
+  "Print": "Nyomtatás"
 }

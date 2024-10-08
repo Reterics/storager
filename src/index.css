@@ -9,3 +9,19 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+#root {
+  height: 100%;
+}
+
+@media print
+{
+  .no-print, .no-print *
+  {
+    display: none !important;
+  }
+}
+
+pre {
+  font-family: Arial, sans-serif;
+}

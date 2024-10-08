@@ -9,6 +9,7 @@ import TableViewComponent, {TableViewActions} from "../components/elements/Table
 import ServiceCompletionModal from "../components/modals/ServiceCompletionModal.tsx";
 import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
+import PrintableVersionModal from "../components/modals/PrintableVersionModal.tsx";
 
 
 function Service() {
@@ -21,6 +22,7 @@ function Service() {
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
+    const [printViewData, setPrintViewData] = useState<unknown|null>(null);
 
 
     const addServiceItem = async (serviceData?: ServiceData) => {
@@ -65,6 +67,36 @@ function Service() {
                 },
                 onPrint: () => {
                     // TODO: Print Service Data
+                    setPrintViewData([
+                        {'': t('Client')},
+                        [{ [t('Name')]: item.client_name }],
+                        [{ [t('Phone')]: item.client_phone }],
+                        [{ [t('Email')]: item.client_email }],
+
+                        {'': t('Recipient')},
+                        [{ [t('Name')]: item.service_name }],
+                        [{ [t('Phone')]: item.service_address }],
+                        [{ [t('Email')]: item.service_email }],
+
+                        {'': t('Item and service details')},
+                        [{ [t('Type')]: (item.type?.split(',').join(', ')) }],
+                        [{ [t('Description')]: item.description }],
+                        [{ [t('status')]: t(item.serviceStatus || 'status_accepted') }],
+                        [{ [t('Guaranteed')]: item.guaranteed }],
+                        [{ [t('Accessories')]: item.accessories }],
+                        [{ [t('Repair Description')]: item.repair_description }],
+                        [{ [t('Expected cost')]: item.expected_cost + ' HUF'}],
+                        [{ [t('Note')]: item.note}],
+                        [],
+                        dbContext?.data.settings?.serviceAgreement || '',
+                        [],
+                        [{ [t('Date')]: item.date}],
+
+                        /*[{ Name: item.client_name }, { Phone: '0630555555' }],
+                        [{ Address: '7474 New York' }],
+                        {'': 'Recipient'},
+                        ['Content'],*/
+                    ])
                 },
                 onCode: () => {
                     const completionFormId = item.id + '_cd';
@@ -103,7 +135,7 @@ function Service() {
 
     return (
         <>
-            <PageHead title={t('Serviced Items')} buttons={[
+            {!printViewData && <PageHead title={t('Serviced Items')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => setModalTemplate(modalTemplate ? null : {
@@ -115,7 +147,7 @@ function Service() {
                         service_email: shop?.email || '',
                     })
                 }
-            ]}/>
+            ]}/> }
 
             <div className={"relative flex justify-center w-full m-auto"}>
                 <div className={"mb-2 mt-1"}>
@@ -134,10 +166,15 @@ function Service() {
                         formData={completedModalTemplate}
                         inPlace={true}
                     />
+                    <PrintableVersionModal
+                        inPlace={true}
+                        formData={printViewData}
+                        onClose={() => setPrintViewData(null)}
+                    />
                 </div>
             </div>
 
-            {!modalTemplate && !completedModalTemplate &&
+            {!modalTemplate && !completedModalTemplate && !printViewData &&
                 <TableViewComponent lines={tableLines}
                                     header={[
                                         t('ID'),
@@ -177,7 +214,7 @@ function Service() {
                 />
             }
 
-            <div className="relative flex justify-center w-full m-auto mt-1 flex-1">
+            <div className="relative flex justify-center w-full m-auto mt-1 flex-1 no-print">
             </div>
         </>
     )
