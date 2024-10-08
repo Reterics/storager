@@ -117,10 +117,12 @@ export const FirebaseProvider = ({children}: {
             const filteredData = ctxData[key].filter(item => item.id !== id);
             if (filteredData.length !== ctxData[key].length) {
                 await deleteDoc(doc(db, firebaseCollections[key], id));
-                ctxData[key] = filteredData;
+                ctxData[key] = [...filteredData];
+
                 setCtxData({
                     ...ctxData,
                 });
+                return ctxData[key];
             }
         }
 
@@ -156,7 +158,7 @@ export const FirebaseProvider = ({children}: {
 
         if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
             if (isNew) {
-                ctxData[key].push(item);
+                ctxData[key].unshift(item);
             } else {
                 ctxData[key] = ctxData[key].map((ctx: ContextDataValueType) => {
                     if (item.id && ctx && ctx.id === item.id) {
@@ -166,7 +168,7 @@ export const FirebaseProvider = ({children}: {
                 }) as ContextDataValueType[];
             }
 
-
+            ctxData[key] = [...ctxData[key]];
         } else if (ctxData && key === 'settings') {
             ctxData[key] = item;
         }
@@ -175,12 +177,7 @@ export const FirebaseProvider = ({children}: {
             ...ctxData,
         } : null);
 
-        if (ctxData && Array.isArray(ctxData[key])) {
-            return [...ctxData[key]];
-        } else if (ctxData && ctxData[key]) {
-            return {...ctxData[key]};
-        }
-        return null;
+        return ctxData ? ctxData[key] : null;
     }
 
     useEffect(() => {

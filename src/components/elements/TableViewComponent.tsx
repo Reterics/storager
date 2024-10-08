@@ -69,11 +69,17 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
     const [value, setValue] = useState<TableLineElementType>(element);
 
     if (!editMode) {
+        // Support outside changing from DB
+        if (element !== value) {
+            setValue(element)
+        }
         return <div onClick={() => setEditMode(true)}>{element} {options.postFix}</div>;
     }
 
     const closeEditMode = () => {
-        onChange(index, col, value);
+        if (element !== value) {
+            onChange(index, col, value);
+        }
         setEditMode(false);
     };
 
