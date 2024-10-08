@@ -7,16 +7,15 @@ import {ShopContext} from "../store/ShopContext.tsx";
 import {Shop, StyledSelectOption, UserData} from "../interfaces/interfaces.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import UserModal from "../components/modals/UserModal.tsx";
-import {addDoc, collection, deleteDoc, doc, setDoc} from "firebase/firestore";
-import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
+import UnauthorizedComponent from "../components/Unauthorized.tsx";
 
 function UsersPage() {
-    const firebaseContext = useContext(DBContext);
+    const dbContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
-    const [users, setUsers] = useState<UserData[]>(firebaseContext?.data.users || []);
+    const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
+    const [users, setUsers] = useState<UserData[]>(dbContext?.data.users || []);
     const [modalTemplate, setModalTemplate] = useState<UserData|null>(null)
 
     const typeOptions: StyledSelectOption[] = shops.map((key)=>{
@@ -28,37 +27,15 @@ function UsersPage() {
 
     const deleteUser = async (item: UserData) => {
         if (item.id && window.confirm(t('Are you sure you wish to revoke all of the rights from the User?'))) {
-            await deleteDoc(doc(db, firebaseCollections.users, item.id));
-
-            setUsers(users.filter(i => i !== item))
+            setUsers(await dbContext?.removeData('users', item.id) as UserData[])
         }
     };
 
 
     const saveUser = async (item: UserData) => {
-        let modelRef;
-        if (item && item.id) {
-            modelRef = doc(db, firebaseCollections.users, item.id);
-            await setDoc(modelRef, item, { merge: true }).catch(e => {
-                console.error(e);
-            });
-            console.log('Updated document ID:', modelRef.id);
-        } else if (item) {
-            // For creating a new document with an auto-generated ID
-            modelRef = await addDoc(collection(db, firebaseCollections.users), item).catch(e => {
-                console.error(e);
-            });
+        const updatedUsers = await dbContext?.setData('users', item as UserData);
 
-            if (modelRef) {
-                console.log('Created new document with ID:', modelRef.id);
-
-                item.id = modelRef.id;
-                const updatedItems = [...users];
-                updatedItems.push(item);
-                setUsers(updatedItems);
-            }
-        }
-
+        setUsers(updatedUsers as UserData[]);
         setModalTemplate(null);
     }
 
@@ -76,6 +53,10 @@ function UsersPage() {
             })
         ];
     });
+
+    if (!dbContext?.data.currentUser) {
+        return <UnauthorizedComponent />;
+    }
 
     return (
         <>

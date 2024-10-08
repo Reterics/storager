@@ -6,13 +6,14 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import StyledInput from "../components/elements/StyledInput.tsx";
 import FormRow from "../components/elements/FormRow.tsx";
 import {SettingsItems} from "../interfaces/interfaces.ts";
+import UnauthorizedComponent from "../components/Unauthorized.tsx";
 
 
 function Service() {
-    const firebaseContext = useContext(DBContext);
+    const dbContext = useContext(DBContext);
     const { t } = useTranslation();
 
-    const initialSettings = firebaseContext?.data.settings || {
+    const initialSettings = dbContext?.data.settings || {
         id: '',
         companyName: '',
         address: '',
@@ -42,7 +43,7 @@ function Service() {
     };
 
     const saveFirebaseSettings = async () => {
-        await firebaseContext?.setData('settings', settingsItems);
+        await dbContext?.setData('settings', settingsItems);
         setShouldSave(false);
     }
 
@@ -51,6 +52,10 @@ function Service() {
 
         void saveFirebaseSettings();
     };
+
+    if (!dbContext?.data.currentUser) {
+        return <UnauthorizedComponent />;
+    }
 
     return (
         <>

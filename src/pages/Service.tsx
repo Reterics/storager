@@ -5,58 +5,28 @@ import {BsFillPlusCircleFill} from "react-icons/bs";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import {ServiceCompleteData, ServiceData} from "../interfaces/interfaces.ts";
 import ServiceModal from "../components/modals/ServiceModal.tsx";
-import {collection, doc, setDoc} from "firebase/firestore";
-import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import ServiceCompletionModal from "../components/modals/ServiceCompletionModal.tsx";
 import {ShopContext} from "../store/ShopContext.tsx";
+import UnauthorizedComponent from "../components/Unauthorized.tsx";
 
 
 function Service() {
-    const firebaseContext = useContext(DBContext);
+    const dbContext = useContext(DBContext);
     const {shop} = useContext(ShopContext);
     const { t } = useTranslation();
 
-    const [servicedItems, setServicedItems] = useState<ServiceData[]>(firebaseContext?.data.services || []);
-    const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(firebaseContext?.data.completions || []);
+    const [servicedItems, setServicedItems] = useState<ServiceData[]>(dbContext?.data.services || []);
+    const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(dbContext?.data.completions || []);
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
 
 
     const addServiceItem = async (serviceData?: ServiceData) => {
-        if (!serviceData) {
-            console.error('There is no serviceData defined during saving')
-            return;
-        }
+        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData);
 
-        let modelRef;
-
-        if (serviceData.id) {
-            // If item has an ID, update the existing document
-            modelRef = doc(db, firebaseCollections.services, serviceData.id);
-        } else {
-            // Generate a new document reference with an auto-generated ID
-            modelRef = doc(collection(db, firebaseCollections.services));
-            serviceData.id = modelRef.id; // Assign the generated ID to your item
-        }
-
-
-        // Use setDoc with { merge: true } to update or create the document
-        await setDoc(modelRef, serviceData, { merge: true }).catch(e => {
-            console.error(e);
-        });
-
-
-        // Update  local state
-        const updatedItems = [...servicedItems];
-        const index = updatedItems.findIndex(existingItem => existingItem.id === serviceData.id);
-        if (index !== -1) {
-            updatedItems[index] = serviceData; // Update existing item
-        } else {
-            updatedItems.push(serviceData); // Add new item
-        }
-        setServicedItems(updatedItems);
+        setServicedItems(updatedItems as ServiceData[]);
         setModalTemplate(null);
     };
 
@@ -65,33 +35,9 @@ function Service() {
             return;
         }
 
-        let modelRef;
+        const updatedItems = await dbContext?.setData('completions', serviceCompleteData as ServiceCompleteData);
 
-        if (serviceCompleteData.id) {
-            // If item has an ID, update the existing document
-            modelRef = doc(db, firebaseCollections.completions, serviceCompleteData.id);
-        } else {
-            // Generate a new document reference with an auto-generated ID
-            modelRef = doc(collection(db, firebaseCollections.completions));
-            serviceCompleteData.id = modelRef.id; // Assign the generated ID to your item
-        }
-
-
-        // Use setDoc with { merge: true } to update or create the document
-        await setDoc(modelRef, serviceCompleteData, { merge: true }).catch(e => {
-            console.error(e);
-        });
-
-
-        // Update  local state
-        const updatedItems = [...completionForms];
-        const index = updatedItems.findIndex(existingItem => existingItem.id === serviceCompleteData.id);
-        if (index !== -1) {
-            updatedItems[index] = serviceCompleteData; // Update existing item
-        } else {
-            updatedItems.push(serviceCompleteData); // Add new item
-        }
-        setCompletionForms(updatedItems);
+        setCompletionForms(updatedItems as ServiceCompleteData[]);
         setCompletedModalTemplate(null);
 
         if (serviceCompleteData.service_id) {
@@ -103,7 +49,6 @@ function Service() {
             }
         }
     };
-    // const tableKeyOrder = ['id', 'client_name', 'type', 'guaranteed', 'expected_cost', 'date'];
 
     const tableLines = servicedItems.map(item => {
         return [
@@ -152,6 +97,10 @@ function Service() {
         ];
     });
 
+    if (!dbContext?.data.currentUser) {
+        return <UnauthorizedComponent />;
+    }
+
     return (
         <>
             <PageHead title={t('Serviced Items')} buttons={[
@@ -176,7 +125,7 @@ function Service() {
                         setService={(item: ServiceData) => setModalTemplate(item)}
                         service={modalTemplate}
                         inPlace={true}
-                        settings={firebaseContext?.data.settings}
+                        settings={dbContext?.data.settings}
                     />
                     <ServiceCompletionModal
                         onClose={() => setCompletedModalTemplate(null)}

@@ -1,7 +1,6 @@
 import {useContext, useState} from 'react'
 import './Shops.css'
-import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
-import {doc, deleteDoc, collection, setDoc, addDoc, GeoPoint} from "firebase/firestore";
+import {GeoPoint} from "firebase/firestore";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import {MapContainer, TileLayer} from 'react-leaflet'
 import "leaflet/dist/leaflet.css";
@@ -15,19 +14,19 @@ import {DBContext} from "../database/DBContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 import {ShopContext} from "../store/ShopContext.tsx";
+import UnauthorizedComponent from "../components/Unauthorized.tsx";
 
 function Shops() {
-    const firebaseContext = useContext(DBContext);
+    const dbContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
-    const isAdmin = firebaseContext && firebaseContext.data && firebaseContext.data.currentUser &&
-        firebaseContext.data.currentUser.role === 'admin';
-    const [shops, setShops] = useState<Shop[]>(firebaseContext?.data.shops || []);
+    const isAdmin = dbContext && dbContext.data && dbContext.data.currentUser &&
+        dbContext.data.currentUser.role === 'admin';
+    const [shops, setShops] = useState<Shop[]>(dbContext?.data.shops || []);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
     const center = [46.840399, 16.8279712, 0] as LatLngTuple;
-
 
     const ref = (map: Map|null) => {
         if (map !== null) {
@@ -48,36 +47,13 @@ function Shops() {
 
     const deleteShop = async (shop: Shop) => {
         if (shop.id && window.confirm(t('Are you sure you wish to delete this Shop?'))) {
-            await deleteDoc(doc(db, firebaseCollections.shops, shop.id));
-
-            setShops(shops.filter(s => s !== shop))
+            setShops(await dbContext?.removeData('shops', shop.id) as Shop[])
         }
     };
 
     const closeShop = async (shop?: Shop)=> {
-        let modelRef;
-
-        if (shop && shop.id) {
-            // For updating an existing document
-            modelRef = doc(db, firebaseCollections.shops, shop.id);
-            await setDoc(modelRef, shop, { merge: true }).catch(e => {
-                console.error(e);
-            });
-            console.log('Updated document ID:', modelRef.id);
-        } else if (shop) {
-            // For creating a new document with an auto-generated ID
-            modelRef = await addDoc(collection(db, firebaseCollections.shops), shop).catch(e => {
-                console.error(e);
-            });
-            if (modelRef) {
-                console.log('Created new document with ID:', modelRef.id);
-
-                shop.id = modelRef.id;
-                const updatedShops = [...shops];
-                updatedShops.push(shop);
-                setShops(updatedShops);
-            }
-        }
+        const updatedShops = await dbContext?.setData('shops', shop as Shop);
+        setShops(updatedShops as Shop[]);
 
         setModalTemplate(null);
     }
@@ -86,7 +62,7 @@ function Shops() {
         const actions: TableViewActionArguments = {
             onRemove: () => deleteShop(shop)
         };
-        if (firebaseContext?.data.currentUser?.role === 'admin') {
+        if (dbContext?.data.currentUser?.role === 'admin') {
             actions.onEdit = () => setModalTemplate(shop)
         }
         return [
@@ -95,6 +71,10 @@ function Shops() {
             TableViewActions(actions)
         ];
     });
+
+    if (!dbContext?.data.currentUser) {
+        return <UnauthorizedComponent />;
+    }
 
     return (
         <>

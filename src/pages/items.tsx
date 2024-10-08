@@ -1,6 +1,4 @@
 import {useContext, useState} from 'react'
-import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
-import {doc, deleteDoc} from "firebase/firestore";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 
 import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
@@ -10,19 +8,20 @@ import {DBContext} from "../database/DBContext.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 import {ShopContext} from "../store/ShopContext.tsx";
+import UnauthorizedComponent from "../components/Unauthorized.tsx";
 
 function Items() {
-    const firebaseContext = useContext(DBContext);
+    const dbContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    let initialItems = firebaseContext?.data.items || [];
+    let initialItems = dbContext?.data.items || [];
     if (shopContext.shop) {
         initialItems = initialItems.filter((item) => shopContext.shop?.id === item.shop_id);
     }
 
     const [items, setItems] = useState<StoreItem[]>(initialItems);
-    const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
+    const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
     let error;
     const storageWarnings = items.filter(item=> !item.storage || item.storage < 5);
@@ -41,16 +40,19 @@ function Items() {
 
     const deleteItem = async (item: StoreItem) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Item?'))) {
-            await deleteDoc(doc(db, firebaseCollections.items, item.id));
-
-            setItems(items.filter(i => i !== item))
+            let updatedItems = await dbContext?.removeData('items', item.id) as StoreItem[];
+            if (shopContext.shop) {
+                updatedItems = (updatedItems as StoreItem[])
+                    .filter((item) => shopContext.shop?.id === item.shop_id);
+            }
+            setItems(updatedItems);
         }
     };
 
     const closeItem = async (item?: StoreItem)=> {
-        let updatedItems = await firebaseContext?.setData('items', item as StoreItem);
+        let updatedItems = await dbContext?.setData('items', item as StoreItem);
         if (item) {
-            await firebaseContext?.refreshImagePointers([item]);
+            await dbContext?.refreshImagePointers([item]);
         }
 
         if (shopContext.shop) {
@@ -92,7 +94,7 @@ function Items() {
                 }
             }, key, item);
 
-            firebaseContext?.setData('items', {
+            dbContext?.setData('items', {
                 id: item.id,
                 [key]: value
             });
@@ -114,6 +116,10 @@ function Items() {
             })
         ];
     });
+
+    if (!dbContext?.data.currentUser) {
+        return <UnauthorizedComponent />;
+    }
 
     return (
         <>

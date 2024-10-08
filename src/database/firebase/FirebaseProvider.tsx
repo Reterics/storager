@@ -1,5 +1,9 @@
 import {ReactNode, useContext, useEffect, useRef, useState} from "react";
-import {ContextDataType, ContextData, ContextDataValueType} from "../../interfaces/firebase.ts";
+import {
+    ContextDataType,
+    ContextData,
+    ContextDataValueType
+} from "../../interfaces/firebase.ts";
 import {db, firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
 import {
     ServiceCompleteData,
@@ -13,7 +17,7 @@ import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "../../firebase/storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
-import {addDoc, collection, doc, setDoc} from "firebase/firestore";
+import {collection, deleteDoc, doc, setDoc} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 
 
@@ -38,14 +42,14 @@ export const FirebaseProvider = ({children}: {
     };
 
     const getContextData = async () => {
-        let shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
-        let items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
-        let parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
         let users = await getCollection(firebaseCollections.users).catch(setError) as UserData[];
         let services: ServiceData[] = [];
         let completions: ServiceCompleteData[] = [];
         let settings: SettingsItems[] = [];
         let user;
+        let shops: Shop[] = [];
+        let items: StoreItem[] = [];
+        let parts: StorePart[] = [];
 
         if (authContext.user && authContext.user.email) {
             user = users.find(user => user.email === authContext.user?.email);
@@ -71,9 +75,16 @@ export const FirebaseProvider = ({children}: {
             }
         }
 
+
+
+
+
         if (user) {
             services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
             completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
+            shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
+            items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
+            parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
         }
 
         // TODO: move the filter server side
@@ -101,30 +112,51 @@ export const FirebaseProvider = ({children}: {
         })
     }
 
-
-    const updateContextData = async (key: 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users', item: ContextDataValueType)=> {
-        let modelRef;
-        let isNew = false;
-        if (item && item.id) {
-            modelRef = doc(db, firebaseCollections[key], item.id);
-            await setDoc(modelRef, item, { merge: true }).catch(e => {
-                console.error(e);
-            });
-        } else if (item) {
-            modelRef = await addDoc(collection(db, firebaseCollections[key]), item).catch(e => {
-                console.error(e);
-            });
-            if (modelRef) {
-                isNew = true;
-                console.log('Created new document with ID:', modelRef.id, ' in ', key);
-
-                item.id = modelRef.id;
+    const removeContextData = async (key: ContextDataType, id: string)=> {
+        if (ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
+            const filteredData = ctxData[key].filter(item => item.id !== id);
+            if (filteredData.length !== ctxData[key].length) {
+                await deleteDoc(doc(db, firebaseCollections[key], id));
+                ctxData[key] = filteredData;
+                setCtxData({
+                    ...ctxData,
+                });
             }
         }
 
+        return ctxData ? ctxData[key] : null;
+    }
+
+    const updateContextData = async (key: ContextDataType, item: ContextDataValueType)=> {
+        if (!item) {
+            console.error('There is no data provided for saving');
+            return ctxData ? ctxData[key] : null;
+        }
+
+        let modelRef;
+        let isNew = false;
+
+        if (item && item.id) {
+            // If item has an ID, update the existing document
+            modelRef = doc(db, firebaseCollections[key], item.id);
+        } else {
+            // Generate a new document reference with an auto-generated ID
+            modelRef = doc(collection(db, firebaseCollections[key]));
+            item.id = modelRef.id; // Assign the generated ID to your item
+            isNew = true;
+        }
+
+        // Use setDoc with { merge: true } to update or create the document
+        await setDoc(modelRef, item, { merge: true }).catch(e => {
+            console.error(e);
+        });
+
+        console.log('Created document with ID:', modelRef.id, ' in ', key);
+
+
         if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
             if (isNew) {
-                ctxData[key].unshift(item);
+                ctxData[key].push(item);
             } else {
                 ctxData[key] = ctxData[key].map((ctx: ContextDataValueType) => {
                     if (item.id && ctx && ctx.id === item.id) {
@@ -143,15 +175,13 @@ export const FirebaseProvider = ({children}: {
             ...ctxData,
         } : null);
 
-        return ctxData ? ctxData[key] : null;
+        if (ctxData && Array.isArray(ctxData[key])) {
+            return [...ctxData[key]];
+        } else if (ctxData && ctxData[key]) {
+            return {...ctxData[key]};
+        }
+        return null;
     }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const use = (id: number, type: ContextDataType) => {
-        // TODO: To be implemented
-    };
 
     useEffect(() => {
         if (!renderAfterCalled.current) {
@@ -165,7 +195,7 @@ export const FirebaseProvider = ({children}: {
     return <DBContext.Provider value={{
         data: ctxData as ContextData,
         setData: updateContextData,
-        use: use,
+        removeData: removeContextData,
         refreshImagePointers:refreshImagePointers
     }}>
         {!error && ctxData && children}

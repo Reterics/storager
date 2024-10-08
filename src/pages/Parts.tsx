@@ -5,24 +5,23 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {ShopContext} from "../store/ShopContext.tsx";
 import {Shop, StoreItem, StorePart, StyledSelectOption} from "../interfaces/interfaces.ts";
-import {deleteDoc, doc} from "firebase/firestore";
-import {db, firebaseCollections} from "../firebase/BaseConfig.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import PartModal from "../components/modals/PartModal.tsx";
+import UnauthorizedComponent from "../components/Unauthorized.tsx";
 
 
 function Parts() {
-    const firebaseContext = useContext(DBContext);
+    const dbContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    let initialParts = firebaseContext?.data.parts || [];
+    let initialParts = dbContext?.data.parts || [];
     if (shopContext.shop) {
         initialParts = initialParts.filter((item) => shopContext.shop?.id === item.shop_id);
     }
 
     const [parts, setParts] = useState<StorePart[]>(initialParts);
-    const [shops] = useState<Shop[]>(firebaseContext?.data.shops || []);
+    const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
     let error;
     const storageWarnings = parts.filter(item => !item.storage || item.storage < 5);
@@ -41,16 +40,19 @@ function Parts() {
 
     const deletePart = async (item: StorePart) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Part?'))) {
-            await deleteDoc(doc(db, firebaseCollections.parts, item.id));
-
-            setParts(parts.filter(i => i !== item))
+            let updatedItems = await dbContext?.removeData('parts', item.id) as StorePart[];
+            if (shopContext.shop) {
+                updatedItems = (updatedItems as StorePart[])
+                    .filter((item) => shopContext.shop?.id === item.shop_id);
+            }
+            setParts(updatedItems);
         }
     };
 
     const closePart = async (item?: StorePart)=> {
-        let updatedParts = await firebaseContext?.setData('parts', item as StorePart);
+        let updatedParts = await dbContext?.setData('parts', item as StorePart);
         if (item) {
-            await firebaseContext?.refreshImagePointers([item]);
+            await dbContext?.refreshImagePointers([item]);
         }
 
         if (shopContext.shop) {
@@ -93,7 +95,7 @@ function Parts() {
             }, key, item);
         }
 
-        firebaseContext?.setData('parts', {
+        dbContext?.setData('parts', {
             id: item.id,
             [key]: value
         });
@@ -114,6 +116,10 @@ function Parts() {
             })
         ];
     });
+
+    if (!dbContext?.data.currentUser) {
+        return <UnauthorizedComponent />;
+    }
 
     return (
         <>
