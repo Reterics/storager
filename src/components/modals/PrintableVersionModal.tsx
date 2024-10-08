@@ -15,7 +15,7 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
     function adjustPageHeight(canvas: HTMLCanvasElement, sourceY: number, initialPageHeight: number, ctx: CanvasRenderingContext2D) {
         let pageHeight = initialPageHeight;
         const canvasHeight = canvas.height;
-        const maxIncrease = 20; // Maximum number of pixels to increase
+        const maxIncrease = 50; // Maximum number of pixels to increase
         let increaseCount = 0;
 
         while (sourceY + pageHeight < canvasHeight && increaseCount < maxIncrease) {

@@ -30,8 +30,10 @@ function Service() {
 
 
     const addServiceItem = async (serviceData?: ServiceData) => {
-        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData);
-
+        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData) as ServiceData[];
+        if (serviceData) {
+            updatedItems.push(serviceData);
+        }
         setServicedItems(updatedItems as ServiceData[]);
         setModalTemplate(null);
     };
@@ -71,28 +73,28 @@ function Service() {
                 onPrint: () => {
                     setPrintViewData({data:[
                         {'': t('Client')},
-                        [{ [t('Name')]: item.client_name }],
-                        [{ [t('Phone')]: item.client_phone }],
-                        [{ [t('Email')]: item.client_email }],
+                        [{ [t('Name')]: item.client_name || '' }],
+                        [{ [t('Phone')]: item.client_phone || '' }],
+                        [{ [t('Email')]: item.client_email || '' }],
 
                         {'': t('Recipient')},
-                        [{ [t('Name')]: item.service_name }],
-                        [{ [t('Phone')]: item.service_address }],
-                        [{ [t('Email')]: item.service_email }],
+                        [{ [t('Name')]: item.service_name || '' }],
+                        [{ [t('Phone')]: item.service_address || '' }],
+                        [{ [t('Email')]: item.service_email || '' }],
 
                         {'': t('Item and service details')},
-                        [{ [t('Type')]: (item.type?.split(',').join(', ')) }],
-                        [{ [t('Description')]: item.description }],
+                        [{ [t('Type')]: ((item.type || '')?.split(',').join(', ')) }],
+                        [{ [t('Description')]: item.description || '' }],
                         [{ [t('status')]: t(item.serviceStatus || 'status_accepted') }],
-                        [{ [t('Guaranteed')]: item.guaranteed }],
-                        [{ [t('Accessories')]: item.accessories }],
-                        [{ [t('Repair Description')]: item.repair_description }],
+                        [{ [t('Guaranteed')]: item.guaranteed || '' }],
+                        [{ [t('Accessories')]: item.accessories || '' }],
+                        [{ [t('Repair Description')]: item.repair_description || '' }],
                         [{ [t('Expected cost')]: item.expected_cost + ' HUF'}],
-                        [{ [t('Note')]: item.note}],
+                        [{ [t('Note')]: item.note || ''}],
                         [],
                         dbContext?.data.settings?.serviceAgreement || '',
                         [],
-                        [{ [t('Date')]: item.date}],
+                        [{ [t('Date')]: item.date || ''}],
 
                         /*[{ Name: item.client_name }, { Phone: '0630555555' }],
                         [{ Address: '7474 New York' }],
