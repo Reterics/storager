@@ -194,7 +194,7 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
                     ))
                 }
             </div>
-            <div style={{paddingTop: '20mm', background: 'white'}}>
+            <div className={"text-gray-900"} style={{paddingTop: '20mm', background: 'white'}}>
                 <PrintablePaper data={formData.data} ref={printRef}>
                     <img alt={'Signature'} src={formData.signature} />
                 </PrintablePaper>

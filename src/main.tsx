@@ -17,7 +17,7 @@ import UsersPage from "./pages/Users.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename={'/roller/'}>
           <AuthProvider>
               <ThemeProvider>
                   <ShopProvider>
