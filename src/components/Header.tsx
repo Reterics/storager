@@ -50,7 +50,7 @@ const Header = () => {
                     <div className={`${navbarOpen ? 'block' : 'hidden'} w-full md:block md:w-auto`} id="navbar-default">
                         <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                             <li>
-                                <NavLink to='/'
+                                <NavLink to='/?page='
                                          onClick={handleLinkClick}
                                          className={pathname === '/' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
@@ -58,7 +58,7 @@ const Header = () => {
                                          aria-current="page">{t('Shops')}</NavLink>
                             </li>
                             {shop && <li>
-                                <NavLink to='/items'
+                                <NavLink to='/?page=items'
                                          onClick={handleLinkClick}
                                          className={pathname === '/items' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
@@ -66,7 +66,7 @@ const Header = () => {
                                 >{t('Items')}</NavLink>
                             </li>}
                             {shop && <li>
-                                <NavLink to='/parts'
+                                <NavLink to='/?page=parts'
                                          onClick={handleLinkClick}
                                          className={pathname === '/parts' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
@@ -74,7 +74,7 @@ const Header = () => {
                                 >{t('Parts')}</NavLink>
                             </li>}
                             {shop && <li>
-                                <NavLink to='/service'
+                                <NavLink to='/?page=service'
                                          onClick={handleLinkClick}
                                          className={pathname === '/service' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
@@ -98,7 +98,7 @@ const Header = () => {
                                         <ul className="py-1">
                                             {isAdmin && <li>
                                                 <NavLink
-                                                    to="/settings"
+                                                    to="/?page=settings"
                                                     onClick={handleLinkClick}
                                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
@@ -107,7 +107,7 @@ const Header = () => {
                                             </li>}
                                             {isAdmin && <li>
                                                 <NavLink
-                                                    to="/users"
+                                                    to="/?page=users"
                                                     onClick={handleLinkClick}
                                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
