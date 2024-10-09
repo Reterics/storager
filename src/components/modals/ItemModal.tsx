@@ -120,6 +120,14 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                     maxLength={11}
                 />
                 <StyledInput
+                    type="number" name="storage_limit"
+                    value={item.storage_limit}
+                    onChange={(e) => changeType(e, 'storage_limit')}
+                    label={t('Min Storage Limit')}
+                    pattern="[0-9\.]+"
+                    maxLength={11}
+                />
+                <StyledInput
                     type="number" name="price"
                     value={item.price}
                     onChange={(e) => changeType(e, 'price')}

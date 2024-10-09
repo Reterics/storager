@@ -1,7 +1,7 @@
 import {
     GeneralModalButtons,
     PartModalInput,
-    StoreItem
+    StorePart
 } from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
 import {ChangeEvent, useState} from "react";
@@ -30,10 +30,10 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
         // @ts-expect-error
         obj[key] = value;
 
-        setPart(obj as StoreItem);
+        setPart(obj as StorePart);
     };
 
-    const uploadAndSave = async (item: StoreItem) => {
+    const uploadAndSave = async (item: StorePart) => {
         let screenshot;
 
         if (file) {
@@ -44,7 +44,7 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
             return null;
         }
 
-        const assetToSave: StoreItem = {
+        const assetToSave: StorePart = {
             ...item
         };
 
@@ -121,6 +121,14 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
                     value={part.storage}
                     onChange={(e) => changeType(e, 'storage')}
                     label={t('Storage')}
+                    pattern="[0-9\.]+"
+                    maxLength={11}
+                />
+                <StyledInput
+                    type="number" name="storage_limit"
+                    value={part.storage_limit}
+                    onChange={(e) => changeType(e, 'storage_limit')}
+                    label={t('Min Storage Limit')}
                     pattern="[0-9\.]+"
                     maxLength={11}
                 />

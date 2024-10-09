@@ -24,7 +24,7 @@ function Parts() {
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
     let error;
-    const storageWarnings = parts.filter(item => !item.storage || item.storage < 5);
+    const storageWarnings = parts.filter(item => !item.storage || item.storage < (item.storage_limit || 5));
     if (storageWarnings.length) {
         error = storageWarnings.length + t(' low storage alert');
     }
@@ -120,7 +120,7 @@ function Parts() {
             item.price || 0,
             assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
-                onRemove: () => deletePart(item),
+                onRemove: () => deletePart(item)
             })
         ];
     });
@@ -137,7 +137,8 @@ function Parts() {
                     onClick: () => setModalTemplate(modalTemplate ? null : {
                         id: '',
                         shop_id: shopContext.shop?.id,
-                        storage: 1
+                        storage: 1,
+                        storage_limit: 5
                     })
                 }
             ]} error={error} onSearch={filterItems} />

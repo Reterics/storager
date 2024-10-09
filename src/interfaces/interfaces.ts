@@ -169,7 +169,8 @@ export interface StoreItem {
     storage?: number,
     price?: number,
     type?: string,
-    shop_id?: string
+    shop_id?: string,
+    storage_limit?: number
 }
 
 export interface ItemModalInput {
@@ -189,7 +190,8 @@ export interface StorePart {
     storage?: number,
     price?: number,
     category?: string,
-    shop_id?: string
+    shop_id?: string,
+    storage_limit?: number
 }
 
 export interface PartModalInput {

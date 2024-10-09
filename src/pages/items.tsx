@@ -24,7 +24,7 @@ function Items() {
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
     let error;
-    const storageWarnings = items.filter(item=> !item.storage || item.storage < 5);
+    const storageWarnings = items.filter(item=> !item.storage || item.storage < (item.storage_limit || 5));
     if (storageWarnings.length) {
         error = storageWarnings.length + t(' low storage alert');
     }
@@ -137,7 +137,8 @@ function Items() {
                     onClick:() => setModalTemplate(modalTemplate ? null : {
                         id: '',
                         shop_id: shopContext.shop?.id,
-                        storage: 1
+                        storage: 1,
+                        storage_limit: 5
                     })
                 }
             ]} error={error} onSearch={filterItems}/>
