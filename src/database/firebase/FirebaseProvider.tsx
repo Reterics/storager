@@ -137,10 +137,16 @@ export const FirebaseProvider = ({children}: {
 
         let modelRef;
         let isNew = false;
+        let imageCache;
 
         if (item && item.id) {
             // If item has an ID, update the existing document
             modelRef = doc(db, firebaseCollections[key], item.id);
+
+            if ("image" in item && item.image && item.image.startsWith('https://firebase')) {
+                imageCache = item.image;
+                delete item.image;
+            }
         } else {
             // Generate a new document reference with an auto-generated ID
             modelRef = doc(collection(db, firebaseCollections[key]));
@@ -157,6 +163,11 @@ export const FirebaseProvider = ({children}: {
 
 
         if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
+            if (imageCache) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                item.image = imageCache;
+            }
             if (isNew) {
                 ctxData[key].unshift(item);
             } else {

@@ -120,7 +120,8 @@ function Parts() {
             item.price || 0,
             assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
-                onRemove: () => deletePart(item)
+                onRemove: () => deletePart(item),
+                onEdit: () => setModalTemplate(item)
             })
         ];
     });

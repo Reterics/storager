@@ -121,6 +121,7 @@ function Items() {
             assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
                 onRemove: () => deleteItem(item),
+                onEdit: () => setModalTemplate(item)
             })
         ];
     });
