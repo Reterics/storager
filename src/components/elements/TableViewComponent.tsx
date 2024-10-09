@@ -215,11 +215,14 @@ const TableViewComponent = ({header, lines, children, onChange, onClick}: TableV
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
 
+    const supportedOrderTypes = ['string', 'number'];
     const orderedLines = !orderBy ? lines : lines.sort((a, b) => {
         if (a[orderBy] === undefined || b[orderBy] === undefined) {
             return 0; // If key doesn't exist, treat as equal
         }
-        if (typeof a[orderBy] !== "string" || typeof b[orderBy] !== "string") {
+        if (!supportedOrderTypes.includes(typeof a[orderBy]) ||
+            !supportedOrderTypes.includes(typeof b[orderBy]) ||
+            a[orderBy] === null || b[orderBy] === null) {
             return 0; // If key doesn't a string, treat as equal
         }
         if (orderType === 'ASC') {

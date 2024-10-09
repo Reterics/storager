@@ -116,8 +116,8 @@ function Items() {
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.sku,
             item.name || '',
-            item.storage || 0,
-            item.price || 0,
+            Number(item.storage || 0),
+            Number(item.price || 0),
             assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
                 onRemove: () => deleteItem(item),
