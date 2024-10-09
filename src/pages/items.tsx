@@ -38,6 +38,14 @@ function Items() {
         } as StyledSelectOption
     });
 
+    const filterItems = (filterBy: string) => {
+        if (!filterBy) {
+            setItems(initialItems);
+        } else {
+            setItems(initialItems.filter(item => item.name?.includes(filterBy) || item.sku?.includes(filterBy)))
+        }
+    };
+
     const deleteItem = async (item: StoreItem) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Item?'))) {
             let updatedItems = await dbContext?.removeData('items', item.id) as StoreItem[];
@@ -132,7 +140,7 @@ function Items() {
                         storage: 1
                     })
                 }
-            ]} error={error}/>
+            ]} error={error} onSearch={filterItems}/>
 
             <TableViewComponent lines={tableLines}
                                 header={[
@@ -167,7 +175,7 @@ function Items() {
                                 onChange={(index, col, value) => changeTableElement(index, col, value)}
             />
 
-            <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
+            <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <ItemModal
                     onClose={()=>setModalTemplate(null)}
                     onSave={(item: StoreItem) => closeItem(item)}

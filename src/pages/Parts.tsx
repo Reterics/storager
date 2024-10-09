@@ -38,6 +38,14 @@ function Parts() {
         } as StyledSelectOption
     });
 
+    const filterItems = (filterBy: string) => {
+        if (!filterBy) {
+            setParts(initialParts);
+        } else {
+            setParts(initialParts.filter(item => item.name?.includes(filterBy) || item.sku?.includes(filterBy)))
+        }
+    }
+
     const deletePart = async (item: StorePart) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Part?'))) {
             let updatedItems = await dbContext?.removeData('parts', item.id) as StorePart[];
@@ -132,7 +140,7 @@ function Parts() {
                         storage: 1
                     })
                 }
-            ]} error={error}/>
+            ]} error={error} onSearch={filterItems} />
 
             <TableViewComponent lines={tableLines}
                                 header={[
@@ -167,7 +175,7 @@ function Parts() {
                                 onChange={(index, col, value) => changeTableElement(index, col, value)}
             />
 
-            <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
+            <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <PartModal
                     onClose={() => setModalTemplate(null)}
                     onSave={(item: StoreItem) => closePart(item)}
