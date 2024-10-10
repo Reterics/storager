@@ -40,8 +40,9 @@ export default function GeneralModal({
                 </form>
                 <div className="flex justify-between mt-2">
                     {
-                        (buttons||[]).map(button=> (
+                        (buttons||[]).map((button, index)=> (
                             <button type="button"
+                                    key={modalId + "_button_" + index}
                                     className={
                                         button.primary ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +
                                             "focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-1.5 " +

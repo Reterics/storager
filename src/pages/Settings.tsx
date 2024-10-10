@@ -1,8 +1,6 @@
 import {FormEvent, useContext, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
-import {BsFillPlusCircleFill} from "react-icons/bs";
-import {PageHead} from "../components/elements/PageHead.tsx";
 import StyledInput from "../components/elements/StyledInput.tsx";
 import FormRow from "../components/elements/FormRow.tsx";
 import {SettingsItems} from "../interfaces/interfaces.ts";
@@ -59,89 +57,56 @@ function Service() {
 
     return (
         <>
-            <PageHead title={t('Settings')} buttons={[
-                {
-                    value: <BsFillPlusCircleFill/>,
-                    onClick: () => console.log('To be implemented -> Save Button')
-                }
-            ]}/>
 
             <div className="bg-white p-4 rounded dark:bg-gray-900 min-w-[60vw] m-auto">
-                <form onSubmit={handleSubmit} className="max-h-[60vh] overflow-y-scroll pe-2 ps-1">
-                    {/* Company Details */}
+                <form onSubmit={handleSubmit} className="max-h-[65vh] overflow-y-scroll pe-2 ps-1">
                     <h2 className="text-2xl font-bold mb-4">{t('Company Details')}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Company Name */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Company Name')}</label>
-                            <input
-                                type="text"
-                                name="companyName"
-                                value={settingsItems.companyName}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Address */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Address')}</label>
-                            <input
-                                type="text"
-                                name="address"
-                                value={settingsItems.address}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Tax ID */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Tax ID')}</label>
-                            <input
-                                type="text"
-                                name="taxId"
-                                value={settingsItems.taxId}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Bank Account Number */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Bank Account Number')}</label>
-                            <input
-                                type="text"
-                                name="bankAccount"
-                                value={settingsItems.bankAccount}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Phone */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Phone')}</label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={settingsItems.phone}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Email */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Email')}</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={settingsItems.email}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                    </div>
 
-                    {/* SMTP Data */}
-                    <h2 className="text-2xl font-bold mt-8 mb-4">{t('SMTP Settings')}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                    <FormRow>
+                        <StyledInput
+                            type="text" name="companyName"
+                            value={settingsItems.companyName}
+                            onChange={changeType}
+                            label={t('Company Name')}
+                        />
+                        <StyledInput
+                            type="text" name="address"
+                            value={settingsItems.address}
+                            onChange={changeType}
+                            label={t('Address')}
+                        />
+                    </FormRow>
+                    <FormRow>
+                        <StyledInput
+                            type="text" name="taxId"
+                            value={settingsItems.taxId}
+                            onChange={changeType}
+                            label={t('Tax ID')}
+                        />
+                        <StyledInput
+                            type="text" name="bankAccount"
+                            value={settingsItems.bankAccount}
+                            onChange={changeType}
+                            label={t('Bank Account Number')}
+                        />
+                    </FormRow>
+                    <FormRow>
+                        <StyledInput
+                            type="text" name="phone"
+                            value={settingsItems.phone}
+                            onChange={changeType}
+                            label={t('Phone')}
+                        />
+                        <StyledInput
+                            type="text" name="email"
+                            value={settingsItems.email}
+                            onChange={changeType}
+                            label={t('Email')}
+                        />
+                    </FormRow>
+
+                    <h2 className="text-2xl font-bold mt-8 mb-4 hidden">{t('SMTP Settings')}</h2>
+                    <div className="hidden">
                         {/* SMTP Server */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">{t('SMTP Server')}</label>
@@ -209,7 +174,6 @@ function Service() {
                         />
                     </FormRow>
 
-                    {/* Submit Button */}
                     <div className="mt-8">
                         {shouldSave && <button
                             type="submit"

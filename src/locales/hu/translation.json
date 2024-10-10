@@ -86,5 +86,8 @@
   "401 Unauthorized - Your privileges has been revoked": "401 Hozzáférés megtagadva - A jogosultságaid megvonásra kerültek",
   "Print": "Nyomtatás",
   "Search...": "Keresés...",
-  "Min Storage Limit": "Min. Raktárkészlet"
+  "Min Storage Limit": "Min. Raktárkészlet",
+  "Use SSL": "SSL használata",
+  "Edit Shop": "Bolt szerkesztése",
+  "Add Shop": "Bolt hozzáadása"
 }
