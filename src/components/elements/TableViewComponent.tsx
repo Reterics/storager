@@ -210,7 +210,7 @@ export const TableViewActions = ({
     );
 }
 
-const TableViewComponent = ({header, lines, children, onChange, onClick}: TableViewArguments) => {
+const TableViewComponent = ({header, lines, children, onChange, onClick, selectedIndex}: TableViewArguments) => {
 
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
@@ -238,7 +238,11 @@ const TableViewComponent = ({header, lines, children, onChange, onClick}: TableV
                              orderBy={orderBy} setOrderBy={setOrderBy}/>
             <tbody>
             {orderedLines.map((line, index) =>
-                <tr key={'key' + index} className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+                <tr key={'key' + index} className={
+                    "bg-white border-b dark:bg-gray-900 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800" +
+                    (selectedIndex === index ? " bg-gray-300 dark:bg-gray-700" : "") +
+                    (onClick ? " cursor-pointer" : "")
+                }>
                     <TableViewLine line={line} index={index} header={header} onChange={onChange} onClick={onClick}/>
                 </tr>
             )}

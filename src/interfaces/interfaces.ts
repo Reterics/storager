@@ -85,7 +85,8 @@ export interface TableViewArguments extends TSXComponentArgument {
     lines: TableLineType[]
     header?: TableViewHeader,
     onChange?: TableOnChangeMethod,
-    onClick?: (index: number) => void
+    onClick?: (index: number) => void,
+    selectedIndex?: number
 }
 
 export interface GeneralModalArguments extends TSXComponentArgument {

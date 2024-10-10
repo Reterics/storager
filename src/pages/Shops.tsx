@@ -24,6 +24,13 @@ function Shops() {
         dbContext.data.currentUser.role === 'admin';
     const [shops, setShops] = useState<Shop[]>(dbContext?.data.shops || []);
 
+    let initialSelectedIndex = -1;
+    if (shopContext.shop && shopContext.shop.id) {
+        initialSelectedIndex = shops.findIndex(shop => shop.id === shopContext.shop?.id);
+    }
+
+    const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
+
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
     const center = [46.840399, 16.8279712, 0] as LatLngTuple;
@@ -91,12 +98,15 @@ function Shops() {
                 value: t('Name'),
                 sortable: true
             }, t('Address'), t('Actions')]}
+            selectedIndex={selectedIndex}
             onClick={(index) => {
                 if (shops[index]) {
                     if (shopContext.shop && shops[index].id === shopContext.shop?.id) {
-                        shopContext.setShop(null)
+                        shopContext.setShop(null);
+                        setSelectedIndex(-1);
                     } else {
                         shopContext.setShop(shops[index]);
+                        setSelectedIndex(index);
                     }
                 }
             }}/>
