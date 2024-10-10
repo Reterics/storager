@@ -75,10 +75,6 @@ export const FirebaseProvider = ({children}: {
             }
         }
 
-
-
-
-
         if (user) {
             services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
             completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];

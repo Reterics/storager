@@ -23,3 +23,12 @@ export interface DBContextType {
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
 }
+
+export interface CommonCollectionData {
+    id: string,
+    [key: string]: string | number | undefined
+}
+
+export interface KVCollectionStore {
+    [key: string]: CommonCollectionData[]
+}
