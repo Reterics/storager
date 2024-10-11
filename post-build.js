@@ -1,9 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from 'url';
 
-const distDir = path.resolve(__dirname, './dist');
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
+
 const indexHTML = path.resolve(__dirname, './dist/index.html');
-const indexPHP = path.resolve(__dirname, './dist/index.html');
+const indexPHP = path.resolve(__dirname, './dist/index.php');
 const csrfProtectionFile = path.resolve(__dirname, './php/csrf-protection.php');
 let csrfProtection = '<?php\n' +
     'session_start();\n';
@@ -29,4 +32,8 @@ const indexContent = fs
 fs.writeFileSync(indexPHP, indexContent);
 
 fs.copyFileSync(path.join(__dirname, './php/update.php'), path.join(__dirname, './dist/update.php'));
-fs.mkdir(path.join(__dirname, './dist/uploads'))
+const uploadsFolder = path.join(__dirname, './dist/uploads');
+if (!fs.existsSync(uploadsFolder)) {
+    fs.mkdirSync(path.join(__dirname, './dist/uploads'))
+}
+
