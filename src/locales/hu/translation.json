@@ -89,5 +89,14 @@
   "Min Storage Limit": "Min. Raktárkészlet",
   "Use SSL": "SSL használata",
   "Edit Shop": "Bolt szerkesztése",
-  "Add Shop": "Bolt hozzáadása"
+  "Add Shop": "Bolt hozzáadása",
+  "Manage your store in an easy way": "Kezeld a boltod egyszerűen",
+  "If you have a newer version, you have the chance to update the StorageR Web Application": "Ha van újabb verziód, lehetőséged van frissíteni a StorageR webalkalmazást",
+  "Be Cautious:" : "Légy óvatos:",
+  "Upload content only from secure sources, otherwise you can damage your system/data": "Csak biztonságos forrásból tölts fel tartalmat, különben károsíthatod a rendszert/adatait",
+  "Server Message": "Szerver Üzenet",
+  "Invalid file": "Érvénytelen fájl",
+  "Upload successful. Application will reload in a couple of seconds": "Feltöltés sikeres. Az alkalmazás másodperceken belül újraindul",
+  "Upload": "Feltöltés",
+  "The connection is not protected by the web server, hence you are not able to update the application through this page.": "A kapcsolat nem biztonságos a szerverrel, így nem tudod frissíteni az alkalmazást erről az oldalról."
 }

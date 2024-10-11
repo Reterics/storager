@@ -7,6 +7,7 @@ import Settings from "./pages/Settings.tsx";
 import UsersPage from "./pages/Users.tsx";
 import SignInComponent from "./components/SignIn.tsx";
 import Shops from "./pages/Shops.tsx";
+import About from "./pages/About.tsx";
 
 
 function QueryRouter() {
@@ -26,6 +27,8 @@ function QueryRouter() {
                 return <InAppLayout><Settings /></InAppLayout>;
             case 'users':
                 return <InAppLayout><UsersPage /></InAppLayout>;
+            case 'about':
+                return <InAppLayout><About /></InAppLayout>;
             case 'signin':
                 return <SignInComponent />;
             default:

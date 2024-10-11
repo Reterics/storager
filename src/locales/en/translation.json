@@ -88,5 +88,14 @@
   "Min Storage Limit": "Min Storage Limit",
   "Use SSL": "Use SSL",
   "Edit Shop": "Edit Shop",
-  "Add Shop": "Add Shop"
+  "Add Shop": "Add Shop",
+  "Manage your store in an easy way": "Manage your store in an easy way",
+  "If you have a newer version, you have the chance to update the StorageR Web Application": "If you have a newer version, you have the chance to update the StorageR Web Application",
+  "Be Cautious:" : "Be Cautious:",
+  "Upload content only from secure sources, otherwise you can damage your system/data": "Upload content only from secure sources, otherwise you can damage your system/data",
+  "Server Message": "Server Message",
+  "Invalid file": "Invalid file",
+  "Upload successful. Application will reload in a couple of seconds": "Upload successful. Application will reload in a couple of seconds",
+  "Upload": "Upload",
+  "The connection is not protected by the web server, hence you are not able to update the application through this page.": "The connection is not protected by the web server, hence you are not able to update the application through this page."
 }
