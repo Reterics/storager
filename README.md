@@ -2,7 +2,7 @@
 
 [![build](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml/badge.svg)](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml) ![maintenance-status](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
-
+![Preview](./public/img/screenshot.png)
 
 Lightweight Cloud based storage and service management application based on React, Typescript and Tailwind.
 
