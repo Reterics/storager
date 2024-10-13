@@ -14,7 +14,7 @@ import {
     BsFillPrinterFill,
     BsFillTrashFill, BsFillXCircleFill,
     BsFloppyFill,
-    BsPencilSquare, BsSortDown, BsSortUp
+    BsPencilSquare, BsRecord, BsRecord2, BsSortDown, BsSortUp
 } from "react-icons/bs";
 import StyledInput from "./StyledInput.tsx";
 import StyledSelect from "./StyledSelect.tsx";
@@ -45,9 +45,12 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
                 <th
                     scope="col"
                     key={"table_header_" + index}
-                    className={index === header.length - 1 ? "px-3 py-2 text-right flex justify-end" : "px-3 py-2"}
+                    className={
+                    (index === header.length - 1 ? "px-3 py-2 text-right flex justify-end" : "px-3 py-2") +
+                        (head === '#' && !index ? " w-[1em] text-center" : "" )
+                }
                 >
-                    <div className="flex items-center">
+                    <div className={head === '#' && !index ? "flex justify-center": "flex items-center"}>
                         {typeof head === "string" ? (head) : head.value}
 
                         {typeof head !== "string" && head.sortable && orderType === 'DSC' &&
@@ -148,7 +151,7 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
 }
 
 
-const TableViewLine = ({line, index, header, onChange, onClick}: TableViewLineArguments) => {
+const TableViewLine = ({line, index, header, onChange, onClick, isSelected}: TableViewLineArguments) => {
 
     const onSelect = (e: MouseEvent<HTMLTableHeaderCellElement>) => {
         e.preventDefault();
@@ -157,10 +160,17 @@ const TableViewLine = ({line, index, header, onChange, onClick}: TableViewLineAr
         }
     };
 
-    return (line.map((column, columnIndex) => (
+    const _line = [...line];
+    if (typeof isSelected === 'boolean') {
+        _line.unshift(isSelected ? <BsRecord2 /> : <BsRecord />);
+    }
+
+    return (_line.map((column, columnIndex) => (
         <th scope="row" key={'column_' + columnIndex + '_' + index}
             className={"px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white p-2" +
-                (columnIndex === line.length - 1 ? " text-right" : "")} onClick={(e)=>onSelect(e)}>
+                (columnIndex === _line.length - 1 ? " text-right" : "") +
+                (typeof isSelected === 'boolean' && !columnIndex ? " text-lg" : "")
+        } onClick={(e)=>onSelect(e)}>
             {header && typeof header[columnIndex] !== 'string' && header[columnIndex].editable ?
                 TableViewEditableElement(column, header[columnIndex], onChange || (() => false), index,
                     columnIndex) : column}
@@ -215,6 +225,7 @@ const TableViewComponent = ({header, lines, children, onChange, onClick, selecte
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
 
+    const _header = typeof selectedIndex === 'number' && header ? ["#", ...header] : header;
     const supportedOrderTypes = ['string', 'number'];
     const orderedLines = !orderBy ? lines : lines.sort((a, b) => {
         if (a[orderBy] === undefined || b[orderBy] === undefined) {
@@ -233,17 +244,18 @@ const TableViewComponent = ({header, lines, children, onChange, onClick, selecte
     })
     return (
         <table className="text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
-            <TableViewHeader header={header}
+            <TableViewHeader header={_header}
                              orderType={orderType} setOrderType={setOrderType}
                              orderBy={orderBy} setOrderBy={setOrderBy}/>
             <tbody>
             {orderedLines.map((line, index) =>
                 <tr key={'key' + index} className={
-                    "bg-white border-b dark:bg-gray-900 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800" +
-                    (selectedIndex === index ? " bg-gray-300 dark:bg-gray-700" : "") +
+                    " border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800" +
+                    (selectedIndex === index ? " bg-gray-300 dark:bg-gray-700" : " bg-white dark:bg-gray-900") +
                     (onClick ? " cursor-pointer" : "")
                 }>
-                    <TableViewLine line={line} index={index} header={header} onChange={onChange} onClick={onClick}/>
+                    <TableViewLine line={line} index={index} header={_header} onChange={onChange} onClick={onClick}
+                        isSelected={typeof selectedIndex === 'number' ? selectedIndex === index : undefined}/>
                 </tr>
             )}
             {children}

@@ -63,7 +63,8 @@ export interface TableViewLineArguments {
     index: number,
     header?: TableViewHeader,
     onChange?: TableOnChangeMethod,
-    onClick?: (index: number) => void
+    onClick?: (index: number) => void,
+    isSelected?: boolean
 }
 
 export interface TableViewActionArguments extends TSXComponentArgument {

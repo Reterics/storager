@@ -97,5 +97,6 @@
   "Invalid file": "Érvénytelen fájl",
   "Upload successful. Application will reload in a couple of seconds": "Feltöltés sikeres. Az alkalmazás másodperceken belül újraindul",
   "Upload": "Feltöltés",
-  "The connection is not protected by the web server, hence you are not able to update the application through this page.": "A kapcsolat nem biztonságos a szerverrel, így nem tudod frissíteni az alkalmazást erről az oldalról."
+  "The connection is not protected by the web server, hence you are not able to update the application through this page.": "A kapcsolat nem biztonságos a szerverrel, így nem tudod frissíteni az alkalmazást erről az oldalról.",
+  " selected": " kiválasztva"
 }

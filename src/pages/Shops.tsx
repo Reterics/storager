@@ -29,7 +29,7 @@ function Shops() {
         initialSelectedIndex = shops.findIndex(shop => shop.id === shopContext.shop?.id);
     }
 
-    const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
+    const [selectedIndex, setSelectedIndex] = useState<number>(initialSelectedIndex);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
@@ -85,7 +85,7 @@ function Shops() {
 
     return (
         <>
-            <PageHead title={t('Select a Shop')} buttons={isAdmin ? [
+            <PageHead title={shopContext.shop ? t(shopContext.shop.name + ' selected') : t('Select a Shop')} buttons={isAdmin ? [
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
