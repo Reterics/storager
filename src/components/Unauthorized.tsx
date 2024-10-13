@@ -1,6 +1,6 @@
 import {useTranslation} from "react-i18next";
-import logo from "/brand.svg";
-import {SignOut} from "../firebase/services/AuthService.ts";
+import logo from "../assets/logo.svg";
+import {SignOut} from "../database/firebase/services/AuthService.ts";
 
 
 const UnauthorizedComponent = () => {

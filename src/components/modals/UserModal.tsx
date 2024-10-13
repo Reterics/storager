@@ -13,7 +13,7 @@ import {useTranslation} from "react-i18next";
 import FormRow from "../elements/FormRow.tsx";
 import {userRoleOptions} from "../../interfaces/constants.ts";
 import AlertBox from "../AlertBox.tsx";
-import {SignUp} from "../../firebase/services/AuthService.ts";
+import {SignUp} from "../../database/firebase/services/AuthService.ts";
 
 
 export default function UserModal({ onClose, user, setUser, onSave, inPlace, shops }: UserModalInput) {

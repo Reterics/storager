@@ -5,6 +5,8 @@ import {useTranslation} from "react-i18next";
 import {useTheme} from "../store/ThemeContext.tsx";
 import {ShopContext} from "../store/ShopContext.tsx";
 import {DBContext} from "../database/DBContext.ts";
+import logo from "../assets/logo.svg";
+import logoWhite from "../assets/logo_white.svg";
 
 
 const Header = () => {
@@ -29,7 +31,7 @@ const Header = () => {
             <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <a href="https://reterics.com/" className="flex items-center">
-                        <img src={isDarkTheme ? "./brand_white.svg" : "./brand.svg"} width={30} height={32} className="h-8 mr-3" alt="StorageR Logo"/>
+                        <img src={isDarkTheme ? logoWhite : logo} width={30} height={32} className="h-8 mr-3" alt="StorageR Logo"/>
                         <div
                             className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex">Storage
                             <div className="text-sm pt-1 text">R</div></div>

@@ -1,9 +1,27 @@
 import StyledSelect from "./elements/StyledSelect.tsx";
 import {useTranslation} from "react-i18next";
-import {SyntheticEvent} from "react";
+import {SyntheticEvent, useContext} from "react";
 import {useTheme} from "../store/ThemeContext.tsx";
+import {DBContext} from "../database/DBContext.ts";
 
 export const Footer = () => {
+    const dbContext = useContext(DBContext)
+    const settings = dbContext?.data.settings || {
+        id: '',
+        companyName: '',
+        address: '',
+        taxId: '',
+        bankAccount: '',
+        phone: '',
+        email: '',
+        smtpServer: '',
+        port: '',
+        username: '',
+        password: '',
+        useSSL: false,
+
+        serviceAgreement: ''
+    };
     const theme = useTheme();
     const { t, i18n } = useTranslation();
 
@@ -11,7 +29,7 @@ export const Footer = () => {
         <footer className="bg-white rounded-lg shadow m-4 dark:bg-gray-800 no-print">
             <div className="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
                 <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-          © 2024 <a href="https://reterics.com/" className="hover:underline">Attila Reterics</a>. {t('All Rights Reserved')}.
+          © 2024 <a href={"mailto:" + settings.email} className="hover:underline">{settings.companyName}</a>.
                 </span>
                 <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
                     <li>

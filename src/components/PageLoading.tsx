@@ -1,5 +1,5 @@
 import {useTranslation} from "react-i18next";
-import logo from "/brand.svg";
+import logo from "../assets/logo.svg";
 
 const PageLoading = () => {
     const { t } = useTranslation();

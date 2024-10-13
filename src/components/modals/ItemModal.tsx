@@ -4,7 +4,7 @@ import {ChangeEvent, useState} from "react";
 import StyledFile from "../elements/StyledFile.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import {fileToDataURL} from "../../utils/general.ts";
-import {uploadFileDataURL} from "../../firebase/storage.ts";
+import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
 import FormRow from "../elements/FormRow.tsx";

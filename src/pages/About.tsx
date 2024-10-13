@@ -1,13 +1,16 @@
 import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {PageHead} from "../components/elements/PageHead.tsx";
-import logo from "/brand.svg";
+import logo from "../assets/logo.svg";
+import logoWhite from "../assets/logo_white.svg";
 import FormRow from "../components/elements/FormRow.tsx";
 import StyledFile from "../components/elements/StyledFile.tsx";
 import AlertBox from "../components/AlertBox.tsx";
+import {useTheme} from "../store/ThemeContext.tsx";
 
 
 function About() {
+    const isDarkTheme = useTheme()?.theme === 'dark';
     const { t } = useTranslation();
     const [file, setFile] = useState<File|null>(null)
     const [message, setMessage] = useState('');
@@ -48,7 +51,7 @@ function About() {
         <div className={"bg-white rounded-lg shadow m-4 dark:bg-gray-800 p-4"}>
             <a href="https://reterics.com"
                className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col">
-                <img src={logo} className="h-40 mr-2" alt="Reterics logo"/>
+                <img src={isDarkTheme ? logoWhite : logo} className="h-40 mr-2" alt="Reterics logo"/>
                 StorageR
             </a>
             <div className={"flex flex-row justify-between items-center w-fit m-auto mb-2"}>

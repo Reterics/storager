@@ -4,7 +4,7 @@ import {
     ContextData,
     ContextDataValueType
 } from "../../interfaces/firebase.ts";
-import {db, firebaseCollections, getCollection} from "../../firebase/BaseConfig.ts";
+import {db, firebaseCollections, getCollection} from "./config.ts";
 import {
     ServiceCompleteData,
     ServiceData,
@@ -14,7 +14,7 @@ import {
     StorePart, UserData
 } from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
-import {getFileURL} from "../../firebase/storage.ts";
+import {getFileURL} from "./storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
 import {collection, deleteDoc, doc, setDoc} from "firebase/firestore";

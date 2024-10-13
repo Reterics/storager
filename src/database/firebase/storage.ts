@@ -1,6 +1,6 @@
 import { getDownloadURL, getStorage, ref, uploadBytes, UploadResult, uploadString, deleteObject } from "firebase/storage";
-import app, {firebaseCollections, getById} from "./BaseConfig.ts";
-import {Template} from "../interfaces/interfaces.ts";
+import app, {firebaseCollections, getById} from "./config.ts";
+import {Template} from "../../interfaces/interfaces.ts";
 
 export const storage = getStorage(app);
 

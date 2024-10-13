@@ -6,7 +6,7 @@ import {
 import {useTranslation} from "react-i18next";
 import {ChangeEvent, useState} from "react";
 import {fileToDataURL} from "../../utils/general.ts";
-import {uploadFileDataURL} from "../../firebase/storage.ts";
+import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledInput from "../elements/StyledInput.tsx";

@@ -1,8 +1,8 @@
-import {firebaseAuth} from '../firebase/BaseConfig';
+import {firebaseAuth} from '../database/firebase/config.ts';
 import React, {createContext, useEffect, useState} from 'react';
 import {IAuth, LoginFormValues, UserFormValues} from "../interfaces/interfaces.ts";
 import {useNavigate} from 'react-router-dom';
-import {SignIn, SignOut, SignUp} from "../firebase/services/AuthService.ts";
+import {SignIn, SignOut, SignUp} from "../database/firebase/services/AuthService.ts";
 import {onAuthStateChanged, User} from 'firebase/auth';
 import PageLoading from "../components/PageLoading.tsx";
 import {FIREBASE_ERRORS} from "./FirebaseErrors.ts";

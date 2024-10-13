@@ -5,8 +5,8 @@ import {
     signInWithEmailAndPassword,
     signOut
 } from 'firebase/auth';
-import {firebaseAuth} from '../BaseConfig.ts';
-import {LoginFormValues, UserFormValues} from "../../interfaces/interfaces.ts";
+import {firebaseAuth} from '../config.ts';
+import {LoginFormValues, UserFormValues} from "../../../interfaces/interfaces.ts";
 
 
 //required if you want to keep logged in after user exits the browser or closes tab

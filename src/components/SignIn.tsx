@@ -1,4 +1,4 @@
-import logo from "/brand.svg";
+import logo from "../assets/logo.svg";
 import {useContext, useState} from "react";
 import {AuthContext} from "../store/AuthContext.tsx";
 import '../pages/Shops.css';
