@@ -41,10 +41,11 @@ function Shops() {
             container.onclick = (ev: MouseEvent) => {
                 if (modalTemplate) {
                     const coordinate = map.mouseEventToLatLng(ev);
-                    console.error(coordinate);
                     if (coordinate) {
                         setModalTemplate({...modalTemplate,
-                            coordinates: new GeoPoint(coordinate.lat, coordinate.lng),});
+                            coordinates: new GeoPoint(
+                                parseFloat(coordinate.lat.toFixed(5)),
+                                parseFloat(coordinate.lng.toFixed(5)))});
                     }
                 }
 
@@ -85,7 +86,7 @@ function Shops() {
 
     return (
         <>
-            <PageHead title={shopContext.shop ? t(shopContext.shop.name + ' selected') : t('Select a Shop')} buttons={isAdmin ? [
+            <PageHead title={shopContext.shop ? shopContext.shop.name + t(' selected') : t('Select a Shop')} buttons={isAdmin ? [
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
@@ -111,13 +112,13 @@ function Shops() {
                 }
             }}/>
             <div className="mt-4 h-80 flex flex-row text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
-                <ShopModal
+                { modalTemplate && <ShopModal
                     onClose={()=>setModalTemplate(null)}
                     onSave={(shop: Shop) => closeShop(shop)}
                     setShop={(shop: Shop) => setModalTemplate(shop)}
                     shop={modalTemplate}
                     inPlace={true}
-                />
+                /> }
                 <MapContainer ref={ref}
                     center={center}
                     zoom={13}

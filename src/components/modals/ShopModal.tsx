@@ -8,6 +8,7 @@ import FormRow from "../elements/FormRow.tsx";
 
 export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: ShopModalInput) {
     const { t } = useTranslation();
+    const coordinateRegexp = /[0-9\.]{3,12} [0-9\.]{3,12}/g;
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
@@ -26,6 +27,8 @@ export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: S
 
         if (lat && lon && !Number.isNaN(lat) && !Number.isNaN(lon)) {
             setShop({...shop, coordinates: new GeoPoint(Number(lat), Number(lon))} as Shop);
+        } else if (!value) {
+            setShop({...shop, coordinates: undefined} as Shop);
         }
     }
 
@@ -60,12 +63,17 @@ export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: S
         <FormRow>
             <StyledInput
                 type="text" name="coordinates"
-                value={shop.coordinates instanceof GeoPoint ?
+                value={shop && shop.coordinates instanceof GeoPoint ?
                     shop.coordinates?.latitude + ' ' + shop.coordinates?.longitude : ''}
-                onChange={(e) => changeCoordinates(e)}
+                onChange={(e) => {
+                    const match = coordinateRegexp.test(e.target.value)
+                    if (!e.target.value.trim() || match) {
+                        changeCoordinates(e);
+                    }
+                }}
                 label="Coordinates"
-                pattern="[0-9\.]{5}[-]{1}[0-9\.]{5}"
-                maxLength={11}
+                pattern="[0-9\.]{3,12}[ ]{1}[0-9\.]{3,12}"
+                maxLength={25}
             />
             <StyledInput
                 type="text" name="phone"
