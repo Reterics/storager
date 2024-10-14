@@ -20,6 +20,7 @@ export const firebaseCollections = {
     completions: import.meta.env.VITE_FIREBASE_DB_COMPLETIONS || 'completions',
     settings: import.meta.env.VITE_FIREBASE_DB_SETTINGS || 'settings',
     users: import.meta.env.VITE_FIREBASE_DB_USERS || 'users',
+    archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
 };
 
 export const firebaseAuth = getAuth(app);

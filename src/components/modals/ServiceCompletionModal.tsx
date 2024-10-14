@@ -171,7 +171,7 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
                 <StyledInput
                     type="text" name="date"
                     value={formData.date}
-                    onChange={() => false}
+                    onChange={(e) => changeType(e, 'date')}
                     label={t("Date")}
                 />
                 <div></div>

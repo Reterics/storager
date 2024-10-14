@@ -3,7 +3,11 @@ import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from "react";
 import {GeoPoint} from "firebase/firestore";
 import {PDFData} from "./pdf.ts";
 
-
+export interface GeneralCollectionEntry {
+    docType?: string,
+    docParent?: string,
+    docUpdated?: number
+}
 export interface LoginFormValues {
     email: string;
     password: string;
@@ -144,14 +148,14 @@ export interface StyledSelectArgs {
     options: StyledSelectOption[],
 }
 
-export interface Shop {
+export interface Shop extends GeneralCollectionEntry{
     id: string,
     name?: string,
     address?: string,
     phone?: string,
     email?: string,
     description?: string,
-    coordinates?: GeoPoint
+    coordinates?: GeoPoint,
 }
 
 export interface ShopModalInput {
@@ -162,7 +166,7 @@ export interface ShopModalInput {
     inPlace?: boolean
 }
 
-export interface StoreItem {
+export interface StoreItem extends GeneralCollectionEntry{
     id: string,
     name?: string,
     sku?: string,
@@ -172,7 +176,7 @@ export interface StoreItem {
     price?: number,
     type?: string,
     shop_id?: string,
-    storage_limit?: number
+    storage_limit?: number,
 }
 
 export interface ItemModalInput {
@@ -183,7 +187,7 @@ export interface ItemModalInput {
     inPlace?: boolean
 }
 
-export interface StorePart {
+export interface StorePart extends GeneralCollectionEntry{
     id: string,
     name?: string,
     sku?: string,
@@ -193,7 +197,7 @@ export interface StorePart {
     price?: number,
     category?: string,
     shop_id?: string,
-    storage_limit?: number
+    storage_limit?: number,
 }
 
 export interface PartModalInput {
@@ -206,7 +210,7 @@ export interface PartModalInput {
 
 export type ServiceStatus = 'status_accepted'|'status_in_progress'|'status_waiting_parts'|'status_waiting_feedback'|'status_ready'|'status_delivered';
 
-export interface ServiceData {
+export interface ServiceData extends GeneralCollectionEntry{
     id: string,
     client_name?: string,
     client_email?: string,
@@ -228,7 +232,7 @@ export interface ServiceData {
     signature?: string,
     date?: string,
 
-    onUpdate?: boolean
+    onUpdate?: boolean,
 }
 
 export interface ServiceModalInput {
@@ -241,7 +245,7 @@ export interface ServiceModalInput {
     settings?: SettingsItems
 }
 
-export interface ServiceCompleteData {
+export interface ServiceCompleteData extends GeneralCollectionEntry{
     service_id?: string,
     id: string,
     client_name?: string,
@@ -259,7 +263,7 @@ export interface ServiceCompleteData {
     repair_cost?: string,
     repair_description?: string,
 
-    date?: string
+    date?: string,
 }
 
 export interface ServiceCompletionModalInput {
@@ -291,7 +295,7 @@ export interface TableHead {
 export type OrderType = 'ASC' | 'DSC';
 
 
-export interface SettingsItems {
+export interface SettingsItems extends GeneralCollectionEntry{
     id: string,
     companyName?: string,
     address?: string,
@@ -305,18 +309,18 @@ export interface SettingsItems {
     password?: string,
     useSSL?: boolean,
 
-    serviceAgreement?: string
+    serviceAgreement?: string,
 }
 
 
-export interface UserData {
+export interface UserData extends GeneralCollectionEntry{
     username?: string,
     email?: string,
     shop_id?: string,
     role?: string,
     id: string
     password?: string
-    password_confirmation?: string
+    password_confirmation?: string,
 }
 
 export interface UserModalInput {
@@ -330,5 +334,14 @@ export interface UserModalInput {
 
 export interface PrintableModalInput {
     onClose: () => void,
-    formData: { data: PDFData, signature?: string } | null,
+    formData: { data: PDFData, signature?: string, printNow?: boolean } | null,
+}
+
+
+export interface ListModalArguments {
+    buttons?: GeneralModalButtons[]
+    lines: TableLineType[]
+    header?: TableViewHeader,
+    inPlace?: boolean,
+    title?: string
 }

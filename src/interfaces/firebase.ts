@@ -9,7 +9,8 @@ export interface ContextData {
     completions: ServiceCompleteData[],
     settings: SettingsItems,
     users: UserData[],
-    currentUser?: UserData
+    currentUser?: UserData,
+    archive: ContextDataValueType[]
 }
 
 
@@ -19,7 +20,7 @@ export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceC
 
 export interface DBContextType {
     data: ContextData,
-    setData: (key: ContextDataType, value: ContextDataValueType) =>  Promise<ContextDataCollectionType | null>,
+    setData: (key: ContextDataType, value: ContextDataValueType, archive?: boolean) =>  Promise<ContextDataCollectionType | null>,
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
 }

@@ -17,7 +17,7 @@ import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "./storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
-import {collection, deleteDoc, doc, setDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, setDoc} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 
 
@@ -50,6 +50,7 @@ export const FirebaseProvider = ({children}: {
         let shops: Shop[] = [];
         let items: StoreItem[] = [];
         let parts: StorePart[] = [];
+        let archive: ContextDataValueType[] = [];
 
         if (authContext.user && authContext.user.email) {
             user = users.find(user => user.email === authContext.user?.email);
@@ -81,6 +82,7 @@ export const FirebaseProvider = ({children}: {
             shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
             items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
             parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
+            archive = await getCollection(firebaseCollections.archive).catch(setError) as ContextDataValueType[];
         }
 
         // TODO: move the filter server side
@@ -104,7 +106,8 @@ export const FirebaseProvider = ({children}: {
             completions,
             settings: settings[0],
             users: users,
-            currentUser: user
+            currentUser: user,
+            archive: archive
         })
     }
 
@@ -125,7 +128,7 @@ export const FirebaseProvider = ({children}: {
         return ctxData ? ctxData[key] : null;
     }
 
-    const updateContextData = async (key: ContextDataType, item: ContextDataValueType)=> {
+    const updateContextData = async (key: ContextDataType, item: ContextDataValueType, archive?: boolean)=> {
         if (!item) {
             console.error('There is no data provided for saving');
             return ctxData ? ctxData[key] : null;
@@ -150,13 +153,30 @@ export const FirebaseProvider = ({children}: {
             isNew = true;
         }
 
+        if (item) {
+            item.docUpdated = new Date().getTime();
+        }
+
         // Use setDoc with { merge: true } to update or create the document
         await setDoc(modelRef, item, { merge: true }).catch(e => {
             console.error(e);
         });
+        if (archive) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            delete item.id;
+            item.docType = key;
+            item.docParent = modelRef.id;
+            const document = await addDoc(collection(db, firebaseCollections.archive), item).catch(e => {
+                console.error(e);
+            });
+            if (document && ctxData && ctxData.archive) {
+                ctxData.archive.unshift({...item, id: document.id});
+            }
+            item.id = modelRef.id;
+        }
 
         console.log('Created document with ID:', modelRef.id, ' in ', key);
-
 
         if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
             if (imageCache) {

@@ -3,7 +3,7 @@ import {
 } from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
 import PrintablePaper from "../elements/PrintablePaper.tsx";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -66,7 +66,8 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
 
         // Capture the element as a canvas
         const canvas = await html2canvas(element, {
-            scale: 2, // Increase scale for better quality
+            // scale: 2, // Increase scale for better quality
+            scale: 1,
             useCORS: true, // Enable cross-origin images
         });
 
@@ -163,6 +164,14 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
             value: t('Cancel')
         }
     ];
+
+    useEffect(() => {
+        if (formData && formData?.printNow) {
+            handleDownloadPdf().then(() => {
+                onClose();
+            })
+        }
+    }, []);
 
     if (!formData) return null;
 

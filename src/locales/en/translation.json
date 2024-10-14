@@ -97,5 +97,8 @@
   "Upload successful. Application will reload in a couple of seconds": "Upload successful. Application will reload in a couple of seconds",
   "Upload": "Upload",
   "The connection is not protected by the web server, hence you are not able to update the application through this page.": "The connection is not protected by the web server, hence you are not able to update the application through this page.",
-  " selected": " selected"
+  " selected": " selected",
+  "Version": "Version",
+  "List Documents: ": "List Documents: ",
+  "Fill Completion Form": "Fill Completion Form"
 }

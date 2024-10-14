@@ -3,7 +3,7 @@ import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {PageHead} from "../components/elements/PageHead.tsx";
-import {ServiceCompleteData, ServiceData} from "../interfaces/interfaces.ts";
+import {ServiceCompleteData, ServiceData, SettingsItems, TableLineType} from "../interfaces/interfaces.ts";
 import ServiceModal from "../components/modals/ServiceModal.tsx";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import ServiceCompletionModal from "../components/modals/ServiceCompletionModal.tsx";
@@ -11,6 +11,8 @@ import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import PrintableVersionModal from "../components/modals/PrintableVersionModal.tsx";
 import {PDFData} from "../interfaces/pdf.ts";
+import ListModal from "../components/modals/ListModal.tsx";
+import {serviceDataToPrintable} from "../utils/print.tsx";
 
 
 function Service() {
@@ -25,12 +27,15 @@ function Service() {
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
     const [printViewData, setPrintViewData] = useState<{
         data: PDFData,
-        signature?: string
+        signature?: string,
+        printNow?: boolean
     }|null>(null);
+
+    const [selectedServiceLines, setSelectedServiceLines] = useState<{id: string, name: string, table: TableLineType[]}|null>(null);
 
 
     const addServiceItem = async (serviceData?: ServiceData) => {
-        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData) as ServiceData[];
+        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, true) as ServiceData[];
         if (serviceData) {
             updatedItems.push(serviceData);
         }
@@ -67,68 +72,70 @@ function Service() {
             item.expected_cost || 0,
             item.date || '',
             TableViewActions({
-                onEdit: () => {
-                    setModalTemplate({...item, onUpdate: true})
-                },
-                onPrint: () => {
-                    setPrintViewData({data:[
-                        {'': t('Client')},
-                        [{ [t('Name')]: item.client_name || '' }],
-                        [{ [t('Phone')]: item.client_phone || '' }],
-                        [{ [t('Email')]: item.client_email || '' }],
-
-                        {'': t('Recipient')},
-                        [{ [t('Name')]: item.service_name || '' }],
-                        [{ [t('Phone')]: item.service_address || '' }],
-                        [{ [t('Email')]: item.service_email || '' }],
-
-                        {'': t('Item and service details')},
-                        [{ [t('Type')]: ((item.type || '')?.split(',').join(', ')) }],
-                        [{ [t('Description')]: item.description || '' }],
-                        [{ [t('status')]: t(item.serviceStatus || 'status_accepted') }],
-                        [{ [t('Guaranteed')]: item.guaranteed || '' }],
-                        [{ [t('Accessories')]: item.accessories || '' }],
-                        [{ [t('Repair Description')]: item.repair_description || '' }],
-                        [{ [t('Expected cost')]: item.expected_cost + ' HUF'}],
-                        [{ [t('Note')]: item.note || ''}],
-                        [],
-                        dbContext?.data.settings?.serviceAgreement || '',
-                        [],
-                        [{ [t('Date')]: item.date || ''}],
-
-                        /*[{ Name: item.client_name }, { Phone: '0630555555' }],
-                        [{ Address: '7474 New York' }],
-                        {'': 'Recipient'},
-                        ['Content'],*/
-                    ], signature: item.signature})
-                },
-                onCode: () => {
-                    const completionFormId = item.id + '_cd';
-                    const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
-                    const sourceItem = completionForm || item;
-
-                    if (!completionForm) {
-                        setCompletedModalTemplate({
-                            id: item.id + '_cd',
-                            service_id: item.id,
-                            service_date: item.date,
-                            date: new Date().toISOString().split('T')[0],
-                            service_address: sourceItem.service_address || shop?.address || '',
-                            service_name: sourceItem.service_name || shop?.name || '',
-                            service_email: sourceItem.service_email || shop?.email || '',
-                            client_name: sourceItem.client_name || '',
-                            client_email: sourceItem.client_email || '',
-                            client_phone: sourceItem.client_phone || '',
-                            type: sourceItem.type,
-                            accessories: sourceItem.accessories || '',
-                            repair_cost: item.expected_cost,
-                            guaranteed: sourceItem.guaranteed || 'no',
-                            repair_description: sourceItem.repair_description || ''
-                        });
-                    } else {
-                        alert(t('You already completed the form'))
+                onOpen: () => {
+                    if (selectedServiceLines && selectedServiceLines.id === item.id) {
+                        setSelectedServiceLines(null);
+                        return;
                     }
-                }
+                    const completionFormId = item.id + '_cd';
+                    const serviceForm = item;
+                    const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
+
+                    const list = (dbContext?.data.archive || [])
+                        .filter(data => data.docParent === serviceForm.id);
+
+                    list.sort((b, a) => {
+                        if (!b.docUpdated || !a.docUpdated) {
+                            return 0;
+                        }
+                        return b.docUpdated - a.docUpdated;
+                    });
+
+
+                    if (!list.find(d => d.docUpdated === serviceForm.docUpdated)) {
+                        list.push(serviceForm);
+                    }
+                    if (completionForm) {
+                        list.push(completionForm);
+                    }
+
+                    setSelectedServiceLines({
+                        id: item.id,
+                        name: item.client_name || item.id,
+                        table: list.map((data, index) => {
+                            const serviceData = data as ServiceData;
+
+                            let version = index+1;
+                            let name = t('Service Form');
+                            if (completionForm && index === list.length - 1) {
+                                version = 1;
+                                name = t('Service Completion Form');
+                            }
+
+
+                            return [index+1, name, version, serviceData.docUpdated ?
+                                new Date(serviceData.docUpdated).toISOString().split('.')[0].replace('T', ' ') :
+                                serviceData.date,
+                                TableViewActions({
+                                    onPrint: () => {
+                                        if (completionForm && index === list.length - 1) {
+                                            alert('Not implemented');
+                                        } else {
+                                            setPrintViewData(serviceDataToPrintable(item, dbContext?.data.settings || {} as SettingsItems, t));
+                                            // setSelectedServiceLines(null);
+                                        }
+                                    }
+                                })];
+                        })
+                    });
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    },
+                onEdit: () => {
+                    setModalTemplate({...item, onUpdate: true});
+                    if (selectedServiceLines) {
+                        setSelectedServiceLines(null);
+                    }
+                },
             })
         ];
     });
@@ -170,10 +177,63 @@ function Service() {
                         formData={completedModalTemplate}
                         inPlace={true}
                     />
+
                     <PrintableVersionModal
                         formData={printViewData}
                         onClose={() => setPrintViewData(null)}
                     />
+
+                    {selectedServiceLines && printViewData && <div className={"mb-8"}></div>}
+                    {selectedServiceLines && <ListModal
+                        title={t('List Documents: ') + (selectedServiceLines.name || selectedServiceLines.id)}
+                        inPlace={true}
+                        lines={selectedServiceLines.table}
+                        buttons={
+                        [
+                            {
+                                onClick: () => {
+                                    const item = servicedItems.find((item) => item.id === selectedServiceLines.id)
+                                    if (!item) {
+                                        return;
+                                    }
+                                    const completionFormId = item.id + '_cd';
+                                    const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
+                                    const sourceItem = completionForm || item;
+
+                                    if (!completionForm) {
+                                        setCompletedModalTemplate({
+                                            id: item.id + '_cd',
+                                            service_id: item.id,
+                                            service_date: item.date,
+                                            date: new Date().toISOString().split('T')[0],
+                                            service_address: sourceItem.service_address || shop?.address || '',
+                                            service_name: sourceItem.service_name || shop?.name || '',
+                                            service_email: sourceItem.service_email || shop?.email || '',
+                                            client_name: sourceItem.client_name || '',
+                                            client_email: sourceItem.client_email || '',
+                                            client_phone: sourceItem.client_phone || '',
+                                            type: sourceItem.type,
+                                            accessories: sourceItem.accessories || '',
+                                            repair_cost: item.expected_cost,
+                                            guaranteed: sourceItem.guaranteed || 'no',
+                                            repair_description: sourceItem.repair_description || ''
+                                        });
+                                        setSelectedServiceLines(null);
+                                    } else {
+                                        alert(t('You already completed the form'))
+                                    }
+                                },
+                                value: t('Fill Completion Form')
+                            },
+                            {
+                                onClick: () => setSelectedServiceLines(null),
+                                value: t('Cancel')
+                            }
+                        ]
+                        }
+                        header={['#', t('Name'), t('Version'), t('Date'), t('Actions')]}></ListModal>}
+
+
                 </div>
             </div>
 
