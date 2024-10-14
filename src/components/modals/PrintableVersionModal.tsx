@@ -171,7 +171,7 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
                 onClose();
             })
         }
-    }, []);
+    }, [formData]);
 
     if (!formData) return null;
 

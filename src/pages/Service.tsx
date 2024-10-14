@@ -141,7 +141,15 @@ function Service() {
                                         if (completionForm && index === list.length - 1) {
                                             alert('Not implemented');
                                         } else {
-                                            setPrintViewData(serviceDataToPrintable(item, dbContext?.data.settings || {} as SettingsItems, t));
+                                            setPrintViewData(serviceDataToPrintable(item, dbContext?.data.settings || {} as SettingsItems, t, true));
+                                            // setSelectedServiceLines(null);
+                                        }
+                                    },
+                                    onOpen: () => {
+                                        if (completionForm && index === list.length - 1) {
+                                            alert('Not implemented');
+                                        } else {
+                                            setPrintViewData(serviceDataToPrintable(item, dbContext?.data.settings || {} as SettingsItems, t, false));
                                             // setSelectedServiceLines(null);
                                         }
                                     }
@@ -193,10 +201,10 @@ function Service() {
                         inPlace={true}
                     />
 
-                    <PrintableVersionModal
+                    {printViewData && <PrintableVersionModal
                         formData={printViewData}
                         onClose={() => setPrintViewData(null)}
-                    />
+                    />}
 
                     {selectedServiceLines && printViewData && <div className={"mb-8"}></div>}
                     {selectedServiceLines && <ListModal

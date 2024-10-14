@@ -2,12 +2,13 @@ import {ServiceData, SettingsItems} from "../interfaces/interfaces.ts";
 import {PDFData} from "../interfaces/pdf.ts";
 
 
-export const serviceDataToPrintable = (item: ServiceData, settings: SettingsItems, t: (n: string)=>string): {
+export const serviceDataToPrintable = (item: ServiceData, settings: SettingsItems, t: (n: string)=>string, printNow = true): {
         data: PDFData,
         signature?: string,
         printNow?: boolean
 } | null => {
     return {
+            printNow: printNow,
             data: [
                     {'': t('Client')},
                     [{[t('Name')]: item.client_name || ''}],
