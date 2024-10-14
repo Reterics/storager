@@ -115,6 +115,7 @@ export interface GeneralModalButtons {
     value: string
     onClick: (e?: React.MouseEvent) => void
     primary?: boolean
+    id?: string
 }
 
 

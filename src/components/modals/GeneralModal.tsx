@@ -42,6 +42,7 @@ export default function GeneralModal({
                     {
                         (buttons||[]).map((button, index)=> (
                             <button type="button"
+                                    id={button.id}
                                     key={modalId + "_button_" + index}
                                     className={
                                         button.primary ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +

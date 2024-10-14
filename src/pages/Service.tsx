@@ -31,11 +31,15 @@ function Service() {
         printNow?: boolean
     }|null>(null);
 
-    const [selectedServiceLines, setSelectedServiceLines] = useState<{id: string, name: string, table: TableLineType[]}|null>(null);
+    const [selectedServiceLines, setSelectedServiceLines] = useState<{
+        id: string,
+        name: string,
+        completed?: boolean,
+        table: TableLineType[]}|null>(null);
 
 
-    const addServiceItem = async (serviceData?: ServiceData) => {
-        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, true) as ServiceData[];
+    const addServiceItem = async (serviceData?: ServiceData, archive = true) => {
+        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, archive) as ServiceData[];
         if (serviceData) {
             updatedItems.push(serviceData);
         }
@@ -57,12 +61,27 @@ function Service() {
             const serviceData = servicedItems.find(existingItem => existingItem.id === serviceCompleteData.service_id);
             if (serviceData) {
                 serviceData.serviceStatus = "status_delivered";
-                await addServiceItem(serviceData);
+                await addServiceItem(serviceData, false);
             }
         }
     };
 
     const tableLines = servicedItems.map(item => {
+
+        let onEdit = undefined;
+
+        const completionFormId = item.id + '_cd';
+        const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
+
+        if (!completionForm) {
+            onEdit = () => {
+                setModalTemplate({...item, onUpdate: true});
+                if (selectedServiceLines) {
+                    setSelectedServiceLines(null);
+                }
+            }
+        }
+
         return [
             item.id,
             item.client_name,
@@ -102,6 +121,7 @@ function Service() {
                     setSelectedServiceLines({
                         id: item.id,
                         name: item.client_name || item.id,
+                        completed: !! completionForm,
                         table: list.map((data, index) => {
                             const serviceData = data as ServiceData;
 
@@ -130,12 +150,7 @@ function Service() {
                     });
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                     },
-                onEdit: () => {
-                    setModalTemplate({...item, onUpdate: true});
-                    if (selectedServiceLines) {
-                        setSelectedServiceLines(null);
-                    }
-                },
+                onEdit: onEdit
             })
         ];
     });
@@ -191,6 +206,7 @@ function Service() {
                         buttons={
                         [
                             {
+                                id: selectedServiceLines.completed ? 'completedListButton' : '',
                                 onClick: () => {
                                     const item = servicedItems.find((item) => item.id === selectedServiceLines.id)
                                     if (!item) {
