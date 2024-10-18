@@ -100,5 +100,10 @@
   " selected": " selected",
   "Version": "Version",
   "List Documents: ": "List Documents: ",
-  "Fill Completion Form": "Fill Completion Form"
+  "Fill Completion Form": "Fill Completion Form",
+  "(Comma separated)": "(Comma separated)",
+  "Storage Settings": "Storage Settings",
+  "Item Types": "Item Types",
+  "Part Types": "Part Types",
+  "Service Types": "Service Types"
 }

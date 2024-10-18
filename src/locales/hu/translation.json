@@ -101,5 +101,10 @@
   " selected": " kiválasztva",
   "Version": "Verzió",
   "List Documents: ": "Dokumentumok: ",
-  "Fill Completion Form": "Javított készülék visszaadása"
+  "Fill Completion Form": "Javított készülék visszaadása",
+  "(Comma separated)": "(Vesszővel elválasztva)",
+  "Storage Settings": "Raktár beállítások",
+  "Item Types": "Termék típusok",
+  "Part Types": "Alkatrész típusok",
+  "Service Types": "Szervíz kategóriák (pl defekt, fék)"
 }

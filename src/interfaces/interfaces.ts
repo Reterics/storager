@@ -311,6 +311,9 @@ export interface SettingsItems extends GeneralCollectionEntry{
     useSSL?: boolean,
 
     serviceAgreement?: string,
+    itemTypes?: string,
+    partTypes?: string,
+    serviceTypes?: string,
 }
 
 

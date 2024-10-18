@@ -105,6 +105,31 @@ function Service() {
                         />
                     </FormRow>
 
+                    <h2 className="text-2xl font-bold mb-4 mt-4">{t('Storage Settings')}</h2>
+
+                    <FormRow>
+                        <StyledInput
+                            type="text" name="itemTypes"
+                            value={settingsItems.itemTypes}
+                            onChange={changeType}
+                            label={t('Item Types') + ' ' + t('(Comma separated)')}
+                        />
+                        <StyledInput
+                            type="text" name="partTypes"
+                            value={settingsItems.partTypes}
+                            onChange={changeType}
+                            label={t('Part Types') +  ' ' + t('(Comma separated)')}
+                        />
+                    </FormRow>
+                    <FormRow>
+                        <StyledInput
+                            type="text" name="serviceTypes"
+                            value={settingsItems.serviceTypes}
+                            onChange={changeType}
+                            label={t('Service Types') +  ' ' + t('(Comma separated)')}
+                        />
+                    </FormRow>
+
                     <h2 className="text-2xl font-bold mt-8 mb-4 hidden">{t('SMTP Settings')}</h2>
                     <div className="hidden">
                         {/* SMTP Server */}
@@ -166,7 +191,7 @@ function Service() {
 
 
                     <FormRow>
-                          <StyledInput
+                        <StyledInput
                             type="textarea" name="serviceAgreement"
                             value={settingsItems.serviceAgreement}
                             onChange={(e) => changeType(e)}
@@ -180,7 +205,7 @@ function Service() {
                             className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                         >
                             {t('Save Settings')}
-                        </button> }
+                        </button>}
                     </div>
                 </form>
             </div>
