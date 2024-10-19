@@ -5,6 +5,7 @@ import StyledInput from "../components/elements/StyledInput.tsx";
 import FormRow from "../components/elements/FormRow.tsx";
 import {SettingsItems} from "../interfaces/interfaces.ts";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
+import {applyDefaults} from "../utils/general.ts";
 
 
 function Service() {
@@ -27,6 +28,12 @@ function Service() {
 
         serviceAgreement: ''
     };
+
+    applyDefaults({
+        itemTypes: import.meta.env.VITE_ITEM_TYPES,
+        partTypes: import.meta.env.VITE_PART_TYPES,
+        serviceTypes: import.meta.env.VITE_SERVICE_TYPES,
+    }, initialSettings);
 
     const [shouldSave, setShouldSave] = useState(false);
     const [settingsItems, setSettingsItems] = useState<SettingsItems>(initialSettings);

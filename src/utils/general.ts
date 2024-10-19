@@ -1,3 +1,22 @@
+import {ContextDataCollectionType, ContextDataValueType} from "../interfaces/firebase.ts";
+
+export const applyDefaults = (defaults: object, array: ContextDataCollectionType) => {
+
+    const keys = Object.keys(defaults);
+    const updater = (entry: ContextDataValueType) => {
+        keys.forEach((key) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            if (entry && entry[key] === undefined) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                entry[key] = defaults[key];
+            }
+        })
+        return entry;
+    };
+    return (Array.isArray(array) ? array.map(updater) : updater(array));
+};
 
 export const downloadAsFile = (name: string, body: string, fileType = 'text/plain') => {
     if (!name) {
