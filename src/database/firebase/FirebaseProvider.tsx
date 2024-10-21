@@ -9,7 +9,7 @@ import {
     ServiceCompleteData,
     ServiceData,
     SettingsItems,
-    Shop,
+    Shop, ShopType,
     StoreItem,
     StorePart, UserData
 } from "../../interfaces/interfaces.ts";
@@ -50,6 +50,7 @@ export const FirebaseProvider = ({children}: {
         let shops: Shop[] = [];
         let items: StoreItem[] = [];
         let parts: StorePart[] = [];
+        let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
 
         if (authContext.user && authContext.user.email) {
@@ -83,6 +84,7 @@ export const FirebaseProvider = ({children}: {
             items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
             parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
             archive = await getCollection(firebaseCollections.archive).catch(setError) as ContextDataValueType[];
+            types = await getCollection(firebaseCollections.types).catch(setError) as ContextDataValueType[];
         }
 
         // TODO: move the filter server side
@@ -107,7 +109,8 @@ export const FirebaseProvider = ({children}: {
             settings: settings[0],
             users: users,
             currentUser: user,
-            archive: archive
+            archive: archive,
+            types: types
         })
     }
 

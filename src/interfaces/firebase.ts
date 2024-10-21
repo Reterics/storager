@@ -1,4 +1,12 @@
-import {ServiceCompleteData, ServiceData, SettingsItems, Shop, StoreItem, StorePart, UserData} from "./interfaces.ts";
+import {
+    ServiceCompleteData,
+    ServiceData,
+    SettingsItems,
+    Shop, ShopType,
+    StoreItem,
+    StorePart,
+    UserData
+} from "./interfaces.ts";
 
 
 export interface ContextData {
@@ -10,13 +18,14 @@ export interface ContextData {
     settings: SettingsItems,
     users: UserData[],
     currentUser?: UserData,
-    archive: ContextDataValueType[]
+    archive: ContextDataValueType[],
+    types: ShopType[]
 }
 
 
-export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData
-export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users';
-export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData;
+export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData
+export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types';
+export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType;
 
 export interface DBContextType {
     data: ContextData,

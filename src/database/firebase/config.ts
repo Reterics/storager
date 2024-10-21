@@ -21,6 +21,7 @@ export const firebaseCollections = {
     settings: import.meta.env.VITE_FIREBASE_DB_SETTINGS || 'settings',
     users: import.meta.env.VITE_FIREBASE_DB_USERS || 'users',
     archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
+    types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
 };
 
 export const firebaseAuth = getAuth(app);

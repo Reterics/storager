@@ -201,6 +201,13 @@ export interface StorePart extends GeneralCollectionEntry{
     storage_limit?: number,
 }
 
+export interface ShopType extends GeneralCollectionEntry {
+    id: string,
+    name?: string,
+    translations?: GeneralStringObject
+    category?: string
+}
+
 export interface PartModalInput {
     onClose: () => void,
     part: StorePart | null,
