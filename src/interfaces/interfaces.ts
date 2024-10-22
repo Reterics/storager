@@ -208,6 +208,14 @@ export interface ShopType extends GeneralCollectionEntry {
     category?: string
 }
 
+export interface TypeModalInput {
+    onClose: () => void,
+    type: ShopType | null,
+    onSave: (currentType: ShopType) => unknown
+    setType: (type: ShopType) => void
+    inPlace?: boolean
+}
+
 export interface PartModalInput {
     onClose: () => void,
     part: StorePart | null,

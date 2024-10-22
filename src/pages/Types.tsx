@@ -6,6 +6,7 @@ import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
+import TypeModal from "../components/modals/TypeModal.tsx";
 
 
 function Types() {
@@ -16,10 +17,15 @@ function Types() {
 
     const [modalTemplate, setModalTemplate] = useState<ShopType|null>(null)
 
+    const saveType = async (type: ShopType) => {
+        const updatedTypes = await dbContext?.setData('types', type as ShopType);
+        setTypes(updatedTypes as ShopType[]);
+        setModalTemplate(null);
+    }
 
     const deletePart = async (item: ShopType) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Type?'))) {
-            let updatedItems = await dbContext?.removeData('types', item.id) as ShopType[];
+            const updatedItems = await dbContext?.removeData('types', item.id) as ShopType[];
             setTypes(updatedItems);
         }
     };
@@ -69,7 +75,13 @@ function Types() {
         />
 
         <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
-
+            <TypeModal
+                onClose={() => setModalTemplate(null)}
+                onSave={(item: ShopType) => saveType(item)}
+                setType={(item: ShopType) => setModalTemplate(item)}
+                type={modalTemplate}
+                inPlace={false}
+            ></TypeModal>
         </div>
     </>
 }
