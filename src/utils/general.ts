@@ -23,11 +23,11 @@ export const downloadAsFile = (name: string, body: string, fileType = 'text/plai
         name = Math.floor(new Date().getTime() / 360000) + ".json";
     }
     try {
-        let textToSaveAsBlob = new Blob([body], { type: fileType });
-        let textToSaveAsURL = URL.createObjectURL(textToSaveAsBlob);
-        let fileNameToSaveAs = name;
+        const textToSaveAsBlob = new Blob([body], { type: fileType });
+        const textToSaveAsURL = URL.createObjectURL(textToSaveAsBlob);
+        const fileNameToSaveAs = name;
 
-        let downloadLink = document.createElement('a');
+        const downloadLink = document.createElement('a');
         downloadLink.download = fileNameToSaveAs;
         downloadLink.innerHTML = 'Download As File';
         downloadLink.href = textToSaveAsURL;
@@ -38,9 +38,10 @@ export const downloadAsFile = (name: string, body: string, fileType = 'text/plai
         downloadLink.outerHTML = '';
 
 
-    } catch (e) {
-        // @ts-ignore
-        console.error(e.message);
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            console.error(e.message);
+        }
     }
 };
 

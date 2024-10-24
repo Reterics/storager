@@ -100,20 +100,20 @@ const Header = () => {
                                         <ul className="py-1">
                                             {isAdmin && <li>
                                                 <NavLink
-                                                    to="/?page=settings"
-                                                    onClick={handleLinkClick}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
-                                                >
-                                                    {t('Settings')}
-                                                </NavLink>
-                                            </li>}
-                                            {isAdmin && <li>
-                                                <NavLink
                                                     to="/?page=types"
                                                     onClick={handleLinkClick}
                                                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
                                                     {t('Types')}
+                                                </NavLink>
+                                            </li>}
+                                            {isAdmin && <li>
+                                                <NavLink
+                                                    to="/?page=settings"
+                                                    onClick={handleLinkClick}
+                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                >
+                                                    {t('Settings')}
                                                 </NavLink>
                                             </li>}
                                             {isAdmin && <li>

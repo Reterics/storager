@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import logo from "../assets/logo.svg";
@@ -7,6 +7,8 @@ import FormRow from "../components/elements/FormRow.tsx";
 import StyledFile from "../components/elements/StyledFile.tsx";
 import AlertBox from "../components/AlertBox.tsx";
 import {useTheme} from "../store/ThemeContext.tsx";
+import {DBContext} from "../database/DBContext.ts";
+import {downloadAsFile} from "../utils/general.ts";
 
 
 function About() {
@@ -15,6 +17,11 @@ function About() {
     const [file, setFile] = useState<File|null>(null)
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const dbContext = useContext(DBContext);
+
+    const exportData = async () => {
+        downloadAsFile('export.json', JSON.stringify(dbContext?.data || null), 'application/json');
+    };
 
     const applyUpdate = async () => {
         const csrfNode = document.getElementById('csrf_token') as HTMLInputElement | null;
@@ -85,6 +92,13 @@ function About() {
                     className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                 >
                     {t('Upload')}
+                </button>}
+                {!error && <button
+                    type="button"
+                    onClick={() => exportData()}
+                    className="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
+
+                    {t('Export Data')}
                 </button>}
             </div>
         </div>
