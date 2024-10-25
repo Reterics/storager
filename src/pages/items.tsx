@@ -20,6 +20,18 @@ function Items() {
         initialItems = initialItems.filter((item) => shopContext.shop?.id === item.shop_id);
     }
 
+    // Order by storage
+    initialItems.sort((a, b) => {
+        const warningA = !a.storage || a.storage < (a.storage_limit || 5);
+        const warningB = !b.storage || b.storage < (b.storage_limit || 5);
+
+        if (warningA && !warningB) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
     const [items, setItems] = useState<StoreItem[]>(initialItems);
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
@@ -112,7 +124,7 @@ function Items() {
     const tableLines = items.map(item => {
         const assignedShop = item.shop_id ? shops.find(i => i.id === item.shop_id) : null;
 
-        return [
+        const array =  [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.sku,
             item.name || '',
@@ -124,6 +136,10 @@ function Items() {
                 onEdit: () => setModalTemplate(item)
             })
         ];
+
+        array[-1] = !item.storage || item.storage < (item.storage_limit || 5) ? 1 : 0;
+
+        return array;
     });
 
     if (!dbContext?.data.currentUser) {
@@ -145,6 +161,9 @@ function Items() {
             ]} error={error} onSearch={filterItems}/>
 
             <TableViewComponent lines={tableLines}
+                                isHighlighted={(item) => {
+                                    return !!item[-1];
+                                }}
                                 header={[
                                     t('Image'),
                                     t('SKU'),

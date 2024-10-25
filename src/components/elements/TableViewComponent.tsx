@@ -220,7 +220,7 @@ export const TableViewActions = ({
     );
 }
 
-const TableViewComponent = ({header, lines, children, onChange, onClick, selectedIndex}: TableViewArguments) => {
+const TableViewComponent = ({header, lines, children, onChange, onClick, selectedIndex, isHighlighted}: TableViewArguments) => {
 
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
@@ -251,6 +251,8 @@ const TableViewComponent = ({header, lines, children, onChange, onClick, selecte
             {orderedLines.map((line, index) =>
                 <tr key={'key' + index} className={
                     " border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800" +
+                    (typeof isHighlighted === 'function' && isHighlighted(line, index) ? " bg-yellow-50 dark:bg-yellow-950" : "") +
+
                     (selectedIndex === index ? " bg-gray-300 dark:bg-gray-700" : " bg-white dark:bg-gray-900") +
                     (onClick ? " cursor-pointer" : "")
                 }>

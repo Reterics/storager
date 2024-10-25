@@ -91,7 +91,8 @@ export interface TableViewArguments extends TSXComponentArgument {
     header?: TableViewHeader,
     onChange?: TableOnChangeMethod,
     onClick?: (index: number) => void,
-    selectedIndex?: number
+    selectedIndex?: number,
+    isHighlighted?: ((line: TableLineType, index: number) => boolean) | boolean | number,
 }
 
 export interface GeneralModalArguments extends TSXComponentArgument {
