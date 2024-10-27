@@ -10,7 +10,7 @@ Lightweight Cloud based storage and service management application based on Reac
 
 ### Preparing Cloud Environment ☁️
 
-In order to have Denarius application functional we need to create a .env file based on our available .env.template
+In order to have StorageR application functional we need to create a .env file based on our available .env.template
 
 We need to create a Google Firebase Project in Google Console for this here: https://console.firebase.google.com/project/
 

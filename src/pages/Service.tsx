@@ -37,6 +37,13 @@ function Service() {
         completed?: boolean,
         table: TableLineType[]}|null>(null);
 
+    const filterItems = (filterBy: string) => {
+        if (!filterBy) {
+            setServicedItems(dbContext?.data.services || []);
+        } else {
+            setServicedItems((dbContext?.data.services || []).filter(item => item.client_name?.includes(filterBy) || item.client_phone?.includes(filterBy)))
+        }
+    };
 
     const addServiceItem = async (serviceData?: ServiceData, archive = true) => {
         const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, archive) as ServiceData[];
@@ -181,7 +188,7 @@ function Service() {
                         service_email: shop?.email || '',
                     })
                 }
-            ]}/> }
+            ]} onSearch={filterItems}/>}
 
             <div className={"relative flex justify-center w-full m-auto"}>
                 <div className={"mb-2 mt-1"}>
