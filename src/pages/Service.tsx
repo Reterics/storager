@@ -45,6 +45,30 @@ function Service() {
         }
     };
 
+    const deleteServiceHistoryFor = async (item: ServiceData) => {
+        if (item.id && window.confirm(t('Are you sure you wish to delete this Service and all of its history?'))) {
+
+            const completions = completionForms?.filter((c) => c.service_id !== item.id);
+            if (completions.length) {
+                let completionUpdates = completionForms;
+                for (let i = 0; i < completions.length; i++) {
+                    completionUpdates = await dbContext?.removeData('completions', item.id) as ServiceCompleteData[];
+                }
+                setCompletionForms(completionUpdates);
+            }
+
+            const history = (dbContext?.data.archive || []).filter(a => a.docParent === item.id);
+            if (history.length) {
+                for (let i = 0; i < history.length; i++) {
+                    await dbContext?.removeData('archive', history[i].id);
+                }
+            }
+
+            const servicedItems = await dbContext?.removeData('services', item.id) as ServiceData[];
+            setServicedItems(servicedItems);
+        }
+    };
+
     const addServiceItem = async (serviceData?: ServiceData, archive = true) => {
         const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, archive) as ServiceData[];
         if (serviceData) {
@@ -165,7 +189,8 @@ function Service() {
                     });
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                     },
-                onEdit: onEdit
+                onEdit: onEdit,
+                onRemove: () => deleteServiceHistoryFor(item)
             })
         ];
     });

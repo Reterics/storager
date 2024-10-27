@@ -24,7 +24,7 @@ export interface ContextData {
 
 
 export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData
-export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types';
+export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive';
 export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType;
 
 export interface DBContextType {
