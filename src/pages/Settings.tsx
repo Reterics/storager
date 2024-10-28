@@ -5,7 +5,6 @@ import StyledInput from "../components/elements/StyledInput.tsx";
 import FormRow from "../components/elements/FormRow.tsx";
 import {SettingsItems} from "../interfaces/interfaces.ts";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
-import {applyDefaults} from "../utils/general.ts";
 
 
 function Service() {
@@ -29,11 +28,6 @@ function Service() {
         serviceAgreement: ''
     };
 
-    applyDefaults({
-        itemTypes: import.meta.env.VITE_ITEM_TYPES,
-        partTypes: import.meta.env.VITE_PART_TYPES,
-        serviceTypes: import.meta.env.VITE_SERVICE_TYPES,
-    }, initialSettings);
 
     const [shouldSave, setShouldSave] = useState(false);
     const [settingsItems, setSettingsItems] = useState<SettingsItems>(initialSettings);
@@ -109,31 +103,6 @@ function Service() {
                             value={settingsItems.email}
                             onChange={changeType}
                             label={t('Email')}
-                        />
-                    </FormRow>
-
-                    <h2 className="text-2xl font-bold mb-4 mt-4">{t('Storage Settings')}</h2>
-
-                    <FormRow>
-                        <StyledInput
-                            type="text" name="itemTypes"
-                            value={settingsItems.itemTypes}
-                            onChange={changeType}
-                            label={t('Item Types') + ' ' + t('(Comma separated)')}
-                        />
-                        <StyledInput
-                            type="text" name="partTypes"
-                            value={settingsItems.partTypes}
-                            onChange={changeType}
-                            label={t('Part Types') +  ' ' + t('(Comma separated)')}
-                        />
-                    </FormRow>
-                    <FormRow>
-                        <StyledInput
-                            type="text" name="serviceTypes"
-                            value={settingsItems.serviceTypes}
-                            onChange={changeType}
-                            label={t('Service Types') +  ' ' + t('(Comma separated)')}
                         />
                     </FormRow>
 

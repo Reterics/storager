@@ -4,23 +4,24 @@ import {
     StorePart
 } from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useContext, useState} from "react";
 import {fileToDataURL} from "../../utils/general.ts";
 import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledInput from "../elements/StyledInput.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
-import {shopPartCategoryOptions} from "../../interfaces/constants.ts";
 import StyledFile from "../elements/StyledFile.tsx";
+import {DBContext} from "../../database/DBContext.ts";
 
 
 
 export default function PartModal({ onClose, part, setPart, onSave, inPlace }: PartModalInput) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const dbContext = useContext(DBContext);
+    const [file, setFile] = useState<File|null>(null);
 
-    const [file, setFile] = useState<File|null>(null)
-
+    const shopPartCategoryOptions = dbContext?.getType('part', i18n.language === 'hu' ? 'hu' : 'en') || [];
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;

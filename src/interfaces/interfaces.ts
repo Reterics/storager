@@ -365,3 +365,8 @@ export interface ListModalArguments {
     inPlace?: boolean,
     title?: string
 }
+
+export interface TextFile {
+    value: string|ArrayBuffer|null,
+    file_input?: File
+}

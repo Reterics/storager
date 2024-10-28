@@ -35,8 +35,8 @@ export const userRoleOptions = [
 
 
 export const typeModalOptions = [
-    {"value": "part", "name": "Part Type"},
-    {"value": "item", "name": "Item Type"},
-    {"value": "service", "name": "Service Type"},
+    {"value": "part", "name": "Part Types"},
+    {"value": "item", "name": "Item Types"},
+    {"value": "service", "name": "Service Types"},
 ];
 

@@ -11,13 +11,13 @@ import {
     SettingsItems,
     Shop, ShopType,
     StoreItem,
-    StorePart, UserData
+    StorePart, StyledSelectOption, UserData
 } from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "./storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
-import {addDoc, collection, deleteDoc, doc, setDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, setDoc, writeBatch} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 
 
@@ -210,6 +210,58 @@ export const FirebaseProvider = ({children}: {
         return ctxData ? ctxData[key] : null;
     }
 
+    const updateContextBatched = async (key: ContextDataType, items: ContextDataValueType[]) => {
+        const batch = writeBatch(db);
+
+        for (const item of items) {
+            let modelRef;
+
+            if (item && item.id) {
+                // If item has an ID, update the existing document
+                modelRef = doc(db, firebaseCollections[key], item.id);
+
+                if ("image" in item && item.image && item.image.startsWith('https://firebase')) {
+                    delete item.image;
+                }
+            } else {
+                // Generate a new document reference with an auto-generated ID
+                modelRef = doc(collection(db, firebaseCollections[key]));
+                item.id = modelRef.id; // Assign the generated ID to your item
+            }
+
+            if (item) {
+                item.docUpdated = new Date().getTime();
+            }
+
+            batch.set(modelRef, item, { merge: true });
+            if (ctxData && key !== 'settings') {
+                ctxData[key].unshift(item);
+            }
+        }
+
+        await batch.commit();
+
+        setCtxData(ctxData ? {
+            ...ctxData,
+        } : null);
+
+        return ctxData ? ctxData[key] : null;
+    }
+
+    const getType = (type: 'part'|'item'|'service', lang: 'hu'|'en' = 'hu'): StyledSelectOption[] => {
+        if (ctxData && ctxData.types) {
+            return ctxData.types
+                .filter(t => t.category === type)
+                .map(type => {
+                    return {
+                        "value": type.name || '',
+                        "name": (type.translations? type.translations[lang] : type.name) || ''
+                    };
+                })
+        }
+        return [];
+    }
+
     useEffect(() => {
         if (!renderAfterCalled.current) {
             console.log('Load context data');
@@ -223,7 +275,9 @@ export const FirebaseProvider = ({children}: {
         data: ctxData as ContextData,
         setData: updateContextData,
         removeData: removeContextData,
-        refreshImagePointers:refreshImagePointers
+        refreshImagePointers:refreshImagePointers,
+        uploadDataBatch: updateContextBatched,
+        getType: getType
     }}>
         {!error && ctxData && children}
         {!error && !ctxData && <PageLoading/>}

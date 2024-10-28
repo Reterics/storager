@@ -4,7 +4,7 @@ import {
     SettingsItems,
     Shop, ShopType,
     StoreItem,
-    StorePart,
+    StorePart, StyledSelectOption,
     UserData
 } from "./interfaces.ts";
 
@@ -32,6 +32,8 @@ export interface DBContextType {
     setData: (key: ContextDataType, value: ContextDataValueType, archive?: boolean) =>  Promise<ContextDataCollectionType | null>,
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
+    uploadDataBatch: (key: ContextDataType, values: ContextDataValueType[]) =>  Promise<ContextDataCollectionType | null>,
+    getType: (type: 'part'|'item'|'service', lang: 'hu'|'en') => StyledSelectOption[]
 }
 
 export interface CommonCollectionData {

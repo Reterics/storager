@@ -4,12 +4,19 @@ import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledInput from "../elements/StyledInput.tsx";
 import {typeModalOptions} from "../../interfaces/constants.ts";
-import {ChangeEvent} from "react";
+import {ChangeEvent, useMemo} from "react";
 import StyledSelect from "../elements/StyledSelect.tsx";
 
 
 export default function TypeModal({onClose, type, setType, onSave, inPlace}: TypeModalInput) {
     const { t, i18n } = useTranslation();
+
+    const types = useMemo(()=>{
+        return typeModalOptions.map(type=> {
+            type.name = t(type.name);
+            return type;
+        })
+    }, [t]);
 
     const changeTranslation = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
@@ -69,8 +76,8 @@ export default function TypeModal({onClose, type, setType, onSave, inPlace}: Typ
 
             <StyledSelect
                 type="text" name="category"
-                options={typeModalOptions}
-                value={type.category || typeModalOptions[0].value}
+                options={types}
+                value={type.category || types[0].value}
                 onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'category')}
                 label={t("Category")}
             />

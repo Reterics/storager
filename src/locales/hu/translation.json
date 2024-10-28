@@ -107,5 +107,9 @@
   "Item Types": "Termék típusok",
   "Part Types": "Alkatrész típusok",
   "Service Types": "Szervíz kategóriák (pl defekt, fék)",
-  "Are you sure you wish to delete this Service and all of its history?": "Biztosan törlöd az alábbi szerviz dokumentációt, és a hozzá tartozó dokumentumokat?"
+  "Are you sure you wish to delete this Service and all of its history?": "Biztosan törlöd az alábbi szerviz dokumentációt, és a hozzá tartozó dokumentumokat?",
+  "Edit Type": "Típus szerkesztése",
+  "Types": "Típusok",
+  "HU": "HU",
+  "EN": "EN"
 }

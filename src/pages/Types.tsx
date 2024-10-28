@@ -3,10 +3,11 @@ import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {ShopType} from "../interfaces/interfaces.ts";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
-import {BsFillPlusCircleFill} from "react-icons/bs";
+import {BsFillCloudArrowDownFill, BsFillFolderFill, BsFillPlusCircleFill} from "react-icons/bs";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import TypeModal from "../components/modals/TypeModal.tsx";
+import {downloadAsFile, readJSONFile} from "../utils/general.ts";
 
 
 function Types() {
@@ -50,6 +51,26 @@ function Types() {
 
     return <>
         <PageHead title={t('Types')} buttons={[
+            {
+                value: <BsFillCloudArrowDownFill />,
+                onClick: ()=> {
+                    downloadAsFile('storager_types.json', JSON.stringify(types))
+                }
+            },
+            {
+                value: <BsFillFolderFill />,
+                onClick: async ()=> {
+                    const array = await readJSONFile();
+                    if (Array.isArray(array) && array.length) {
+                        if (confirm(array.length + ' new entry detected. Do you want to add them?')) {
+                            const updatedTypes = await dbContext?.uploadDataBatch('types', array);
+                            if (updatedTypes) {
+                                setTypes(updatedTypes as ShopType[]);
+                            }
+                        }
+                    }
+                }
+            },
             {
                 value: <BsFillPlusCircleFill/>,
                 onClick: () => setModalTemplate(modalTemplate ? null : {

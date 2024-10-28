@@ -1,9 +1,9 @@
 import StyledInput from "../elements/StyledInput.tsx";
-import {GeneralModalButtons, ItemModalInput, SettingsItems, StoreItem} from "../../interfaces/interfaces.ts";
+import {GeneralModalButtons, ItemModalInput, StoreItem} from "../../interfaces/interfaces.ts";
 import {ChangeEvent, useContext, useState} from "react";
 import StyledFile from "../elements/StyledFile.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
-import {applyDefaults, fileToDataURL} from "../../utils/general.ts";
+import {fileToDataURL} from "../../utils/general.ts";
 import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
@@ -12,22 +12,11 @@ import {DBContext} from "../../database/DBContext.ts";
 
 
 export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: ItemModalInput) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dbContext = useContext(DBContext);
-    const initialSettings = dbContext?.data.settings || {
-        itemTypes: '',
-    };
 
-    applyDefaults({
-        itemTypes: import.meta.env.VITE_ITEM_TYPES
-    }, initialSettings as SettingsItems);
+    const selectTypeOptions = dbContext?.getType('item', i18n.language === 'hu' ? 'hu' : 'en') || [];
 
-    const selectTypeOptions = initialSettings.itemTypes?.split(',').map(a=> {
-        return {
-            value: a,
-            name: a
-        }
-    }) || [];
     const [file, setFile] = useState<File|null>(null)
 
 

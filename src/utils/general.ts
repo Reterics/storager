@@ -1,22 +1,5 @@
-import {ContextDataCollectionType, ContextDataValueType} from "../interfaces/firebase.ts";
+import {TextFile} from "../interfaces/interfaces.ts";
 
-export const applyDefaults = (defaults: object, array: ContextDataCollectionType) => {
-
-    const keys = Object.keys(defaults);
-    const updater = (entry: ContextDataValueType) => {
-        keys.forEach((key) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            if (entry && entry[key] === undefined) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                entry[key] = defaults[key];
-            }
-        })
-        return entry;
-    };
-    return (Array.isArray(array) ? array.map(updater) : updater(array));
-};
 
 export const downloadAsFile = (name: string, body: string, fileType = 'text/plain') => {
     if (!name) {
@@ -60,3 +43,65 @@ export const fileToDataURL = (file: File) => {
         }
     })
 };
+
+
+export const uploadFileInputAsText = (file: Blob): Promise<string|ArrayBuffer|null> => {
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = function (): void {
+            resolve(reader.result);
+        };
+        reader.readAsText(file);
+        reader.onerror = function (error): void {
+            console.log('Error: ', error);
+        };
+    })
+};
+
+
+export const readTextFile = (accept = 'application/json'): Promise<TextFile> => {
+    return new Promise(resolve => {
+        const fileInput = document.createElement("input");
+        fileInput.classList.add("readTextFile");
+        fileInput.setAttribute("type", "file");
+        if (accept) {
+            fileInput.setAttribute('accept', accept);
+        }
+        fileInput.onchange = async function (): Promise<void> {
+            const formData: TextFile = {
+                value: ''
+            };
+            const files = fileInput.files as FileList;
+            if (files && files.length) {
+                formData.value = await uploadFileInputAsText(files[0]);
+                formData.file_input = files[0];
+            }
+            fileInput.outerHTML = "";
+            resolve(formData);
+        };
+        document.body.appendChild(fileInput);
+        fileInput.click();
+    });
+}
+
+
+export const readJSONFile = async (): Promise<object|null> => {
+    const file = await readTextFile();
+    if (!file || !file.value || typeof file.value !== 'string') {
+        return null;
+    }
+
+    let json = null;
+
+    try {
+        json = JSON.parse(file.value)
+    } catch (err) {
+        console.error(err);
+    }
+
+    if (!json) {
+        return null;
+    }
+
+    return json;
+}

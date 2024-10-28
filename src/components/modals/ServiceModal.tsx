@@ -2,17 +2,20 @@ import {GeneralModalButtons, ServiceData, ServiceModalInput} from "../../interfa
 import StyledInput from "../elements/StyledInput.tsx";
 import {useTranslation} from "react-i18next";
 import SignaturePad from "react-signature-pad-wrapper";
-import {ChangeEvent, useRef} from "react";
+import {ChangeEvent, useContext, useRef} from "react";
 import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import StyledMultiSelect from "../elements/StyledMultiSelect.tsx";
-import {serviceTypeOptions} from "../../interfaces/constants.ts";
 import './ServiceModal.css';
+import {DBContext} from "../../database/DBContext.ts";
 
 export default function ServiceModal({ id, onClose, service, setService, onSave, inPlace, settings }: ServiceModalInput) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const dbContext = useContext(DBContext);
     const signaturePadRef = useRef<SignaturePad>(null);
+
+    const serviceTypeOptions = dbContext?.getType('service', i18n.language === 'hu' ? 'hu' : 'en') || [];
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
