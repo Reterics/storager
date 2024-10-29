@@ -4,7 +4,7 @@ import {
     ContextData,
     ContextDataValueType
 } from "../../interfaces/firebase.ts";
-import {db, firebaseCollections, getCollection} from "./config.ts";
+import {db, firebaseCollections, firebaseModel, getCollection} from "./config.ts";
 import {
     ServiceCompleteData,
     ServiceData,
@@ -17,7 +17,7 @@ import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "./storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
-import {addDoc, collection, deleteDoc, doc, setDoc, writeBatch} from "firebase/firestore";
+import {addDoc, collection, doc, writeBatch} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 
 
@@ -28,8 +28,8 @@ export const FirebaseProvider = ({children}: {
     const authContext = useContext(AuthContext);
     const shopContext = useContext(ShopContext);
     const [ctxData, setCtxData] = useState<ContextData|null>(null);
-    const [error, setError] = useState<Error | null>(null);
     const renderAfterCalled = useRef(false);
+
 
     const refreshImagePointers = async (array: StoreItem[]|StorePart[]) => {
         if (Array.isArray(array)) {
@@ -41,8 +41,8 @@ export const FirebaseProvider = ({children}: {
         }
     };
 
-    const getContextData = async () => {
-        let users = await getCollection(firebaseCollections.users).catch(setError) as UserData[];
+    const getContextData = async (cache: boolean = false) => {
+        let users = await getCollection(firebaseCollections.users) as UserData[];
         let services: ServiceData[] = [];
         let completions: ServiceCompleteData[] = [];
         let settings: SettingsItems[] = [];
@@ -53,6 +53,11 @@ export const FirebaseProvider = ({children}: {
         let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
 
+        users = (users || []).map(user => {
+            user.password = undefined;
+            user.password_confirmation = undefined;
+            return user;
+        })
         if (authContext.user && authContext.user.email) {
             user = users.find(user => user.email === authContext.user?.email);
             if (!user) {
@@ -60,7 +65,7 @@ export const FirebaseProvider = ({children}: {
             } else if (user.role !== 'admin') {
                 console.log('User is not an admin, hence we do not load settings');
                 users = [user];
-                settings = await getCollection(firebaseCollections.settings).catch(setError) as SettingsItems[];
+                settings = await getCollection(firebaseCollections.settings) as SettingsItems[];
                 if (settings && settings[0]) {
                     for(let i = 0; i < settings.length; i++) {
                         settings[i] = {
@@ -73,18 +78,18 @@ export const FirebaseProvider = ({children}: {
                     }
                 }
             } else {
-                settings = await getCollection(firebaseCollections.settings).catch(setError) as SettingsItems[];
+                settings = await getCollection(firebaseCollections.settings) as SettingsItems[];
             }
         }
 
         if (user) {
-            services = await getCollection(firebaseCollections.services).catch(setError) as ServiceData[];
-            completions = await getCollection(firebaseCollections.completions).catch(setError) as ServiceCompleteData[];
-            shops = await getCollection(firebaseCollections.shops).catch(setError) as Shop[];
-            items = await getCollection(firebaseCollections.items).catch(setError) as StoreItem[];
-            parts = await getCollection(firebaseCollections.parts).catch(setError) as StorePart[];
-            archive = await getCollection(firebaseCollections.archive).catch(setError) as ContextDataValueType[];
-            types = await getCollection(firebaseCollections.types).catch(setError) as ContextDataValueType[];
+            services = await getCollection(firebaseCollections.services) as ServiceData[];
+            completions = await getCollection(firebaseCollections.completions) as ServiceCompleteData[];
+            shops = await getCollection(firebaseCollections.shops) as Shop[];
+            items = await getCollection(firebaseCollections.items) as StoreItem[];
+            parts = await getCollection(firebaseCollections.parts) as StorePart[];
+            archive = await getCollection(firebaseCollections.archive) as ContextDataValueType[];
+            types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
         }
 
         // TODO: move the filter server side
@@ -99,6 +104,10 @@ export const FirebaseProvider = ({children}: {
 
         await refreshImagePointers(items);
         await refreshImagePointers(parts);
+
+        if (cache) {
+            firebaseModel.sync(0);
+        }
 
         setCtxData({
             shops,
@@ -118,7 +127,7 @@ export const FirebaseProvider = ({children}: {
         if (ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
             const filteredData = ctxData[key].filter(item => item.id !== id);
             if (filteredData.length !== ctxData[key].length) {
-                await deleteDoc(doc(db, firebaseCollections[key], id));
+                await firebaseModel.remove(id, firebaseCollections[key])
                 ctxData[key] = [...filteredData];
 
                 setCtxData({
@@ -137,56 +146,27 @@ export const FirebaseProvider = ({children}: {
             return ctxData ? ctxData[key] : null;
         }
 
-        let modelRef;
-        let isNew = false;
-        let imageCache;
-
-        if (item && item.id) {
-            // If item has an ID, update the existing document
-            modelRef = doc(db, firebaseCollections[key], item.id);
-
-            if ("image" in item && item.image && item.image.startsWith('https://firebase')) {
-                imageCache = item.image;
-                delete item.image;
-            }
-        } else {
-            // Generate a new document reference with an auto-generated ID
-            modelRef = doc(collection(db, firebaseCollections[key]));
-            item.id = modelRef.id; // Assign the generated ID to your item
-            isNew = true;
-        }
-
-        if (item) {
-            item.docUpdated = new Date().getTime();
-        }
-
-        // Use setDoc with { merge: true } to update or create the document
-        await setDoc(modelRef, item, { merge: true }).catch(e => {
-            console.error(e);
-        });
+        const isNew = !item.id;
+        await firebaseModel.update(item, key);
         if (archive) {
+            item.docType = key;
+            item.docParent = item.id;
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
             delete item.id;
-            item.docType = key;
-            item.docParent = modelRef.id;
+
             const document = await addDoc(collection(db, firebaseCollections.archive), item).catch(e => {
                 console.error(e);
             });
             if (document && ctxData && ctxData.archive) {
                 ctxData.archive.unshift({...item, id: document.id});
             }
-            item.id = modelRef.id;
+            item.id = item.docParent;
         }
 
-        console.log('Created document with ID:', modelRef.id, ' in ', key);
+        console.log('Created document with ID:', item.id, ' in ', key);
 
         if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
-            if (imageCache) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                item.image = imageCache;
-            }
             if (isNew) {
                 ctxData[key].unshift(item);
             } else {
@@ -265,7 +245,8 @@ export const FirebaseProvider = ({children}: {
     useEffect(() => {
         if (!renderAfterCalled.current) {
             console.log('Load context data');
-            void getContextData();
+            firebaseModel.loadPersisted();
+            void getContextData(true);
         }
 
         renderAfterCalled.current = true;
@@ -273,14 +254,14 @@ export const FirebaseProvider = ({children}: {
 
     return <DBContext.Provider value={{
         data: ctxData as ContextData,
+        refreshData: () => getContextData(),
         setData: updateContextData,
         removeData: removeContextData,
         refreshImagePointers:refreshImagePointers,
         uploadDataBatch: updateContextBatched,
         getType: getType
     }}>
-        {!error && ctxData && children}
-        {!error && !ctxData && <PageLoading/>}
-        {error && <div>Error: {error.message}</div>}
+        {ctxData && children}
+        {!ctxData && <PageLoading/>}
     </DBContext.Provider>;
 };

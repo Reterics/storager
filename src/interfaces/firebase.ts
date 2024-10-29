@@ -29,6 +29,7 @@ export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceC
 
 export interface DBContextType {
     data: ContextData,
+    refreshData: () => Promise<void>,
     setData: (key: ContextDataType, value: ContextDataValueType, archive?: boolean) =>  Promise<ContextDataCollectionType | null>,
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
@@ -43,4 +44,8 @@ export interface CommonCollectionData {
 
 export interface KVCollectionStore {
     [key: string]: CommonCollectionData[]
+}
+
+export interface TTLData {
+    [key: string]: number
 }

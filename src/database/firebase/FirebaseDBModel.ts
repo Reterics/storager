@@ -12,15 +12,15 @@ import {
     setDoc,
     addDoc
 } from "firebase/firestore";
-import {CommonCollectionData} from "../../interfaces/firebase.ts";
+import {CommonCollectionData, ContextDataValueType, TTLData} from "../../interfaces/firebase.ts";
 
 
 export default class FirebaseDBModel extends DBModel {
     private _app: FirebaseApp;
     private _db: Firestore;
 
-    constructor() {
-        super();
+    constructor(options?: {ttl?: TTLData, mtime?: TTLData}) {
+        super(options);
         this._app = initializeApp({
             apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
             authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -31,6 +31,14 @@ export default class FirebaseDBModel extends DBModel {
             measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
         });
         this._db = getFirestore(this._app);
+    }
+
+    getApp() {
+        return this._app;
+    }
+
+    getDB() {
+        return this._db;
     }
 
     getAll(table: string): Promise<CommonCollectionData[]> {
@@ -45,6 +53,8 @@ export default class FirebaseDBModel extends DBModel {
                 querySnapshot.forEach((doc) => {
                     receivedData.push({...doc.data(), id: doc.id});
                 });
+                this.updateCache(table, receivedData);
+                this.sync();
                 resolve(receivedData);
                 return () => unsubscribe()
             }, (error) => {
@@ -72,26 +82,42 @@ export default class FirebaseDBModel extends DBModel {
         this.removeCachedEntry(id, table);
     }
 
-    async update(item: { [key: string]: unknown }, table: string): Promise<void> {
+    async update(item: ContextDataValueType, table: string): Promise<void> {
         if (!item) {
             return;
         }
 
         let modelRef;
+        let imageCache;
 
         if (item && item.id) {
             // If item has an ID, update the existing document
             modelRef = doc(this._db, table, item.id as string);
+
+            if ("image" in item && item.image && (item.image as string).startsWith('https://firebase')) {
+                imageCache = item.image;
+                delete item.image;
+            }
         } else {
             // Generate a new document reference with an auto-generated ID
             modelRef = doc(collection(this._db, table));
             item.id = modelRef.id; // Assign the generated ID to your item
         }
 
+        if (item) {
+            item.docUpdated = new Date().getTime();
+        }
+
         // Use setDoc with { merge: true } to update or create the document
-        await setDoc(modelRef, item, {merge: true}).catch(e => {
+        await setDoc(modelRef, item, { merge: true }).catch(e => {
             console.error(e);
         });
+
+        if (item && imageCache) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            item.image = imageCache;
+        }
         this.updateCachedEntry(item.id as string, table, item as CommonCollectionData);
     }
 
