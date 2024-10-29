@@ -54,7 +54,8 @@ function Parts() {
         if (!filterBy) {
             setParts(initialParts);
         } else {
-            setParts(initialParts.filter(item => item.name?.includes(filterBy) || item.sku?.includes(filterBy)))
+            const lowerCaseFilter = filterBy.toLowerCase();
+            setParts(initialParts.filter(item => item.name?.toLowerCase().includes(lowerCaseFilter) || item.sku?.toLowerCase().includes(lowerCaseFilter)))
         }
     }
 

@@ -41,7 +41,8 @@ function Service() {
         if (!filterBy) {
             setServicedItems(dbContext?.data.services || []);
         } else {
-            setServicedItems((dbContext?.data.services || []).filter(item => item.client_name?.includes(filterBy) || item.client_phone?.includes(filterBy)))
+            const lowerCaseFilter = filterBy.toLowerCase();
+            setServicedItems((dbContext?.data.services || []).filter(item => item.client_name?.toLowerCase().includes(lowerCaseFilter) || item.client_phone?.toLowerCase().includes(lowerCaseFilter)))
         }
     };
 

@@ -1,5 +1,6 @@
 import React from "react";
 import {CommonCollectionData, KVCollectionStore, TTLData} from "../interfaces/firebase.ts";
+import {loadFromIndexedDB, saveToIndexedDB} from "../utils/indexedDB.ts";
 
 
 export default abstract class DBModel {
@@ -14,18 +15,29 @@ export default abstract class DBModel {
         this._mtime = (options && options.mtime) ? options.mtime : {};
     }
 
-    loadPersisted() {
+    async loadPersisted() {
         let cache,
             ttl,
             mtime;
         try {
-            cache = JSON.parse(localStorage.getItem("storager_persisted") || '{}');
-            ttl = JSON.parse(localStorage.getItem("storager_ttl") || 'null');
-            mtime = JSON.parse(localStorage.getItem("storager_mtime") || 'null');
+            cache = {
+                'shops'         : await loadFromIndexedDB('shops') as CommonCollectionData[],
+                'items'         : await loadFromIndexedDB('items') as CommonCollectionData[],
+                'parts'         : await loadFromIndexedDB('parts') as CommonCollectionData[],
+                'services'      : await loadFromIndexedDB('services') as CommonCollectionData[],
+                'completions'   : await loadFromIndexedDB('completions') as CommonCollectionData[],
+                'settings'      : await loadFromIndexedDB('settings') as CommonCollectionData[],
+                'users'         : await loadFromIndexedDB('users') as CommonCollectionData[],
+                'archive'       : await loadFromIndexedDB('archive') as CommonCollectionData[],
+                'types'         : await loadFromIndexedDB('types') as CommonCollectionData[],
+            };
+            ttl = await loadFromIndexedDB('ttl') as TTLData;
+            mtime = await loadFromIndexedDB('mtime') as TTLData;
+
         } catch (e) {
             console.error(e);
         }
-        if (cache) {
+        if (cache && cache.users.length && cache.settings.length) {
             this._cache = cache;
         }
         if (ttl) {
@@ -34,12 +46,25 @@ export default abstract class DBModel {
         if (mtime) {
             this._mtime = mtime;
         }
+        console.error(this._cache)
     }
 
-    savePersisted() {
-        localStorage.setItem("storager_persisted", JSON.stringify(this._cache));
-        localStorage.setItem("storager_ttl", JSON.stringify(this._ttl));
-        localStorage.setItem("storager_mtime", JSON.stringify(this._mtime));
+    async savePersisted() {
+        try {
+            await saveToIndexedDB('shops'      ,this._cache['shops'      ]);
+            await saveToIndexedDB('items'      ,this._cache['items'      ]);
+            await saveToIndexedDB('parts'      ,this._cache['parts'      ]);
+            await saveToIndexedDB('services'   ,this._cache['services'   ]);
+            await saveToIndexedDB('completions',this._cache['completions']);
+            await saveToIndexedDB('settings'   ,this._cache['settings'   ]);
+            await saveToIndexedDB('users'      ,this._cache['users'      ]);
+            await saveToIndexedDB('archive'    ,this._cache['archive'    ]);
+            await saveToIndexedDB('types'      ,this._cache['types'      ]);
+            await saveToIndexedDB('ttl', this._ttl);
+            await saveToIndexedDB('mtime', this._mtime);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     sync(ms = 5000) {
@@ -127,7 +152,7 @@ export default abstract class DBModel {
             console.log(table + ' is expired');
             this.invalidateCache(table);
         }
-        console.log(this._cache[table] ? table + '  has cache' : ' has no cache');
+        console.log(this._cache[table] ? table + '  has cache' : table+' has no cache');
         return this._cache[table];
     }
 

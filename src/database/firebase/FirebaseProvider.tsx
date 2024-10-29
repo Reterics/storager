@@ -254,8 +254,11 @@ export const FirebaseProvider = ({children}: {
     useEffect(() => {
         if (!renderAfterCalled.current) {
             console.log('Load context data');
-            firebaseModel.loadPersisted();
-            void getContextData(true);
+            firebaseModel.loadPersisted()
+                .finally(() => {
+                    void getContextData(true);
+                })
+
         }
 
         renderAfterCalled.current = true;

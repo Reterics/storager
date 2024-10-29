@@ -54,7 +54,9 @@ function Items() {
         if (!filterBy) {
             setItems(initialItems);
         } else {
-            setItems(initialItems.filter(item => item.name?.includes(filterBy) || item.sku?.includes(filterBy)))
+            const lowerCaseFilter = filterBy.toLowerCase();
+
+            setItems(initialItems.filter(item => item.name?.toLowerCase().includes(lowerCaseFilter) || item.sku?.toLowerCase().includes(lowerCaseFilter)))
         }
     };
 
