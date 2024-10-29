@@ -1,4 +1,4 @@
-import {NavLink, useLocation} from "react-router-dom";
+import {NavLink, useLocation, useSearchParams} from "react-router-dom";
 import {AuthContext} from "../store/AuthContext.tsx";
 import {useContext, useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -7,6 +7,7 @@ import {ShopContext} from "../store/ShopContext.tsx";
 import {DBContext} from "../database/DBContext.ts";
 import logo from "../assets/logo.svg";
 import logoWhite from "../assets/logo_white.svg";
+import {BsArrowClockwise, BsDoorOpen, BsFillGearFill, BsFillPersonLinesFill, BsListUl} from "react-icons/bs";
 
 
 const Header = () => {
@@ -18,6 +19,8 @@ const Header = () => {
     const {shop} = useContext(ShopContext);
     const isDarkTheme = useTheme()?.theme === 'dark';
     const { t } = useTranslation();
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get('page') || 'shops'
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [navbarOpen, setNavbarOpen] = useState(false); // State for the navbar collapse
@@ -25,6 +28,23 @@ const Header = () => {
     const handleLinkClick = () => {
         setDropdownOpen(false); // Close dropdown when link is clicked
     };
+
+    const updatePageData = ()=> {
+        switch (page) {
+            case 'items':
+                return dbContext?.refreshData('items');
+            case 'parts':
+                return dbContext?.refreshData('parts');
+            case 'service':
+                return dbContext?.refreshData('services');
+            case 'settings':
+                return dbContext?.refreshData('settings');
+            case 'users':
+                return dbContext?.refreshData('users');
+            case 'types':
+                return dbContext?.refreshData('types');
+        }
+    }
 
     return (
         <header className="no-print">
@@ -87,7 +107,7 @@ const Header = () => {
                             <li className="relative">
                                 <button
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                                    className="text-gray-900 hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"
+                                    className="flex text-gray-900 hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"
                                 >
                                     {user?.displayName || user?.email}
                                     <svg className="w-6 h-6 inline-block ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -102,17 +122,29 @@ const Header = () => {
                                                 <NavLink
                                                     to="/?page=types"
                                                     onClick={handleLinkClick}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                    className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
+                                                    <div className="text-xl me-2"><BsListUl/></div>
                                                     {t('Types')}
                                                 </NavLink>
                                             </li>}
+                                            <li>
+                                                <NavLink
+                                                    to="/?page=types"
+                                                    onClick={() => updatePageData()}
+                                                    className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                >
+                                                    <div className="text-xl me-2"><BsArrowClockwise/></div>
+                                                    {t('Update')}
+                                                </NavLink>
+                                            </li>
                                             {isAdmin && <li>
                                                 <NavLink
                                                     to="/?page=settings"
                                                     onClick={handleLinkClick}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                    className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
+                                                    <div className="text-xl me-2"><BsFillGearFill/></div>
                                                     {t('Settings')}
                                                 </NavLink>
                                             </li>}
@@ -120,8 +152,9 @@ const Header = () => {
                                                 <NavLink
                                                     to="/?page=users"
                                                     onClick={handleLinkClick}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                    className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
+                                                    <div className="text-xl me-2"><BsFillPersonLinesFill/></div>
                                                     {t('Users')}
                                                 </NavLink>
                                             </li>}
@@ -131,8 +164,9 @@ const Header = () => {
                                                         handleLinkClick();
                                                         SignOut()
                                                     }}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                    className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
+                                                    <div className="text-xl me-2"><BsDoorOpen/></div>
                                                     {t('Logout')}
                                                 </button>
                                             </li>

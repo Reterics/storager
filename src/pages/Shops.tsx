@@ -33,7 +33,7 @@ function Shops() {
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
 
-    const center = [46.840399, 16.8279712, 0] as LatLngTuple;
+    const center = [47.25852, 16.77818, 0] as LatLngTuple;
 
     const ref = (map: Map|null) => {
         if (map !== null) {
@@ -121,7 +121,7 @@ function Shops() {
                 /> }
                 <MapContainer ref={ref}
                     center={center}
-                    zoom={13}
+                    zoom={8}
                     scrollWheelZoom={false}
                     style={{height: '100%', width: '100%'}}>
                     <TileLayer

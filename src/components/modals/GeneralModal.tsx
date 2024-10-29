@@ -1,5 +1,7 @@
 import {GeneralModalArguments} from "../../interfaces/interfaces.ts";
 import './GeneralModal.css';
+import LoadingIcon from "../elements/LoadingIcon.tsx";
+import {useState} from "react";
 
 export default function GeneralModal({
                                          visible,
@@ -12,6 +14,7 @@ export default function GeneralModal({
 ) {
 
     const modalId = id || "GeneralModal";
+    const [throttled, setThrottled] = useState(false);
 
     const formClasses = {
         inPlace: "flex flex-col max-h-[45vh] overflow-y-auto modalForm pe-1",
@@ -38,6 +41,9 @@ export default function GeneralModal({
                 <form className={inPlace ? formClasses.inPlace : formClasses.default}>
                     {children}
                 </form>
+                <div className="hidden loading-parent">
+                    <LoadingIcon />
+                </div>
                 <div className="flex justify-between mt-2">
                     {
                         (buttons||[]).map((button, index)=> (
@@ -54,7 +60,22 @@ export default function GeneralModal({
                                             "text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 " +
                                             "dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                     }
-                                    onClick={(e)=>button.onClick(e)}>
+                                    onClick={(e)=> {
+                                        if (!throttled) {
+                                            setThrottled(true);
+                                            setTimeout(()=> {
+                                                setThrottled(false);
+                                            }, 2000);
+                                        } else {
+                                            return;
+                                        }
+                                        const loadingIcon = document.querySelector('.loading-parent > svg');
+                                        if (loadingIcon) {
+                                            (e.target as HTMLButtonElement).innerHTML = '';
+                                            (e.target as HTMLButtonElement).appendChild(loadingIcon)
+                                        }
+                                        button.onClick(e);
+                                    }}>
                                 {button.value}
                             </button>
                         ))

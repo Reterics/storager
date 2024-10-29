@@ -242,6 +242,15 @@ export const FirebaseProvider = ({children}: {
         return [];
     }
 
+    const refreshData = async (key?: ContextDataType)=>{
+        let updateLocalCache = false;
+        if (key) {
+            firebaseModel.invalidateCache(key);
+            updateLocalCache = true;
+        }
+        void getContextData(updateLocalCache);
+    }
+
     useEffect(() => {
         if (!renderAfterCalled.current) {
             console.log('Load context data');
@@ -254,7 +263,7 @@ export const FirebaseProvider = ({children}: {
 
     return <DBContext.Provider value={{
         data: ctxData as ContextData,
-        refreshData: () => getContextData(),
+        refreshData: refreshData,
         setData: updateContextData,
         removeData: removeContextData,
         refreshImagePointers:refreshImagePointers,

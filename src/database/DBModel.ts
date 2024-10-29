@@ -89,6 +89,7 @@ export default abstract class DBModel {
 
     updateCache(table: string, collection: CommonCollectionData[]) {
         this._cache[table] = collection;
+        this.updateMTime(table);
     }
 
     updateCachedEntry(id: string, table: string, data: CommonCollectionData) {
@@ -96,6 +97,7 @@ export default abstract class DBModel {
 
         if (cachedEntryIndex !== -1) {
             this._cache[table][cachedEntryIndex] = Object.assign(this._cache[table][cachedEntryIndex], data);
+            this.updateMTime(table);
         }
     }
 
@@ -105,6 +107,7 @@ export default abstract class DBModel {
         if (cachedEntryIndex !== -1) {
             this._cache[table] = this._cache[table].splice(cachedEntryIndex, 1);
         }
+        this.updateMTime(table);
     }
 
     appendCachedEntry(table: string, data: CommonCollectionData) {
@@ -112,6 +115,7 @@ export default abstract class DBModel {
         if (collection) {
             collection.push(data);
         }
+        this.updateMTime(table);
     }
 
     invalidateCache(table: string) {
@@ -120,8 +124,10 @@ export default abstract class DBModel {
 
     getCached(table: string) {
         if (this.isExpired(table)) {
+            console.log(table + ' is expired');
             this.invalidateCache(table);
         }
+        console.log(this._cache[table] ? table + '  has cache' : ' has no cache');
         return this._cache[table];
     }
 

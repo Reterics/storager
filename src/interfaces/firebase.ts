@@ -29,7 +29,7 @@ export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceC
 
 export interface DBContextType {
     data: ContextData,
-    refreshData: () => Promise<void>,
+    refreshData: (key?: ContextDataType) => Promise<void>,
     setData: (key: ContextDataType, value: ContextDataValueType, archive?: boolean) =>  Promise<ContextDataCollectionType | null>,
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
