@@ -40,6 +40,9 @@ export function openDatabase(): Promise<IDBDatabase> {
 export async function saveToIndexedDB(key: string, data: CommonCollectionData[]|TTLData) {
     const db = await openDatabase();
     return await new Promise<void>((resolve, reject) => {
+        if (!data || !key) {
+            return resolve();
+        }
         const transaction = db.transaction([key], 'readwrite');
         const store = transaction.objectStore(key);
 

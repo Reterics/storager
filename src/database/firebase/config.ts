@@ -7,10 +7,22 @@ const refreshRate = {
 }
 
 const storageTTL = {
-    hot: refreshRate.hours,
-    warm: refreshRate.hours * 24,
-    cold: refreshRate.hours * 48,
+    hot: refreshRate.hours * 12,
+    warm: refreshRate.hours * 24 * 2,
+    cold: refreshRate.hours * 24 * 7,
 }
+
+export const firebaseCollections = {
+    shops: import.meta.env.VITE_FIREBASE_DB_SHOPS || 'shops',
+    items: import.meta.env.VITE_FIREBASE_DB_ITEMS || 'items',
+    parts: import.meta.env.VITE_FIREBASE_DB_PARTS || 'parts',
+    services: import.meta.env.VITE_FIREBASE_DB_SERVICES || 'services',
+    completions: import.meta.env.VITE_FIREBASE_DB_COMPLETIONS || 'completions',
+    settings: import.meta.env.VITE_FIREBASE_DB_SETTINGS || 'settings',
+    users: import.meta.env.VITE_FIREBASE_DB_USERS || 'users',
+    archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
+    types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
+};
 
 export const firebaseModel = new FirebaseDBModel({
     ttl: {
@@ -30,21 +42,9 @@ const app = firebaseModel.getApp();
 export const db = firebaseModel.getDB()
 export const firebaseAuth = getAuth(app);
 
-export const firebaseCollections = {
-    shops: import.meta.env.VITE_FIREBASE_DB_SHOPS || 'shops',
-    items: import.meta.env.VITE_FIREBASE_DB_ITEMS || 'items',
-    parts: import.meta.env.VITE_FIREBASE_DB_PARTS || 'parts',
-    services: import.meta.env.VITE_FIREBASE_DB_SERVICES || 'services',
-    completions: import.meta.env.VITE_FIREBASE_DB_COMPLETIONS || 'completions',
-    settings: import.meta.env.VITE_FIREBASE_DB_SETTINGS || 'settings',
-    users: import.meta.env.VITE_FIREBASE_DB_USERS || 'users',
-    archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
-    types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
-};
 
-
-export const getCollection = (table: string)=>{
-    return firebaseModel.getAll(table);
+export const getCollection = (table: string, force?: boolean)=>{
+    return firebaseModel.getAll(table, force);
 };
 
 export const getById = (id: string, table: string) => {

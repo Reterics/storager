@@ -41,12 +41,11 @@ export default abstract class DBModel {
             this._cache = cache;
         }
         if (ttl) {
-            this._ttl = ttl;
+            this._ttl = Object.assign(ttl, this._ttl);
         }
         if (mtime) {
             this._mtime = mtime;
         }
-        console.error(this._cache)
     }
 
     async savePersisted() {
@@ -82,6 +81,10 @@ export default abstract class DBModel {
 
     updateMTime(table:string) {
         this._mtime[table] = new Date().getTime();
+    }
+
+    getMTime(table:string) {
+        return this._mtime[table] || 0;
     }
 
     isExpired(table:string) {
@@ -123,6 +126,11 @@ export default abstract class DBModel {
         if (cachedEntryIndex !== -1) {
             this._cache[table][cachedEntryIndex] = Object.assign(this._cache[table][cachedEntryIndex], data);
             this.updateMTime(table);
+        } else {
+            if (!this._cache[table]) {
+                this._cache[table] = [];
+            }
+            this._cache[table].push(data);
         }
     }
 
@@ -139,12 +147,15 @@ export default abstract class DBModel {
         const collection = this.getCached(table);
         if (collection) {
             collection.push(data);
+        } else {
+            this._cache[table] = [data];
         }
         this.updateMTime(table);
     }
 
     invalidateCache(table: string) {
         delete this._cache[table];
+        delete this._mtime[table];
     }
 
     getCached(table: string) {
@@ -152,7 +163,7 @@ export default abstract class DBModel {
             console.log(table + ' is expired');
             this.invalidateCache(table);
         }
-        console.log(this._cache[table] ? table + '  has cache' : table+' has no cache');
+        console.log(this._cache[table] ? table + ' has cache' : table+' has no cache');
         return this._cache[table];
     }
 

@@ -42,7 +42,7 @@ export const FirebaseProvider = ({children}: {
     };
 
     const getContextData = async (cache: boolean = false) => {
-        let users = await getCollection(firebaseCollections.users) as UserData[];
+        let users = await getCollection(firebaseCollections.users, true) as UserData[];
         let services: ServiceData[] = [];
         let completions: ServiceCompleteData[] = [];
         let settings: SettingsItems[] = [];
@@ -58,6 +58,7 @@ export const FirebaseProvider = ({children}: {
             user.password_confirmation = undefined;
             return user;
         })
+
         if (authContext.user && authContext.user.email) {
             user = users.find(user => user.email === authContext.user?.email);
             if (!user) {

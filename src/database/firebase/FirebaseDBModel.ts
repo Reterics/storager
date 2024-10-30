@@ -3,14 +3,15 @@ import {FirebaseApp, initializeApp} from "firebase/app";
 import {
     collection,
     getFirestore,
-    onSnapshot,
     query,
     Firestore,
     doc,
     getDoc,
     deleteDoc,
     setDoc,
-    addDoc
+    addDoc,
+    getDocs,
+    where
 } from "firebase/firestore";
 import {CommonCollectionData, ContextDataValueType, TTLData} from "../../interfaces/firebase.ts";
 
@@ -41,28 +42,36 @@ export default class FirebaseDBModel extends DBModel {
         return this._db;
     }
 
-    getAll(table: string): Promise<CommonCollectionData[]> {
-        return new Promise((resolve) => {
-            const cached = this.getCached(table);
-            if (cached) {
-                return resolve(cached);
-            }
-            const q = query(collection(this._db, table));
-            const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                const receivedData: CommonCollectionData[] = [];
-                querySnapshot.forEach((doc) => {
-                    receivedData.push({...doc.data(), id: doc.id});
-                });
-                this.updateCache(table, receivedData);
-                this.sync();
-                resolve(receivedData);
-                return () => unsubscribe()
-            }, (error) => {
-                console.error('Error happened during Firebase connection: ', error);
-                resolve([]);
-                return () => unsubscribe()
-            })
-        });
+    async getAll(table: string, force?: boolean): Promise<CommonCollectionData[]> {
+        const after = force ? 0 : this.getMTime(table);
+        const now = new Date().getTime();
+        const five = 5000;
+        const cached = this.getCached(table);
+
+        // Inside 5 seconds timeframe we have purely the cache
+        if (cached && now - five <= after) {
+            return cached;
+        }
+        const receivedData: CommonCollectionData[] = cached || [];
+
+        try {
+            // Apply a condition to only get documents where docUpdated > after the last cache modification
+            console.log('Get update for ' + table + ' after ' + new Date(after).toISOString().split('T')[0]);
+            const q = after
+                ? query(collection(this._db, table), where("docUpdated", ">", after))
+                : query(collection(this._db, table));
+            const querySnapshot = await getDocs(q);
+
+            querySnapshot.forEach((doc) => {
+                receivedData.push({...doc.data(), id: doc.id});
+            });
+            this.updateCache(table, receivedData);
+            this.sync();
+            return receivedData;
+        } catch (error) {
+            console.error('Error happened during Firebase connection: ', error);
+            return [];
+        }
     }
 
     async get(id: string, table: string): Promise<unknown> {
