@@ -147,7 +147,6 @@ export const FirebaseProvider = ({children}: {
             return ctxData ? ctxData[key] : null;
         }
 
-        const isNew = !item.id;
         await firebaseModel.update(item, key);
         if (archive) {
             item.docType = key;
@@ -167,21 +166,18 @@ export const FirebaseProvider = ({children}: {
 
         console.log('Created document with ID:', item.id, ' in ', key);
 
-        if (item && ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
-            if (isNew) {
-                ctxData[key].unshift(item);
+        if (ctxData) {
+            // FirebaseModel above build up the cache, so we need just to refresh data from it here
+            const cachedData = firebaseModel.getCached(key);
+            if (cachedData) {
+                if (key === 'settings') {
+                    ctxData[key] = cachedData[0];
+                } else {
+                    ctxData[key] = cachedData;
+                }
             } else {
-                ctxData[key] = ctxData[key].map((ctx: ContextDataValueType) => {
-                    if (item.id && ctx && ctx.id === item.id) {
-                        return item;
-                    }
-                    return ctx;
-                }) as ContextDataValueType[];
+                console.warn('Failed to fetch data from local cache');
             }
-
-            ctxData[key] = [...ctxData[key]];
-        } else if (ctxData && key === 'settings') {
-            ctxData[key] = item;
         }
 
         setCtxData(ctxData ? {

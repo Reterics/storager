@@ -43,7 +43,7 @@ export default class FirebaseDBModel extends DBModel {
     }
 
     async getAll(table: string, force?: boolean): Promise<CommonCollectionData[]> {
-        const after = force ? 0 : this.getMTime(table);
+        let after = force ? 0 : this.getMTime(table);
         const now = new Date().getTime();
         const five = 5000;
         const cached = this.getCached(table);
@@ -51,6 +51,10 @@ export default class FirebaseDBModel extends DBModel {
         // Inside 5 seconds timeframe we have purely the cache
         if (cached && now - five <= after) {
             return cached;
+        }
+        if (!cached) {
+            // If there is no cache, then we need all data
+            after = 0;
         }
         const receivedData: CommonCollectionData[] = cached || [];
 
@@ -63,7 +67,17 @@ export default class FirebaseDBModel extends DBModel {
             const querySnapshot = await getDocs(q);
 
             querySnapshot.forEach((doc) => {
-                receivedData.push({...doc.data(), id: doc.id});
+                const indexOf = receivedData.findIndex(data => data.id === doc.id);
+                const data = doc.data()
+                if (data && !data.deleted) {
+                    if (indexOf !== -1) {
+                        receivedData[indexOf] = {...data, id: doc.id}
+                    } else {
+                        receivedData.push({...data, id: doc.id});
+                    }
+                } else if (data && data.deleted && indexOf !== -1) {
+                    receivedData.splice(indexOf, 1);
+                }
             });
             this.updateCache(table, receivedData);
             this.sync();

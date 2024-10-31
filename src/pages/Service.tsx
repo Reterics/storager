@@ -61,7 +61,9 @@ function Service() {
             const history = (dbContext?.data.archive || []).filter(a => a.docParent === item.id);
             if (history.length) {
                 for (let i = 0; i < history.length; i++) {
-                    await dbContext?.removeData('archive', history[i].id);
+                    await dbContext?.removeData('archive', history[i].id).catch(e => {
+                        console.error(e);
+                    })
                 }
             }
 
@@ -72,9 +74,6 @@ function Service() {
 
     const addServiceItem = async (serviceData?: ServiceData, archive = true) => {
         const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, archive) as ServiceData[];
-        if (serviceData) {
-            updatedItems.push(serviceData);
-        }
         setServicedItems(updatedItems as ServiceData[]);
         setModalTemplate(null);
     };
@@ -135,6 +134,8 @@ function Service() {
                     const list = (dbContext?.data.archive || [])
                         .filter(data => data.docParent === serviceForm.id);
 
+                    console.log(dbContext?.data.archive)
+                    console.log(list);
                     list.sort((b, a) => {
                         if (!b.docUpdated || !a.docUpdated) {
                             return 0;
@@ -205,14 +206,25 @@ function Service() {
             {!printViewData && <PageHead title={t('Serviced Items')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
-                    onClick: () => setModalTemplate(modalTemplate ? null : {
-                        id: (servicedItems.length + 1).toString().padStart(5, '0'),
-                        serviceStatus: 'status_accepted',
-                        date: new Date().toISOString().split('T')[0],
-                        service_address: shop?.address || '',
-                        service_name: shop?.name || '',
-                        service_email: shop?.email || '',
-                    })
+                    onClick: () => {
+                        let lastNumber = Number.parseInt(servicedItems[servicedItems.length - 1].id || servicedItems.length.toString());
+                        if (Number.isNaN(lastNumber)) {
+                            lastNumber = servicedItems.length;
+                        }
+                        let id = (lastNumber + 1).toString().padStart(5, '0');
+                        while (servicedItems.find(item => item.id === id)) {
+                            lastNumber++;
+                            id = (lastNumber + 1).toString().padStart(5, '0');
+                        }
+                        setModalTemplate(modalTemplate ? null : {
+                            id: (lastNumber + 1).toString().padStart(5, '0'),
+                            serviceStatus: 'status_accepted',
+                            date: new Date().toISOString().split('T')[0],
+                            service_address: shop?.address || '',
+                            service_name: shop?.name || '',
+                            service_email: shop?.email || '',
+                        });
+                    }
                 }
             ]} onSearch={filterItems}/>}
 

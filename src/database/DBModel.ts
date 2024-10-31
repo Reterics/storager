@@ -163,8 +163,13 @@ export default abstract class DBModel {
             console.log(table + ' is expired');
             this.invalidateCache(table);
         }
-        console.log(this._cache[table] ? table + ' has cache' : table+' has no cache');
-        return this._cache[table];
+        if (this._cache[table] &&
+            (!Array.isArray(this._cache[table]) || this._cache[table].length)) {
+            console.log(table + ' has cache');
+            return this._cache[table];
+        }
+        console.log(table + ' has no cache');
+        return null;
     }
 
     getCachedEntry(id: string, table: string) {
