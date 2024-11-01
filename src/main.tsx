@@ -8,9 +8,11 @@ import {ThemeProvider} from "./store/ThemeContext.tsx";
 import {ShopProvider} from "./store/ShopContext.tsx";
 import QueryRouter from "./router.tsx";
 
+const baseName = import.meta.env.DEV ? '/' : (import.meta.env.VITE_BASENAME || '/');
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-      <BrowserRouter basename={import.meta.env.VITE_BASENAME || '/'}>
+      <BrowserRouter basename={baseName}>
           <AuthProvider>
               <ThemeProvider>
                   <ShopProvider>
