@@ -11,7 +11,9 @@ export default defineConfig(({mode}) => {
     base: './',
     build: {
       outDir: outDir,
-      emptyOutDir: true
+      emptyOutDir: true,
+      sourcemap: mode === 'test',
+      minify: mode === 'test' || mode === 'development' ? false : 'esbuild'
     },
     plugins: [react(), storageRPostBuild({outDir: outDir})],
     define: defineCustomConfig.defineViteConfig,
@@ -21,6 +23,11 @@ export default defineConfig(({mode}) => {
       environment: 'jsdom',
       globals: true,
       setupFiles: './tests/setup.js',
+      coverage: {
+        enabled: true,
+        provider: 'custom',
+        customProviderModule: 'vitest-monocart-coverage'
+      }
     },
   }
 })
