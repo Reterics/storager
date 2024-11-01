@@ -1,6 +1,6 @@
 import {
     SettingsItems,
-    Shop, StoreItem,
+    Shop, ShopType, StoreItem,
     StorePart
 } from "../../src/interfaces/interfaces";
 import {ContextData} from "../../src/interfaces/firebase";
@@ -90,6 +90,53 @@ export const defaultSettings: SettingsItems = {
     serviceTypes: 'default',
 }
 
+export const defaultTypes: ShopType[] = [
+    {
+        category: "item",
+        "translations": {
+            hu: "Item",
+            en: "Item"
+        },
+        name: "Item",
+        id: "012",
+    },{
+        category: "item",
+        "translations": {
+            hu: "Item2",
+            en: "Item2"
+        },
+        name: "Item2",
+        id: "013",
+    },
+    {
+        category: "service",
+        name: "Front",
+        translations: {
+            en: "Front",
+            hu: "Front"
+        },
+        id: "5214",
+    },
+    {
+        category: "service",
+        name: "Back",
+        translations: {
+            en: "Back",
+            hu: "Back"
+        },
+        id: "515",
+    },
+    {
+        category: "part",
+        name: "Part",
+        translations: {
+            en: "Part",
+            hu: "Part"
+        },
+        id: "T16",
+    }
+]
+
 export const defaultContextData:ContextData = {
     shops: [defaultShop],
     items: defaultItems,
@@ -100,6 +147,6 @@ export const defaultContextData:ContextData = {
     users: [currentUserMock],
     currentUser: currentUserMock,
     archive: [],
-    types: [],
+    types: defaultTypes,
     deleted: []
 }

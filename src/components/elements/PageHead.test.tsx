@@ -14,7 +14,7 @@ describe('PageHead', () => {
             <PageHead title={'PageHead Test Title'} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
-                    onClick: () => {}
+                    onClick: vi.fn()
                 }
             ]} error={'PageHead Test Error'} onSearch={search} debounceInterval={1} />
         )
@@ -59,9 +59,9 @@ describe('PageHead', () => {
             <PageHead title={'PageHead Test Title'} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
-                    onClick: () => {}
+                    onClick: vi.fn()
                 }
-            ]} error={undefined} onSearch={()=> {}} />
+            ]} error={undefined} onSearch={vi.fn()} />
         )
 
         expect(container.getByRole('heading', { name: 'PageHead Test Title' })).toBeDefined();
@@ -77,7 +77,7 @@ describe('PageHead', () => {
             <PageHead title={'PageHead Test Title'} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
-                    onClick: () => {}
+                    onClick: vi.fn()
                 }
             ]} />
         )
