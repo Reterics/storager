@@ -7,11 +7,11 @@ import {
     Firestore,
     doc,
     getDoc,
-    deleteDoc,
     setDoc,
     addDoc,
     getDocs,
-    where
+    where,
+    deleteDoc
 } from "firebase/firestore";
 import {CommonCollectionData, ContextDataValueType, TTLData} from "../../interfaces/firebase.ts";
 
@@ -56,6 +56,10 @@ export default class FirebaseDBModel extends DBModel {
             // If there is no cache, then we need all data
             after = 0;
         }
+        // There is no deleted table in DB
+        if (table === 'deleted') {
+            return cached || [];
+        }
         const receivedData: CommonCollectionData[] = cached || [];
 
         try {
@@ -76,6 +80,7 @@ export default class FirebaseDBModel extends DBModel {
                         receivedData.push({...data, id: doc.id});
                     }
                 } else if (data && data.deleted && indexOf !== -1) {
+                    this.updateCachedEntry(doc.id, 'deleted', {...data, id: doc.id});
                     receivedData.splice(indexOf, 1);
                 }
             });
@@ -101,8 +106,32 @@ export default class FirebaseDBModel extends DBModel {
     }
 
     async remove(id: string, table: string): Promise<void> {
-        await deleteDoc(doc(this._db, table, id));
-        this.removeCachedEntry(id, table);
+        const cached = this.getCachedEntry(id, table);
+        // There must be a cached entry, otherwise we would not show it in UI
+        if (cached) {
+            const modelRef = doc(this._db, table, id);
+            cached.deleted = true;
+            cached.docUpdated = new Date().getTime();
+            cached.docType = table;
+            await setDoc(modelRef, cached, { merge: true }).catch(e => {
+                console.error(e);
+            });
+            this.updateCachedEntry(id, 'deleted', {...cached, id});
+            this.removeCachedEntry(id, table);
+            this.sync();
+        } else {
+            // Data is not available anymore (ui error or multiple function calls)
+        }
+    }
+
+    async removePermanent(id: string): Promise<ContextDataValueType[] | null> {
+        const cached = this.getCachedEntry(id, 'deleted');
+        if (cached && cached.docType) {
+            await deleteDoc(doc(this._db, cached.docType as string, id));
+        }
+        this.removeCachedEntry(id, 'deleted');
+        this.sync();
+        return this.getAll('deleted');
     }
 
     async update(item: ContextDataValueType, table: string): Promise<void> {
@@ -142,6 +171,7 @@ export default class FirebaseDBModel extends DBModel {
             item.image = imageCache;
         }
         this.updateCachedEntry(item.id as string, table, item as CommonCollectionData);
+        this.sync();
     }
 
     async add(item: { [key: string]: unknown }, table: string): Promise<void | string> {
@@ -156,6 +186,7 @@ export default class FirebaseDBModel extends DBModel {
             item.id = modelRef.id;
         }
         this.appendCachedEntry(table, item as CommonCollectionData);
+        this.sync();
         return item.id as string | undefined;
     }
 }

@@ -19,7 +19,8 @@ export interface ContextData {
     users: UserData[],
     currentUser?: UserData,
     archive: ContextDataValueType[],
-    types: ShopType[]
+    types: ShopType[],
+    deleted: ContextDataValueType[]
 }
 
 
@@ -32,6 +33,7 @@ export interface DBContextType {
     refreshData: (key?: ContextDataType) => Promise<void>,
     setData: (key: ContextDataType, value: ContextDataValueType, archive?: boolean) =>  Promise<ContextDataCollectionType | null>,
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
+    removePermanentData: (id: string) => Promise<ContextDataValueType[] | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
     uploadDataBatch: (key: ContextDataType, values: ContextDataValueType[]) =>  Promise<ContextDataCollectionType | null>,
     getType: (type: 'part'|'item'|'service', lang: 'hu'|'en') => StyledSelectOption[]
@@ -39,7 +41,7 @@ export interface DBContextType {
 
 export interface CommonCollectionData {
     id: string,
-    [key: string]: string | number | undefined
+    [key: string]: string | number | boolean | undefined
 }
 
 export interface KVCollectionStore {

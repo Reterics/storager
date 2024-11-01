@@ -6,7 +6,8 @@ import {PDFData} from "./pdf.ts";
 export interface GeneralCollectionEntry {
     docType?: string,
     docParent?: string,
-    docUpdated?: number
+    docUpdated?: number,
+    deleted?: boolean
 }
 export interface LoginFormValues {
     email: string;

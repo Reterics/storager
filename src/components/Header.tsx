@@ -7,7 +7,14 @@ import {ShopContext} from "../store/ShopContext.tsx";
 import {DBContext} from "../database/DBContext.ts";
 import logo from "../assets/logo.svg";
 import logoWhite from "../assets/logo_white.svg";
-import {BsArrowClockwise, BsDoorOpen, BsFillGearFill, BsFillPersonLinesFill, BsListUl} from "react-icons/bs";
+import {
+    BsArrowClockwise,
+    BsDoorOpen,
+    BsFillGearFill,
+    BsFillPersonLinesFill,
+    BsFillTrash3Fill,
+    BsListUl
+} from "react-icons/bs";
 
 
 const Header = () => {
@@ -126,6 +133,17 @@ const Header = () => {
                                                 >
                                                     <div className="text-xl me-2"><BsListUl/></div>
                                                     {t('Types')}
+                                                </NavLink>
+                                            </li>}
+                                            {isAdmin && <li>
+                                                <NavLink
+                                                    to="/?page=recycle"
+                                                    onClick={handleLinkClick}
+                                                    className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                >
+                                                    <div className="text-xl me-2"><BsFillTrash3Fill />
+                                                    </div>
+                                                    {t('Recycle Bin')}
                                                 </NavLink>
                                             </li>}
                                             <li>

@@ -9,7 +9,7 @@ import {useCallback, useRef} from "react";
 export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 500 }:
     {
         buttons?: GeneralButtons[],
-        title?: string,
+        title?: string|React.ReactNode,
         error?: string,
         onSearch?: (value: string) => void,
         debounceInterval?: false | number

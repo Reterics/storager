@@ -30,6 +30,7 @@ export default abstract class DBModel {
                 'users'         : await loadFromIndexedDB('users') as CommonCollectionData[],
                 'archive'       : await loadFromIndexedDB('archive') as CommonCollectionData[],
                 'types'         : await loadFromIndexedDB('types') as CommonCollectionData[],
+                'deleted'       : await loadFromIndexedDB('deleted') as CommonCollectionData[],
             };
             ttl = await loadFromIndexedDB('ttl') as TTLData;
             mtime = await loadFromIndexedDB('mtime') as TTLData;
@@ -59,6 +60,7 @@ export default abstract class DBModel {
             await saveToIndexedDB('users'      ,this._cache['users'      ]);
             await saveToIndexedDB('archive'    ,this._cache['archive'    ]);
             await saveToIndexedDB('types'      ,this._cache['types'      ]);
+            await saveToIndexedDB('deleted'    ,this._cache['deleted'    ]);
             await saveToIndexedDB('ttl', this._ttl);
             await saveToIndexedDB('mtime', this._mtime);
         } catch (e) {
@@ -125,20 +127,19 @@ export default abstract class DBModel {
 
         if (cachedEntryIndex !== -1) {
             this._cache[table][cachedEntryIndex] = Object.assign(this._cache[table][cachedEntryIndex], data);
-            this.updateMTime(table);
         } else {
             if (!this._cache[table]) {
                 this._cache[table] = [];
             }
             this._cache[table].push(data);
         }
+        this.updateMTime(table);
     }
 
     removeCachedEntry(id: string, table: string) {
         const cachedEntryIndex = this.getCachedEntryIndex(id, table);
-
         if (cachedEntryIndex !== -1) {
-            this._cache[table] = this._cache[table].splice(cachedEntryIndex, 1);
+            this._cache[table].splice(cachedEntryIndex, 1);
         }
         this.updateMTime(table);
     }

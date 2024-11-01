@@ -120,7 +120,8 @@ export const FirebaseProvider = ({children}: {
             users: users,
             currentUser: user,
             archive: archive,
-            types: types
+            types: types,
+            deleted: await firebaseModel.getAll('deleted')
         })
     }
 
@@ -130,6 +131,10 @@ export const FirebaseProvider = ({children}: {
             if (filteredData.length !== ctxData[key].length) {
                 await firebaseModel.remove(id, firebaseCollections[key])
                 ctxData[key] = [...filteredData];
+                const cachedRecycleBin = firebaseModel.getCached('deleted');
+                if (cachedRecycleBin) {
+                    ctxData.deleted = cachedRecycleBin;
+                }
 
                 setCtxData({
                     ...ctxData,
@@ -139,6 +144,14 @@ export const FirebaseProvider = ({children}: {
         }
 
         return ctxData ? ctxData[key] : null;
+    }
+
+    const removePermanentCtxData = async (id: string)=> {
+        const cached = firebaseModel.getCachedEntry(id, 'deleted');
+        if (cached) {
+            return await firebaseModel.removePermanent(id);
+        }
+        return await firebaseModel.getAll('deleted');
     }
 
     const updateContextData = async (key: ContextDataType, item: ContextDataValueType, archive?: boolean)=> {
@@ -266,6 +279,7 @@ export const FirebaseProvider = ({children}: {
         refreshData: refreshData,
         setData: updateContextData,
         removeData: removeContextData,
+        removePermanentData: removePermanentCtxData,
         refreshImagePointers:refreshImagePointers,
         uploadDataBatch: updateContextBatched,
         getType: getType

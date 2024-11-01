@@ -3,23 +3,22 @@ import {CommonCollectionData, TTLData} from "../interfaces/firebase.ts";
 
 export function openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('storagerDB', 1);
+        const request = indexedDB.open('storagerDB', 2);
 
+        const stores = [
+            'shops', 'deleted', 'items', 'parts', 'services',
+            'completions', 'settings', 'users', 'archive',
+            'types', 'mtime', 'ttl'
+        ];
         request.onupgradeneeded = function(event: IDBVersionChangeEvent) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-expect-error
             const db = event.target?.result;
-            db.createObjectStore('shops', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('items', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('parts', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('services', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('completions', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('settings', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('users', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('archive', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('types', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('mtime', { keyPath: 'key', autoIncrement: true });
-            db.createObjectStore('ttl', { keyPath: 'key', autoIncrement: true });
+            stores.forEach((storeName) => {
+                if (!db.objectStoreNames.contains(storeName)) {
+                    db.createObjectStore(storeName, { keyPath: 'key', autoIncrement: true });
+                }
+            });
         };
 
         request.onsuccess = function(event) {

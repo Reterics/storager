@@ -9,6 +9,7 @@ import SignInComponent from "./components/SignIn.tsx";
 import Shops from "./pages/Shops.tsx";
 import About from "./pages/About.tsx";
 import Types from "./pages/Types.tsx";
+import RecycleBin from "./pages/RecycleBin.tsx";
 
 
 function QueryRouter() {
@@ -32,6 +33,8 @@ function QueryRouter() {
                 return <InAppLayout><About /></InAppLayout>;
             case 'types':
                 return <InAppLayout><Types /></InAppLayout>;
+            case 'recycle':
+                return <InAppLayout><RecycleBin /></InAppLayout>;
             case 'signin':
                 return <SignInComponent />;
             default:
