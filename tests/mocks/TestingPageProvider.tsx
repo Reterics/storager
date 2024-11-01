@@ -22,10 +22,6 @@ const TestingPageProvider = ({children, ctxDataOverride}: {
         useSearchParams: () => [{'page': '', get: () => ''}]
     }));
 
-    vi.mock('react-i18next', () => ({
-        useTranslation: ()=>({ t: (s:string) => s, i18n: {language: 'en', changeLanguage: vi.fn()} })
-    }));
-
     return (
         <AuthContextProviderMock>
             <ThemeContextProviderMock>

@@ -1,3 +1,4 @@
+import '../../../tests/mocks/firebase.ts';
 import {describe, expect, it, vi} from "vitest";
 import {fireEvent, render} from "@testing-library/react";
 import PartModal from "./PartModal.tsx";

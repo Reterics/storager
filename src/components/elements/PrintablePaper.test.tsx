@@ -23,7 +23,7 @@ describe('PrintablePaper', () => {
         const result = render(
             <div className={"text-gray-900"} style={{paddingTop: '20mm', background: 'white'}}>
                 <PrintablePaper data={formData.data} ref={undefined as unknown as RefObject<HTMLDivElement>}>
-                    <img alt={'Signature'} src={formData.signature}/>
+                    <img alt={'Signature'} src={undefined}/>
                 </PrintablePaper>
             </div>
         )
