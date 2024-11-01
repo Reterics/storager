@@ -60,12 +60,14 @@ export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 5
                             ref={ref}
                             onKeyDown={handleKeyPress}
                             type="text"
+                            role="search"
                             className="block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600"
                             placeholder={t('Search...')}
                         />
                         <button
                             onClick={onClickSearch}
                             type="button"
+                            role="search"
                             className="px-2.5 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-r-lg focus:ring-2 focus:ring-gray-400 focus:outline-none"
                         >
                             <BsSearch size={18} />

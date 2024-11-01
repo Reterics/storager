@@ -17,5 +17,10 @@ export default defineConfig(({mode}) => {
     define: defineCustomConfig.defineViteConfig,
     publicDir: "public",
     assetsInclude: './src/assets/*.*',
+    test: {
+      environment: 'jsdom',
+      globals: true,
+      setupFiles: './tests/setup.js',
+    },
   }
 })
