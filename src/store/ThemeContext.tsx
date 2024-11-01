@@ -1,6 +1,6 @@
 import React, {createContext, useState, useEffect, ReactNode} from 'react';
 
-const ThemeContext = createContext< { theme: string; toggleTheme: () => void; }|null>(null);
+export const ThemeContext = createContext< { theme: string; toggleTheme: () => void; }|null>(null);
 
 export const ThemeProvider = ({ children }: {
     children: ReactNode

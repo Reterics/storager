@@ -1,6 +1,6 @@
 # ![Logo](./src/assets/logo_48.png) StorageR
 
-[![build](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml/badge.svg)](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml) ![maintenance-status](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
+[![build](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml/badge.svg)](https://github.com/Reterics/storager/actions/workflows/npm-build-test.yml) [![codecov](https://codecov.io/github/Reterics/storager/graph/badge.svg?token=VA00FOSC8W)](https://codecov.io/github/Reterics/storager) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![maintenance-status](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
 
 ![Preview](./public/img/screenshot.png)
 
@@ -21,10 +21,11 @@ After you have the access to Firebase Dashboard use the following steps:
     - Under Your apps section click the **Add app** button and click to the third **Web App** button
     - On the next page Add a nickname to your app and click to **Register app** button and then **Continue to console**
     - Now in the **Your apps** section you can see all of the details you need to put in your **.env** file
-- Create Collections
+- Setup collection Rules
     - Open Firestore Database in Build Menu
-    - Create an empty **shops**  **items** **parts** **services** **completions** **settings** and **users** collection
-      - _Note:_ You can customize collection names in the .env file
+    - Open Rules tab, and update it in order to have proper connection with your app
+      - **DEV**: You can use the following in _DEV_ environments: ```allow read, write: if request.time < timestamp.date(2050, 11, 30);```
+
 
 ### Environment Setup
 

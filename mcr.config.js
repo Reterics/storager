@@ -24,6 +24,7 @@ export default {
             '**/assets/*': false,
             '**/*.d.ts': false,
             '**/*.json': false,
+            '**/*test.tsx': false,
 
             // include files
             '**/*.css': 'css',
