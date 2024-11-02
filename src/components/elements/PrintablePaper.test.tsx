@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import PrintablePaper from './PrintablePaper'
 import {render} from "@testing-library/react";
-import {mockPDFData} from "../../../tests/mocks/printData.ts";
+import {mockEmptyPDFData, mockPDFData} from "../../../tests/mocks/printData.ts";
 import {PDFData} from "../../interfaces/pdf.ts";
 import {RefObject} from "react";
 import {serviceDataList} from "../../../tests/mocks/serviceData.ts";
 
 describe('PrintablePaper', () => {
-    it('renders PrintablePaper', async () => {
+    it.concurrent('renders PrintablePaper', async () => {
 
         const formData = mockPDFData as {
             data: PDFData,
@@ -37,6 +37,25 @@ describe('PrintablePaper', () => {
         expect(result.getByText(serviceDataList[0]?.service_name as string)).toBeDefined()
         expect(result.getByText('Strong Title Test')).toBeDefined()
 
+        result.unmount();
+    })
+
+    it.concurrent('Should render an empty page', async () => {
+        const formData = mockEmptyPDFData as {
+            data: PDFData,
+            signature?: string,
+            printNow?: boolean
+        };
+
+        const result = render(
+            <div className={"text-gray-900"} style={{paddingTop: '20mm', background: 'white'}}>
+                <PrintablePaper data={formData.data} ref={undefined as unknown as RefObject<HTMLDivElement>}>
+                    <img alt={'Signature'} src={undefined}/>
+                </PrintablePaper>
+            </div>
+        )
+        expect(result.queryByText(serviceDataList[0].client_name as string)).toBeNull()
+        expect(result.queryByText(serviceDataList[0]?.service_name as string)).toBeNull()
         result.unmount();
     })
 })

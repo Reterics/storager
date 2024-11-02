@@ -48,7 +48,10 @@ export const fileToDataURL = (file: File) => {
 export const uploadFileInputAsText = (file: Blob): Promise<string|ArrayBuffer|null> => {
     return new Promise(resolve => {
         const reader = new FileReader();
-        reader.onload = function (): void {
+        reader.onload = function (e: ProgressEvent<FileReader>): void {
+            if (e && e.target) {
+                return resolve(e.target.result);
+            }
             resolve(reader.result);
         };
         reader.readAsText(file);

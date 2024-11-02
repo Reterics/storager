@@ -1,15 +1,27 @@
 import {DBContext} from '../../src/database/DBContext'
 import {
-    ContextData, ContextDataCollectionType, ContextDataType
+    ContextData, ContextDataCollectionType, ContextDataValueType
 } from "../../src/interfaces/firebase";
-import {useState} from "react";
 import {defaultContextData} from "./shopData";
-import { vi } from 'vitest'
+import {Mock, vi} from 'vitest'
 import {StyledSelectOption} from "../../src/interfaces/interfaces.ts";
 
-const DBContextProviderMock = ({children, ctxDataOverride}:{
+const DBContextProviderMock = ({children, ctxDataOverride,
+    refreshData= vi.fn(),
+    setData= vi.fn(),
+    removeData= vi.fn(),
+    removePermanentData= vi.fn(),
+    refreshImagePointers= vi.fn(),
+    uploadDataBatch= vi.fn()
+}:{
     children: React.ReactNode,
-    ctxDataOverride?: ContextData
+    ctxDataOverride?: ContextData,
+    refreshData: Mock<()=>Promise<void>>,
+    setData: Mock<()=>Promise<ContextDataCollectionType | null>>,
+    removeData: Mock<()=>Promise<ContextDataValueType[] | null>>,
+    removePermanentData: Mock<()=>Promise<ContextDataValueType[] | null>>,
+    refreshImagePointers: Mock<()=>Promise<void>>,
+    uploadDataBatch: Mock<()=>Promise<ContextDataCollectionType | null>>,
 }) => {
     //const authContext = {user: currentUserMock};
     /*const shopContext = {
@@ -17,45 +29,11 @@ const DBContextProviderMock = ({children, ctxDataOverride}:{
         setShop: vi.fn()
     };*/
 
-    const [ctxData, setCtxData] = useState<ContextData|null>(ctxDataOverride || defaultContextData);
+    const ctxData = ctxDataOverride || defaultContextData;
 
-
-    /*const setData = async (key: ContextDataType, value: ContextDataValueType, archive?: boolean): Promise<ContextDataCollectionType | null> => {
-        if (ctxData && ctxData[key] && key !== 'settings') {
-            const indexOf = ctxData[key].findIndex(data => data.id === value.id);
-            if (indexOf !== -1) {
-                if (archive) {
-                    ctxData.archive.push({...ctxData[key][indexOf]})
-                }
-
-                ctxData[key][indexOf] = value;
-            } else {
-                ctxData[key].push(value);
-            }
-        }
-        setCtxData(ctxData ? {
-            ...ctxData,
-        } : null);
-
-        return ctxData ? ctxData[key] : null;
-    }*/
-
-    const removeData = async (key: ContextDataType, id: string): Promise<ContextDataCollectionType | null> => {
-        if (ctxData && Array.isArray(ctxData[key]) && key !== 'settings') {
-            const filteredData = ctxData[key].filter(item => item.id !== id);
-            ctxData[key] = [...filteredData];
-
-            setCtxData({
-                ...ctxData,
-            });
-            return filteredData
-        }
-
-        return ctxData ? ctxData[key] : null;
-    }
 
     const getType = (type: 'part'|'item'|'service', lang: 'hu'|'en' = 'hu'): StyledSelectOption[] => {
-        if (ctxData && ctxData.types) {
+        if (ctxData.types) {
             return ctxData.types
                 .filter(t => t.category === type)
                 .map(type => {
@@ -71,12 +49,12 @@ const DBContextProviderMock = ({children, ctxDataOverride}:{
     return (
         <DBContext.Provider value={{
             data: ctxData as ContextData,
-            refreshData: vi.fn(),
-            setData: vi.fn(),
+            refreshData: refreshData,
+            setData: setData,
             removeData: removeData,
-            removePermanentData: vi.fn(),
-            refreshImagePointers: vi.fn(),
-            uploadDataBatch: vi.fn(),
+            removePermanentData: removePermanentData,
+            refreshImagePointers: refreshImagePointers,
+            uploadDataBatch: uploadDataBatch,
             getType: getType
         }}>{children}</DBContext.Provider>
     )
