@@ -23,11 +23,11 @@ export const defaultItems: StoreItem[] = [
         sku: 'C4545454',
         description: 'description',
         image: '/image.png',
-        storage: 5,
         price: 1,
         type: 'item',
-        shop_id: '1',
-        storage_limit: 5,
+        storage: [5],
+        shop_id: ['1'],
+        storage_limit: [5],
     },
     {
         id: 'i2',
@@ -35,11 +35,11 @@ export const defaultItems: StoreItem[] = [
         sku: 'C4545455',
         description: 'description2',
         image: '/image.png',
-        storage: 5,
         price: 2,
         type: 'item',
-        shop_id: '1',
-        storage_limit: 5,
+        storage: [5],
+        shop_id: ['1'],
+        storage_limit: [5],
     }
 ]
 
@@ -50,11 +50,11 @@ export const defaultParts: StorePart[] = [
         sku: 'P232131',
         description: 'description',
         image: '/image.png',
-        storage: 3,
         price: 1,
         category: 'base',
-        shop_id: '1',
-        storage_limit: 5
+        storage: [3],
+        shop_id: ['1'],
+        storage_limit: [5]
     },
     {
         id: 'p2',
@@ -62,11 +62,11 @@ export const defaultParts: StorePart[] = [
         sku: 'P232134',
         description: 'description2',
         image: '/image.png',
-        storage: 5,
         price: 2,
         category: 'base',
-        shop_id: '1',
-        storage_limit: 5
+        storage: [5],
+        shop_id: ['1'],
+        storage_limit: [5]
     }
 ];
 

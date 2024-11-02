@@ -94,11 +94,11 @@ export const FirebaseProvider = ({children}: {
         }
 
         // TODO: move the filter server side
-        if (user && user.shop_id) {
-            shops = shops.filter(shop => shop.id === user.shop_id);
-            items = items.filter(item => item.shop_id === user.shop_id);
-            parts = parts.filter(part => part.shop_id === user.shop_id);
-            if (shopContext.shop?.id !== user.shop_id) {
+        if (user && user.shop_id && user.shop_id.length) {
+            shops = shops.filter(shop => user.shop_id.includes(shop.id));
+            items = items.filter(item => user.shop_id.includes(item.shop_id));
+            parts = parts.filter(part => user.shop_id.includes(part.shop_id));
+            if (!shopContext.shop?.id || !user.shop_id.includes(shopContext.shop?.id)) {
                 shopContext.setShop(shops[0])
             }
         }

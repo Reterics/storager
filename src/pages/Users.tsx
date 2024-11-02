@@ -8,6 +8,7 @@ import {Shop, StyledSelectOption, UserData} from "../interfaces/interfaces.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import UserModal from "../components/modals/UserModal.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
+import {getShopIndex} from "../utils/storage.ts";
 
 function UsersPage() {
     const dbContext = useContext(DBContext);
@@ -15,6 +16,7 @@ function UsersPage() {
     const { t } = useTranslation();
 
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
+    const selectedShopId = shopContext.shop ? shopContext.shop.id : dbContext?.data.shops[0]?.id as string;
     const [users, setUsers] = useState<UserData[]>(dbContext?.data.users || []);
     const [modalTemplate, setModalTemplate] = useState<UserData|null>(null)
 
@@ -40,7 +42,8 @@ function UsersPage() {
     }
 
     const tableLines = users.map(item => {
-        const assignedShop = item.shop_id ? shops.find(i => i.id === item.shop_id) : null;
+        const shopIndex = getShopIndex(item, selectedShopId);
+        const assignedShop = shops[shopIndex];
 
         return [
             item.id,
@@ -65,7 +68,7 @@ function UsersPage() {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => setModalTemplate(modalTemplate ? null : {
                         id: '',
-                        shop_id: shopContext.shop?.id,
+                        shop_id: [shopContext.shop?.id as string],
                     })
                 }
             ]}/>

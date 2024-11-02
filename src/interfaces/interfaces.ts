@@ -175,11 +175,11 @@ export interface StoreItem extends GeneralCollectionEntry{
     sku?: string,
     description?: string,
     image?: string,
-    storage?: number,
     price?: number,
     type?: string,
-    shop_id?: string,
-    storage_limit?: number,
+    storage?: number[],
+    shop_id?: string[],
+    storage_limit?: number[],
 }
 
 export interface ItemModalInput {
@@ -187,7 +187,8 @@ export interface ItemModalInput {
     item: StoreItem | null,
     onSave: (currentItem: StoreItem) => unknown
     setItem: (item: StoreItem) => void
-    inPlace?: boolean
+    inPlace?: boolean,
+    selectedShopId?: string
 }
 
 export interface StorePart extends GeneralCollectionEntry{
@@ -196,11 +197,11 @@ export interface StorePart extends GeneralCollectionEntry{
     sku?: string,
     description?: string,
     image?: string,
-    storage?: number,
     price?: number,
     category?: string,
-    shop_id?: string,
-    storage_limit?: number,
+    storage?: number[],
+    shop_id?: string[],
+    storage_limit?: number[],
 }
 
 export interface ShopType extends GeneralCollectionEntry {
@@ -221,9 +222,10 @@ export interface TypeModalInput {
 export interface PartModalInput {
     onClose: () => void,
     part: StorePart | null,
-    onSave: (currentPart: StorePart) => unknown
-    setPart: (part: StorePart) => void
-    inPlace?: boolean
+    onSave: (currentPart: StorePart) => unknown,
+    setPart: (part: StorePart) => void,
+    inPlace?: boolean,
+    selectedShopId?: string
 }
 
 export type ServiceStatus = 'status_accepted'|'status_in_progress'|'status_waiting_parts'|'status_waiting_feedback'|'status_ready'|'status_delivered';
@@ -337,7 +339,7 @@ export interface SettingsItems extends GeneralCollectionEntry{
 export interface UserData extends GeneralCollectionEntry{
     username?: string,
     email?: string,
-    shop_id?: string,
+    shop_id?: string[],
     role?: string,
     id: string
     password?: string

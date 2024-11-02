@@ -9,37 +9,23 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
+import {getShopIndex, sortItemsByWarn} from "../utils/storage.ts";
 
 function Items() {
     const dbContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    let initialItems = dbContext?.data.items || [];
-    if (shopContext.shop) {
-        initialItems = initialItems.filter((item) => shopContext.shop?.id === item.shop_id);
-    }
+    const selectedShopId = shopContext.shop ? shopContext.shop.id : dbContext?.data.shops[0]?.id as string;
+    const initialItems = (dbContext?.data.items || [])
+        .filter((item) => item.shop_id?.includes(selectedShopId));
 
-    // Order by storage
-    initialItems.sort((a, b) => {
-        const warningA = !a.storage || a.storage < (a.storage_limit || 5);
-        const warningB = !b.storage || b.storage < (b.storage_limit || 5);
-
-        if (warningA && !warningB) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
+    const warnings = sortItemsByWarn(initialItems, selectedShopId);
 
     const [items, setItems] = useState<StoreItem[]>(initialItems);
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
-    let error;
-    const storageWarnings = items.filter(item=> !item.storage || item.storage < (item.storage_limit || 5));
-    if (storageWarnings.length) {
-        error = storageWarnings.length + t(' low storage alert');
-    }
+    const error = warnings.length ? warnings.length + t(' low storage alert') : undefined;
 
     const [modalTemplate, setModalTemplate] = useState<StoreItem|null>(null)
 
@@ -65,7 +51,7 @@ function Items() {
             let updatedItems = await dbContext?.removeData('items', item.id) as StoreItem[];
             if (shopContext.shop) {
                 updatedItems = (updatedItems as StoreItem[])
-                    .filter((item) => shopContext.shop?.id === item.shop_id);
+                    .filter((item) => item.shop_id?.includes(selectedShopId));
             }
             setItems(updatedItems);
         }
@@ -79,19 +65,39 @@ function Items() {
 
         if (shopContext.shop) {
             updatedItems = (updatedItems as StoreItem[])
-                .filter((item) => shopContext.shop?.id === item.shop_id);
+                .filter((item) => item.shop_id?.includes(selectedShopId));
         }
         setItems(updatedItems as StoreItem[]);
         setModalTemplate(null);
     }
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement> | {target: {value: unknown}}, key: string, item: StoreItem) => {
-        const value = e.target.value;
+        const value = e.target.value as string;
 
-        const obj = {...item};
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        obj[key] = value;
+        let obj: StoreItem;
+
+        if (!['storage_limit', 'shop_id', 'storage'].includes(key)) {
+            obj = {
+                ...item,
+                [key]: value
+            } as StoreItem;
+        } else {
+            const storeKey = key as 'storage_limit'|'shop_id'|'storage';
+            obj = {
+                ...item,
+                [key]: item?.[storeKey] || []
+            } as StoreItem;
+
+            if (!Array.isArray(obj[storeKey])) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                obj[storeKey] = [obj[storeKey]]
+            }
+            const shopIndex = item ? getShopIndex(item, selectedShopId) : -1;
+            if (obj[storeKey]) {
+                obj[storeKey][shopIndex] = value;
+            }
+        }
 
         setItems((items) => {
             return items.map(i => {
@@ -124,13 +130,16 @@ function Items() {
     };
 
     const tableLines = items.map(item => {
-        const assignedShop = item.shop_id ? shops.find(i => i.id === item.shop_id) : null;
+        const shopIndex = getShopIndex(item, selectedShopId);
+        const assignedShop = shops[shopIndex];
+        const storage = item.storage && item.storage[shopIndex];
+        const stLimitA = item.storage_limit && item.storage_limit[shopIndex];
 
         const array =  [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.sku,
             item.name || '',
-            Number(item.storage || 0),
+            Number(storage || 0),
             Number(item.price || 0),
             assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
@@ -139,7 +148,7 @@ function Items() {
             })
         ];
 
-        array[-1] = !item.storage || item.storage < (item.storage_limit || 5) ? 1 : 0;
+        array[-1] = !storage || storage < (stLimitA || 5) ? 1 : 0;
 
         return array;
     });
@@ -155,9 +164,9 @@ function Items() {
                     value: <BsFillPlusCircleFill/>,
                     onClick:() => setModalTemplate(modalTemplate ? null : {
                         id: '',
-                        shop_id: shopContext.shop?.id,
-                        storage: 1,
-                        storage_limit: 5
+                        shop_id: [selectedShopId],
+                        storage: [1],
+                        storage_limit: [5]
                     })
                 }
             ]} error={error} onSearch={filterItems}/>
@@ -205,6 +214,7 @@ function Items() {
                     setItem={(item: StoreItem) => setModalTemplate(item)}
                     item={modalTemplate}
                     inPlace={false}
+                    selectedShopId={selectedShopId}
                 />
             </div>
         </>

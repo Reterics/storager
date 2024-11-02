@@ -8,6 +8,7 @@ import {Shop, StoreItem, StorePart, StyledSelectOption} from "../interfaces/inte
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import PartModal from "../components/modals/PartModal.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
+import {getShopIndex, sortItemsByWarn} from "../utils/storage.ts";
 
 
 function Parts() {
@@ -15,31 +16,17 @@ function Parts() {
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    let initialParts = dbContext?.data.parts || [];
-    if (shopContext.shop) {
-        initialParts = initialParts.filter((item) => shopContext.shop?.id === item.shop_id);
-    }
+    const selectedShopId = shopContext.shop ? shopContext.shop.id : dbContext?.data.shops[0]?.id as string;
 
-    // Order by storage
-    initialParts.sort((a, b) => {
-        const warningA = !a.storage || a.storage < (a.storage_limit || 5);
-        const warningB = !b.storage || b.storage < (b.storage_limit || 5);
+    const initialParts = (dbContext?.data.parts || [])
+        .filter((item) => item.shop_id?.includes(selectedShopId));
 
-        if (warningA && !warningB) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
+    const warnings = sortItemsByWarn(initialParts, selectedShopId);
 
     const [parts, setParts] = useState<StorePart[]>(initialParts);
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
-    let error;
-    const storageWarnings = parts.filter(item => !item.storage || item.storage < (item.storage_limit || 5));
-    if (storageWarnings.length) {
-        error = storageWarnings.length + t(' low storage alert');
-    }
+    const error = warnings.length ? warnings.length + t(' low storage alert') : undefined;
 
     const [modalTemplate, setModalTemplate] = useState<StorePart|null>(null)
 
@@ -64,7 +51,7 @@ function Parts() {
             let updatedItems = await dbContext?.removeData('parts', item.id) as StorePart[];
             if (shopContext.shop) {
                 updatedItems = (updatedItems as StorePart[])
-                    .filter((item) => shopContext.shop?.id === item.shop_id);
+                    .filter((item) => item.shop_id?.includes(selectedShopId));
             }
             setParts(updatedItems);
         }
@@ -78,26 +65,45 @@ function Parts() {
 
         if (shopContext.shop) {
             updatedParts = (updatedParts as StorePart[])
-                .filter((item) => shopContext.shop?.id === item.shop_id);
+                .filter((item) => item.shop_id?.includes(selectedShopId));
         }
         setParts(updatedParts as StorePart[]);
         setModalTemplate(null);
     }
 
-    const changeType = (e: React.ChangeEvent<HTMLInputElement> | {target: {value: unknown}}, key: string, item: StorePart) => {
-        const value = e.target.value;
+    const changeType = (e: React.ChangeEvent<HTMLInputElement> | {target: {value: unknown}}, key: string, part: StorePart) => {
+        const value = e.target.value as string;
 
-        const obj = {...item};
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        obj[key] = value;
+        let obj: StorePart;
+        if (!['storage_limit', 'shop_id', 'storage'].includes(key)) {
+            obj = {
+                ...part,
+                [key]: value
+            } as StorePart;
+        } else {
+            const storeKey = key as 'storage_limit'|'shop_id'|'storage';
+            obj = {
+                ...part,
+                [key]: part?.[storeKey] || []
+            } as StorePart;
+
+            if (!Array.isArray(obj[storeKey])) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                obj[storeKey] = [obj[storeKey]]
+            }
+            const shopIndex = part ? getShopIndex(part, selectedShopId) : -1;
+            if (obj[storeKey]) {
+                obj[storeKey][shopIndex] = value;
+            }
+        }
 
         setParts((items) => {
             return items.map(i => {
-                if (i === item) {
-                    return obj as StoreItem;
+                if (i === part) {
+                    return obj as StorePart;
                 }
-                return {...i} as StoreItem;
+                return {...i} as StorePart;
             })
         });
     };
@@ -106,7 +112,7 @@ function Parts() {
 
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
         const key = tableKeyOrder[col as number];
-        const item = parts[index] as StoreItem;
+        const item = parts[index] as StorePart;
 
         if (item && key) {
             changeType({
@@ -123,13 +129,16 @@ function Parts() {
     };
 
     const tableLines = parts.map(item => {
-        const assignedShop = item.shop_id ? shops.find(i => i.id === item.shop_id) : null;
+        const shopIndex = getShopIndex(item, selectedShopId);
+        const assignedShop = shops[shopIndex];
+        const storage = item.storage && item.storage[shopIndex];
+        const stLimitA = item.storage_limit && item.storage_limit[shopIndex];
 
         const array =  [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.sku,
             item.name || '',
-            Number(item.storage || 0),
+            Number(storage || 0),
             Number(item.price || 0),
             assignedShop ? assignedShop.name : t('Nincs megadva'),
             TableViewActions({
@@ -138,7 +147,7 @@ function Parts() {
             })
         ];
 
-        array[-1] = !item.storage || item.storage < (item.storage_limit || 5) ? 1 : 0;
+        array[-1] = !storage || storage < (stLimitA || 5) ? 1 : 0;
 
         return array;
     });
@@ -154,9 +163,9 @@ function Parts() {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => setModalTemplate(modalTemplate ? null : {
                         id: '',
-                        shop_id: shopContext.shop?.id,
-                        storage: 1,
-                        storage_limit: 5
+                        shop_id: [selectedShopId],
+                        storage: [1],
+                        storage_limit: [5]
                     })
                 }
             ]} error={error} onSearch={filterItems} />
@@ -204,6 +213,7 @@ function Parts() {
                     setPart={(item: StoreItem) => setModalTemplate(item)}
                     part={modalTemplate}
                     inPlace={false}
+                    selectedShopId={selectedShopId}
                 />
             </div>
         </>

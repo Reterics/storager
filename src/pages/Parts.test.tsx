@@ -20,8 +20,8 @@ describe('Parts', () => {
     })
     it('renders the Parts page with proper ordering', () => {
         const ctxDataOverride = {...defaultContextData};
-        ctxDataOverride.parts[0] = {...defaultParts[0], storage: 1000};
-        ctxDataOverride.parts[1] = {...defaultParts[1], storage: 0};
+        ctxDataOverride.parts[0] = {...defaultParts[0], storage: [1000]};
+        ctxDataOverride.parts[1] = {...defaultParts[1], storage: [0]};
         const renderResult = render(<TestingPageProvider ctxDataOverride={ctxDataOverride}><Parts /></TestingPageProvider>);
 
         const trList = renderResult.container.querySelectorAll('table > tbody > tr');

@@ -16,12 +16,12 @@ const DBContextProviderMock = ({children, ctxDataOverride,
 }:{
     children: React.ReactNode,
     ctxDataOverride?: ContextData,
-    refreshData: Mock<()=>Promise<void>>,
-    setData: Mock<()=>Promise<ContextDataCollectionType | null>>,
-    removeData: Mock<()=>Promise<ContextDataValueType[] | null>>,
-    removePermanentData: Mock<()=>Promise<ContextDataValueType[] | null>>,
-    refreshImagePointers: Mock<()=>Promise<void>>,
-    uploadDataBatch: Mock<()=>Promise<ContextDataCollectionType | null>>,
+    refreshData?: Mock<()=>Promise<void>>,
+    setData?: Mock<()=>Promise<ContextDataCollectionType | null>>,
+    removeData?: Mock<()=>Promise<ContextDataValueType[] | null>>,
+    removePermanentData?: Mock<()=>Promise<ContextDataValueType[] | null>>,
+    refreshImagePointers?: Mock<()=>Promise<void>>,
+    uploadDataBatch?: Mock<()=>Promise<ContextDataCollectionType | null>>,
 }) => {
     //const authContext = {user: currentUserMock};
     /*const shopContext = {

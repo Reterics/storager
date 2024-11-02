@@ -21,9 +21,8 @@ function RecycleBin() {
             .filter((item) => {
                 const shopId = (item as unknown as StoreItem).shop_id;
 
-                if (shopId !== undefined) {
-                    return shopContext.shop?.id === shopId;
-
+                if (shopId !== undefined && shopContext.shop?.id) {
+                    return shopId.includes(shopContext.shop?.id);
                 }
                 return true;
             });
@@ -43,9 +42,8 @@ function RecycleBin() {
                     .filter((item) => {
                         const shopId = (item as unknown as StoreItem).shop_id;
 
-                        if (shopId !== undefined) {
-                            return shopContext.shop?.id === shopId;
-
+                        if (shopId !== undefined && shopContext.shop?.id) {
+                            return shopId.includes(shopContext.shop?.id);
                         }
                         return true;
                     });

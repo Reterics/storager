@@ -9,24 +9,44 @@ import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
 import FormRow from "../elements/FormRow.tsx";
 import {DBContext} from "../../database/DBContext.ts";
+import {getShopIndex} from "../../utils/storage.ts";
 
 
-export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: ItemModalInput) {
+export default function ItemModal({ onClose, item, setItem, onSave, inPlace, selectedShopId }: ItemModalInput) {
     const { t, i18n } = useTranslation();
     const dbContext = useContext(DBContext);
 
     const selectTypeOptions = dbContext?.getType('item', i18n.language === 'hu' ? 'hu' : 'en') || [];
 
     const [file, setFile] = useState<File|null>(null)
+    const shopIndex = item ? getShopIndex(item, selectedShopId) : -1;
 
-
-    const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const changeType = (e: ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
 
-        const obj = {...item};
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        obj[key] = value;
+        let obj: StoreItem;
+
+        if (!['storage_limit', 'shop_id', 'storage'].includes(key)) {
+            obj = {
+                ...item,
+                [key]: value
+            } as StoreItem;
+        } else {
+            const storeKey = key as 'storage_limit'|'shop_id'|'storage';
+            obj = {
+                ...item,
+                [key]: item?.[storeKey] || []
+            } as StoreItem;
+
+            if (!Array.isArray(obj[storeKey])) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                obj[storeKey] = [obj[storeKey]]
+            }
+            if (obj[storeKey]) {
+                obj[storeKey][shopIndex] = value;
+            }
+        }
 
         setItem(obj as StoreItem);
     };
@@ -116,7 +136,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
             <FormRow>
                 <StyledInput
                     type="number" name="storage"
-                    value={item.storage}
+                    value={item.storage?.[shopIndex]}
                     onChange={(e) => changeType(e, 'storage')}
                     label={t('Storage')}
                     pattern="[0-9\.]+"
@@ -124,7 +144,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace }: I
                 />
                 <StyledInput
                     type="number" name="storage_limit"
-                    value={item.storage_limit}
+                    value={item.storage_limit?.[shopIndex]}
                     onChange={(e) => changeType(e, 'storage_limit')}
                     label={t('Min Storage Limit')}
                     pattern="[0-9\.]+"

@@ -1,7 +1,6 @@
 import StyledInput from "../elements/StyledInput.tsx";
 import {
     GeneralModalButtons,
-    StoreItem,
     StyledSelectOption,
     UserData,
     UserModalInput
@@ -35,7 +34,7 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
         // @ts-expect-error
         obj[key] = value;
 
-        setUser(obj as StoreItem);
+        setUser(obj as UserData);
     };
 
     const uploadAndSave = async (item: UserData) => {

@@ -13,24 +13,43 @@ import StyledInput from "../elements/StyledInput.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import StyledFile from "../elements/StyledFile.tsx";
 import {DBContext} from "../../database/DBContext.ts";
+import {getShopIndex} from "../../utils/storage.ts";
 
 
 
-export default function PartModal({ onClose, part, setPart, onSave, inPlace }: PartModalInput) {
+export default function PartModal({ onClose, part, setPart, onSave, inPlace, selectedShopId }: PartModalInput) {
     const { t, i18n } = useTranslation();
     const dbContext = useContext(DBContext);
     const [file, setFile] = useState<File|null>(null);
 
     const shopPartCategoryOptions = dbContext?.getType('part', i18n.language === 'hu' ? 'hu' : 'en') || [];
+    const shopIndex = part ? getShopIndex(part, selectedShopId) : -1;
 
-    const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const changeType = (e: ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
 
-        const obj = {...part};
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        obj[key] = value;
+        let obj: StorePart;
+        if (!['storage_limit', 'shop_id', 'storage'].includes(key)) {
+            obj = {
+                ...part,
+                [key]: value
+            } as StorePart;
+        } else {
+            const storeKey = key as 'storage_limit'|'shop_id'|'storage';
+            obj = {
+                ...part,
+                [key]: part?.[storeKey] || []
+            } as StorePart;
 
+            if (!Array.isArray(obj[storeKey])) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                obj[storeKey] = [obj[storeKey]]
+            }
+            if (obj[storeKey]) {
+                obj[storeKey][shopIndex] = value;
+            }
+        }
         setPart(obj as StorePart);
     };
 
@@ -119,7 +138,7 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
             <FormRow>
                 <StyledInput
                     type="number" name="storage"
-                    value={part.storage}
+                    value={part.storage?.[shopIndex]}
                     onChange={(e) => changeType(e, 'storage')}
                     label={t('Storage')}
                     pattern="[0-9\.]+"
@@ -127,7 +146,7 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace }: P
                 />
                 <StyledInput
                     type="number" name="storage_limit"
-                    value={part.storage_limit}
+                    value={part.storage_limit?.[shopIndex]}
                     onChange={(e) => changeType(e, 'storage_limit')}
                     label={t('Min Storage Limit')}
                     pattern="[0-9\.]+"
