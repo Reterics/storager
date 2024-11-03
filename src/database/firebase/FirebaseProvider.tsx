@@ -31,15 +31,28 @@ export const FirebaseProvider = ({children}: {
     const renderAfterCalled = useRef(false);
 
 
-    const refreshImagePointers = async (array: StoreItem[]|StorePart[]) => {
+    const postProcessStoreData = async (array: StoreItem[]|StorePart[]) => {
         if (Array.isArray(array)) {
             for (let i = 0; i < array.length; i++) {
                 if (array[i].name && array[i].image && array[i].image?.startsWith('screenshots/')) {
                     array[i].image = await getFileURL(array[i].image || '');
                 }
+                if (array[i].name === 'belső 12.5x1.75') {
+                    console.log(array[i]);
+                }
+                if (typeof array[i].storage === 'number' || typeof array[i].storage === 'string') {
+                    array[i].storage = [Number(array[i].storage)]
+                }
+                if (typeof array[i].shop_id === 'string') {
+                    array[i].shop_id = [array[i].shop_id] as unknown as string[]
+                }
+                if (typeof array[i].storage_limit === 'number' || typeof array[i].storage_limit === 'string') {
+                    array[i].storage_limit = [Number(array[i].storage_limit)]
+                }
             }
         }
     };
+
 
     const getContextData = async (cache: boolean = false) => {
         let users = await getCollection(firebaseCollections.users, true) as UserData[];
@@ -103,8 +116,8 @@ export const FirebaseProvider = ({children}: {
             }
         }
 
-        await refreshImagePointers(items);
-        await refreshImagePointers(parts);
+        await postProcessStoreData(items);
+        await postProcessStoreData(parts);
 
         if (cache) {
             firebaseModel.sync(0);
@@ -280,7 +293,7 @@ export const FirebaseProvider = ({children}: {
         setData: updateContextData,
         removeData: removeContextData,
         removePermanentData: removePermanentCtxData,
-        refreshImagePointers:refreshImagePointers,
+        refreshImagePointers:postProcessStoreData,
         uploadDataBatch: updateContextBatched,
         getType: getType
     }}>

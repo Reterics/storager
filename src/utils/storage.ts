@@ -14,13 +14,15 @@ export const sortItemsByWarn = (items: StoreItem[]|StorePart[], shopId?: string)
         const indexB = getShopIndex(b, shopId);
 
         const storageA = a.storage && a.storage[indexA];
-        const stLimitA = a.storage_limit && a.storage_limit[indexA];
+        const stLimitA = a.storage_limit &&
+            (a.storage_limit[indexA] || a.storage_limit[indexA] === 0) ? Number(a.storage_limit[indexA]) : 5;
 
         const storageB = b.storage && b.storage[indexB];
-        const stLimitB = b.storage_limit && b.storage_limit[indexB];
+        const stLimitB = b.storage_limit &&
+            (b.storage_limit[indexB] || b.storage_limit[indexB] === 0) ? Number(b.storage_limit[indexB]) : 5;
 
-        const warningA = !storageA || storageA < (stLimitA || 5);
-        const warningB = !storageB || storageB < (stLimitB || 5);
+        const warningA = storageA === undefined || Number(storageA) < (stLimitA);
+        const warningB = storageB === undefined || Number(storageB) < (stLimitB);
 
         if (warningA && !warnings.includes(a.id)) {
             warnings.push(a.id);

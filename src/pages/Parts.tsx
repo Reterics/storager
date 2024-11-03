@@ -132,7 +132,8 @@ function Parts() {
         const shopIndex = getShopIndex(item, selectedShopId);
         const assignedShop = shops[shopIndex];
         const storage = item.storage && item.storage[shopIndex];
-        const stLimitA = item.storage_limit && item.storage_limit[shopIndex];
+        const stLimitA = item.storage_limit &&
+        (item.storage_limit[shopIndex] || item.storage_limit[shopIndex] === 0) ? Number(item.storage_limit[shopIndex]) : 5;
 
         const array =  [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
@@ -147,7 +148,7 @@ function Parts() {
             })
         ];
 
-        array[-1] = !storage || storage < (stLimitA || 5) ? 1 : 0;
+        array[-1] = storage === undefined || storage < stLimitA ? 1 : 0;
 
         return array;
     });
