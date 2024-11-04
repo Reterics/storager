@@ -123,5 +123,6 @@
   "types": "Types",
   "Recycle Bin": "Recycle Bin",
   "Are you sure you want to delete permanently?": "Are you sure you want to delete permanently?",
-  "Hungarian language": "Magyar nyelv"
+  "Hungarian language": "Magyar nyelv",
+  "You must sign before you save.": "You must sign before you save."
 }

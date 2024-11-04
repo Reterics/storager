@@ -39,6 +39,7 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
             onClick: () => {
                 const signaturePad = signaturePadRef.current;
                 if (signaturePad && signaturePad.isEmpty()) {
+                    alert(t('You must sign before you save.'))
                     return false;
                 } else if (signaturePad) {
                     formData.signature = signaturePad.toDataURL("image/jpeg");

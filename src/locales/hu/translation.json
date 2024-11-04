@@ -123,5 +123,6 @@
   "types": "Típusok",
   "Recycle Bin": "Lomtár",
   "Are you sure you want to delete permanently?" : "Biztosan véglegesen törölni szeretnéd az alábbi tételt?",
-  "English language": "English language"
+  "English language": "English language",
+  "You must sign before you save.": "Aláírás kötelező mentés előtt."
 }

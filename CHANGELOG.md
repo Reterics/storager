@@ -8,7 +8,7 @@
   * fix: Low storage alert boolean
   * test: Increased storage coverage
 
-* Service Management:
+* Service Management: [(fb7f732)](https://github.com/Reterics/storager/commit/fb7f73203672c4cc2e767f235c22a988cf401039)
   * fix: Completion form does not close service anymore
   * fix: Service form history loads the right form now
   * fix: Completion form didn't have default description before
@@ -19,7 +19,7 @@
 * GeneralModal:
   * fix: Save button resets if the validation failed (onClick -> false)
 
-* Footer:
+* Footer: [(fb7f732)](https://github.com/Reterics/storager/commit/fb7f73203672c4cc2e767f235c22a988cf401039)
   * fix: translation for light mode
   * feat: compact design
 

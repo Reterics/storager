@@ -80,7 +80,7 @@ export default function GeneralModal({
                                             if (loadingIcon) {
                                                 const loadingParent = document.querySelector('.loading-parent') as HTMLElement;
                                                 loadingParent.appendChild(loadingIcon);
-                                                (e.target as HTMLButtonElement).innerHTML = '';
+                                                (e.target as HTMLButtonElement).innerHTML = button.value;
                                             }
                                         }
                                     }}>
