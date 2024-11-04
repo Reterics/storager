@@ -17,8 +17,9 @@
   * fix: Service and Completion form must be signed
 
 * GeneralModal:
-  * fix: Save button resets if the validation failed (onClick -> false)
-  * fix: Validation updates on Item, Part and UserModal
+  * fix: Save button resets if the validation failed (onClick -> false) [(448dce9)](https://github.com/Reterics/storager/commit/448dce9188c7f087429f4016b18dd0145e4e53a9)
+  * fix: Validation updates on Item, Part and UserModal [(ce85ff8)](https://github.com/Reterics/storager/commit/ce85ff89a35fa4ae3ff3c38f7ce9780efc59c710)
+
 * Footer: [(fb7f732)](https://github.com/Reterics/storager/commit/fb7f73203672c4cc2e767f235c22a988cf401039)
   * fix: translation for light mode
   * feat: compact design
