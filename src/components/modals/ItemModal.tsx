@@ -33,7 +33,7 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
         }
 
         if (!item) {
-            return null;
+            return false;
         }
 
         const assetToSave: StoreItem = {

@@ -166,7 +166,7 @@ export interface Shop extends GeneralCollectionEntry{
 export interface ShopModalInput {
     onClose: () => void,
     shop: Shop | null,
-    onSave: (currentShop: Shop) => unknown
+    onSave: (currentShop: Shop) => onClickReturn
     setShop: (shop: Shop) => void
     inPlace?: boolean
 }
@@ -216,7 +216,7 @@ export interface ShopType extends GeneralCollectionEntry {
 export interface TypeModalInput {
     onClose: () => void,
     type: ShopType | null,
-    onSave: (currentType: ShopType) => unknown
+    onSave: (currentType: ShopType) => onClickReturn
     setType: (type: ShopType) => void
     inPlace?: boolean
 }
@@ -224,7 +224,7 @@ export interface TypeModalInput {
 export interface PartModalInput {
     onClose: () => void,
     part: StorePart | null,
-    onSave: (currentPart: StorePart) => unknown,
+    onSave: (currentPart: StorePart) => onClickReturn,
     setPart: (part: StorePart|null) => void,
     inPlace?: boolean,
     selectedShopId?: string

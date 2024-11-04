@@ -40,7 +40,7 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
     const uploadAndSave = async (item: UserData) => {
         if (!item) {
             setError(t('Invalid Item'));
-            return null;
+            return false;
         }
 
         const assetToSave: UserData = {
@@ -49,14 +49,14 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
 
         if (!item.email) {
             setError('Email must be provided');
-            return;
+            return false;
         }
 
         if (!item.id) {
             // We verify passwords at user creation
             if (item.password_confirmation !== item.password) {
                 setError(t('Passwords mismatch'));
-                return;
+                return false;
             }
             await SignUp({
                 displayName: item.username || item.email,

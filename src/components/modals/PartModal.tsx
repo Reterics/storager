@@ -37,7 +37,7 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace, sel
         }
 
         if (!item) {
-            return null;
+            return false;
         }
 
         const assetToSave: StorePart = {

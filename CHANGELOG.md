@@ -18,7 +18,7 @@
 
 * GeneralModal:
   * fix: Save button resets if the validation failed (onClick -> false)
-
+  * fix: Validation updates on Item, Part and UserModal
 * Footer: [(fb7f732)](https://github.com/Reterics/storager/commit/fb7f73203672c4cc2e767f235c22a988cf401039)
   * fix: translation for light mode
   * feat: compact design
