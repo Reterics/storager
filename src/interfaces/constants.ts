@@ -10,3 +10,5 @@ export const typeModalOptions = [
     {"value": "service", "name": "Service Types"},
 ];
 
+export const storeTableKeyOrder = ['image', 'sku', 'name', 'storage', 'price', 'shop'];
+

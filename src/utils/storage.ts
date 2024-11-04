@@ -1,28 +1,31 @@
-import {StoreItem, StorePart} from "../interfaces/interfaces.ts";
+import {StorageInfo, StoreItem, StorePart} from "../interfaces/interfaces.ts";
 
 export const getShopIndex = (item: StoreItem|StorePart, shopId?: string) => {
     if (item.shop_id && shopId) {
         return item.shop_id.indexOf(shopId);
     }
-    return -1.
+    return -1;
 };
+
+export const extractStorageInfo = (item: StoreItem|StorePart, shopId?: string): StorageInfo => {
+    const shopIndex = getShopIndex(item, shopId);
+    const storage = item.storage && item.storage[shopIndex];
+    const stLimit = item.storage_limit &&
+    (item.storage_limit[shopIndex] || item.storage_limit[shopIndex] === 0) ? Number(item.storage_limit[shopIndex]) : 5;
+
+    return {
+        shopIndex: shopIndex,
+        storage: Number(storage || 0),
+        storageLimit: stLimit,
+        lowStorageAlert: storage === undefined || Number(storage) < stLimit
+    }
+}
 
 export const sortItemsByWarn = (items: StoreItem[]|StorePart[], shopId?: string) => {
     const warnings: string[] = [];
     items.sort((a:StoreItem|StorePart, b:StoreItem|StorePart) => {
-        const indexA = getShopIndex(a, shopId);
-        const indexB = getShopIndex(b, shopId);
-
-        const storageA = a.storage && a.storage[indexA];
-        const stLimitA = a.storage_limit &&
-            (a.storage_limit[indexA] || a.storage_limit[indexA] === 0) ? Number(a.storage_limit[indexA]) : 5;
-
-        const storageB = b.storage && b.storage[indexB];
-        const stLimitB = b.storage_limit &&
-            (b.storage_limit[indexB] || b.storage_limit[indexB] === 0) ? Number(b.storage_limit[indexB]) : 5;
-
-        const warningA = storageA === undefined || Number(storageA) < (stLimitA);
-        const warningB = storageB === undefined || Number(storageB) < (stLimitB);
+        const warningA = extractStorageInfo(a, shopId).lowStorageAlert;
+        const warningB = extractStorageInfo(b, shopId).lowStorageAlert;
 
         if (warningA && !warnings.includes(a.id)) {
             warnings.push(a.id);

@@ -186,7 +186,7 @@ export interface ItemModalInput {
     onClose: () => void,
     item: StoreItem | null,
     onSave: (currentItem: StoreItem) => unknown
-    setItem: (item: StoreItem) => void
+    setItem: (item: StoreItem|null) => void
     inPlace?: boolean,
     selectedShopId?: string
 }
@@ -223,7 +223,7 @@ export interface PartModalInput {
     onClose: () => void,
     part: StorePart | null,
     onSave: (currentPart: StorePart) => unknown,
-    setPart: (part: StorePart) => void,
+    setPart: (part: StorePart|null) => void,
     inPlace?: boolean,
     selectedShopId?: string
 }
@@ -372,4 +372,11 @@ export interface ListModalArguments {
 export interface TextFile {
     value: string|ArrayBuffer|null,
     file_input?: File
+}
+
+export interface StorageInfo {
+    shopIndex: number,
+    storage: number,
+    storageLimit: number,
+    lowStorageAlert: boolean
 }

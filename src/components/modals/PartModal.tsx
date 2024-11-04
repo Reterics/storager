@@ -4,7 +4,7 @@ import {
     StorePart
 } from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
-import {ChangeEvent, useContext, useState} from "react";
+import {ChangeEvent, SyntheticEvent, useContext, useState} from "react";
 import {fileToDataURL} from "../../utils/general.ts";
 import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
@@ -14,6 +14,7 @@ import StyledSelect from "../elements/StyledSelect.tsx";
 import StyledFile from "../elements/StyledFile.tsx";
 import {DBContext} from "../../database/DBContext.ts";
 import {getShopIndex} from "../../utils/storage.ts";
+import {changeStoreType} from "../../utils/events.ts";
 
 
 
@@ -25,33 +26,8 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace, sel
     const shopPartCategoryOptions = dbContext?.getType('part', i18n.language === 'hu' ? 'hu' : 'en') || [];
     const shopIndex = part ? getShopIndex(part, selectedShopId) : -1;
 
-    const changeType = (e: ChangeEvent<HTMLInputElement>, key: string) => {
-        const value = e.target.value;
-
-        let obj: StorePart;
-        if (!['storage_limit', 'shop_id', 'storage'].includes(key)) {
-            obj = {
-                ...part,
-                [key]: value
-            } as StorePart;
-        } else {
-            const storeKey = key as 'storage_limit'|'shop_id'|'storage';
-            obj = {
-                ...part,
-                [key]: part?.[storeKey] || []
-            } as StorePart;
-
-            if (!Array.isArray(obj[storeKey])) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                obj[storeKey] = [obj[storeKey]]
-            }
-            if (obj[storeKey]) {
-                obj[storeKey][shopIndex] = value;
-            }
-        }
-        setPart(obj as StorePart);
-    };
+    const changeType = (e: ChangeEvent<HTMLInputElement>|SyntheticEvent<HTMLSelectElement>, key: string) =>
+        setPart(changeStoreType(e, key, part, selectedShopId));
 
     const uploadAndSave = async (item: StorePart) => {
         let screenshot;

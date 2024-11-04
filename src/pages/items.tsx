@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react'
+import {ChangeEvent, SyntheticEvent, useContext, useState} from 'react'
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 
 import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
@@ -9,7 +9,9 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
-import {getShopIndex, sortItemsByWarn} from "../utils/storage.ts";
+import {extractStorageInfo, sortItemsByWarn} from "../utils/storage.ts";
+import {changeStoreType} from "../utils/events.ts";
+import {storeTableKeyOrder} from "../interfaces/constants.ts";
 
 function Items() {
     const dbContext = useContext(DBContext);
@@ -71,48 +73,14 @@ function Items() {
         setModalTemplate(null);
     }
 
-    const changeType = (e: React.ChangeEvent<HTMLInputElement> | {target: {value: unknown}}, key: string, item: StoreItem) => {
-        const value = e.target.value as string;
-
-        let obj: StoreItem;
-
-        if (!['storage_limit', 'shop_id', 'storage'].includes(key)) {
-            obj = {
-                ...item,
-                [key]: value
-            } as StoreItem;
-        } else {
-            const storeKey = key as 'storage_limit'|'shop_id'|'storage';
-            obj = {
-                ...item,
-                [key]: item?.[storeKey] || []
-            } as StoreItem;
-
-            if (!Array.isArray(obj[storeKey])) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                obj[storeKey] = [obj[storeKey]]
-            }
-            const shopIndex = item ? getShopIndex(item, selectedShopId) : -1;
-            if (obj[storeKey]) {
-                obj[storeKey][shopIndex] = value;
-            }
-        }
-
-        setItems((items) => {
-            return items.map(i => {
-                if (i === item) {
-                    return obj as StoreItem;
-                }
-                return {...i} as StoreItem;
-            })
-        });
+    const changeType = (e: ChangeEvent<HTMLInputElement>|SyntheticEvent<HTMLSelectElement>, key: string, item: StoreItem) => {
+        const obj = changeStoreType(e, key, item, selectedShopId)
+        setItems((items) =>
+            items.map(i => i === item ? (obj as StoreItem) : {...i}));
     };
 
-    const tableKeyOrder = ['image', 'sku', 'name', 'storage', 'price', 'shop'];
-
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
-        const key = tableKeyOrder[col as number];
+        const key = storeTableKeyOrder[col as number];
         const item = items[index] as StoreItem;
 
         if (item && key) {
@@ -120,7 +88,7 @@ function Items() {
                 target: {
                     value: value
                 }
-            }, key, item);
+            } as ChangeEvent<HTMLInputElement>, key, item);
 
             dbContext?.setData('items', {
                 id: item.id,
@@ -130,26 +98,22 @@ function Items() {
     };
 
     const tableLines = items.map(item => {
-        const shopIndex = getShopIndex(item, selectedShopId);
-        const assignedShop = shops[shopIndex];
-        const storage = item.storage && item.storage[shopIndex];
-        const stLimitA = item.storage_limit &&
-        (item.storage_limit[shopIndex] || item.storage_limit[shopIndex] === 0) ? Number(item.storage_limit[shopIndex]) : 5;
+        const storageInfo = extractStorageInfo(item, selectedShopId);
 
         const array =  [
             item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
             item.sku,
             item.name || '',
-            Number(storage || 0),
+            storageInfo.storage,
             Number(item.price || 0),
-            assignedShop ? assignedShop.name : t('Nincs megadva'),
+            shopContext.shop ? shopContext.shop.name : t('Nincs megadva'),
             TableViewActions({
                 onRemove: () => deleteItem(item),
                 onEdit: () => setModalTemplate(item)
             })
         ];
 
-        array[-1] = storage === undefined || storage < stLimitA ? 1 : 0;
+        array[-1] = storageInfo.lowStorageAlert ? 1 : 0;
 
         return array;
     });
@@ -212,7 +176,7 @@ function Items() {
                 <ItemModal
                     onClose={()=>setModalTemplate(null)}
                     onSave={(item: StoreItem) => closeItem(item)}
-                    setItem={(item: StoreItem) => setModalTemplate(item)}
+                    setItem={(item: StoreItem|null) => setModalTemplate(item)}
                     item={modalTemplate}
                     inPlace={false}
                     selectedShopId={selectedShopId}
