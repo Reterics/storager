@@ -36,7 +36,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             onClick: () => {
                 const signaturePad = signaturePadRef.current;
                 if (signaturePad && signaturePad.isEmpty()) {
-                    return;
+                    return false;
                 } else if (signaturePad) {
                     service.signature = signaturePad.toDataURL("image/jpeg");
                 }

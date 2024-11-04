@@ -36,7 +36,16 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
     const buttons: GeneralModalButtons[] = [
         {
             primary: true,
-            onClick: ()=>onSave(formData),
+            onClick: () => {
+                const signaturePad = signaturePadRef.current;
+                if (signaturePad && signaturePad.isEmpty()) {
+                    return false;
+                } else if (signaturePad) {
+                    formData.signature = signaturePad.toDataURL("image/jpeg");
+                }
+
+                return onSave(formData);
+            },
             value: t('Save')
         },
         {

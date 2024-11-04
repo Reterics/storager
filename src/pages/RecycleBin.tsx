@@ -35,7 +35,7 @@ function RecycleBin() {
     }
 
     const deletePermanent = async (id: string) => {
-        if (window.confirm("Are you sure you want to delete permanently?")) {
+        if (window.confirm(t("Are you sure you want to delete permanently?"))) {
             let updatedList = await dbContext.removePermanentData(id);
             if (updatedList && shopContext.shop) {
                 updatedList = updatedList

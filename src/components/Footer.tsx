@@ -1,6 +1,5 @@
-import StyledSelect from "./elements/StyledSelect.tsx";
 import {useTranslation} from "react-i18next";
-import {SyntheticEvent, useContext} from "react";
+import {useContext} from "react";
 import {useTheme} from "../store/ThemeContext.tsx";
 import {DBContext} from "../database/DBContext.ts";
 
@@ -33,26 +32,21 @@ export const Footer = () => {
                 </span>
                 <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
                     <li>
-                        <StyledSelect value={i18n.language} options={[
-                            {
-                                name: 'Magyar',
-                                value: 'hu'
-                            },
-                            {
-                                name: 'Angol',
-                                value: 'en'
-                            }
-                        ]} onSelect={(e: SyntheticEvent<HTMLSelectElement, Event> ) => i18n.changeLanguage(e.currentTarget.value)}
-                        label={false}
-                        />
-                    </li>
-                    <li className="ms-2">
                         <a
+                            href="#"
+                            className="hover:underline"
+                            onClick={() => i18n.changeLanguage(i18n.language === 'hu' ? 'en' : 'hu')}
+                        >{(i18n.language === 'hu' ? t('English language') : t('Hungarian language'))}</a>
+                    </li>
+                    <li className="ms-1">
+                        | <a
                             href="#"
                             className="hover:underline"
                             onClick={() => theme?.toggleTheme()}
                         >{(theme?.theme === 'dark' ? t('Light Mode') : t('Dark Mode'))}</a>
-
+                    </li>
+                    <li className="ms-1">
+                        | StorageR v{import.meta.env.PACKAGE_VERSION}
                     </li>
                 </ul>
             </div>

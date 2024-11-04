@@ -205,7 +205,7 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
             </div>
             <div className={"text-gray-900"} style={{paddingTop: '20mm', background: 'white'}}>
                 <PrintablePaper data={formData.data} ref={printRef}>
-                    <img alt={'Signature'} src={formData.signature} />
+                    {formData.signature && <img alt={'Signature'} src={formData.signature}/>}
                 </PrintablePaper>
             </div>
             <div className="flex justify-between mt-2 min-w-60 no-print">

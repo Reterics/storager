@@ -12,7 +12,7 @@ import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import PrintableVersionModal from "../components/modals/PrintableVersionModal.tsx";
 import {PDFData} from "../interfaces/pdf.ts";
 import ListModal from "../components/modals/ListModal.tsx";
-import {serviceDataToPrintable} from "../utils/print.tsx";
+import {completionFormToPrintable, serviceDataToPrintable} from "../utils/print.tsx";
 
 
 function Service() {
@@ -87,32 +87,9 @@ function Service() {
 
         setCompletionForms(updatedItems as ServiceCompleteData[]);
         setCompletedModalTemplate(null);
-
-        if (serviceCompleteData.service_id) {
-            const serviceData = servicedItems.find(existingItem => existingItem.id === serviceCompleteData.service_id);
-            if (serviceData) {
-                serviceData.serviceStatus = "status_delivered";
-                await addServiceItem(serviceData, false);
-            }
-        }
     };
 
     const tableLines = servicedItems.map(item => {
-
-        let onEdit = undefined;
-
-        const completionFormId = item.id + '_cd';
-        const completionForm = completionForms.find((completionForm) => completionForm.id === completionFormId);
-
-        if (!completionForm) {
-            onEdit = () => {
-                setModalTemplate({...item, onUpdate: true});
-                if (selectedServiceLines) {
-                    setSelectedServiceLines(null);
-                }
-            }
-        }
-
         return [
             item.id,
             item.client_name,
@@ -134,8 +111,7 @@ function Service() {
                     const list = (dbContext?.data.archive || [])
                         .filter(data => data.docParent === serviceForm.id);
 
-                    console.log(dbContext?.data.archive)
-                    console.log(list);
+
                     list.sort((b, a) => {
                         if (!b.docUpdated || !a.docUpdated) {
                             return 0;
@@ -172,18 +148,17 @@ function Service() {
                                 TableViewActions({
                                     onPrint: () => {
                                         if (completionForm && index === list.length - 1) {
-                                            alert('Not implemented');
+                                            setPrintViewData(completionFormToPrintable(data,  t, true));
+
                                         } else {
-                                            setPrintViewData(serviceDataToPrintable(item, dbContext?.data.settings || {} as SettingsItems, t, true));
-                                            // setSelectedServiceLines(null);
+                                            setPrintViewData(serviceDataToPrintable(data, dbContext?.data.settings || {} as SettingsItems, t, true));
                                         }
                                     },
                                     onOpen: () => {
                                         if (completionForm && index === list.length - 1) {
-                                            alert('Not implemented');
+                                            setPrintViewData(completionFormToPrintable(data,  t, true));
                                         } else {
-                                            setPrintViewData(serviceDataToPrintable(item, dbContext?.data.settings || {} as SettingsItems, t, false));
-                                            // setSelectedServiceLines(null);
+                                            setPrintViewData(serviceDataToPrintable(data, dbContext?.data.settings || {} as SettingsItems, t, false));
                                         }
                                     }
                                 })];
@@ -191,7 +166,12 @@ function Service() {
                     });
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                     },
-                onEdit: onEdit,
+                onEdit: () => {
+                    setModalTemplate({...item, onUpdate: true});
+                    if (selectedServiceLines) {
+                        setSelectedServiceLines(null);
+                    }
+                },
                 onRemove: () => deleteServiceHistoryFor(item)
             })
         ];
@@ -285,6 +265,7 @@ function Service() {
                                             accessories: sourceItem.accessories || '',
                                             repair_cost: item.expected_cost,
                                             guaranteed: sourceItem.guaranteed || 'no',
+                                            description: sourceItem.description || '',
                                             repair_description: sourceItem.repair_description || ''
                                         });
                                         setSelectedServiceLines(null);

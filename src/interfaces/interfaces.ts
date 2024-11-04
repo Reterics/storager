@@ -3,6 +3,8 @@ import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from "react";
 import {GeoPoint} from "firebase/firestore";
 import {PDFData} from "./pdf.ts";
 
+export type onClickReturn = void|false|Promise<void|false>;
+
 export interface GeneralCollectionEntry {
     docType?: string,
     docParent?: string,
@@ -115,11 +117,10 @@ export interface ModalArguments {
 
 export interface GeneralModalButtons {
     value: string
-    onClick: (e?: React.MouseEvent) => void
+    onClick: (e?: React.MouseEvent) => onClickReturn
     primary?: boolean
     id?: string
 }
-
 
 export interface StyledInputArgs {
     value?: string | number | readonly string[]
@@ -149,6 +150,7 @@ export interface StyledSelectArgs {
     name?: string,
     label?: string | number | boolean,
     options: StyledSelectOption[],
+    className?: string
 }
 
 export interface Shop extends GeneralCollectionEntry{
@@ -284,13 +286,15 @@ export interface ServiceCompleteData extends GeneralCollectionEntry{
     repair_description?: string,
 
     date?: string,
+
+    signature?: string
 }
 
 export interface ServiceCompletionModalInput {
     id?: string,
     onClose: () => void,
     formData: ServiceCompleteData | null,
-    onSave: (currentService: ServiceCompleteData) => unknown
+    onSave: (currentService: ServiceCompleteData) => onClickReturn
     setFromData: (shop: ServiceCompleteData) => void
     inPlace?: boolean
 }

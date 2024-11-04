@@ -60,7 +60,7 @@ export default function GeneralModal({
                                             "text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 " +
                                             "dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                                     }
-                                    onClick={(e)=> {
+                                    onClick={async (e)=> {
                                         if (!throttled) {
                                             setThrottled(true);
                                             setTimeout(()=> {
@@ -74,7 +74,15 @@ export default function GeneralModal({
                                             (e.target as HTMLButtonElement).innerHTML = '';
                                             (e.target as HTMLButtonElement).appendChild(loadingIcon)
                                         }
-                                        button.onClick(e);
+                                        const validationResult = await button.onClick(e);
+                                        if (validationResult === false) {
+                                            setThrottled(false);
+                                            if (loadingIcon) {
+                                                const loadingParent = document.querySelector('.loading-parent') as HTMLElement;
+                                                loadingParent.appendChild(loadingIcon);
+                                                (e.target as HTMLButtonElement).innerHTML = '';
+                                            }
+                                        }
                                     }}>
                                 {button.value}
                             </button>

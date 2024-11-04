@@ -45,6 +45,7 @@
   "Accessories": "Átvett tartozékok",
   "Guaranteed": "Garanciális",
   "Repair Description": "Javítás leírása",
+  "Repair Cost": "Javítás költsége",
   "Expected cost": "Várható költség",
   "Note": "Megjegyzés",
   "Signature": "Aláírás",
@@ -120,5 +121,7 @@
   "completions": "Visszaadások",
   "archive": "Archívum",
   "types": "Típusok",
-  "Recycle Bin": "Lomtár"
+  "Recycle Bin": "Lomtár",
+  "Are you sure you want to delete permanently?" : "Biztosan véglegesen törölni szeretnéd az alábbi tételt?",
+  "English language": "English language"
 }

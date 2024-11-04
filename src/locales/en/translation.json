@@ -30,7 +30,8 @@
   "Recipient": "Recipient",
   "Settings": "Settings",
   "Serviced Items": "Serviced Items",
-  "Dark Mode": "Dark Mode",
+  "Dark Mode": "Dark mode",
+  "Light Mode": "Light mode",
   "Save": "Save",
   "Cancel": "Cancel",
   "Service Form": "Service Form",
@@ -44,6 +45,7 @@
   "Accessories": "Accessories",
   "Guaranteed": "Guaranteed",
   "Repair Description": "Repair Description",
+  "Repair Cost": "Repair Cost",
   "Expected cost": "Expected cost",
   "Note": "Note",
   "Signature": "Signature",
@@ -119,5 +121,7 @@
   "completions": "Completions",
   "archive": "Archive",
   "types": "Types",
-  "Recycle Bin": "Recycle Bin"
+  "Recycle Bin": "Recycle Bin",
+  "Are you sure you want to delete permanently?": "Are you sure you want to delete permanently?",
+  "Hungarian language": "Magyar nyelv"
 }
