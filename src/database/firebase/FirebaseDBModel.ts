@@ -124,6 +124,30 @@ export default class FirebaseDBModel extends DBModel {
         }
     }
 
+    async restore(id: string): Promise<boolean> {
+        const cached = this.getCachedEntry(id, 'deleted');
+        // There must be a cached entry, otherwise we would not show it in UI
+        if (cached) {
+            const target = cached.docType as string;
+            if (!target) {
+                return false;
+            }
+            const modelRef = doc(this._db, target, id);
+            cached.deleted = false;
+            cached.docUpdated = new Date().getTime();
+            await setDoc(modelRef, cached, { merge: true }).catch(e => {
+                console.error(e);
+            });
+            this.updateCachedEntry(id, target, {...cached, id});
+            this.removeCachedEntry(id, 'deleted');
+            this.sync();
+            return true;
+        } else {
+            return false;
+            // Data is not available anymore (ui error or multiple function calls)
+        }
+    }
+
     async removePermanent(id: string): Promise<ContextDataValueType[] | null> {
         const cached = this.getCachedEntry(id, 'deleted');
         if (cached && cached.docType) {

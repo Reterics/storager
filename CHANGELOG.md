@@ -15,6 +15,7 @@
   * fix: Service form stays editable after completion form is done
   * fix: Completion form print view enabled
   * fix: Service and Completion form must be signed
+  * fix: Service id generation fixed (counting deleted ones)
 
 * GeneralModal:
   * fix: Save button resets if the validation failed (onClick -> false) [(448dce9)](https://github.com/Reterics/storager/commit/448dce9188c7f087429f4016b18dd0145e4e53a9)

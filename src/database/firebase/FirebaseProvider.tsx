@@ -159,6 +159,20 @@ export const FirebaseProvider = ({children}: {
         return ctxData ? ctxData[key] : null;
     }
 
+    const restoreContextData = async (id: string) => {
+        if (ctxData && ctxData.deleted) {
+            await firebaseModel.restore(id);
+            const filteredData = ctxData.deleted.filter(item => item.id !== id);
+            ctxData.deleted = [...filteredData];
+            setCtxData({
+                ...ctxData,
+            });
+            return ctxData.deleted
+        }
+        return ctxData ? ctxData.deleted: null;
+
+    }
+
     const removePermanentCtxData = async (id: string)=> {
         const cached = firebaseModel.getCachedEntry(id, 'deleted');
         if (cached) {
@@ -292,6 +306,7 @@ export const FirebaseProvider = ({children}: {
         refreshData: refreshData,
         setData: updateContextData,
         removeData: removeContextData,
+        restoreData: restoreContextData,
         removePermanentData: removePermanentCtxData,
         refreshImagePointers:postProcessStoreData,
         uploadDataBatch: updateContextBatched,

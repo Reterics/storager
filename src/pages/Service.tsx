@@ -49,11 +49,11 @@ function Service() {
     const deleteServiceHistoryFor = async (item: ServiceData) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Service and all of its history?'))) {
 
-            const completions = completionForms?.filter((c) => c.service_id !== item.id);
+            const completions = completionForms?.filter((c) => c.service_id === item.id);
             if (completions.length) {
                 let completionUpdates = completionForms;
                 for (let i = 0; i < completions.length; i++) {
-                    completionUpdates = await dbContext?.removeData('completions', item.id) as ServiceCompleteData[];
+                    completionUpdates = await dbContext?.removeData('completions', completions[i].id) as ServiceCompleteData[];
                 }
                 setCompletionForms(completionUpdates);
             }
@@ -191,13 +191,26 @@ function Service() {
                         if (Number.isNaN(lastNumber)) {
                             lastNumber = servicedItems.length;
                         }
+                        const deletedData = (dbContext?.data.deleted || [])
+                            .filter(d => d.docType !== 'archive')
+
+                        for (let i = Math.max(deletedData.length - 10, 0); i < deletedData.length; i++){
+                            const d = deletedData[i];
+                            if (d && d.id) {
+                                const lastDeletedId = Number.parseInt(d.id);
+                                if (!Number.isNaN(lastDeletedId) && lastNumber < lastDeletedId) {
+                                    lastNumber = lastDeletedId;
+                                }
+                            }
+                        }
                         let id = (lastNumber + 1).toString().padStart(5, '0');
                         while (servicedItems.find(item => item.id === id)) {
                             lastNumber++;
                             id = (lastNumber + 1).toString().padStart(5, '0');
                         }
+                        console.error('ID will be: ', id)
                         setModalTemplate(modalTemplate ? null : {
-                            id: (lastNumber + 1).toString().padStart(5, '0'),
+                            id: id,
                             serviceStatus: 'status_accepted',
                             date: new Date().toISOString().split('T')[0],
                             service_address: shop?.address || '',

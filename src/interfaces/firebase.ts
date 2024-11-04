@@ -33,6 +33,7 @@ export interface DBContextType {
     refreshData: (key?: ContextDataType) => Promise<void>,
     setData: (key: ContextDataType, value: ContextDataValueType, archive?: boolean) =>  Promise<ContextDataCollectionType | null>,
     removeData: (key: ContextDataType, id: string) => Promise<ContextDataCollectionType | null>,
+    restoreData: (id: string) => Promise<ContextDataCollectionType | null>,
     removePermanentData: (id: string) => Promise<ContextDataValueType[] | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
     uploadDataBatch: (key: ContextDataType, values: ContextDataValueType[]) =>  Promise<ContextDataCollectionType | null>,

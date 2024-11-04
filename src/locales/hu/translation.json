@@ -124,5 +124,6 @@
   "Recycle Bin": "Lomtár",
   "Are you sure you want to delete permanently?" : "Biztosan véglegesen törölni szeretnéd az alábbi tételt?",
   "English language": "English language",
-  "You must sign before you save.": "Aláírás kötelező mentés előtt."
+  "You must sign before you save.": "Aláírás kötelező mentés előtt.",
+  "Are you sure to restore this entry?": "Biztosan helyreállítod ezt a tételt?"
 }
