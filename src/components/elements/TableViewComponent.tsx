@@ -166,7 +166,7 @@ const TableViewLine = ({line, index, header, onChange, onClick, isSelected}: Tab
     }
 
     return (_line.map((column, columnIndex) => (
-        <th scope="row" key={'column_' + columnIndex + '_' + index}
+        <th scope="col" key={'column_' + columnIndex + '_' + index}
             className={"px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white p-2" +
                 (columnIndex === _line.length - 1 ? " text-right" : "") +
                 (typeof isSelected === 'boolean' && !columnIndex ? " text-lg" : "")
