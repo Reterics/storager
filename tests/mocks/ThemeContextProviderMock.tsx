@@ -1,13 +1,14 @@
 import {ThemeContext} from '../../src/store/ThemeContext';
 import { vi } from 'vitest'
 
-
+const toggleTheme = vi.fn();
 const ThemeContextProviderMock = ({children}:{children: React.ReactNode}) => {
+    console.error(toggleTheme.mock.calls.length)
     return (
         <ThemeContext.Provider value={
             {
-                theme: 'light',
-                toggleTheme: vi.fn()
+                theme: toggleTheme.mock.calls.length % 1 ? 'dark' : 'light',
+                toggleTheme: toggleTheme
             }
         }>{children}</ThemeContext.Provider>
     )

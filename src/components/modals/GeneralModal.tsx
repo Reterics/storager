@@ -79,7 +79,9 @@ export default function GeneralModal({
                                             setThrottled(false);
                                             if (loadingIcon) {
                                                 const loadingParent = document.querySelector('.loading-parent') as HTMLElement;
-                                                loadingParent.appendChild(loadingIcon);
+                                                if (loadingParent) {
+                                                    loadingParent.appendChild(loadingIcon);
+                                                }
                                                 (e.target as HTMLButtonElement).innerHTML = button.value;
                                             }
                                         }

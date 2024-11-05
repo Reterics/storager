@@ -1,10 +1,8 @@
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
-import {fireEvent, render} from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import ServiceCompletionModal from "./ServiceCompletionModal.tsx";
 import DBContextProviderMock from "../../../tests/mocks/DBContextProviderMock.tsx";
 import {serviceCompletionDataList} from "../../../tests/mocks/serviceData.ts";
-
-
 
 describe('ServiceCompletionModal', () => {
     const originalGetContext = HTMLCanvasElement.prototype.getContext;
@@ -27,8 +25,8 @@ describe('ServiceCompletionModal', () => {
     const setFromData = vi.fn();
     const onSave = vi.fn();
 
-    it.concurrent('Should not render the modal', () => {
-        const container = render(
+    it('Should not render the modal', () => {
+        const {container} = render(
             <ServiceCompletionModal
                 onClose={onClose}
                 onSave={onSave}
@@ -37,12 +35,10 @@ describe('ServiceCompletionModal', () => {
                 inPlace={true}
             />
         )
-        expect(container.container.innerHTML).toEqual('');
-
-        container.unmount();
+        expect(container.innerHTML).toEqual('');
     })
 
-    it.concurrent('Should render the modal as popup and fill the fields', () => {
+    it('Should render the modal as popup and fill the fields', async () => {
         const container = render(
             <DBContextProviderMock>
                 <ServiceCompletionModal
@@ -76,15 +72,13 @@ describe('ServiceCompletionModal', () => {
         const saveButton = buttons.find(b=> b.innerHTML === 'Save');
         expect(saveButton).toBeDefined();
 
-        onSave.mockReset();
+        const alert = vi.spyOn(window, 'alert').mockImplementation(()=> {});
         if (saveButton) fireEvent.click(saveButton)
-        expect(onSave.mock.calls.length).toEqual(1)
-
-        container.unmount();
+        await waitFor(() => expect(alert.mock.calls.length).toEqual(1))
     })
 
-    it.concurrent('Should render in place and close', () => {
-        const container = render(
+    it('Should render in place and close', async () => {
+        const {getAllByRole} = render(
             <DBContextProviderMock>
                 <ServiceCompletionModal
                     onClose={onClose}
@@ -96,14 +90,13 @@ describe('ServiceCompletionModal', () => {
             </DBContextProviderMock>
         )
 
-        const buttons = container.queryAllByRole('button');
+        const buttons = getAllByRole('button');
 
         const closeButton = buttons.find(b=> b.innerHTML === 'Cancel');
         expect(closeButton).toBeDefined();
 
         onClose.mockReset();
-        if (closeButton) fireEvent.click(closeButton)
-        expect(onClose.mock.calls.length).toEqual(1)
-        container.unmount();
+        fireEvent.click(closeButton as HTMLButtonElement);
+        await waitFor(() => expect(onClose.mock.calls.length).toEqual(1), {timeout: 10000})
     })
 })

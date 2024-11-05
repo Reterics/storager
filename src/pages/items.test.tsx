@@ -3,6 +3,7 @@ import {fireEvent, render} from "@testing-library/react";
 import TestingPageProvider from "../../tests/mocks/TestingPageProvider.tsx";
 import Items from "./items.tsx";
 import {defaultContextData, defaultItems} from "../../tests/mocks/shopData.ts";
+import AuthContextProviderMock from "../../tests/mocks/AuthContextProviderMock.tsx";
 
 
 describe('Items', () => {
@@ -35,6 +36,11 @@ describe('Items', () => {
 
         expect(renderResult.container.querySelector('#ItemModal')).toBeDefined();
         renderResult.unmount();
+    })
+
+    it('renders the items page without data', () => {
+        const renderResult = render(<AuthContextProviderMock><Items /></AuthContextProviderMock>);
+        expect(renderResult.container.querySelector('#ItemModal')).toBeDefined();
     })
 
     afterAll(() => {
