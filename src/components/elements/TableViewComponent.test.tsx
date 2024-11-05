@@ -1,13 +1,13 @@
-import React from 'react';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import TableViewComponent, {TableViewActions} from './TableViewComponent';
-import { vi } from 'vitest';
+import {render, screen, fireEvent} from '@testing-library/react';
+import TableViewComponent from './TableViewComponent';
+import {beforeEach, describe, expect, it, vi } from 'vitest';
+import {TableHead, TableLineType} from "../../interfaces/interfaces.ts";
 
 const mockHeader = [
     { value: 'ID', sortable: true, editable: false },
     { value: 'Name', sortable: true, editable: true, type: 'text' },
     { value: 'Quantity', sortable: true, editable: true, type: 'number' },
-];
+] as (string | TableHead)[];
 
 const mockLines = [
     [1, 'Item 1', 10],
@@ -21,11 +21,13 @@ describe('TableViewComponent', () => {
     });
 
     it('renders table headers and rows', () => {
-        render(<TableViewComponent header={mockHeader} lines={mockLines} />);
+        render(<TableViewComponent header={mockHeader as (string | TableHead)[]} lines={mockLines} />);
 
         // Check header rendering
         mockHeader.forEach((header) => {
-            expect(screen.getByText(header.value)).toBeInTheDocument();
+            if (header && typeof header !== 'string') {
+                expect(screen.getByText(header.value)).toBeInTheDocument();
+            }
         });
 
         // Check rows rendering
@@ -39,7 +41,7 @@ describe('TableViewComponent', () => {
 
     it('toggles edit mode and saves changes on editable cells', () => {
         const mockOnChange = vi.fn();
-        render(<TableViewComponent header={mockHeader} lines={mockLines} onChange={mockOnChange} />);
+        render(<TableViewComponent header={mockHeader as (string | TableHead)[]} lines={mockLines} onChange={mockOnChange} />);
 
         const cell = screen.getByText('Item 1');
         fireEvent.click(cell); // Enter edit mode
@@ -61,7 +63,7 @@ describe('TableViewComponent', () => {
     });
 
     it('highlights rows conditionally', () => {
-        const isHighlighted = (line) => line[2] > 6; // Highlight if quantity > 6
+        const isHighlighted = (line: TableLineType) => line && typeof line[2] === 'number' && line[2] > 6; // Highlight if quantity > 6
         render(<TableViewComponent header={mockHeader} lines={mockLines} isHighlighted={isHighlighted} />);
 
         const highlightedRows = screen.getAllByRole('row').filter(row => row.classList.contains('bg-yellow-50'));
