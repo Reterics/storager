@@ -36,7 +36,7 @@ describe("AuthContext", () => {
 
     it("should provide default auth values", async () => {
 
-        const { getByText, container } = render(
+        const { getByText } = render(
             <Router>
                 <AuthProvider>
                     <AuthContext.Consumer>
