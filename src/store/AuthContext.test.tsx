@@ -1,18 +1,26 @@
+import {vi, expect, describe, it, Mock} from "vitest";
+import '../../tests/mocks/firebase.ts'
 import {render, waitFor} from "@testing-library/react";
 import { AuthContext } from "./AuthContext";
 import AuthProvider from "./AuthContext";
-import { SignIn, SignUp, SignOut } from "../database/firebase/services/AuthService.ts";
-import { BrowserRouter as Router } from 'react-router-dom';
-import {vi, expect, describe, it, beforeEach, Mock} from "vitest";
-import {firebaseAuth} from "../database/firebase/config.ts";
 import {currentUserMock} from "../../tests/mocks/userData.ts";
 import {UserFormValues} from "../interfaces/interfaces.ts";
+
+import { SignIn, SignUp, SignOut } from "../database/firebase/services/AuthService.ts";
 
 // Mock Firebase and navigation functions
 vi.mock("../database/firebase/services/AuthService.ts", () => ({
     SignIn: vi.fn(),
     SignUp: vi.fn(),
     SignOut: vi.fn(),
+}));
+
+vi.mock("../database/firebase/config.ts", () => ({
+    firebaseAuth: () => {
+        return {
+            currentUser: currentUserMock,
+        }
+    },
 }));
 
 const mockNavigate = vi.fn();
@@ -22,20 +30,10 @@ vi.mock('react-router-dom', () => ({
     BrowserRouter: ({children}: {children: React.ReactNode})=><div>{children}</div>
 }));
 
+import {BrowserRouter as Router} from "react-router-dom";
+
 describe("AuthContext", () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-
-        vi.spyOn(firebaseAuth, 'onAuthStateChanged').mockImplementation((callback) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            callback(currentUserMock);
-            return () => {}; // Return a cleanup function
-        });
-    });
-
     it("should provide default auth values", async () => {
-
         const { getByText } = render(
             <Router>
                 <AuthProvider>

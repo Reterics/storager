@@ -9,12 +9,16 @@ vi.mock('firebase/auth', () => ({
         },
         setPersistence: vi.fn(),
         browserLocalPersistence: 'LOCAL',
-        /*createUserWithEmailAndPassword: vi.fn().mockImplementation(()=>({
+        createUserWithEmailAndPassword: vi.fn().mockImplementation(()=>({
             user: currentUserMock
         })),
         signInWithEmailAndPassword: vi.fn().mockImplementation(()=>({
             user: currentUserMock
         })),
-        signOut: vi.fn(),*/
+        signOut: vi.fn(),
+        onAuthStateChanged: vi.fn().mockImplementation((_auth, callback) => {
+            callback(currentUserMock);
+            return () => {}; // Return a cleanup function
+        })
     }
 ));
