@@ -4,12 +4,17 @@ import ShopContextProviderMock from "./ShopContextProviderMock";
 
 import {ReactNode} from "react";
 import { Params } from 'react-router-dom';
-import { vi } from 'vitest'
+import {Mock, vi} from 'vitest'
 import DBContextProviderMock from "./DBContextProviderMock.tsx";
-import {ContextData} from "../../src/interfaces/firebase.ts";
+import {ContextData, ContextDataValueType} from "../../src/interfaces/firebase.ts";
 
-const TestingPageProvider = ({children, ctxDataOverride}: {
-    children: ReactNode, ctxDataOverride?: ContextData
+const TestingPageProvider = ({
+    children,
+    ctxDataOverride,
+    removeData= vi.fn(),
+}: {
+    children: ReactNode, ctxDataOverride?: ContextData,
+    removeData?: Mock<()=>Promise<ContextDataValueType[] | null>>,
 }) => {
 
     vi.mock('react-router-dom', () => ({
@@ -26,7 +31,9 @@ const TestingPageProvider = ({children, ctxDataOverride}: {
         <AuthContextProviderMock>
             <ThemeContextProviderMock>
                 <ShopContextProviderMock>
-                    <DBContextProviderMock ctxDataOverride={ctxDataOverride}>
+                    <DBContextProviderMock
+                        removeData={removeData}
+                        ctxDataOverride={ctxDataOverride}>
                         <div
                             className="w-full h-full m-auto flex flex-col text-black dark:text-white bg-[#ebebeb] dark:bg-black flex-1 min-h-svh">
                             <div className="main-container p-2 flex flex-col h-full flex-1">
