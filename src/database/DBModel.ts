@@ -1,4 +1,3 @@
-import React from "react";
 import {CommonCollectionData, KVCollectionStore, TTLData} from "../interfaces/firebase.ts";
 import {loadFromIndexedDB, saveToIndexedDB} from "../utils/indexedDB.ts";
 
@@ -38,7 +37,9 @@ export default abstract class DBModel {
         } catch (e) {
             console.error(e);
         }
-        if (cache && cache.users.length && cache.settings.length) {
+
+        if (cache && cache.users && cache.settings &&
+            cache.users.length && cache.settings.length) {
             this._cache = cache;
         }
         if (ttl) {
@@ -100,8 +101,6 @@ export default abstract class DBModel {
         const now = new Date().getTime();
         return now - this._ttl[table] > this._mtime[table];
     }
-
-    authProvider?: ({children}: { children: React.ReactNode }) => Element
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
