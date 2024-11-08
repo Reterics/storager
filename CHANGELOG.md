@@ -4,6 +4,11 @@
 
 * Firebase Auth error handling improved
 
+### Features
+
+* Multiselect box changed to List of checkboxes in Service forms
+
+
 ## [1.1.0] (2024-11-04)
 
 ### Bug fixes

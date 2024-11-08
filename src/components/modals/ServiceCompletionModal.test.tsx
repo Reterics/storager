@@ -63,8 +63,8 @@ describe('ServiceCompletionModal', () => {
         expect(guaranteedBox).toBeDefined();
         fireEvent.change(guaranteedBox, {target: { value: 'no' } });
 
-        const multiSelectBox = container.getByRole('listbox', {name: 'Type'})
-        fireEvent.change(multiSelectBox, {target: { value: 'Back' } });
+        const multiSelectCheckBox = container.getByRole('checkbox', {name: 'Back'})
+        fireEvent.click(multiSelectCheckBox);
 
         expect(setFromData.mock.calls.length).equal(10);
 

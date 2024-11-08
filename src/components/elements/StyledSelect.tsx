@@ -9,12 +9,12 @@ export const textToOptions = (strings: string[], names: string[]|undefined):  St
 
 
 export default function StyledSelect({
-                                         value,
-                                         onSelect,
-                                         name,
-                                         label,
-                                         options,
-                                     }: StyledSelectArgs) {
+    value,
+    onSelect,
+    name,
+    label,
+    options,
+}: StyledSelectArgs) {
     const { t } = useTranslation();
 
     return (

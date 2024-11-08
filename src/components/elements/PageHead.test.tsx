@@ -61,7 +61,7 @@ describe('PageHead', () => {
                     value: <BsFillPlusCircleFill/>,
                     onClick: vi.fn()
                 }
-            ]} error={undefined} onSearch={vi.fn()} />
+            ]} error={undefined} onSearch={vi.fn()} debounceInterval={false}/>
         )
 
         expect(container.getByRole('heading', { name: 'PageHead Test Title' })).toBeDefined();
@@ -77,7 +77,8 @@ describe('PageHead', () => {
             <PageHead title={'PageHead Test Title'} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
-                    onClick: vi.fn()
+                    onClick: vi.fn(),
+                    primary: true
                 }
             ]} />
         )

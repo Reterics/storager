@@ -71,8 +71,8 @@ describe('ServiceModal', () => {
         fireEvent.change(statusBox, {target: { value: 'status_in_progress' } });
         fireEvent.change(guaranteedBox, {target: { value: 'no' } });
 
-        const multiSelectBox = container.getByRole('listbox', {name: 'Type'})
-        fireEvent.change(multiSelectBox, {target: { value: 'Back' } });
+        const multiSelectCheckBox = container.getByRole('checkbox', {name: 'Back'})
+        fireEvent.click(multiSelectCheckBox);
 
         expect(setService.mock.calls.length).equal(11);
         container.unmount();
