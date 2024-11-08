@@ -7,7 +7,7 @@ vi.mock('firebase/auth', () => ({
                 currentUser: currentUserMock
             }
         },
-        setPersistence: vi.fn(),
+        setPersistence: vi.fn().mockImplementation(async () => {}),
         browserLocalPersistence: 'LOCAL',
         createUserWithEmailAndPassword: vi.fn().mockImplementation(()=>({
             user: currentUserMock

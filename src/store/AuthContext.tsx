@@ -1,4 +1,4 @@
-import {firebaseAuth} from '../database/firebase/config.ts';
+import {firebaseAuth, firebaseAuthError} from '../database/firebase/config.ts';
 import React, {createContext, useEffect, useState} from 'react';
 import {IAuth, LoginFormValues, UserFormValues} from "../interfaces/interfaces.ts";
 import {useNavigate} from 'react-router-dom';
@@ -6,9 +6,10 @@ import {SignIn, SignOut, SignUp} from "../database/firebase/services/AuthService
 import {onAuthStateChanged, User} from 'firebase/auth';
 import PageLoading from "../components/PageLoading.tsx";
 import {FIREBASE_ERRORS} from "./FirebaseErrors.ts";
+import ScreenMessage from "../components/ScreenMessage.tsx";
 
 export const AuthContext = createContext<IAuth>({
-    user: firebaseAuth.currentUser,
+    user: firebaseAuth?.currentUser,
     loading: false,
     SignIn: () => {},
     SignUp: () => {},
@@ -78,6 +79,7 @@ const AuthProvider = ({children}: { children: React.ReactNode }) => {
             navigate('/signin', {replace: true});
         } catch (error) {
             setIsLoading(false);
+            console.warn('Error happened during signing out, ', error);
             //show error alert
         }
     }
@@ -93,14 +95,20 @@ const AuthProvider = ({children}: { children: React.ReactNode }) => {
 
     useEffect(() => {
         //onAuthStateChanged check if the user is still logged in or not
-        return onAuthStateChanged(firebaseAuth, user => {
-            setCurrentUser(user);
-            setIsAuthLoading(false);
-        });
+        if (firebaseAuth) {
+            return onAuthStateChanged(firebaseAuth, user => {
+                setCurrentUser(user);
+                setIsAuthLoading(false);
+            });
+        }
+        console.warn('AuthProvider failed to load due to missing firebaseAuth')
     }, []);
+
+    if (firebaseAuthError) return <ScreenMessage><b>Error code: {firebaseAuthError.code}</b></ScreenMessage>
 
     //If loading for the first time when visiting the page
     if (isAuthLoading) return <PageLoading/>;
+
 
     return (
         <AuthContext.Provider value={authValues}>{children}</AuthContext.Provider>

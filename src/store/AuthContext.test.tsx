@@ -21,6 +21,7 @@ vi.mock("../database/firebase/config.ts", () => ({
             currentUser: currentUserMock,
         }
     },
+    firebaseAuthError: null
 }));
 
 const mockNavigate = vi.fn();

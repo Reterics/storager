@@ -5,18 +5,19 @@ import {
     UserData,
     UserModalInput
 } from "../../interfaces/interfaces.ts";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useContext, useState} from "react";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
 import FormRow from "../elements/FormRow.tsx";
 import {userRoleOptions} from "../../interfaces/constants.ts";
 import AlertBox from "../AlertBox.tsx";
-import {SignUp} from "../../database/firebase/services/AuthService.ts";
+import {AuthContext} from "../../store/AuthContext.tsx";
 
 
 export default function UserModal({ onClose, user, setUser, onSave, inPlace, shops }: UserModalInput) {
     const { t } = useTranslation();
+    const {SignUp} = useContext(AuthContext);
     const [error, setError] = useState<string | null>(null);
 
     const typeOptions: StyledSelectOption[] = (shops || []).map((key)=>{

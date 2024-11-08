@@ -24,7 +24,7 @@ export interface UserFormValues {
 
 //IAuth context
 export interface IAuth {
-    user: User | null;  //type User comes from firebase
+    user?: User | null;  //type User comes from firebase
     loading: boolean;
     SignIn: (credentials: LoginFormValues) => void;
     SignUp: (credentials: UserFormValues) => void;

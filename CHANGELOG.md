@@ -1,5 +1,10 @@
-## [1.1.0] (Unreleased)
+## [1.1.1] (Unreleased)
 
+### Bug fixes
+
+* Firebase Auth error handling improved
+
+## [1.1.0] (2024-11-04)
 
 ### Bug fixes
 

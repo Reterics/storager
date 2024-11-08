@@ -1,5 +1,6 @@
-import { getAuth } from 'firebase/auth';
+import { getAuth, Auth } from 'firebase/auth';
 import FirebaseDBModel from "./FirebaseDBModel.ts";
+import { FirebaseError } from 'firebase/app';
 
 const refreshRate = {
     minutes: 60000,
@@ -40,8 +41,17 @@ export const firebaseModel = new FirebaseDBModel({
 
 const app = firebaseModel.getApp();
 export const db = firebaseModel.getDB()
-export const firebaseAuth = getAuth(app);
 
+let _firebaseAuth: Auth|null = null;
+let _firebaseAuthError: FirebaseError|null = null;
+try {
+    _firebaseAuth = getAuth(app);
+} catch(err: unknown) {
+    _firebaseAuthError = err as FirebaseError;
+}
+
+export const firebaseAuth = _firebaseAuth;
+export const firebaseAuthError = _firebaseAuthError;
 
 export const getCollection = (table: string, force?: boolean)=>{
     return firebaseModel.getAll(table, force);
