@@ -56,7 +56,7 @@ describe('TableViewComponent', () => {
 
 
     it('highlights selected row', () => {
-        render(<TableViewComponent header={mockHeader} lines={mockLines} selectedIndex={1} />);
+        render(<TableViewComponent header={mockHeader} lines={mockLines} selectedIndexes={{1: true}} />);
 
         const selectedRow = screen.getAllByRole('row')[2];
         expect(selectedRow).toHaveClass('bg-gray-300');

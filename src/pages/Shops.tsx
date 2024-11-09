@@ -15,6 +15,7 @@ import {PageHead} from "../components/elements/PageHead.tsx";
 import { useTranslation } from 'react-i18next';
 import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
+import ImportShopData from "../components/modals/ImportShopData.tsx";
 
 function Shops() {
     const dbContext = useContext(DBContext);
@@ -32,6 +33,7 @@ function Shops() {
     const [selectedIndex, setSelectedIndex] = useState<number>(initialSelectedIndex);
 
     const [modalTemplate, setModalTemplate] = useState<Shop|null>(null)
+    const [importShop, setImportShop] = useState<Shop|null>(null)
 
     const center = [47.25852, 16.77818, 0] as LatLngTuple;
 
@@ -68,10 +70,15 @@ function Shops() {
 
     const tableLines = shops.map(shop => {
         const actions: TableViewActionArguments = {
-            onRemove: () => deleteShop(shop)
+            onRemove: () => deleteShop(shop),
         };
         if (dbContext?.data.currentUser?.role === 'admin') {
             actions.onEdit = () => setModalTemplate(shop)
+        }
+        if (dbContext?.data.currentUser?.role === 'admin' /*&& there is no data for this shop*/) {
+            actions.onPaste = () => {
+                setImportShop(shop);
+            }
         }
         return [
             shop.name || '',
@@ -99,7 +106,7 @@ function Shops() {
                 value: t('Name'),
                 sortable: true
             }, t('Address'), t('Actions')]}
-            selectedIndex={selectedIndex}
+            selectedIndexes={{[selectedIndex]: true}}
             onClick={(index) => {
                 if (shops[index]) {
                     if (shopContext.shop && shops[index].id === shopContext.shop?.id) {
@@ -118,6 +125,11 @@ function Shops() {
                     setShop={(shop: Shop) => setModalTemplate(shop)}
                     shop={modalTemplate}
                     inPlace={true}
+                /> }
+                { importShop && <ImportShopData
+                    onClose={()=>setImportShop(null)}
+                    shop={importShop}
+                    inPlace={false}
                 /> }
                 <MapContainer ref={ref}
                     center={center}

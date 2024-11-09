@@ -17,6 +17,8 @@ export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 5
     const { t } = useTranslation();
     const ref = useRef<HTMLInputElement>(null);
 
+    const buttonPY = title ? "py-2.5" : "py-1.5";
+
     const onClickSearch = () => {
         if (ref.current && onSearch) {
             onSearch(ref.current.value);
@@ -45,7 +47,7 @@ export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 5
     }, [debounceFunc, debounceInterval, onSearch]);
 
     return (
-        <div className="flex justify-center overflow-x-auto sm:rounded-lg w-full m-auto no-print">
+        <div className="flex justify-center overflow-x-auto sm:rounded-lg w-full m-auto no-print min-h-16">
             <div className="flex justify-between items-center max-w-screen-xl m-1 mt-0 p-2 pt-1 w-full">
                 <h1 className="text-2xl font-bold leading-none tracking-tight text-gray-900 lg:text-3xl dark:text-white">
                     {title}
@@ -81,8 +83,8 @@ export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 5
                             type="button"
                             className={
                                 button.primary
-                                    ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                                    : "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                    ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-5 "+buttonPY+" dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+                                    : "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-5 "+buttonPY+" dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                             }
                             onClick={button.onClick}
                         >

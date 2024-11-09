@@ -220,12 +220,11 @@ export const TableViewActions = ({
     );
 }
 
-const TableViewComponent = ({header, lines, children, onChange, onClick, selectedIndex, isHighlighted}: TableViewArguments) => {
-
+const TableViewComponent = ({header, lines, children, onChange, onClick, selectedIndexes, isHighlighted}: TableViewArguments) => {
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
 
-    const _header = typeof selectedIndex === 'number' && header ? ["#", ...header] : header;
+    const _header = selectedIndexes && header ? ["#", ...header] : header;
     const supportedOrderTypes = ['string', 'number'];
     const orderedLines = !orderBy ? lines : lines.sort((a, b) => {
         if (a[orderBy] === undefined || b[orderBy] === undefined) {
@@ -253,11 +252,11 @@ const TableViewComponent = ({header, lines, children, onChange, onClick, selecte
                     " border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800" +
                     (typeof isHighlighted === 'function' && isHighlighted(line, index) ? " bg-yellow-50 dark:bg-yellow-950" : "") +
 
-                    (selectedIndex === index ? " bg-gray-300 dark:bg-gray-700" : " bg-white dark:bg-gray-900") +
+                    (selectedIndexes?.[index] ? " bg-gray-300 dark:bg-gray-700" : " bg-white dark:bg-gray-900") +
                     (onClick ? " cursor-pointer" : "")
                 }>
                     <TableViewLine line={line} index={index} header={_header} onChange={onChange} onClick={onClick}
-                        isSelected={typeof selectedIndex === 'number' ? selectedIndex === index : undefined}/>
+                        isSelected={selectedIndexes ? !!selectedIndexes?.[index] : undefined}/>
                 </tr>
             )}
             {children}

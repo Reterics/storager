@@ -94,7 +94,7 @@ export interface TableViewArguments extends TSXComponentArgument {
     header?: TableViewHeader,
     onChange?: TableOnChangeMethod,
     onClick?: (index: number) => void,
-    selectedIndex?: number,
+    selectedIndexes?: { [key: number]: boolean | undefined },
     isHighlighted?: ((line: TableLineType, index: number) => boolean) | boolean | number,
 }
 
@@ -383,4 +383,11 @@ export interface StorageInfo {
     storage: number,
     storageLimit: number,
     lowStorageAlert: boolean
+}
+
+export interface ImportShopDataArguments {
+    inPlace?: boolean,
+    title?: string,
+    onClose: () => void,
+    shop?: Shop
 }
