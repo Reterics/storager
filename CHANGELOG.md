@@ -3,6 +3,7 @@
 ### Bug fixes
 
 * Firebase Auth error handling improved
+* ShopModal regexp validation fixed
 
 ### Features
 
