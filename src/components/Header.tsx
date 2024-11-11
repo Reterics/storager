@@ -1,4 +1,4 @@
-import {NavLink, useLocation, useSearchParams} from "react-router-dom";
+import {NavLink, useSearchParams} from "react-router-dom";
 import {AuthContext} from "../store/AuthContext.tsx";
 import {useContext, useState} from "react";
 import {useTranslation} from "react-i18next";
@@ -18,7 +18,6 @@ import {
 
 
 const Header = () => {
-    const pathname = useLocation().pathname;
     const {SignOut, user} = useContext(AuthContext);
     const dbContext = useContext(DBContext);
     const isAdmin = dbContext && dbContext.data && dbContext.data.currentUser &&
@@ -76,12 +75,12 @@ const Header = () => {
                                   d="M1 1h15M1 7h15M1 13h15"/>
                         </svg>
                     </button>
-                    <div className={`${navbarOpen ? 'block' : 'hidden'} w-full md:block md:w-auto`} id="navbar-default">
+                    <div className={`${navbarOpen ? 'block' : 'hidden'} w-full md:block md:w-auto`} id="navbar-default" role="navigation">
                         <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                             <li>
                                 <NavLink to='/?page='
                                          onClick={handleLinkClick}
-                                         className={pathname === '/' ?
+                                         className={page === 'shops' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                          aria-current="page">{t('Shops')}</NavLink>
@@ -89,7 +88,7 @@ const Header = () => {
                             {shop && <li>
                                 <NavLink to='/?page=items'
                                          onClick={handleLinkClick}
-                                         className={pathname === '/items' ?
+                                         className={page === 'items' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Items')}</NavLink>
@@ -97,7 +96,7 @@ const Header = () => {
                             {shop && <li>
                                 <NavLink to='/?page=parts'
                                          onClick={handleLinkClick}
-                                         className={pathname === '/parts' ?
+                                         className={page === 'parts' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Parts')}</NavLink>
@@ -105,7 +104,7 @@ const Header = () => {
                             {shop && <li>
                                 <NavLink to='/?page=service'
                                          onClick={handleLinkClick}
-                                         className={pathname === '/service' ?
+                                         className={page === 'service' ?
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Service')}</NavLink>
