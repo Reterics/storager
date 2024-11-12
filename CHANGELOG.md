@@ -10,6 +10,7 @@
 * Multiselect box changed to List of checkboxes in Service forms
 * TableViewComponent support multi selection
 * Import Shop Data dialog added to Shop list
+* Item and Part deleted only in case when we remove from all shops
 
 
 ## [1.1.0] (2024-11-04)

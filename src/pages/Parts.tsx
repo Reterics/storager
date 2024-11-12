@@ -4,7 +4,7 @@ import {useTranslation} from "react-i18next";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {ShopContext} from "../store/ShopContext.tsx";
-import {Shop, StoreItem, StorePart, StyledSelectOption} from "../interfaces/interfaces.ts";
+import {Shop, StorePart, StyledSelectOption} from "../interfaces/interfaces.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import PartModal from "../components/modals/PartModal.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
@@ -50,7 +50,19 @@ function Parts() {
 
     const deletePart = async (item: StorePart) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Part?'))) {
-            let updatedItems = await dbContext?.removeData('parts', item.id) as StorePart[];
+            let updatedItems;
+            if (item.shop_id && item.shop_id?.length > 1) {
+                const indexToRemove = item.shop_id.indexOf(selectedShopId);
+                if (indexToRemove === -1) {
+                    return;
+                }
+                item.shop_id.splice(indexToRemove, 1);
+                item.storage?.splice(indexToRemove, 1);
+                item.storage_limit?.splice(indexToRemove, 1);
+                updatedItems = await dbContext?.setData('parts', item as StorePart) as StorePart[];
+            } else {
+                updatedItems = await dbContext?.removeData('parts', item.id) as StorePart[];
+            }
             if (shopContext.shop) {
                 updatedItems = (updatedItems as StorePart[])
                     .filter((item) => item.shop_id?.includes(selectedShopId));
@@ -175,8 +187,8 @@ function Parts() {
             <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <PartModal
                     onClose={() => setModalTemplate(null)}
-                    onSave={(item: StoreItem) => closePart(item)}
-                    setPart={(item: StoreItem|null) => setModalTemplate(item)}
+                    onSave={(item: StorePart) => closePart(item)}
+                    setPart={(item: StorePart|null) => setModalTemplate(item)}
                     part={modalTemplate}
                     inPlace={false}
                     selectedShopId={selectedShopId}

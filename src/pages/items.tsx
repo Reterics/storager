@@ -50,7 +50,19 @@ function Items() {
 
     const deleteItem = async (item: StoreItem) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Item?'))) {
-            let updatedItems = await dbContext?.removeData('items', item.id) as StoreItem[];
+            let updatedItems;
+            if (item.shop_id && item.shop_id?.length > 1) {
+                const indexToRemove = item.shop_id.indexOf(selectedShopId);
+                if (indexToRemove === -1) {
+                    return;
+                }
+                item.shop_id.splice(indexToRemove, 1);
+                item.storage?.splice(indexToRemove, 1);
+                item.storage_limit?.splice(indexToRemove, 1);
+                updatedItems = await dbContext?.setData('items', item as StoreItem) as StoreItem[];
+            } else {
+                updatedItems = await dbContext?.removeData('items', item.id) as StoreItem[];
+            }
             if (shopContext.shop) {
                 updatedItems = (updatedItems as StoreItem[])
                     .filter((item) => item.shop_id?.includes(selectedShopId));
