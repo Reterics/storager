@@ -128,5 +128,6 @@
   "Are you sure to restore this entry?": "Are you sure to restore this entry?",
   "Import Shop Data": "Import Shop Data",
   "Deselect All": "Deselect All",
-  "Select All": "Select All"
+  "Select All": "Select All",
+  "Are you sure to import the following amount into your shop? ": "Are you sure to import the following amount into your shop? "
 }

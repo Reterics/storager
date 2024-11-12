@@ -1,5 +1,5 @@
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import {vi, describe, it, expect, beforeEach} from 'vitest';
 import ImportShopData from './ImportShopData';
 import { DBContext } from '../../database/DBContext';
 import {GeneralButtons, ImportShopDataArguments, TableViewArguments} from "../../interfaces/interfaces.ts";
@@ -65,6 +65,7 @@ describe('ImportShopData Component', () => {
                 { sku: 'sku3', name: 'Part 1', storage_limit: [2], price: 50, shop_id: [] },
             ],
         },
+        uploadDataBatch: vi.fn().mockImplementation(async ()=> {})
     };
 
     const renderComponent = (props: ImportShopDataArguments) => {
@@ -165,13 +166,24 @@ describe('ImportShopData Component', () => {
         expect(onCloseMock).toHaveBeenCalledTimes(1);
     });
 
-    it('calls import function when "Import" button is clicked', () => {
-        const onImportMock = vi.fn();
+    it('calls import function when "Import" button is clicked', async () => {
+        vi.spyOn(window, 'confirm').mockReturnValue(true);
+        vi.spyOn(window, 'alert').mockReturnValue();
 
         renderComponent({ shop: { id: 'shop1' }, onClose: onCloseMock});
 
+        fireEvent.click(screen.getByText('Items'));
+        fireEvent.click(screen.getByText('Parts'));
+
+        await waitFor(() => {
+            expect(screen.queryAllByRole('row')).toHaveLength(4); // Header + 2 items
+        });
+
+        fireEvent.click(screen.queryAllByRole('row')[1]);
+        fireEvent.click(screen.queryAllByRole('row')[3]);
+
         fireEvent.click(screen.getByText('Import'));
 
-        expect(onImportMock).toHaveBeenCalledTimes(0);
+        await waitFor(()=> expect(mockDBContext.uploadDataBatch).toHaveBeenCalledTimes(2))
     });
 });

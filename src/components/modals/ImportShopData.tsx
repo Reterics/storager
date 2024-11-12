@@ -1,7 +1,7 @@
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
 import TableViewComponent from "../elements/TableViewComponent.tsx";
-import {GeneralModalButtons, ImportShopDataArguments} from "../../interfaces/interfaces.ts";
+import {GeneralModalButtons, ImportShopDataArguments, StoreItem, StorePart} from "../../interfaces/interfaces.ts";
 import {useContext, useState} from "react";
 import {DBContext} from "../../database/DBContext.ts";
 import {PageHead} from "../elements/PageHead.tsx";
@@ -25,8 +25,8 @@ export default function ImportShopData(
     if (!shop) return null;
 
     const data = [
-        ...(isItemSelected ? dbContext?.data.items || [] : []),
-        ...(isPartSelected ? dbContext?.data.parts || [] : [])
+        ...(isItemSelected ? dbContext?.data.items || [] : []).map(d=> ({...d, docType: 'items'})),
+        ...(isPartSelected ? dbContext?.data.parts || [] : []).map(d=> ({...d, docType: 'parts'}))
     ]
         .filter(item => {
             if (search) {
@@ -56,7 +56,47 @@ export default function ImportShopData(
     const buttons: GeneralModalButtons[] = [
         {
             primary: true,
-            onClick: ()=> {},
+            onClick: async (): Promise<false> => {
+                const dataToImport = data.reduce((out, data, index)=>{
+                    if (selectedData[index] && data && (data.docType === 'items' || data.docType === 'parts')) {
+                        if (!data.shop_id) {
+                            data.shop_id = [];
+                        }
+                        if (!data.storage) {
+                            data.storage = [0];
+                        }
+                        if (!data.storage_limit) {
+                            data.storage_limit = [5];
+                        }
+                        if (shop?.id) {
+                            data.shop_id.push(shop.id);
+                            data.storage_limit.push(data.storage_limit[0]);
+                            data.storage.push(0);
+                            out[data.docType].push(data);
+                        }
+
+                    }
+                    return out;
+                }, {
+                    items: [],
+                    parts: []
+                } as {items: StoreItem[], parts: StorePart[]});
+
+                const length = (dataToImport.items.length + dataToImport.parts.length)
+                console.log('Ready to import ' + length + ' data');
+
+                if (length && window.confirm(t('Are you sure to import the following amount into your shop? ') + length)) {
+                    if (dataToImport.items.length) {
+                        await dbContext?.uploadDataBatch('items', dataToImport.items);
+                    }
+                    if (dataToImport.parts.length) {
+                        await dbContext?.uploadDataBatch('parts', dataToImport.parts);
+                    }
+
+                    alert('Import successful');
+                }
+                return false;
+            },
             value: t('Import')
         },
         {

@@ -17,7 +17,7 @@ import PageLoading from "../../components/PageLoading.tsx";
 import {getFileURL} from "./storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
-import {addDoc, collection, doc, writeBatch} from "firebase/firestore";
+import {addDoc, collection} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 
 
@@ -228,35 +228,21 @@ export const FirebaseProvider = ({children}: {
     }
 
     const updateContextBatched = async (key: ContextDataType, items: ContextDataValueType[]) => {
-        const batch = writeBatch(db);
+        await firebaseModel.updateAll(items, key);
 
-        for (const item of items) {
-            let modelRef;
-
-            if (item && item.id) {
-                // If item has an ID, update the existing document
-                modelRef = doc(db, firebaseCollections[key], item.id);
-
-                if ("image" in item && item.image && item.image.startsWith('https://firebase')) {
-                    delete item.image;
+        if (ctxData) {
+            // FirebaseModel above build up the cache, so we need just to refresh data from it here
+            const cachedData = firebaseModel.getCached(key);
+            if (cachedData) {
+                if (key === 'settings') {
+                    ctxData[key] = cachedData[0];
+                } else {
+                    ctxData[key] = cachedData;
                 }
             } else {
-                // Generate a new document reference with an auto-generated ID
-                modelRef = doc(collection(db, firebaseCollections[key]));
-                item.id = modelRef.id; // Assign the generated ID to your item
-            }
-
-            if (item) {
-                item.docUpdated = new Date().getTime();
-            }
-
-            batch.set(modelRef, item, { merge: true });
-            if (ctxData && key !== 'settings') {
-                ctxData[key].unshift(item);
+                console.warn('Failed to fetch data from local cache');
             }
         }
-
-        await batch.commit();
 
         setCtxData(ctxData ? {
             ...ctxData,

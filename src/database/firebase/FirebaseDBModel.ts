@@ -11,7 +11,8 @@ import {
     addDoc,
     getDocs,
     where,
-    deleteDoc
+    deleteDoc,
+    writeBatch
 } from "firebase/firestore";
 import {CommonCollectionData, ContextDataValueType, TTLData} from "../../interfaces/firebase.ts";
 
@@ -195,6 +196,51 @@ export default class FirebaseDBModel extends DBModel {
             item.image = imageCache;
         }
         this.updateCachedEntry(item.id as string, table, item as CommonCollectionData);
+        this.sync();
+    }
+
+    async updateAll(items: ContextDataValueType[], table: string): Promise<void> {
+        const batch = writeBatch(this._db);
+
+        let modelRef;
+
+
+        for (const item of items) {
+            if (!item) {
+                continue;
+            }
+            let imageCache;
+
+            if (item && item.id) {
+                // If item has an ID, update the existing document
+                modelRef = doc(this._db, table, item.id as string);
+
+                if ("image" in item && item.image && (item.image as string).startsWith('https://firebase')) {
+                    imageCache = item.image;
+                    delete item.image;
+                }
+            } else {
+                // Generate a new document reference with an auto-generated ID
+                modelRef = doc(collection(this._db, table));
+                item.id = modelRef.id; // Assign the generated ID to your item
+            }
+
+            if (item) {
+                item.docUpdated = new Date().getTime();
+            }
+
+            batch.set(modelRef, item, { merge: true });
+
+            if (item && imageCache) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                item.image = imageCache;
+            }
+            this.updateCachedEntry(item.id as string, table, item as CommonCollectionData);
+        }
+
+        await batch.commit();
+
         this.sync();
     }
 
