@@ -18,7 +18,7 @@ export default function StyledMultiSelect({
 
     const handleCheckboxChange = (selectedValue: string) => {
         const updatedSelectedValues = value.includes(selectedValue)
-            ? value.filter((val) => val !== selectedValue)
+            ? value.filter((val) => val !== selectedValue && val)
             : [...value, selectedValue];
         onSelect(updatedSelectedValues);
     };

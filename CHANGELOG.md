@@ -11,6 +11,8 @@
 
 * Firebase Auth error handling improved
 * ShopModal regexp validation fixed
+* Signature border is more visible
+* Comma prefix issue fixed in StyledMultiSelect
 
 ### Features
 

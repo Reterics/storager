@@ -187,7 +187,10 @@ function Service() {
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => {
-                        let lastNumber = Number.parseInt(servicedItems[servicedItems.length - 1].id || servicedItems.length.toString());
+                        let lastNumber = Number.parseInt(
+                            servicedItems.length && servicedItems[servicedItems.length - 1].id ?
+                            servicedItems[servicedItems.length - 1].id : servicedItems.length.toString());
+
                         if (Number.isNaN(lastNumber)) {
                             lastNumber = servicedItems.length;
                         }
