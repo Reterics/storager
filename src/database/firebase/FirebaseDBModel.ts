@@ -153,8 +153,12 @@ export default class FirebaseDBModel extends DBModel {
         const cached = this.getCachedEntry(id, 'deleted');
         if (cached && cached.docType) {
             await deleteDoc(doc(this._db, cached.docType as string, id));
+            this.removeCachedEntry(id, 'deleted');
         }
-        this.removeCachedEntry(id, 'deleted');
+        if (cached && !cached.docType) {
+            console.error('Failed to determine document type');
+        }
+        // Keep sync here to make sure the data is persisted
         this.sync();
         return this.getAll('deleted');
     }

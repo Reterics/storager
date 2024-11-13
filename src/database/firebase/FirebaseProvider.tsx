@@ -37,9 +37,6 @@ export const FirebaseProvider = ({children}: {
                 if (array[i].name && array[i].image && array[i].image?.startsWith('screenshots/')) {
                     array[i].image = await getFileURL(array[i].image || '');
                 }
-                if (array[i].name === 'belső 12.5x1.75') {
-                    console.log(array[i]);
-                }
                 if (typeof array[i].storage === 'number' || typeof array[i].storage === 'string') {
                     array[i].storage = [Number(array[i].storage)]
                 }
@@ -174,11 +171,7 @@ export const FirebaseProvider = ({children}: {
     }
 
     const removePermanentCtxData = async (id: string)=> {
-        const cached = firebaseModel.getCachedEntry(id, 'deleted');
-        if (cached) {
-            return await firebaseModel.removePermanent(id);
-        }
-        return await firebaseModel.getAll('deleted');
+        return await firebaseModel.removePermanent(id);
     }
 
     const updateContextData = async (key: ContextDataType, item: ContextDataValueType, archive?: boolean)=> {

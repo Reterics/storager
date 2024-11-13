@@ -1,4 +1,11 @@
-## [1.1.1] (Unreleased)
+## [1.1.2] (Unreleased)
+
+### Bug fixes
+
+### Features
+
+
+## [1.1.1] (2024-11-13)
 
 ### Bug fixes
 
