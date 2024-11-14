@@ -106,66 +106,6 @@ function Service() {
                         />
                     </FormRow>
 
-                    <h2 className="text-2xl font-bold mt-8 mb-4 hidden">{t('SMTP Settings')}</h2>
-                    <div className="hidden">
-                        {/* SMTP Server */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('SMTP Server')}</label>
-                            <input
-                                type="text"
-                                name="smtpServer"
-                                value={settingsItems.smtpServer}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Port */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Port')}</label>
-                            <input
-                                type="number"
-                                name="port"
-                                value={settingsItems.port}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Username */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Username')}</label>
-                            <input
-                                type="text"
-                                name="username"
-                                value={settingsItems.username}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Password */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">{t('Password')}</label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={settingsItems.password}
-                                onChange={changeType}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                            />
-                        </div>
-                        {/* Use SSL */}
-                        <div className="col-span-1 md:col-span-2 flex items-center">
-                            <input
-                                type="checkbox"
-                                name="useSSL"
-                                checked={settingsItems.useSSL}
-                                onChange={changeType}
-                                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                            />
-                            <label className="ml-2 block text-sm text-gray-700">{t('Use SSL')}</label>
-                        </div>
-                    </div>
-
-
                     <FormRow>
                         <StyledInput
                             type="textarea" name="serviceAgreement"
