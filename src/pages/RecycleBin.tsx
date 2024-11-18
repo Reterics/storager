@@ -5,30 +5,14 @@ import {ContextDataValueType} from "../interfaces/firebase.ts";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
-import {StoreItem} from "../interfaces/interfaces.ts";
-import {ShopContext} from "../store/ShopContext.tsx";
 import {BsFillTrash3Fill} from "react-icons/bs";
 
 
 function RecycleBin() {
     const dbContext = useContext(DBContext);
-    const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
-    let initialItems = dbContext?.data.deleted || [];
-    if (shopContext.shop) {
-        initialItems = initialItems
-            .filter((item) => {
-                const shopId = (item as unknown as StoreItem).shop_id;
-
-                if (shopId !== undefined && shopContext.shop?.id) {
-                    return shopId.includes(shopContext.shop?.id);
-                }
-                return true;
-            });
-    }
-    const [items, setItems] = useState<ContextDataValueType[]>(initialItems);
-
+    const [items, setItems] = useState<ContextDataValueType[]>(dbContext?.data.deleted || []);
 
     if (!dbContext?.data.currentUser) {
         return <UnauthorizedComponent />;
@@ -36,18 +20,7 @@ function RecycleBin() {
 
     const deletePermanent = async (id: string) => {
         if (window.confirm(t("Are you sure you want to delete permanently?"))) {
-            let updatedList = await dbContext.removePermanentData(id);
-            if (updatedList && shopContext.shop) {
-                updatedList = updatedList
-                    .filter((item) => {
-                        const shopId = (item as unknown as StoreItem).shop_id;
-
-                        if (shopId !== undefined && shopContext.shop?.id) {
-                            return shopId.includes(shopContext.shop?.id);
-                        }
-                        return true;
-                    });
-            }
+            const updatedList = await dbContext.removePermanentData(id);
 
             if (updatedList) {
                 setItems(updatedList);

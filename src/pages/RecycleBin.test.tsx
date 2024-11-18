@@ -64,7 +64,7 @@ describe('RecycleBin Component', () => {
                     client_name: 'Client 2',
                     docType: 'Type2',
                     docUpdated: new Date().toISOString(),
-                    shop_id: ['shop2'],
+                    shop_id: ['shop1'],
                 },
             ],
         },
@@ -162,7 +162,7 @@ describe('RecycleBin Component', () => {
                 client_name: 'Client 2',
                 docType: 'Type2',
                 docUpdated: new Date().getTime(),
-                shop_id: ['shop2'],
+                shop_id: ['shop1'],
             },
         ];
         mockDBContext.removePermanentData.mockResolvedValue(updatedDeletedItems);
@@ -177,7 +177,7 @@ describe('RecycleBin Component', () => {
             expect(mockDBContext.removePermanentData).toHaveBeenCalledWith('item1');
 
             expect(screen.queryByText('Item 1')).not.toBeInTheDocument();
-            expect(screen.queryByText('Client 2')).not.toBeInTheDocument();
+            expect(screen.queryByText('Client 2')).toBeInTheDocument();
 
         });
     });
@@ -197,7 +197,7 @@ describe('RecycleBin Component', () => {
 
             // Item should still be present
             expect(screen.getByText('Item 1')).toBeInTheDocument();
-            expect(screen.queryByText('Client 2')).not.toBeInTheDocument();
+            expect(screen.queryByText('Client 2')).toBeInTheDocument();
 
         });
     });
@@ -238,6 +238,6 @@ describe('RecycleBin Component', () => {
         renderWithProviders(<RecycleBin />);
 
         expect(screen.getByText('Item 1')).toBeInTheDocument();
-        expect(screen.queryByText('Client 2')).not.toBeInTheDocument();
+        expect(screen.queryByText('Client 2')).toBeInTheDocument();
     });
 });

@@ -1,6 +1,7 @@
 ## [1.1.2] (Unreleased)
 
 ### Bug fixes
+ * Removed Shop filtering from Recycle Bin
 
 ### Features
 
