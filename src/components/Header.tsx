@@ -36,6 +36,7 @@ const Header = () => {
     };
 
     const updatePageData = ()=> {
+        setDropdownOpen(false);
         switch (page) {
             case 'items':
                 return dbContext?.refreshData('items');
@@ -146,14 +147,13 @@ const Header = () => {
                                                 </NavLink>
                                             </li>}
                                             <li>
-                                                <NavLink
-                                                    to="/?page=types"
+                                                <button
                                                     onClick={() => updatePageData()}
                                                     className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                                 >
                                                     <div className="text-xl me-2"><BsArrowClockwise/></div>
                                                     {t('Update')}
-                                                </NavLink>
+                                                </button>
                                             </li>
                                             {isAdmin && <li>
                                                 <NavLink

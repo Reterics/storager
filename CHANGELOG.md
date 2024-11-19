@@ -2,6 +2,7 @@
 
 ### Bug fixes
  * Removed Shop filtering from Recycle Bin
+ * Update button fixed in Header menu
 
 ### Features
 
