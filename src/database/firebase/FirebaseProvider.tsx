@@ -103,11 +103,13 @@ export const FirebaseProvider = ({children}: {
             types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
         }
 
-        // TODO: move the filter server side
-        if (user && user.shop_id && user.shop_id.length) {
-            shops = shops.filter(shop => user.shop_id.includes(shop.id));
-            items = items.filter(item => user.shop_id.includes(item.shop_id));
-            parts = parts.filter(part => user.shop_id.includes(part.shop_id));
+        if (user?.shop_id && user.shop_id.length) {
+            if (typeof user.shop_id === 'string') {
+                user.shop_id = [user.shop_id as string];
+            }
+            shops = shops.filter(shop => user.shop_id.find((shop_id: string) => shop.id.includes(shop_id)));
+            items = items.filter(item => user.shop_id.find((shop_id: string) => item.shop_id?.includes(shop_id)));
+            parts = parts.filter(part => user.shop_id.find((shop_id: string) => part.shop_id?.includes(shop_id)));
             if (!shopContext.shop?.id || !user.shop_id.includes(shopContext.shop?.id)) {
                 shopContext.setShop(shops[0])
             }

@@ -8,7 +8,7 @@ import {Shop, StyledSelectOption, UserData} from "../interfaces/interfaces.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import UserModal from "../components/modals/UserModal.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
-import {getShopIndex} from "../utils/storage.ts";
+import {userRoleOptions} from "../interfaces/constants.ts";
 
 function UsersPage() {
     const dbContext = useContext(DBContext);
@@ -16,7 +16,6 @@ function UsersPage() {
     const { t } = useTranslation();
 
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
-    const selectedShopId = shopContext.shop ? shopContext.shop.id : dbContext?.data.shops[0]?.id as string;
     const [users, setUsers] = useState<UserData[]>(dbContext?.data.users || []);
     const [modalTemplate, setModalTemplate] = useState<UserData|null>(null)
 
@@ -42,15 +41,22 @@ function UsersPage() {
     }
 
     const tableLines = users.map(item => {
-        const shopIndex = getShopIndex(item, selectedShopId);
-        const assignedShop = shops[shopIndex];
+        let assignedShops: Shop[] | null;
+        if (Array.isArray(item.shop_id)) {
+            assignedShops = item.shop_id
+                .map(id => shops.find(shop=>shop.id === id))
+                .filter(a => a) as Shop[];
+        } else {
+            assignedShops = item.shop_id ?
+                [shops.find(shop => shop.id === (item.shop_id as unknown as string)) as Shop] : null;
+        }
 
         return [
             item.id,
             item.username,
             item.email || '',
-            item.role || 0,
-            assignedShop ? assignedShop.name : t('Minden bolt'),
+            item.role || userRoleOptions[0].name,
+            assignedShops?.length ? assignedShops.map(a=>a.name).join(', ') : t('Minden bolt'),
             TableViewActions({
                 onRemove: () => deleteUser(item)
             })

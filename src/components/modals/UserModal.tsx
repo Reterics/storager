@@ -13,6 +13,7 @@ import FormRow from "../elements/FormRow.tsx";
 import {userRoleOptions} from "../../interfaces/constants.ts";
 import AlertBox from "../AlertBox.tsx";
 import {AuthContext} from "../../store/AuthContext.tsx";
+import StyledMultiSelect from "../elements/StyledMultiSelect.tsx";
 
 
 export default function UserModal({ onClose, user, setUser, onSave, inPlace, shops }: UserModalInput) {
@@ -36,6 +37,13 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
         obj[key] = value;
 
         setUser(obj as UserData);
+    };
+
+    const selectMultiShopId = (shop_ids: string[])=>{
+        setUser({
+            ...user as UserData,
+            shop_id: shop_ids
+        });
     };
 
     const uploadAndSave = async (item: UserData) => {
@@ -120,11 +128,11 @@ export default function UserModal({ onClose, user, setUser, onSave, inPlace, sho
             }
 
             <FormRow>
-                <StyledSelect
+                <StyledMultiSelect
                     options={typeOptions}
                     name="shop_id"
-                    value={user.shop_id}
-                    onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'shop_id')}
+                    value={Array.isArray(user.shop_id) ? user.shop_id : []}
+                    onSelect={(selectedShopId) => selectMultiShopId(selectedShopId)}
                     label={t("Assigned Shop")}
                 />
 

@@ -3,9 +3,10 @@
 ### Bug fixes
  * Removed Shop filtering from Recycle Bin
  * Update button fixed in Header menu
+ * User assigned to specific shop had parts, and items empty fixed
 
 ### Features
-
+ * Users can be assigned to multiple shops
 
 ## [1.1.1] (2024-11-13)
 
