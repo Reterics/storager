@@ -3,7 +3,7 @@
   "displayName": "StorageR",
   "description": "Manage your store in an easy way",
   "private": true,
-  "version": "1.1.1",
+  "version": "1.1.2",
   "repository": {
     "url": "https://github.com/Reterics/storager",
     "type": "git"

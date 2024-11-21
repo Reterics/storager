@@ -1,9 +1,16 @@
-## [1.1.2] (Unreleased)
+## [1.1.3] (Unreleased)
+
+### Bug fixes
+
+### Features
+
+## [1.1.2] (2024-11-21)
 
 ### Bug fixes
  * Removed Shop filtering from Recycle Bin
  * Update button fixed in Header menu
  * User assigned to specific shop had parts, and items empty fixed
+ * Assets contain version in order to avoid caching issues.
 
 ### Features
  * Users can be assigned to multiple shops
