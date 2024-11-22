@@ -1,6 +1,7 @@
 ## [1.1.3] (Unreleased)
 
 ### Bug fixes
+ * Optimized data loading, updating and missing data cases
 
 ### Features
 

@@ -184,6 +184,12 @@ function Items() {
                                 onChange={(index, col, value) => changeTableElement(index, col, value)}
             />
 
+            {!tableLines.length && !initialItems.length &&
+                <div className="text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 p-2 max-w-screen-xl w-full shadow-md self-center">
+                    {t('There is no items in selected shop: ') + shopContext.shop?.name}
+                </div>
+            }
+
             <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
                 <ItemModal
                     onClose={()=>setModalTemplate(null)}

@@ -129,5 +129,7 @@
   "Import Shop Data": "Import Shop Data - Beta",
   "Deselect All": "Deselect All",
   "Select All": "Select All",
-  "Are you sure to import the following amount into your shop? ": "Are you sure to import the following amount into your shop? "
+  "Are you sure to import the following amount into your shop? ": "Are you sure to import the following amount into your shop? ",
+  "There is no items in selected shop: ": "There is no items in selected shop: ",
+  "There is no parts in selected shop: ": "There is no parts in selected shop: "
 }

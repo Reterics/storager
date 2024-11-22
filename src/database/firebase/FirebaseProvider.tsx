@@ -33,18 +33,18 @@ export const FirebaseProvider = ({children}: {
 
     const postProcessStoreData = async (array: StoreItem[]|StorePart[]) => {
         if (Array.isArray(array)) {
-            for (let i = 0; i < array.length; i++) {
-                if (array[i].name && array[i].image && array[i].image?.startsWith('screenshots/')) {
-                    array[i].image = await getFileURL(array[i].image || '');
+            for (const element of array) {
+                if (element.name && element.image?.startsWith('screenshots/')) {
+                    element.image = await getFileURL(element.image || '');
                 }
-                if (typeof array[i].storage === 'number' || typeof array[i].storage === 'string') {
-                    array[i].storage = [Number(array[i].storage)]
+                if (typeof element.storage === 'number' || typeof element.storage === 'string') {
+                    element.storage = [Number(element.storage)]
                 }
-                if (typeof array[i].shop_id === 'string') {
-                    array[i].shop_id = [array[i].shop_id] as unknown as string[]
+                if (typeof element.shop_id === 'string') {
+                    element.shop_id = [element.shop_id] as unknown as string[]
                 }
-                if (typeof array[i].storage_limit === 'number' || typeof array[i].storage_limit === 'string') {
-                    array[i].storage_limit = [Number(array[i].storage_limit)]
+                if (typeof element.storage_limit === 'number' || typeof element.storage_limit === 'string') {
+                    element.storage_limit = [Number(element.storage_limit)]
                 }
             }
         }
@@ -63,13 +63,13 @@ export const FirebaseProvider = ({children}: {
         let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
 
-        users = (users || []).map(user => {
+        users = users.map(user => {
             user.password = undefined;
             user.password_confirmation = undefined;
             return user;
         })
 
-        if (authContext.user && authContext.user.email) {
+        if (authContext.user?.email) {
             user = users.find(user => user.email === authContext.user?.email);
             if (!user) {
                 console.error('User is not found in the Firestore settings');
@@ -77,15 +77,13 @@ export const FirebaseProvider = ({children}: {
                 console.log('User is not an admin, hence we do not load settings');
                 users = [user];
                 settings = await getCollection(firebaseCollections.settings) as SettingsItems[];
-                if (settings && settings[0]) {
-                    for(let i = 0; i < settings.length; i++) {
-                        settings[i] = {
-                            id: settings[i].id,
-                            serviceAgreement: settings[i].serviceAgreement,
-                            companyName: settings[i].companyName,
-                            address: settings[i].address,
-                            email: settings[i].email,
-                        }
+                for(let i = 0; i < settings.length; i++) {
+                    settings[i] = {
+                        id: settings[i].id,
+                        serviceAgreement: settings[i].serviceAgreement,
+                        companyName: settings[i].companyName,
+                        address: settings[i].address,
+                        email: settings[i].email,
                     }
                 }
             } else {
@@ -103,7 +101,7 @@ export const FirebaseProvider = ({children}: {
             types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
         }
 
-        if (user?.shop_id && user.shop_id.length) {
+        if (user?.shop_id?.length) {
             if (typeof user.shop_id === 'string') {
                 user.shop_id = [user.shop_id as string];
             }
@@ -266,7 +264,7 @@ export const FirebaseProvider = ({children}: {
             firebaseModel.invalidateCache(key);
             updateLocalCache = true;
         }
-        void getContextData(updateLocalCache);
+        await getContextData(updateLocalCache);
     }
 
     useEffect(() => {

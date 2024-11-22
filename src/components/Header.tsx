@@ -15,13 +15,14 @@ import {
     BsFillTrash3Fill,
     BsListUl
 } from "react-icons/bs";
+import LoadingIcon from "./elements/LoadingIcon.tsx";
+import {flushSync} from "react-dom";
 
 
 const Header = () => {
     const {SignOut, user} = useContext(AuthContext);
     const dbContext = useContext(DBContext);
-    const isAdmin = dbContext && dbContext.data && dbContext.data.currentUser &&
-        dbContext.data.currentUser.role === 'admin';
+    const isAdmin = dbContext?.data?.currentUser?.role === 'admin';
     const {shop} = useContext(ShopContext);
     const isDarkTheme = useTheme()?.theme === 'dark';
     const { t } = useTranslation();
@@ -31,26 +32,62 @@ const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [navbarOpen, setNavbarOpen] = useState(false); // State for the navbar collapse
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleLinkClick = () => {
         setDropdownOpen(false); // Close dropdown when link is clicked
     };
 
-    const updatePageData = ()=> {
+    const updatePageData = async ()=> {
         setDropdownOpen(false);
+        flushSync(() => {
+            setIsLoading(true);
+        });
+
         switch (page) {
             case 'items':
-                return dbContext?.refreshData('items');
+                await dbContext?.refreshData('items');
+                await dbContext?.refreshData('users');
+                break;
             case 'parts':
-                return dbContext?.refreshData('parts');
+                await dbContext?.refreshData('parts');
+                await dbContext?.refreshData('users');
+                break;
             case 'service':
-                return dbContext?.refreshData('services');
+                await dbContext?.refreshData('services');
+                await dbContext?.refreshData('users');
+                break;
             case 'settings':
-                return dbContext?.refreshData('settings');
+                await dbContext?.refreshData('settings');
+                break;
             case 'users':
-                return dbContext?.refreshData('users');
+                await dbContext?.refreshData('users');
+                break;
             case 'types':
-                return dbContext?.refreshData('types');
+                await dbContext?.refreshData('types');
+                break;
         }
+        setIsLoading(false);
+    }
+
+    if (isLoading) {
+        return (
+            <header className="no-print">
+                <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
+                    <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                        <a href="https://reterics.com/" className="flex items-center">
+                            <img src={isDarkTheme ? logoWhite : logo} width={30} height={32} className="h-8 mr-3"
+                                 alt="StorageR Logo"/>
+                            <div
+                                className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex">Storage
+                                <div className="text-sm pt-1 text">R</div></div>
+                        </a>
+
+                        <LoadingIcon />
+                    </div>
+                </nav>
+            </header>
+        )
     }
 
     return (
