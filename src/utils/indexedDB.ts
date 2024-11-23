@@ -3,12 +3,12 @@ import {CommonCollectionData, TTLData} from "../interfaces/firebase.ts";
 
 export function openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('storagerDB', 2);
+        const request = indexedDB.open('storagerDB', 3);
 
         const stores = [
             'shops', 'deleted', 'items', 'parts', 'services',
             'completions', 'settings', 'users', 'archive',
-            'types', 'mtime', 'ttl'
+            'types', 'mtime', 'ttl', 'images'
         ];
         request.onupgradeneeded = function(event: IDBVersionChangeEvent) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment

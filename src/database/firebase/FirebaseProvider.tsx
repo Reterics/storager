@@ -14,11 +14,11 @@ import {
     StorePart, StyledSelectOption, UserData
 } from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
-import {getFileURL} from "./storage.ts";
 import {DBContext} from "../DBContext.ts";
 import {AuthContext} from "../../store/AuthContext.tsx";
 import {addDoc, collection} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
+import {imageModel} from "./storage.ts";
 
 
 export const FirebaseProvider = ({children}: {
@@ -35,7 +35,7 @@ export const FirebaseProvider = ({children}: {
         if (Array.isArray(array)) {
             for (const element of array) {
                 if (element.name && element.image?.startsWith('screenshots/')) {
-                    element.image = await getFileURL(element.image || '');
+                    element.image = await imageModel.getFileURL(element.image || '');
                 }
                 if (typeof element.storage === 'number' || typeof element.storage === 'string') {
                     element.storage = [Number(element.storage)]
@@ -270,10 +270,11 @@ export const FirebaseProvider = ({children}: {
     useEffect(() => {
         if (!renderAfterCalled.current) {
             console.log('Load context data');
-            firebaseModel.loadPersisted()
-                .finally(() => {
-                    void getContextData(true);
-                })
+            imageModel.loadPersisted()
+                .finally(() => firebaseModel.loadPersisted())
+                .finally(() => imageModel.integrityCheck(firebaseModel.getCached('parts')))
+                .finally(() => imageModel.integrityCheck(firebaseModel.getCached('items')))
+                .finally(() => getContextData(true))
 
         }
 

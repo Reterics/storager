@@ -1,6 +1,7 @@
 import { getDownloadURL, getStorage, ref, uploadBytes, UploadResult, uploadString, deleteObject } from "firebase/storage";
 import app, {firebaseCollections, getById} from "./config.ts";
 import {Template} from "../../interfaces/interfaces.ts";
+import ImageDBModel from "./ImageDBModel.ts";
 
 export const storage = getStorage(app);
 
@@ -51,7 +52,7 @@ export const getFileFromStorage = async (id: string) => {
         const url = template.path;
         if (url) {
             const response = await fetch(await getFileURL(url));
-            if (response && response.ok) {
+            if (response?.ok) {
                 const content = await response.text();
                 if (content) {
                     template.content = content;
@@ -62,3 +63,5 @@ export const getFileFromStorage = async (id: string) => {
     }
     return null;
 }
+
+export const imageModel = new ImageDBModel();

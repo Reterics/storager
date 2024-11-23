@@ -4,6 +4,7 @@
  * Optimized data loading, updating and missing data cases
 
 ### Features
+ * Added permanent caching solution for Firebase Storage images to reduce load time and refresh
 
 ## [1.1.2] (2024-11-21)
 

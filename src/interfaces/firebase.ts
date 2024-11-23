@@ -52,3 +52,12 @@ export interface KVCollectionStore {
 export interface TTLData {
     [key: string]: number
 }
+
+export interface FirebaseImageData {
+    id: string,
+    url: string,
+    base64?: string
+}
+export interface ImageStore {
+    [key: string]: FirebaseImageData
+}

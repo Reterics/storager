@@ -6,7 +6,7 @@ export default abstract class DBModel {
     protected _cache: KVCollectionStore;
     protected _ttl: TTLData;
     protected _mtime: TTLData;
-    private _timeout: NodeJS.Timeout | undefined;
+    protected _timeout: NodeJS.Timeout | undefined;
 
     protected constructor(options?: {ttl?: TTLData, mtime?: TTLData}) {
         this._cache = {};

@@ -40,7 +40,7 @@ export const firebaseModel = new FirebaseDBModel({
 });
 
 const app = firebaseModel.getApp();
-export const db = firebaseModel.getDB()
+export const db = firebaseModel.getDB();
 
 let _firebaseAuth: Auth|null = null;
 let _firebaseAuthError: FirebaseError|null = null;
