@@ -21,7 +21,7 @@ i18n
         interpolation: {
             escapeValue: false, // React already protects from XSS
         },
-        debug: true, // Enable debug mode
+        debug: false, // Enable debug mode
     });
 
 export default i18n;

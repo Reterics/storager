@@ -1,6 +1,7 @@
 import { getAuth, Auth } from 'firebase/auth';
 import FirebaseDBModel from "./FirebaseDBModel.ts";
 import { FirebaseError } from 'firebase/app';
+import STLogger from "../../utils/logger.ts";
 
 const refreshRate = {
     minutes: 60000,
@@ -24,6 +25,8 @@ export const firebaseCollections = {
     archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
     types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
 };
+
+export const logger = new STLogger();
 
 export const firebaseModel = new FirebaseDBModel({
     ttl: {
