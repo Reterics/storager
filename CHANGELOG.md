@@ -2,6 +2,7 @@
 
 ### Bug fixes
  * Optimized data loading, updating and missing data cases
+ * Fixed refresh deleted data from DB
 
 ### Features
  * Added permanent caching solution for Firebase Storage images to reduce load time and refresh

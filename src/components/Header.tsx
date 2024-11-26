@@ -17,6 +17,7 @@ import {
 } from "react-icons/bs";
 import LoadingIcon from "./elements/LoadingIcon.tsx";
 import {flushSync} from "react-dom";
+import {firebaseModel} from "../database/firebase/config.ts";
 
 
 const Header = () => {
@@ -54,7 +55,11 @@ const Header = () => {
                 await dbContext?.refreshData('users');
                 break;
             case 'service':
-                await dbContext?.refreshData('services');
+            case 'recycle':
+                firebaseModel.invalidateCache('deleted');
+                firebaseModel.invalidateCache('archive');
+                firebaseModel.invalidateCache('services');
+                firebaseModel.invalidateCache('completions');
                 await dbContext?.refreshData('users');
                 break;
             case 'settings':

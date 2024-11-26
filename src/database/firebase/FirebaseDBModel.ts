@@ -80,9 +80,11 @@ export default class FirebaseDBModel extends DBModel {
                     } else {
                         receivedData.push({...data, id: doc.id});
                     }
-                } else if (data && data.deleted && indexOf !== -1) {
+                } else if (data?.deleted && indexOf !== -1) {
                     this.updateCachedEntry(doc.id, 'deleted', {...data, id: doc.id});
                     receivedData.splice(indexOf, 1);
+                } else if (data?.deleted) {
+                    this.appendCachedEntry('deleted', {...data, id: doc.id});
                 }
             });
             this.updateCache(table, receivedData);
