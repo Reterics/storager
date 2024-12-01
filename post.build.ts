@@ -37,6 +37,7 @@ function storageRPostBuild(opt: {outDir?: string}): PluginOption {
             fs.writeFileSync(indexPHP, indexContent);
 
             fs.copyFileSync('./php/update.php', path.join(dir, './update.php'));
+            fs.copyFileSync('./php/media.php', path.join(dir, './media.php'));
             const uploadsFolder = path.join(dir, './uploads');
             if (!fs.existsSync(uploadsFolder)) {
                 fs.mkdirSync(path.join(dir, './uploads'))

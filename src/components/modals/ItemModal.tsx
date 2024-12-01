@@ -1,7 +1,6 @@
 import StyledInput from "../elements/StyledInput.tsx";
 import {GeneralModalButtons, ItemModalInput, StoreItem} from "../../interfaces/interfaces.ts";
 import {ChangeEvent, SyntheticEvent, useContext, useState} from "react";
-import StyledFile from "../elements/StyledFile.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import {fileToDataURL} from "../../utils/general.ts";
 import {uploadFileDataURL} from "../../database/firebase/storage.ts";
@@ -11,6 +10,7 @@ import FormRow from "../elements/FormRow.tsx";
 import {DBContext} from "../../database/DBContext.ts";
 import {getShopIndex} from "../../utils/storage.ts";
 import {changeStoreType} from "../../utils/events.ts";
+import MediaModal, {MediaBrowse} from "./MediaModal.tsx";
 
 
 export default function ItemModal({ onClose, item, setItem, onSave, inPlace, selectedShopId }: ItemModalInput) {
@@ -19,7 +19,8 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
 
     const selectTypeOptions = dbContext?.getType('item', i18n.language === 'hu' ? 'hu' : 'en') || [];
 
-    const [file, setFile] = useState<File|null>(null)
+    const [file] = useState<File|null>(null)
+    const [gallery, setGallery] = useState<boolean>(false)
     const shopIndex = item ? getShopIndex(item, selectedShopId) : -1;
 
     const changeType = (e: ChangeEvent<HTMLInputElement>|SyntheticEvent<HTMLSelectElement>, key: string) =>
@@ -65,6 +66,17 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
             value: t('Cancel')
         }
     ];
+
+    if (gallery) {
+        return <MediaModal setFile={(image) => {
+            setItem({
+                ...item,
+                image: image || undefined
+            });
+            setGallery(false);
+        }} onClose={() => setGallery(false)}/>
+    }
+
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace}
                       title={t('Edit Item')} id="ItemModal" >
@@ -99,12 +111,8 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
                     label={t('Description')}
                 />
 
-                <StyledFile name="model" label={t('Image')}
-                            onChange={setFile} preview={true}
-                            defaultPreview={item?.image}/>
-
+                <MediaBrowse image={item.image} onClick={()=> setGallery(true)} />
             </FormRow>
-
 
 
             <FormRow>

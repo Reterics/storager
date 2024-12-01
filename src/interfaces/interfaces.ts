@@ -391,3 +391,10 @@ export interface ImportShopDataArguments {
     onClose: () => void,
     shop?: Shop
 }
+
+export interface MediaModalArguments {
+    inPlace?: boolean,
+    title?: string,
+    onClose: () => void,
+    setFile: (file: string|null) => void,
+}

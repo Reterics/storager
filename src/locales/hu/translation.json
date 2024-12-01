@@ -131,5 +131,7 @@
   "Select All": "Kijelölés mind",
   "Are you sure to import the following amount into your shop? ": "Biztosan importálod az alábbi mennyiséget a boltodba? ",
   "There is no items in selected shop: ": "Nincsenek termékek az alábbi boltban: ",
-  "There is no parts in selected shop: ": "Nincsenek alkatrészek az alábbi boltban: "
+  "There is no parts in selected shop: ": "Nincsenek alkatrészek az alábbi boltban: ",
+  "Browse": "Tallózás",
+  "Media Browser": "Kép böngésző"
 }

@@ -5,6 +5,7 @@
 
 ### Features
  * Added About page link to the footer
+ * Added new PHP based Media browser to StoreItems
 
 ## [1.1.3] (2024-11-26)
 
