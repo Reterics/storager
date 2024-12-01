@@ -4,6 +4,7 @@
  * Fixed CSRF Protection in PHP build
  * UI/UX updated in signature boxes in service forms
  * Updated service ID generation by modulus to ignore site overlap
+ * Comma in type fixed in service list
 
 ### Features
  * Added About page link to the footer

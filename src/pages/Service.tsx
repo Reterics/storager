@@ -92,10 +92,11 @@ function Service() {
     };
 
     const tableLines = servicedItems.map(item => {
+        const type = item.type?.startsWith(',') ? item.type.substring(1) : (item.type || '');
         return [
             item.id,
             item.client_name,
-            (item.type || '').split(',').join(', '),
+            type.replace(/,/g, ', '),
             t(item.serviceStatus || 'status_accepted'),
             t(item.guaranteed || 'no'),
             item.expected_cost || 0,
