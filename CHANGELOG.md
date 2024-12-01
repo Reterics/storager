@@ -3,6 +3,7 @@
 ### Bug fixes
  * Fixed CSRF Protection in PHP build
  * UI/UX updated in signature boxes in service forms
+ * Updated service ID generation by modulus to ignore site overlap
 
 ### Features
  * Added About page link to the footer

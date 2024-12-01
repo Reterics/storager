@@ -191,30 +191,23 @@ function Service() {
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => {
-                        let lastNumber = Number.parseInt(
-                            servicedItems.length && servicedItems[servicedItems.length - 1].id ?
-                            servicedItems[servicedItems.length - 1].id : servicedItems.length.toString());
+                        const shopIndex = Math.max(0, dbContext?.data.shops.findIndex(s => s.id === shop?.id));
+                        const shopLength = Math.max(1, dbContext?.data.shops.length);
 
-                        if (Number.isNaN(lastNumber)) {
-                            lastNumber = servicedItems.length;
-                        }
-                        const deletedData = (dbContext?.data.deleted || [])
-                            .filter(d => d.docType !== 'archive')
+                        const existingIds = new Set([
+                            ...(dbContext?.data.deleted || [])
+                                .filter(d => d.docType !== 'archive' && /^\d+$/.test(d.id))
+                                .map(d => parseInt(d.id)),
+                            ...servicedItems
+                                .filter(item => /^\d+$/.test(item.id))
+                                .map(item => parseInt(item.id))
+                        ]);
 
-                        for (let i = Math.max(deletedData.length - 10, 0); i < deletedData.length; i++){
-                            const d = deletedData[i];
-                            if (d && d.id) {
-                                const lastDeletedId = Number.parseInt(d.id);
-                                if (!Number.isNaN(lastDeletedId) && lastNumber < lastDeletedId) {
-                                    lastNumber = lastDeletedId;
-                                }
-                            }
-                        }
-                        let id = (lastNumber + 1).toString().padStart(5, '0');
-                        while (servicedItems.find(item => item.id === id)) {
-                            lastNumber++;
-                            id = (lastNumber + 1).toString().padStart(5, '0');
-                        }
+                        let lastNumber = Math.max(...existingIds, 0);
+                        lastNumber += (shopIndex - (lastNumber % shopLength) + shopLength) % shopLength;
+
+                        const id = (lastNumber + 1).toString().padStart(5, '0');
+
                         console.error('ID will be: ', id)
                         setModalTemplate(modalTemplate ? null : {
                             id: id,
