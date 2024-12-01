@@ -11,7 +11,7 @@ function storageRPostBuild(opt: {outDir?: string}): PluginOption {
             const dir = opt.outDir || options.dir || './dist';
             const indexHTML = path.resolve(dir, './index.html');
             const indexPHP = path.resolve(dir, './index.php');
-            const csrfProtectionFile = path.resolve(dir, './php/csrf-protection.php');
+            const csrfProtectionFile = path.resolve( './php/csrf-protection.php');
             let csrfProtection = '<?php\n' +
                 'session_start();\n';
 
@@ -22,6 +22,8 @@ function storageRPostBuild(opt: {outDir?: string}): PluginOption {
 
             if (fs.existsSync(csrfProtectionFile)) {
                 csrfProtection = fs.readFileSync(csrfProtectionFile, 'utf8').toString();
+            } else {
+                csrfProtection += "\n ?>"
             }
 
             const indexContent = fs

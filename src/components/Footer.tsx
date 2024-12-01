@@ -46,7 +46,7 @@ export const Footer = () => {
                         >{(theme?.theme === 'dark' ? t('Light Mode') : t('Dark Mode'))}</a>
                     </li>
                     <li className="ms-1">
-                        | StorageR v{import.meta.env.PACKAGE_VERSION}
+                        | <a href="?page=about">StorageR v{import.meta.env.PACKAGE_VERSION}</a>
                     </li>
                 </ul>
             </div>

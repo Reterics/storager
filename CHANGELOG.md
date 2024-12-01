@@ -1,4 +1,12 @@
-## [1.1.3] (Unreleased)
+## [1.1.4] (Unreleased)
+
+### Bug fixes
+ * Fixed CSRF Protection in PHP build
+
+### Features
+ * Added About page link to the footer
+
+## [1.1.3] (2024-11-26)
 
 ### Bug fixes
  * Optimized data loading, updating and missing data cases
