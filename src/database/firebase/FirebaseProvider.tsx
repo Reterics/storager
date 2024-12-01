@@ -36,7 +36,10 @@ export const FirebaseProvider = ({children}: {
             for (const element of array) {
                 if (element.name && element.image?.startsWith('screenshots/')) {
                     element.image = await imageModel.getFileURL(element.image || '');
+                } else if (element.name && element.image?.startsWith('https://firebasestorage.googleapis.com')) {
+                    element.image = imageModel.decodeStorageImageURL(element.image);
                 }
+
                 if (typeof element.storage === 'number' || typeof element.storage === 'string') {
                     element.storage = [Number(element.storage)]
                 }

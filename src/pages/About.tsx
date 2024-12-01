@@ -56,7 +56,7 @@ function About() {
     return (<>
         <PageHead title={"About"} />
         <div className={"bg-white rounded-lg shadow m-4 dark:bg-gray-800 p-4"}>
-            <a href="https://reterics.com"
+            <a href="#"
                className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col">
                 <img src={isDarkTheme ? logoWhite : logo} className="h-40 mr-2" alt="Reterics logo"/>
                 StorageR
