@@ -211,7 +211,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
             </h3>}
             {!service.onUpdate && <FormRow>
                 <div
-                    className="relative w-[48rem] h-96 border border-gray-600 rounded-lg self-center justify-self-center">
+                    className="relative w-[40rem] h-80 border border-gray-600 self-center justify-self-center">
                     <SignaturePad ref={signaturePadRef}
                                   debounceInterval={500}
                                   options={{

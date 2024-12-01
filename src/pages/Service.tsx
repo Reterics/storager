@@ -51,11 +51,13 @@ function Service() {
 
             const completions = completionForms?.filter((c) => c.service_id === item.id);
             if (completions.length) {
-                let completionUpdates = completionForms;
+                let completionUpdates;
                 for (let i = 0; i < completions.length; i++) {
                     completionUpdates = await dbContext?.removeData('completions', completions[i].id) as ServiceCompleteData[];
                 }
-                setCompletionForms(completionUpdates);
+                if (completionUpdates) {
+                    setCompletionForms(completionUpdates);
+                }
             }
 
             const history = (dbContext?.data.archive || []).filter(a => a.docParent === item.id);
@@ -181,9 +183,11 @@ function Service() {
         return <UnauthorizedComponent />;
     }
 
+    const noModalActive = !modalTemplate && !completedModalTemplate && !printViewData;
+
     return (
         <>
-            {!printViewData && <PageHead title={t('Serviced Items')} buttons={[
+            {noModalActive && <PageHead title={t('Serviced Items')} buttons={[
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => {
@@ -303,7 +307,7 @@ function Service() {
                 </div>
             </div>
 
-            {!modalTemplate && !completedModalTemplate && !printViewData &&
+            {noModalActive &&
                 <TableViewComponent lines={tableLines}
                                     header={[
                                         t('ID'),
@@ -343,7 +347,7 @@ function Service() {
                 />
             }
 
-            <div className="relative flex justify-center w-full m-auto mt-1 flex-1 no-print">
+            <div className="relative flex justify-center w-full m-auto flex-1 no-print">
             </div>
         </>
     )

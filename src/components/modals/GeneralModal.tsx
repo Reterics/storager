@@ -17,7 +17,7 @@ export default function GeneralModal({
     const [throttled, setThrottled] = useState(false);
 
     const formClasses = {
-        inPlace: "flex flex-col max-h-[45vh] overflow-y-auto modalForm pe-1",
+        inPlace: "flex flex-col max-h-[58vh] overflow-y-auto modalForm pe-1",
         default: "flex flex-col max-h-[60vh] overflow-y-auto modalForm pe-1"
     }
 

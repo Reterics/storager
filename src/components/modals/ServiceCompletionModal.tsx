@@ -195,7 +195,7 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
             </h3>
             <FormRow>
                 <div
-                    className="relative w-96 h-48 border border-gray-600 rounded-lg self-center mb-2 justify-self-center">
+                    className="relative w-[28rem] h-56 border border-gray-600 self-center mb-2 justify-self-center">
                     <SignaturePad ref={signaturePadRef}
                                   debounceInterval={500}
                                   options={{

@@ -1,6 +1,5 @@
 import {useContext, useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {PageHead} from "../components/elements/PageHead.tsx";
 import logo from "../assets/logo.svg";
 import logoWhite from "../assets/logo_white.svg";
 import FormRow from "../components/elements/FormRow.tsx";
@@ -54,7 +53,6 @@ function About() {
         }
     }, []);
     return (<>
-        <PageHead title={"About"} />
         <div className={"bg-white rounded-lg shadow m-4 dark:bg-gray-800 p-4"}>
             <a href="#"
                className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col">

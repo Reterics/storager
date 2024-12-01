@@ -65,7 +65,7 @@ export default function MediaModal(
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace} title={title || t('Media Browser')} id={"MediaModal"}
                       onClose={onClose}>
-            <div className={"flex flex-1 overflow-y-auto flex-wrap flex-row"}>
+            <div className={"flex flex-1 overflow-y-auto flex-wrap flex-row justify-center"}>
                 <ImageUploader setFile={setFile} setLocalFile={setLocalFile}/>
             </div>
         </GeneralModal>
