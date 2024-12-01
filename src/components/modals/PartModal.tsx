@@ -5,23 +5,20 @@ import {
 } from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
 import {ChangeEvent, SyntheticEvent, useContext, useState} from "react";
-import {fileToDataURL} from "../../utils/general.ts";
-import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledInput from "../elements/StyledInput.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
-import StyledFile from "../elements/StyledFile.tsx";
 import {DBContext} from "../../database/DBContext.ts";
 import {getShopIndex} from "../../utils/storage.ts";
 import {changeStoreType} from "../../utils/events.ts";
-
+import MediaModal, {MediaBrowse} from "./MediaModal.tsx";
 
 
 export default function PartModal({ onClose, part, setPart, onSave, inPlace, selectedShopId }: PartModalInput) {
     const { t, i18n } = useTranslation();
     const dbContext = useContext(DBContext);
-    const [file, setFile] = useState<File|null>(null);
+    const [gallery, setGallery] = useState<boolean>(false)
 
     const shopPartCategoryOptions = dbContext?.getType('part', i18n.language === 'hu' ? 'hu' : 'en') || [];
     const shopIndex = part ? getShopIndex(part, selectedShopId) : -1;
@@ -29,31 +26,14 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace, sel
     const changeType = (e: ChangeEvent<HTMLInputElement>|SyntheticEvent<HTMLSelectElement>, key: string) =>
         setPart(changeStoreType(e, key, part, selectedShopId));
 
-    const uploadAndSave = async (item: StorePart) => {
-        let screenshot;
-
-        if (file) {
-            screenshot = await fileToDataURL(file) as string;
-        }
-
-        if (!item) {
+    const uploadAndSave = async (part: StorePart) => {
+        if (!part) {
             return false;
         }
 
-        const assetToSave: StorePart = {
-            ...item
-        };
-
-
-        if (screenshot) {
-            assetToSave.image = 'screenshots/part_' + (item?.id || new Date().getTime()) + '.png';
-        }
-
-        if (assetToSave.image && screenshot) {
-            await uploadFileDataURL(assetToSave.image, screenshot);
-        }
-        // await uploadFile(assetToSave.path, file);
-        onSave(assetToSave);
+        onSave({
+            ...part
+        });
     };
 
     if (!part) return null;
@@ -69,6 +49,17 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace, sel
             value: t('Cancel')
         }
     ];
+
+    if (gallery) {
+        return <MediaModal setFile={(image) => {
+            setPart({
+                ...part,
+                image: image || undefined
+            });
+            setGallery(false);
+        }} onClose={() => setGallery(false)}/>
+    }
+
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace}
                       title={t('Edit Item')} id="ItemModal" >
@@ -103,13 +94,8 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace, sel
                     label={t('Description')}
                 />
 
-                <StyledFile name="model" label={t('Image')}
-                            onChange={setFile} preview={true}
-                            defaultPreview={part?.image}/>
-
+                <MediaBrowse image={part?.image} onClick={()=> setGallery(true)} />
             </FormRow>
-
-
 
             <FormRow>
                 <StyledInput

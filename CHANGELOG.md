@@ -5,7 +5,10 @@
 
 ### Features
  * Added About page link to the footer
- * Added new PHP based Media browser to StoreItems
+ * Added new PHP based Media browser to StoreItems and StoreParts
+
+### Deprecation
+ * Firebase Storage functionality deprecated along with VITE_FIREBASE_STORAGE_BUCKET .env variable
 
 ## [1.1.3] (2024-11-26)
 

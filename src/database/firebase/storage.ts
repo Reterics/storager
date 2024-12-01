@@ -1,67 +1,19 @@
-import { getDownloadURL, getStorage, ref, uploadBytes, UploadResult, uploadString, deleteObject } from "firebase/storage";
-import app, {firebaseCollections, getById} from "./config.ts";
-import {Template} from "../../interfaces/interfaces.ts";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import app from "./config.ts";
 import ImageDBModel from "./ImageDBModel.ts";
 
+/**
+ * @deprecated This method will be no longer supported from version 1.2.0
+ */
 export const storage = getStorage(app);
 
-export const uploadFile = (path: string, file: File|Blob|Uint8Array): Promise<UploadResult> => {
-    const storageRef  = ref(storage, path);
-
-    return uploadBytes(storageRef, file);
-}
-
-export const uploadFileDataURL = (path: string, message: string): Promise<UploadResult> => {
-    const storageRef  = ref(storage, path);
-
-    return uploadString(storageRef, message, 'data_url');
-}
-
-export const uploadFileBase64 = (path: string, message: string): Promise<UploadResult> => {
-    const storageRef  = ref(storage, path);
-
-    return uploadString(storageRef, message, 'base64');
-}
-
-export const uploadFileBase64URL = (path: string, message: string): Promise<UploadResult> => {
-    const storageRef  = ref(storage, path);
-
-    return uploadString(storageRef, message, 'base64url');
-}
-
-export const uploadFileString = (path: string, message: string): Promise<UploadResult> => {
-    const storageRef  = ref(storage, path);
-
-    return uploadString(storageRef, message);
-}
-
+/**
+ * @deprecated This method will be no longer supported from version 1.2.0
+ * @param path
+ */
 export const getFileURL = (path: string): Promise<string> => {
     const storageRef  = ref(storage, path);
     return getDownloadURL(storageRef);
-}
-
-export const deleteFile = (path: string): Promise<void> => {
-    const deleteRef = ref(storage, path);
-    return deleteObject(deleteRef);
-}
-
-export const getFileFromStorage = async (id: string) => {
-    const template = await getById(id, firebaseCollections.shops) as Template;
-    if (template) {
-
-        const url = template.path;
-        if (url) {
-            const response = await fetch(await getFileURL(url));
-            if (response?.ok) {
-                const content = await response.text();
-                if (content) {
-                    template.content = content;
-                }
-            }
-        }
-        return { ...template } as Template
-    }
-    return null;
 }
 
 export const imageModel = new ImageDBModel();

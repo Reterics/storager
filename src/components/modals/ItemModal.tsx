@@ -2,8 +2,6 @@ import StyledInput from "../elements/StyledInput.tsx";
 import {GeneralModalButtons, ItemModalInput, StoreItem} from "../../interfaces/interfaces.ts";
 import {ChangeEvent, SyntheticEvent, useContext, useState} from "react";
 import StyledSelect from "../elements/StyledSelect.tsx";
-import {fileToDataURL} from "../../utils/general.ts";
-import {uploadFileDataURL} from "../../database/firebase/storage.ts";
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
 import FormRow from "../elements/FormRow.tsx";
@@ -19,7 +17,6 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
 
     const selectTypeOptions = dbContext?.getType('item', i18n.language === 'hu' ? 'hu' : 'en') || [];
 
-    const [file] = useState<File|null>(null)
     const [gallery, setGallery] = useState<boolean>(false)
     const shopIndex = item ? getShopIndex(item, selectedShopId) : -1;
 
@@ -27,30 +24,13 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
         setItem(changeStoreType(e, key, item, selectedShopId));
 
     const uploadAndSave = async (item: StoreItem) => {
-        let screenshot;
-
-        if (file) {
-            screenshot = await fileToDataURL(file) as string;
-        }
-
         if (!item) {
             return false;
         }
 
-        const assetToSave: StoreItem = {
+        onSave({
             ...item
-        };
-
-
-        if (screenshot) {
-            assetToSave.image = 'screenshots/item_' + (item?.id || new Date().getTime()) + '.png';
-        }
-
-        if (assetToSave.image && screenshot) {
-            await uploadFileDataURL(assetToSave.image, screenshot);
-        }
-        // await uploadFile(assetToSave.path, file);
-        onSave(assetToSave);
+        });
     };
 
     if (!item) return null;
@@ -111,9 +91,8 @@ export default function ItemModal({ onClose, item, setItem, onSave, inPlace, sel
                     label={t('Description')}
                 />
 
-                <MediaBrowse image={item.image} onClick={()=> setGallery(true)} />
+                <MediaBrowse image={item?.image} onClick={()=> setGallery(true)} />
             </FormRow>
-
 
             <FormRow>
                 <StyledInput

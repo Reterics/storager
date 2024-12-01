@@ -6,6 +6,7 @@ import {StoreItem, StorePart} from "../../interfaces/interfaces.ts";
 
 /**
  * @name ImageDBModel
+ * @deprecated This class will be no longer supported from version 1.2.0
  * @class
  * @classDesc
  * This object will store all the Storage references in IndexedDB without expiration, because the storage tokens
