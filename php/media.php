@@ -41,7 +41,7 @@ if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) ||
 }
 
 // Unset the CSRF token to prevent reuse
-unset($_SESSION['csrf_token']);
+// unset($_SESSION['csrf_token']);
 
 // Handle POST request: file upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {

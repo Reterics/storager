@@ -18,7 +18,7 @@ export default function MediaModal(
 
 
     const handleUpload = async () => {
-        if (!localFile) return;
+        if (!localFile) return false;
 
         const csrfNode = document.getElementById('csrf_token') as HTMLInputElement | null;
         const csrfToken = csrfNode ? csrfNode.value : '';
@@ -35,15 +35,17 @@ export default function MediaModal(
             });
             if (!response.ok) {
                 const errorData = await response.json().catch((error) => console.error('Failed to parse response', error));
-                throw new Error(errorData.error || 'Upload failed');
+                alert(errorData.error || 'Upload failed');
+                return false;
             }
             const data = await response.json();
             console.log('Upload success:', data);
-            if (data && data.fileName) {
+            if (data?.fileName) {
                 setFile('./uploads/' + data.fileName);
             }
         } catch (error) {
             console.error('Upload failed', error);
+            return false;
         }
     };
 
@@ -52,7 +54,7 @@ export default function MediaModal(
         {
             primary: true,
             onClick: async () => {
-                await handleUpload()
+                return await handleUpload()
             },
             value: t('Upload')
         },

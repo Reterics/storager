@@ -30,6 +30,7 @@ export const ImageUploader = (
         <>
             <StyledFile name="model" label={t('Image')}
                         onChange={setLocalFile} preview={true}
+                        accept=".jpg,.jpeg,.png,.bmp,.webp"
                         defaultPreview={undefined}/>
             <div className="flex flex-row max-w-[90vh] flex-wrap">
             {images.map((image, index) => (
