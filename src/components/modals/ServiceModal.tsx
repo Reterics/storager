@@ -177,30 +177,15 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                     onChange={(e) => changeType(e, 'accessories')}
                     label={t("Accessories")}
                 />
+                {!service.onUpdate &&
+                    <StyledInput
+                        type="text" name="expected_cost"
+                        value={service.expected_cost}
+                        onChange={(e) => changeType(e, 'expected_cost')}
+                        label={t("Expected cost")}
+                    />
+                }
             </FormRow>
-
-            <FormRow>
-                <StyledInput
-                    type="textarea" name="repair_description"
-                    value={service.repair_description}
-                    onChange={(e) => changeType(e, 'repair_description')}
-                    label={t("Repair Description")}
-                />
-            </FormRow>
-            {!service.onUpdate && <FormRow>
-                <StyledInput
-                    type="text" name="expected_cost"
-                    value={service.expected_cost}
-                    onChange={(e) => changeType(e, 'expected_cost')}
-                    label={t("Expected cost")}
-                />
-                <StyledInput
-                    type="text" name="note"
-                    value={service.note}
-                    onChange={(e) => changeType(e, 'note')}
-                    label={t("Note")}
-                />
-            </FormRow>}
 
             {!service.onUpdate && <pre
                 className={settings?.serviceAgreement ? 'mt-2 mb-2 max-w-[80vw]' : ''}>{settings?.serviceAgreement}</pre>

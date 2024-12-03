@@ -10,7 +10,6 @@ import FormRow from "../elements/FormRow.tsx";
 import StyledInput from "../elements/StyledInput.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
 import {ChangeEvent} from "react";
-import StyledMultiSelect from "../elements/StyledMultiSelect.tsx";
 
 
 export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPlace, shops}: InvoiceModalInput) {
@@ -23,10 +22,12 @@ export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPl
         } as StyledSelectOption
     });
 
-    const selectMultiShopId = (shop_ids: string[])=>{
+    const selectMultiShopId = (e: React.ChangeEvent<HTMLInputElement>)=>{
+        const value = e.target.value;
+
         setInvoice({
             ...invoice as InvoiceType,
-            shop_id: shop_ids
+            shop_id: [value]
         });
     };
 
@@ -85,33 +86,28 @@ export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPl
                 label={t("Address")}
             />
 
-
-
+            <StyledInput
+                type="text" name="phone"
+                value={invoice.phone}
+                onChange={(e) => changeType(e, 'phone')}
+                label={t("Phone")}
+            />
         </FormRow>
         <FormRow>
-            <StyledMultiSelect
+            <StyledSelect
                 options={shopOptions}
                 name="shop_id"
-                value={Array.isArray(invoice.shop_id) ? invoice.shop_id : []}
-                onSelect={(selectedShopId) => selectMultiShopId(selectedShopId)}
+                value={invoice.shop_id?.[0] ?? shops[0]?.id}
+                onSelect={(e) => selectMultiShopId(e as unknown as ChangeEvent<HTMLInputElement>)}
                 label={t("Assigned Shop")}
             />
-            <div className="flex flex-col justify-between">
-                <StyledInput
-                    type="text" name="phone"
-                    value={invoice.phone}
-                    onChange={(e) => changeType(e, 'phone')}
-                    label={t("Phone")}
-                />
-                <StyledSelect
-                    options={[{name: t('Done'), value: 'done'}, {name: t('Created'), value: 'created'}]}
-                    name="status"
-                    value={invoice.status}
-                    onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'status')}
-                    label={t("Status")}
-                />
-            </div>
-
+            <StyledSelect
+                options={[{name: t('Done'), value: 'done'}, {name: t('Created'), value: 'created'}]}
+                name="status"
+                value={invoice.status}
+                onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'status')}
+                label={t("Status")}
+            />
         </FormRow>
         <FormRow>
             <StyledInput
