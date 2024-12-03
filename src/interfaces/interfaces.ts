@@ -213,12 +213,32 @@ export interface ShopType extends GeneralCollectionEntry {
     category?: string
 }
 
+export interface InvoiceType extends GeneralCollectionEntry {
+    id: string,
+    name?: string,
+    address?: string,
+    phone?: string,
+    tax?: string,
+    notes?: string,
+    status?: string,
+    shop_id?: string[]
+}
+
 export interface TypeModalInput {
     onClose: () => void,
     type: ShopType | null,
     onSave: (currentType: ShopType) => onClickReturn
     setType: (type: ShopType) => void
     inPlace?: boolean
+}
+
+export interface InvoiceModalInput {
+    onClose: () => void,
+    invoice: InvoiceType | null,
+    onSave: (currentType: InvoiceType) => onClickReturn,
+    setInvoice: (type: InvoiceType) => void,
+    inPlace?: boolean,
+    shops: ShopType[]
 }
 
 export interface PartModalInput {

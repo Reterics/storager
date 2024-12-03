@@ -10,6 +10,7 @@ import Shops from "./pages/Shops.tsx";
 import About from "./pages/About.tsx";
 import Types from "./pages/Types.tsx";
 import RecycleBin from "./pages/RecycleBin.tsx";
+import Invoices from "./pages/Invoices.tsx";
 
 
 function QueryRouter() {
@@ -35,6 +36,8 @@ function QueryRouter() {
                 return <InAppLayout><Types /></InAppLayout>;
             case 'recycle':
                 return <InAppLayout><RecycleBin /></InAppLayout>;
+            case 'invoices':
+                return <InAppLayout><Invoices /></InAppLayout>;
             case 'signin':
                 return <SignInComponent />;
             default:

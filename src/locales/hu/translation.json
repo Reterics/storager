@@ -133,5 +133,11 @@
   "There is no items in selected shop: ": "Nincsenek termékek az alábbi boltban: ",
   "There is no parts in selected shop: ": "Nincsenek alkatrészek az alábbi boltban: ",
   "Browse": "Tallózás",
-  "Media Browser": "Kép böngésző"
+  "Media Browser": "Kép böngésző",
+  "Invoices": "Számlák",
+  "Comments": "Megjegyzések",
+  "Edit Invoice": "Számla szerkesztése",
+  "Done": "Elkészült",
+  "Created": "Létrehozva",
+  "Are you sure you wish to delete this Invoice?": "Biztosan törlöd ezt a számlát?"
 }

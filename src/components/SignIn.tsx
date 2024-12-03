@@ -15,7 +15,7 @@ const SignInComponent = () => {
     return <>
         <section className="bg-gray-50 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-svh lg:py-0">
-                <a href="https://reterics.com" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col">
+                <a href="?page=about" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col">
                     <img src={logo} className="h-40 mr-2" alt="Reterics logo"/>
                     StorageR
                 </a>

@@ -79,7 +79,7 @@ export default class STLogger {
         switch (type) {
             case 'ERROR':
                 this._consoleError(
-                    `%c${timestamp} %c${type}%c ${message}`,
+                    `%c${timestamp} %c${type}%c ${message}\n${(new Error().stack)}`,
                     'color: gray; font-weight: bold;',
                     style.labelStyle,
                     style.messageStyle

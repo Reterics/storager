@@ -24,6 +24,7 @@ export const firebaseCollections = {
     users: import.meta.env.VITE_FIREBASE_DB_USERS || 'users',
     archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
     types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
+    invoices: import.meta.env.VITE_FIREBASE_DB_INVOICES || 'invoices',
 };
 
 export const logger = new STLogger();

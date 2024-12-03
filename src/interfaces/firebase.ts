@@ -1,4 +1,5 @@
 import {
+    InvoiceType,
     ServiceCompleteData,
     ServiceData,
     SettingsItems,
@@ -20,13 +21,14 @@ export interface ContextData {
     currentUser?: UserData,
     archive: ContextDataValueType[],
     types: ShopType[],
-    deleted: ContextDataValueType[]
+    deleted: ContextDataValueType[],
+    invoices: InvoiceType[]
 }
 
 
-export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData
-export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive';
-export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType;
+export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData|InvoiceType[]
+export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive'|'invoices';
+export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType|InvoiceType;
 
 export interface DBContextType {
     data: ContextData,

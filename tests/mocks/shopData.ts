@@ -148,5 +148,6 @@ export const defaultContextData:ContextData = {
     currentUser: currentUserMock,
     archive: [],
     types: defaultTypes,
-    deleted: []
+    deleted: [],
+    invoices: []
 }

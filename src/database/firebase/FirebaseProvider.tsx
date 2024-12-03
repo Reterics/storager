@@ -6,6 +6,7 @@ import {
 } from "../../interfaces/firebase.ts";
 import {db, firebaseCollections, firebaseModel, getCollection} from "./config.ts";
 import {
+    InvoiceType,
     ServiceCompleteData,
     ServiceData,
     SettingsItems,
@@ -65,6 +66,7 @@ export const FirebaseProvider = ({children}: {
         let parts: StorePart[] = [];
         let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
+        let invoices: InvoiceType[] = [];
 
         users = users.map(user => {
             user.password = undefined;
@@ -102,6 +104,7 @@ export const FirebaseProvider = ({children}: {
             parts = await getCollection(firebaseCollections.parts) as StorePart[];
             archive = await getCollection(firebaseCollections.archive) as ContextDataValueType[];
             types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
+            invoices = await getCollection(firebaseCollections.invoices) as InvoiceType[];
         }
 
         if (user?.shop_id?.length) {
@@ -134,7 +137,8 @@ export const FirebaseProvider = ({children}: {
             currentUser: user,
             archive: archive,
             types: types,
-            deleted: await firebaseModel.getAll('deleted')
+            deleted: await firebaseModel.getAll('deleted'),
+            invoices
         })
     }
 

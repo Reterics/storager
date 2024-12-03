@@ -80,7 +80,7 @@ const Header = () => {
             <header className="no-print">
                 <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
                     <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                        <a href="https://reterics.com/" className="flex items-center">
+                        <a href="?page=about" className="flex items-center">
                             <img src={isDarkTheme ? logoWhite : logo} width={30} height={32} className="h-8 mr-3"
                                  alt="StorageR Logo"/>
                             <div
@@ -99,7 +99,7 @@ const Header = () => {
         <header className="no-print">
             <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                    <a href="https://reterics.com/" className="flex items-center">
+                    <a href="?page=about" className="flex items-center">
                         <img src={isDarkTheme ? logoWhite : logo} width={30} height={32} className="h-8 mr-3" alt="StorageR Logo"/>
                         <div
                             className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex">Storage
@@ -151,6 +151,14 @@ const Header = () => {
                                              "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Service')}</NavLink>
+                            </li>}
+                            {shop && <li>
+                                <NavLink to='/?page=invoices'
+                                         onClick={handleLinkClick}
+                                         className={page === 'invoices' ?
+                                             "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
+                                             "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
+                                >{t('Invoices')}</NavLink>
                             </li>}
 
                             <li className="relative">

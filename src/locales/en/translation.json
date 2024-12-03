@@ -133,5 +133,11 @@
   "There is no items in selected shop: ": "There is no items in selected shop: ",
   "There is no parts in selected shop: ": "There is no parts in selected shop: ",
   "Browse": "Browse",
-  "Media Browser": "Media Browser"
+  "Media Browser": "Media Browser",
+  "Invoices": "Invoices",
+  "Comments": "Comments",
+  "Edit Invoice": "Edit Invoice",
+  "Done": "Done",
+  "Created": "Created",
+  "Are you sure you wish to delete this Invoice?": "Are you sure you wish to delete this Invoice?"
 }
