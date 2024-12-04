@@ -35,6 +35,7 @@ function storageRPostBuild(opt: {outDir?: string}): PluginOption {
 
 
             fs.writeFileSync(indexPHP, indexContent);
+            fs.unlinkSync(indexHTML);
 
             fs.copyFileSync('./php/update.php', path.join(dir, './update.php'));
             fs.copyFileSync('./php/media.php', path.join(dir, './media.php'));

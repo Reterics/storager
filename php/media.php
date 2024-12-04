@@ -40,8 +40,8 @@ if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) ||
     exit;
 }
 
-// Unset the CSRF token to prevent reuse
-// unset($_SESSION['csrf_token']);
+// Regenerate CSRF token to prevent reuse
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 // Handle POST request: file upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
         // Validate file size
         if ($file['size'] > $maxFileSize) {
             http_response_code(400);
-            echo json_encode(['error' => 'File is too large. Maximum size is 5MB.']);
+            echo json_encode(['error' => 'File is too large. Maximum size is 5MB.', 'token' => $_SESSION['csrf_token']]);
             exit;
         }
         // Validate file type
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
         $fileExtension = strtolower($fileInfo['extension']);
         if (!in_array($fileExtension, $allowedExtensions)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Invalid file type.']);
+            echo json_encode(['error' => 'Invalid file type.', 'token' => $_SESSION['csrf_token']]);
             exit;
         }
         // Sanitize and generate a unique file name
@@ -70,21 +70,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
 
         // Move the file to the upload directory
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-            echo json_encode(['success' => true, 'fileName' => $newFileName]);
+            echo json_encode(['success' => true, 'fileName' => $newFileName, 'token' => $_SESSION['csrf_token']]);
         } else {
             http_response_code(500);
-            echo json_encode(['error' => 'Failed to upload the file.']);
+            echo json_encode(['error' => 'Failed to upload the file.', 'token' => $_SESSION['csrf_token']]);
         }
     } else {
         http_response_code(400);
-        echo json_encode(['error' => 'An error occurred during file upload.']);
+        echo json_encode(['error' => 'An error occurred during file upload.', 'token' => $_SESSION['csrf_token']]);
     }
     exit;
 }
 
 // Default response for unsupported methods
 http_response_code(405);
-echo json_encode(['error' => 'Method not allowed.']);
+echo json_encode(['error' => 'Method not allowed.', 'token' => $_SESSION['csrf_token']]);
 exit;
 
 ?>

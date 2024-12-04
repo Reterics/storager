@@ -33,18 +33,23 @@ export default function MediaModal(
                 body: formData,
                 credentials: 'same-origin'
             });
-            if (!response.ok) {
-                const errorData = await response.json().catch((error) => console.error('Failed to parse response', error));
-                alert(errorData.error || 'Upload failed');
+            const data = await response.json()
+                .catch((error) => console.error('Failed to parse response', error));
+
+            // Update CSRF token if provided in the response
+            if (data && data?.token && csrfNode) {
+                csrfNode.value = data.token;
+            }
+
+            if (!response.ok || !data || !data.fileName) {
+                alert(data.error || 'Upload failed');
                 return false;
             }
-            const data = await response.json();
             console.log('Upload success:', data);
-            if (data?.fileName) {
-                setFile('./uploads/' + data.fileName);
-            }
+            setFile('./uploads/' + data.fileName);
         } catch (error) {
             console.error('Upload failed', error);
+            alert((error as Error).message || 'Upload failed');
             return false;
         }
     };
