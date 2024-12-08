@@ -2,11 +2,12 @@ import {User} from 'firebase/auth';
 import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from "react";
 import {GeoPoint} from "firebase/firestore";
 import {PDFData} from "./pdf.ts";
+import {ContextDataType} from "./firebase.ts";
 
 export type onClickReturn = void|false|Promise<void|false>;
 
 export interface GeneralCollectionEntry {
-    docType?: string,
+    docType?: ContextDataType,
     docParent?: string,
     docUpdated?: number,
     deleted?: boolean
@@ -380,7 +381,7 @@ export interface UserModalInput {
 }
 
 export interface PrintableModalInput {
-    onClose: () => void,
+    onClose?: () => void,
     formData: { data: PDFData, signature?: string, printNow?: boolean } | null,
 }
 

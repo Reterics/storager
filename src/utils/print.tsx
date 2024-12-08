@@ -1,12 +1,13 @@
 import {ServiceCompleteData, ServiceData, SettingsItems} from "../interfaces/interfaces.ts";
 import {PDFData} from "../interfaces/pdf.ts";
 
-
-export const serviceDataToPrintable = (item: ServiceData, settings: SettingsItems, t: (n: string)=>string, printNow = true): {
+export interface PrintableDataProps {
         data: PDFData,
         signature?: string,
         printNow?: boolean
-} | null => {
+}
+
+export const serviceDataToPrintable = (item: ServiceData, settings: SettingsItems, t: (n: string)=>string, printNow = true): PrintableDataProps | null => {
     return {
             printNow: printNow,
             data: [
@@ -43,11 +44,7 @@ export const serviceDataToPrintable = (item: ServiceData, settings: SettingsItem
 }
 
 
-export const completionFormToPrintable = (item: ServiceCompleteData, t: (n: string)=>string, printNow = true): {
-        data: PDFData,
-        signature?: string,
-        printNow?: boolean
-} | null => {
+export const completionFormToPrintable = (item: ServiceCompleteData, t: (n: string)=>string, printNow = true): PrintableDataProps | null => {
         return {
                 printNow: printNow,
                 data: [

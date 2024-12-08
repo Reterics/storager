@@ -4,9 +4,9 @@ export default class STLogger {
     private _logs: string[];
     protected _timeout: NodeJS.Timeout | undefined;
     _styles: { INFO: { labelStyle: string; messageStyle: string; }; WARN: { labelStyle: string; messageStyle: string; }; ERROR: { labelStyle: string; messageStyle: string; }; };
-    private readonly _consoleLog: (...data: string[]) => void;
-    private readonly _consoleError: (...data: string[]) => void;
-    private readonly _consoleWarn: (...data: string[]) => void;
+    private readonly _consoleLog: (...data: string[]|object[]) => void;
+    private readonly _consoleError: (...data: string[]|object[]) => void;
+    private readonly _consoleWarn: (...data: string[]|object[]) => void;
 
     constructor() {
         this._logs = [];
@@ -79,7 +79,8 @@ export default class STLogger {
         switch (type) {
             case 'ERROR':
                 this._consoleError(
-                    `%c${timestamp} %c${type}%c ${message}\n${(new Error().stack)}`,
+                    `%c${timestamp} %c${type}%c ${message}\n${((new Error().stack)
+                        ?.split('\n')[3])}`,
                     'color: gray; font-weight: bold;',
                     style.labelStyle,
                     style.messageStyle
@@ -117,32 +118,62 @@ export default class STLogger {
     }
 
     log(...args: string[]) {
-        const message = args.join(', ');
+        const objs: object[] = [];
+        const message = args.filter(a=> {
+            if (typeof a === 'object') {
+                objs.push(a);
+                return false;
+            }
+            return true;
+        }).join(', ');
         const timestamp = this.getTimestamp();
         const type = 'INFO'
 
         this.appendLog(`${timestamp} ${type}: ${message}`);
 
         this.printLog(timestamp, type, message);
+        if (objs.length) {
+            this._consoleLog(...objs)
+        }
     }
 
     error(...args: string[]) {
-        const message = args.join(', ');
+        const objs: object[] = [];
+        const message = args.filter(a=> {
+            if (typeof a === 'object') {
+                objs.push(a);
+                return false;
+            }
+            return true;
+        }).join(', ');
         const timestamp = this.getTimestamp();
         const type = 'ERROR'
 
         this.appendLog(`${timestamp} ${type}: ${message}`);
 
         this.printLog(timestamp, type, message);
+        if (objs.length) {
+            this._consoleError(...objs)
+        }
     }
 
     warn(...args: string[]) {
-        const message = args.join(', ');
+        const objs: object[] = [];
+        const message = args.filter(a=> {
+            if (typeof a === 'object') {
+                objs.push(a);
+                return false;
+            }
+            return true;
+        }).join(', ');
         const timestamp = this.getTimestamp();
         const type = 'WARN'
 
         this.appendLog(`${timestamp} ${type}: ${message}`);
 
         this.printLog(timestamp, type, message);
+        if (objs.length) {
+            this._consoleWarn(...objs)
+        }
     }
 }

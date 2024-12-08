@@ -7,7 +7,7 @@ import {useEffect, useRef} from "react";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-export default function PrintableVersionModal({ onClose, formData }: PrintableModalInput) {
+export default function PrintableVersionFrame({ onClose, formData }: Readonly<PrintableModalInput>) {
     const { t } = useTranslation();
 
     const printRef = useRef<HTMLDivElement>(null);
@@ -160,15 +160,36 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
             value: t('Print')
         },
         {
-            onClick: onClose,
+            onClick: ()=> {
+                if (typeof onClose === "function") {
+                    onClose();
+                } else {
+                    window.close();
+                }
+            },
             value: t('Cancel')
         }
     ];
 
+    const buttonClasses = {
+        primary: "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +
+            "focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-1.5 " +
+            "dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 " +
+            "dark:border-gray-700",
+        default: "text-gray-900 bg-white border border-gray-300 focus:outline-none " +
+            "hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg " +
+            "text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 " +
+            "dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+    };
+
     useEffect(() => {
-        if (formData && formData?.printNow) {
+        if (formData?.printNow) {
             handleDownloadPdf().then(() => {
-                onClose();
+                if (typeof onClose === "function") {
+                    onClose();
+                } else {
+                    window.close();
+                }
             })
         }
     }, [formData]);
@@ -185,18 +206,10 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
         >
             <div className="flex justify-between mb-2 min-w-60 no-print">
                 {
-                    (buttons || []).map(button => (
-                        <button type="button"
-                                className={
-                                    button.primary ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +
-                                        "focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-1.5 " +
-                                        "dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 " +
-                                        "dark:border-gray-700" :
-                                        "text-gray-900 bg-white border border-gray-300 focus:outline-none " +
-                                        "hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg " +
-                                        "text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 " +
-                                        "dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                                }
+                    (buttons || []).map((button, index) => (
+                        <button key={'print_top_' + index}
+                                type="button"
+                                className={ button.primary ? buttonClasses.primary : buttonClasses.default }
                                 onClick={(e) => button.onClick(e)}>
                             {button.value}
                         </button>
@@ -210,18 +223,10 @@ export default function PrintableVersionModal({ onClose, formData }: PrintableMo
             </div>
             <div className="flex justify-between mt-2 min-w-60 no-print">
                 {
-                    (buttons || []).map(button => (
+                    (buttons || []).map((button, index) => (
                         <button type="button"
-                                className={
-                                    button.primary ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +
-                                        "focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-1.5 " +
-                                        "dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 " +
-                                        "dark:border-gray-700" :
-                                        "text-gray-900 bg-white border border-gray-300 focus:outline-none " +
-                                        "hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg " +
-                                        "text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 " +
-                                        "dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                                }
+                                key={'print_bottom_' + index}
+                                className={ button.primary ? buttonClasses.primary : buttonClasses.default }
                                 onClick={(e) => button.onClick(e)}>
                             {button.value}
                         </button>

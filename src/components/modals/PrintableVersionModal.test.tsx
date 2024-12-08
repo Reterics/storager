@@ -1,5 +1,5 @@
 import {render, fireEvent, waitFor} from '@testing-library/react';
-import PrintableVersionModal from './PrintableVersionModal';
+import PrintableVersionFrame from './PrintableVersionFrame.tsx';
 import {vi, describe, it, expect, beforeEach, Mock, beforeAll, afterAll} from 'vitest';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -58,7 +58,7 @@ describe('PrintableVersionModal', () => {
         };
 
         const { getByAltText, getAllByText, unmount } = render(
-            <PrintableVersionModal onClose={onCloseMock} formData={formData} />
+            <PrintableVersionFrame onClose={onCloseMock} formData={formData} />
         );
 
         expect(getAllByText('Print')[0]).toBeVisible();
@@ -74,7 +74,7 @@ describe('PrintableVersionModal', () => {
         };
 
         const { getAllByText, unmount } = render(
-            <PrintableVersionModal onClose={onCloseMock} formData={formData} />
+            <PrintableVersionFrame onClose={onCloseMock} formData={formData} />
         );
 
         const cancelButton = getAllByText('Cancel')[0];
@@ -96,7 +96,7 @@ describe('PrintableVersionModal', () => {
         (html2canvas as Mock).mockResolvedValue(Promise.resolve(mockCanvas));
 
         const { getAllByText, unmount } = render(
-            <PrintableVersionModal onClose={onCloseMock} formData={formData} />
+            <PrintableVersionFrame onClose={onCloseMock} formData={formData} />
         );
 
         const printButton = getAllByText('Print')[0];
@@ -122,7 +122,7 @@ describe('PrintableVersionModal', () => {
         (html2canvas as Mock).mockResolvedValue(Promise.resolve(mockCanvas));
 
         render(
-            <PrintableVersionModal onClose={onCloseMock} formData={formData} />
+            <PrintableVersionFrame onClose={onCloseMock} formData={formData} />
         );
 
         await waitFor(() => {

@@ -9,7 +9,7 @@ import TableViewComponent, {TableViewActions} from "../components/elements/Table
 import ServiceCompletionModal from "../components/modals/ServiceCompletionModal.tsx";
 import {ShopContext} from "../store/ShopContext.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
-import PrintableVersionModal from "../components/modals/PrintableVersionModal.tsx";
+import PrintableVersionFrame from "../components/modals/PrintableVersionFrame.tsx";
 import {PDFData} from "../interfaces/pdf.ts";
 import ListModal from "../components/modals/ListModal.tsx";
 import {completionFormToPrintable, serviceDataToPrintable} from "../utils/print.tsx";
@@ -52,8 +52,8 @@ function Service() {
             const completions = completionForms?.filter((c) => c.service_id === item.id);
             if (completions.length) {
                 let completionUpdates;
-                for (let i = 0; i < completions.length; i++) {
-                    completionUpdates = await dbContext?.removeData('completions', completions[i].id) as ServiceCompleteData[];
+                for (const element of completions) {
+                    completionUpdates = await dbContext?.removeData('completions', element.id) as ServiceCompleteData[];
                 }
                 if (completionUpdates) {
                     setCompletionForms(completionUpdates);
@@ -139,30 +139,37 @@ function Service() {
 
                             let version = index+1;
                             let name = t('Service Form');
-                            if (completionForm && index === list.length - 1) {
+                            const isCompletionForm = completionForm && index === list.length - 1;
+                            if (isCompletionForm) {
                                 version = 1;
                                 name = t('Service Completion Form');
                             }
-
 
                             return [index+1, name, version, serviceData.docUpdated ?
                                 new Date(serviceData.docUpdated).toISOString().split('.')[0].replace('T', ' ') :
                                 serviceData.date,
                                 TableViewActions({
                                     onPrint: () => {
-                                        if (completionForm && index === list.length - 1) {
+                                        if (isCompletionForm) {
                                             setPrintViewData(completionFormToPrintable(data,  t, true));
-
                                         } else {
                                             setPrintViewData(serviceDataToPrintable(data, dbContext?.data.settings || {} as SettingsItems, t, true));
                                         }
+
+                                        // const docType = data.docType || (isCompletionForm ? 'completions' : 'services');
+                                        //
+                                        // window.open(`?page=print&id=${data.id}&type=${docType}&print=true`, '_blank')
                                     },
                                     onOpen: () => {
-                                        if (completionForm && index === list.length - 1) {
+                                        if (isCompletionForm) {
                                             setPrintViewData(completionFormToPrintable(data,  t, true));
                                         } else {
                                             setPrintViewData(serviceDataToPrintable(data, dbContext?.data.settings || {} as SettingsItems, t, false));
                                         }
+                                        // const docType = data.docType || (isCompletionForm ? 'completions' : 'services');
+                                        //
+                                        // window.open(`?page=print&id=${data.id}&type=${docType}`, '_blank');
+
                                     }
                                 })];
                         })
@@ -217,6 +224,7 @@ function Service() {
                             service_address: shop?.address || '',
                             service_name: shop?.name || '',
                             service_email: shop?.email || '',
+                            docType: 'services'
                         });
                     }
                 }
@@ -240,7 +248,7 @@ function Service() {
                         inPlace={true}
                     />
 
-                    {printViewData && <PrintableVersionModal
+                    {printViewData && <PrintableVersionFrame
                         formData={printViewData}
                         onClose={() => setPrintViewData(null)}
                     />}
@@ -280,7 +288,8 @@ function Service() {
                                             repair_cost: item.expected_cost,
                                             guaranteed: sourceItem.guaranteed || 'no',
                                             description: sourceItem.description || '',
-                                            repair_description: sourceItem.repair_description || ''
+                                            repair_description: sourceItem.repair_description || '',
+                                            docType: 'completions'
                                         });
                                         setSelectedServiceLines(null);
                                     } else {
