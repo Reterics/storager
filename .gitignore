@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.test
+.env.production
 coverage
 public/uploads

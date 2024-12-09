@@ -160,7 +160,7 @@ describe('RecycleBin Component', () => {
             {
                 id: 'item2',
                 client_name: 'Client 2',
-                docType: 'Type2',
+                docType: 'parts',
                 docUpdated: new Date().getTime(),
                 shop_id: ['shop1'],
             },

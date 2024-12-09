@@ -72,7 +72,7 @@ export default function ImportShopData(
                             data.shop_id.push(shop.id);
                             data.storage_limit.push(data.storage_limit[0]);
                             data.storage.push(0);
-                            out[data.docType].push(data);
+                            out[data.docType].push(data as StoreItem|StorePart);
                         }
 
                     }

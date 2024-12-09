@@ -1,9 +1,11 @@
 // Open or create the database
 import {CommonCollectionData, TTLData} from "../interfaces/firebase.ts";
 
+const storageDBName = import.meta.env.VITE_INDEXED_DB || 'storagerDB';
+
 export function openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('storagerDB', 3);
+        const request = indexedDB.open(storageDBName, 3);
 
         const stores = [
             'shops', 'deleted', 'items', 'parts', 'services',
