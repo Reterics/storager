@@ -139,5 +139,6 @@
   "Edit Invoice": "Edit Invoice",
   "Done": "Done",
   "Created": "Created",
-  "Are you sure you wish to delete this Invoice?": "Are you sure you wish to delete this Invoice?"
+  "Are you sure you wish to delete this Invoice?": "Are you sure you wish to delete this Invoice?",
+  " inconsistencies since last build": " inconsistencies since last build"
 }

@@ -139,5 +139,6 @@
   "Edit Invoice": "Számla szerkesztése",
   "Done": "Elkészült",
   "Created": "Létrehozva",
-  "Are you sure you wish to delete this Invoice?": "Biztosan törlöd ezt a számlát?"
+  "Are you sure you wish to delete this Invoice?": "Biztosan törlöd ezt a számlát?",
+  " inconsistencies since last build": " eltérés az utolsó frissítés óta"
 }

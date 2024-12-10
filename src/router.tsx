@@ -12,6 +12,7 @@ import Types from "./pages/Types.tsx";
 import RecycleBin from "./pages/RecycleBin.tsx";
 import Invoices from "./pages/Invoices.tsx";
 import Print from "./pages/Print.tsx";
+import Diagnostic from "./pages/Diagnostic.tsx";
 
 
 function QueryRouter() {
@@ -41,6 +42,8 @@ function QueryRouter() {
                 return <InAppLayout><Invoices /></InAppLayout>;
             case 'print':
                 return <InAppLayout><Print /></InAppLayout>;
+            case 'diag':
+                return <InAppLayout><Diagnostic /></InAppLayout>;
             case 'signin':
                 return <SignInComponent />;
             default:
