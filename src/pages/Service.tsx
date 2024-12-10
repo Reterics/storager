@@ -76,19 +76,25 @@ function Service() {
 
     const addServiceItem = async (serviceData?: ServiceData, archive = true) => {
         const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, archive) as ServiceData[];
-        setServicedItems(updatedItems as ServiceData[]);
+        setServicedItems(updatedItems);
         setModalTemplate(null);
     };
 
     const saveCompletionForm = async (serviceCompleteData: ServiceCompleteData) => {
-        if (!serviceCompleteData || !serviceCompleteData.service_id) {
-            return;
+        if (!serviceCompleteData?.service_id) {
+            return false;
         }
 
-        const updatedItems = await dbContext?.setData('completions', serviceCompleteData as ServiceCompleteData);
+        const updatedItems = await dbContext?.setData('completions', serviceCompleteData)
+            .catch((e: Error) => {
+                console.error(e.message);
+                alert('Server Error');
+            })
 
-        setCompletionForms(updatedItems as ServiceCompleteData[]);
-        setCompletedModalTemplate(null);
+        if (updatedItems) {
+            setCompletionForms(updatedItems as ServiceCompleteData[]);
+            setCompletedModalTemplate(null);
+        }
     };
 
     const tableLines = servicedItems.map(item => {
@@ -283,9 +289,9 @@ function Service() {
                                             client_name: sourceItem.client_name || '',
                                             client_email: sourceItem.client_email || '',
                                             client_phone: sourceItem.client_phone || '',
-                                            type: sourceItem.type,
+                                            type: sourceItem.type || '',
                                             accessories: sourceItem.accessories || '',
-                                            repair_cost: item.expected_cost,
+                                            repair_cost: item.expected_cost || '',
                                             guaranteed: sourceItem.guaranteed || 'no',
                                             description: sourceItem.description || '',
                                             repair_description: sourceItem.repair_description || '',

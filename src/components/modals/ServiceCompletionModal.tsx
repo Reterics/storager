@@ -38,7 +38,7 @@ export default function ServiceCompletionModal({ id, onClose, formData, setFromD
             primary: true,
             onClick: () => {
                 const signaturePad = signaturePadRef.current;
-                if (signaturePad && signaturePad.isEmpty()) {
+                if (signaturePad?.isEmpty()) {
                     alert(t('You must sign before you save.'))
                     return false;
                 } else if (signaturePad) {

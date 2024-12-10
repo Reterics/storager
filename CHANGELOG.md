@@ -5,6 +5,7 @@
  * UI/UX updated in signature boxes in service forms
  * Updated service ID generation by modulus to ignore site overlap
  * Comma in type fixed in service list
+ * Service Completion form saving fixed when no service cost or type selected
 
 ### Features
  * Added About page link to the footer
