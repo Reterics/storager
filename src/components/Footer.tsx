@@ -2,6 +2,7 @@ import {useTranslation} from "react-i18next";
 import {useContext} from "react";
 import {useTheme} from "../store/ThemeContext.tsx";
 import {DBContext} from "../database/DBContext.ts";
+import {useSearchParams} from "react-router-dom";
 
 export const Footer = () => {
     const dbContext = useContext(DBContext)
@@ -23,6 +24,9 @@ export const Footer = () => {
     };
     const theme = useTheme();
     const { t, i18n } = useTranslation();
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get('page');
+
 
     return (
         <footer className="bg-white rounded-lg shadow m-4 dark:bg-gray-800 no-print">
@@ -31,7 +35,11 @@ export const Footer = () => {
           © 2024 <a href={"mailto:" + settings.email} className="hover:underline">{settings.companyName}</a>.
                 </span>
                 <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
-                    <li>
+                    {page === 'service' && <li className="ms-1">
+                        <a href="?page=diag">{t('Diagnostic')}</a>
+                    </li>}
+                    <li className="ms-1">
+                        {page === 'service' && ' | '}
                         <a
                             href="#"
                             className="hover:underline"

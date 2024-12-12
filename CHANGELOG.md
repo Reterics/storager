@@ -11,9 +11,13 @@
  * Added About page link to the footer
  * Added new PHP based Media browser to StoreItems and StoreParts
  * Added Notes page as "Invoices"
+ * Added Diagnostic page to Services for troubleshooting
 
 ### Deprecation
  * Firebase Storage functionality deprecated along with VITE_FIREBASE_STORAGE_BUCKET .env variable
+
+### Removals
+ * Removed Update from ZIP function in About page
 
 ## [1.1.3] (2024-11-26)
 

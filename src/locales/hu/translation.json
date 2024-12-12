@@ -140,5 +140,6 @@
   "Done": "Elkészült",
   "Created": "Létrehozva",
   "Are you sure you wish to delete this Invoice?": "Biztosan törlöd ezt a számlát?",
-  " inconsistencies since last build": " eltérés az utolsó frissítés óta"
+  " inconsistencies since last build": " eltérés az utolsó frissítés óta",
+  "Diagnostic": "Diagnosztika"
 }
