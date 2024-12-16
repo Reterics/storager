@@ -32,7 +32,7 @@ export const sortItemsByWarn = (items: StoreItem[]|StorePart[], shopId?: string)
         }
 
         if (warningB && !warnings.includes(b.id)) {
-            warnings.push(a.id);
+            warnings.push(b.id);
         }
 
         return warningA && !warningB ? -1 : 1;

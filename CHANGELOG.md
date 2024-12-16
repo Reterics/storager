@@ -6,6 +6,7 @@
  * Updated service ID generation by modulus to ignore site overlap
  * Comma in type fixed in service list
  * Service Completion form saving fixed when no service cost or type selected
+ * Low storage alert indicated wrong total number fixed
 
 ### Features
  * Added About page link to the footer
