@@ -282,7 +282,7 @@ export interface ServiceModalInput {
     id?: string,
     onClose: () => void,
     service: ServiceData | null,
-    onSave: (currentService: ServiceData) => unknown
+    onSave: (currentService: ServiceData) => onClickReturn
     setService: (shop: ServiceData) => void
     inPlace?: boolean,
     settings?: SettingsItems

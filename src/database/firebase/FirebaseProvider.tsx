@@ -274,6 +274,23 @@ export const FirebaseProvider = ({children}: {
         await getContextData(updateLocalCache);
     }
 
+    const updateLatestContext = async (key: ContextDataType)=>{
+        // Validation step
+        if (ctxData && key !== 'settings') {
+            ctxData[key] = await getCollection(firebaseCollections[key]);
+        } else if (ctxData && key === 'settings') {
+            const settings = await getCollection(firebaseCollections.settings) as SettingsItems[];
+            if (settings) {
+                ctxData.settings = settings[0];
+            }
+        }
+        setCtxData(ctxData ? {
+            ...ctxData,
+        } : null);
+
+        return ctxData ? ctxData[key] : null;
+    }
+
     useEffect(() => {
         if (!renderAfterCalled.current) {
             console.log('Load context data');
@@ -297,7 +314,8 @@ export const FirebaseProvider = ({children}: {
         removePermanentData: removePermanentCtxData,
         refreshImagePointers:postProcessStoreData,
         uploadDataBatch: updateContextBatched,
-        getType: getType
+        getType: getType,
+        updateLatest: updateLatestContext
     }}>
         {ctxData && children}
         {!ctxData && <PageLoading/>}

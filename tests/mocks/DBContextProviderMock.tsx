@@ -13,7 +13,8 @@ const DBContextProviderMock = ({children, ctxDataOverride,
     restoreData= vi.fn(),
     removePermanentData= vi.fn(),
     refreshImagePointers= vi.fn(),
-    uploadDataBatch= vi.fn()
+    uploadDataBatch= vi.fn(),
+    updateLatest = vi.fn(),
 }:{
     children: React.ReactNode,
     ctxDataOverride?: ContextData,
@@ -24,6 +25,7 @@ const DBContextProviderMock = ({children, ctxDataOverride,
     removePermanentData?: Mock<()=>Promise<ContextDataValueType[] | null>>,
     refreshImagePointers?: Mock<()=>Promise<void>>,
     uploadDataBatch?: Mock<()=>Promise<ContextDataCollectionType | null>>,
+    updateLatest?: Mock<()=>Promise<ContextDataCollectionType | null>>,
 }) => {
     //const authContext = {user: currentUserMock};
     /*const shopContext = {
@@ -58,7 +60,8 @@ const DBContextProviderMock = ({children, ctxDataOverride,
             removePermanentData: removePermanentData,
             refreshImagePointers: refreshImagePointers,
             uploadDataBatch: uploadDataBatch,
-            getType: getType
+            getType: getType,
+            updateLatest: updateLatest
         }}>{children}</DBContext.Provider>
     )
 }

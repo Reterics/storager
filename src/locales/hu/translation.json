@@ -141,5 +141,6 @@
   "Created": "Létrehozva",
   "Are you sure you wish to delete this Invoice?": "Biztosan törlöd ezt a számlát?",
   " inconsistencies since last build": " eltérés az utolsó frissítés óta",
-  "Diagnostic": "Diagnosztika"
+  "Diagnostic": "Diagnosztika",
+  "Do you want to save this item as a new service form?": "Teljesen új különálló űrlapként szeretnéd ezt menteni?"
 }

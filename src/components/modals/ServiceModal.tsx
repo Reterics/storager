@@ -41,7 +41,7 @@ export default function ServiceModal({ id, onClose, service, setService, onSave,
                 } else if (signaturePad) {
                     service.signature = signaturePad.toDataURL("image/jpeg");
                 }
-                onSave(service)
+                return onSave(service)
             },
             value: t('Save')
         },

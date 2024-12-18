@@ -13,6 +13,7 @@ import PrintableVersionFrame from "../components/modals/PrintableVersionFrame.ts
 import {PDFData} from "../interfaces/pdf.ts";
 import ListModal from "../components/modals/ListModal.tsx";
 import {completionFormToPrintable, serviceDataToPrintable} from "../utils/print.tsx";
+import {compareNormalizedStrings, generateServiceId, toUserDateTime} from "../utils/data.ts";
 
 
 function Service() {
@@ -74,8 +75,20 @@ function Service() {
         }
     };
 
-    const addServiceItem = async (serviceData?: ServiceData, archive = true) => {
-        const updatedItems = await dbContext?.setData('services', serviceData as ServiceData, archive) as ServiceData[];
+    const saveServiceItem = async (serviceData: ServiceData, archive = true) => {
+        let updatedItems = await dbContext?.updateLatest('services') as ServiceData[];
+        // validate id
+        const currentItem = updatedItems.find(item => item.id === serviceData.id);
+        if (currentItem?.client_name && serviceData.client_name &&
+            !compareNormalizedStrings(currentItem.client_name, serviceData.client_name)) {
+
+            if (confirm(t('Do you want to save this item as a new service form?'))) {
+                // if there is an item with different client names, we regenerate the id
+                serviceData.id = generateServiceId(updatedItems, shop?.id, dbContext?.data.shops, dbContext?.data.deleted)
+            }
+        }
+
+        updatedItems = await dbContext?.setData('services', serviceData, archive) as ServiceData[];
         setServicedItems(updatedItems);
         setModalTemplate(null);
     };
@@ -135,7 +148,6 @@ function Service() {
                     if (completionForm) {
                         list.push(completionForm);
                     }
-
                     setSelectedServiceLines({
                         id: item.id,
                         name: item.client_name || item.id,
@@ -152,7 +164,7 @@ function Service() {
                             }
 
                             return [index+1, name, version, serviceData.docUpdated ?
-                                new Date(serviceData.docUpdated).toISOString().split('.')[0].replace('T', ' ') :
+                                toUserDateTime(new Date(serviceData.docUpdated)) :
                                 serviceData.date,
                                 TableViewActions({
                                     onPrint: () => {
@@ -205,24 +217,12 @@ function Service() {
                 {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => {
-                        const shopIndex = Math.max(0, dbContext?.data.shops.findIndex(s => s.id === shop?.id));
-                        const shopLength = Math.max(1, dbContext?.data.shops.length);
+                        const id = generateServiceId(
+                            servicedItems,
+                            shop?.id,
+                            dbContext?.data.shops,
+                            dbContext?.data.deleted);
 
-                        const existingIds = new Set([
-                            ...(dbContext?.data.deleted || [])
-                                .filter(d => d.docType !== 'archive' && /^\d+$/.test(d.id))
-                                .map(d => parseInt(d.id)),
-                            ...servicedItems
-                                .filter(item => /^\d+$/.test(item.id))
-                                .map(item => parseInt(item.id))
-                        ]);
-
-                        let lastNumber = Math.max(...existingIds, 0);
-                        lastNumber += (shopIndex - (lastNumber % shopLength) + shopLength) % shopLength;
-
-                        const id = (lastNumber + 1).toString().padStart(5, '0');
-
-                        console.error('ID will be: ', id)
                         setModalTemplate(modalTemplate ? null : {
                             id: id,
                             serviceStatus: 'status_accepted',
@@ -240,7 +240,7 @@ function Service() {
                 <div className={"mb-2 mt-1"}>
                     <ServiceModal
                         onClose={() => setModalTemplate(null)}
-                        onSave={(item: ServiceData) => addServiceItem(item)}
+                        onSave={(item: ServiceData) => saveServiceItem(item)}
                         setService={(item: ServiceData) => setModalTemplate(item)}
                         service={modalTemplate}
                         inPlace={true}

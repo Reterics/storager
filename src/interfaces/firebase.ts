@@ -39,7 +39,8 @@ export interface DBContextType {
     removePermanentData: (id: string) => Promise<ContextDataValueType[] | null>,
     refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>
     uploadDataBatch: (key: ContextDataType, values: ContextDataValueType[]) =>  Promise<ContextDataCollectionType | null>,
-    getType: (type: 'part'|'item'|'service', lang: 'hu'|'en') => StyledSelectOption[]
+    getType: (type: 'part'|'item'|'service', lang: 'hu'|'en') => StyledSelectOption[],
+    updateLatest: (key: ContextDataType) => Promise<SettingsItems | ContextDataValueType[] | null>,
 }
 
 export interface CommonCollectionData {
