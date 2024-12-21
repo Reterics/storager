@@ -86,11 +86,47 @@ export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPl
                 label={t("Address")}
             />
 
+        </FormRow>
+        <FormRow>
+            <StyledInput
+                type="text" name="email"
+                value={invoice.email}
+                onChange={(e) => changeType(e, 'email')}
+                label={t("Email")}
+            />
+
             <StyledInput
                 type="text" name="phone"
                 value={invoice.phone}
                 onChange={(e) => changeType(e, 'phone')}
                 label={t("Phone")}
+            />
+        </FormRow>
+        <FormRow>
+            <StyledSelect
+                type="text" name="payment_method"
+                value={invoice.payment_method ?? "credit_card"}
+                options={[
+                    {
+                        name: t('Credit Card'),
+                        value: 'credit_card',
+
+                    },
+                    {
+                        name: t('Cash'),
+                        value: 'cash',
+
+                    }
+                ]}
+                onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'payment_method')}
+                label={t("Payment method")}
+            />
+
+            <StyledInput
+                type="text" name="total"
+                value={invoice.total}
+                onChange={(e) => changeType(e, 'total')}
+                label={t("Total")}
             />
         </FormRow>
         <FormRow>

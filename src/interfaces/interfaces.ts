@@ -222,7 +222,10 @@ export interface InvoiceType extends GeneralCollectionEntry {
     tax?: string,
     notes?: string,
     status?: string,
-    shop_id?: string[]
+    shop_id?: string[],
+    email?: string,
+    payment_method?: string,
+    total?: string
 }
 
 export interface TypeModalInput {

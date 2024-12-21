@@ -142,5 +142,10 @@
   "Are you sure you wish to delete this Invoice?": "Biztosan törlöd ezt a számlát?",
   " inconsistencies since last build": " eltérés az utolsó frissítés óta",
   "Diagnostic": "Diagnosztika",
-  "Do you want to save this item as a new service form?": "Teljesen új különálló űrlapként szeretnéd ezt menteni?"
+  "Do you want to save this item as a new service form?": "Teljesen új különálló űrlapként szeretnéd ezt menteni?",
+  "Total": "Összeg",
+  "Credit Card": "Bankkártya",
+  "Cash": "Készpénz",
+  "Status": "Állapot",
+  "Payment method": "Fizetési mód"
 }
