@@ -18,6 +18,7 @@ import {
 } from "react-icons/bs";
 import StyledInput from "./StyledInput.tsx";
 import StyledSelect from "./StyledSelect.tsx";
+import {BSIconDimensions} from "../../utils/ui.ts";
 
 const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}: {
     header?: (string | TableHead)[],
@@ -96,10 +97,11 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
     switch (options.type) {
         case 'steps':
             return (
-                <div className="flex flex-row text-xl items-center cursor-pointer">
+                <div className="flex flex-row items-center cursor-pointer">
                     <BsArrowLeftSquare
+                        style={BSIconDimensions}
                         onClick={() => setValue(Number(value) - 1)}/>
-                    <span className="m-0 w-[50] ms-1 me-1">
+                    <span className="m-0 w-1/2 ms-1 me-1 text-xl">
                         <StyledInput type="number" value={value as number || 0}
                                      className="mt-0 w-[50px] me-1 hide-arrows"
                                      onChange={(e) => setValue(e.target.value)}
@@ -107,6 +109,7 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                         />
                     </span>
                     <BsArrowRightSquare
+                        style={BSIconDimensions}
                         onClick={() => setValue(Number(value) + 1)}/>
                     {options.postFix}
                     {closeButton}
@@ -117,7 +120,7 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                 <StyledInput
                     type="number"
                     value={value as number || 0}
-                    className="mt-0 w-auto me-1 max-w-28"
+                    className="mt-0 w-auto me-1 max-w-28 min-w-12"
                     onEnter={() => closeEditMode()}
                     onChange={(e) => setValue(e.target.value)}
                 />{options.postFix}
@@ -127,7 +130,7 @@ const TableViewEditableElement = (element: TableLineElementType, options: TableH
                 <StyledInput
                     type="text"
                     value={value as string || ''}
-                    className="mt-0 w-auto me-1"
+                    className="mt-0 w-auto me-1 min-w-4"
                     onEnter={() => closeEditMode()}
                     onChange={(e) => setValue(e.target.value)}
                 />

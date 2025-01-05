@@ -316,8 +316,9 @@ function Service() {
                 </div>
             </div>
 
+
             {noModalActive &&
-                <TableViewComponent lines={tableLines}
+                <div className='service-table self-center'><TableViewComponent lines={tableLines}
                                     header={[
                                         t('ID'),
                                         t('Name'),
@@ -353,7 +354,7 @@ function Service() {
                                             editable: false
                                         },
                                         t('Actions')]}
-                />
+                /></div>
             }
 
             <div className="relative flex justify-center w-full m-auto flex-1 no-print">

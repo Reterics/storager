@@ -173,7 +173,7 @@ const Header = () => {
                                 </button>
 
                                 {dropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+                                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-50">
                                         <ul className="py-1">
                                             {isAdmin && <li>
                                                 <NavLink

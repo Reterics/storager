@@ -29,3 +29,47 @@ pre {
 #completedListButton {
   visibility: hidden;
 }
+
+/*table.item > tbody > tr > td:nth-child(2),
+table.item > tbody > tr > th:nth-child(2)
+{
+  width: 1em;
+}
+
+table.item > tbody > tr > td:nth-child(5),
+table.item > tbody > tr > th:nth-child(5)
+{
+  width: 7em;
+}*/
+table.item > tbody > tr > td:first-child:has(> img),
+table.item > tbody > tr > th:first-child:has(> img)
+{
+  width: 40px;
+
+}
+
+.service-table tbody > tr > th:nth-child(2),
+.service-table tbody > tr > th:nth-child(3),
+.service-table tbody > tr > th:nth-child(6)
+{
+  text-wrap: wrap;
+}
+
+.service-table tbody > tr > th:nth-child(1),
+.service-table tbody > tr > th:nth-child(4),
+.service-table tbody > tr > th:nth-child(5),
+.service-table tbody > tr > th:nth-child(6)
+{
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.service-table tbody > tr > th:nth-child(6)
+{
+  max-width: 5rem;
+}
+
+.service-table tbody > tr > th:nth-child(2)
+{
+  max-width: 11rem;
+}
