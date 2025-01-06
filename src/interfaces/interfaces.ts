@@ -334,7 +334,7 @@ export type TableRowType = 'steps'|'text' | 'number' | 'checkbox' | 'select';
 
 export interface TableHead {
     sortable?: boolean,
-    value: string,
+    value: string | React.ReactNode,
     editable?: boolean,
     type?: TableRowType,
     options?: StyledSelectOption[],

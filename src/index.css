@@ -82,3 +82,8 @@ table.item > tbody > tr > th:first-child:has(> img)
 .select-no-first select option:first-child {
   display: none;
 }
+
+.text-xxs {
+  font-size: 0.625rem; /* 10px */
+  line-height: 0.75rem; /* 12px */
+}

@@ -18,6 +18,7 @@ function Parts() {
     const shopContext = useContext(ShopContext);
     const { t } = useTranslation();
 
+    const [tableLimits, setTableLimits] = useState<number>(100);
     const selectedShopId = shopContext.shop ? shopContext.shop.id : dbContext?.data.shops[0]?.id as string;
 
     const initialParts = (dbContext?.data.parts || [])
@@ -146,42 +147,49 @@ function Parts() {
                         storage_limit: [5]
                     })
                 }
-            ]} error={error} onSearch={filterItems} />
+            ]}
+                error={error}
+                onSearch={filterItems}
+                tableLimits={tableLimits}
+                setTableLimits={setTableLimits}
+            />
 
-            <TableViewComponent lines={tableLines}
-                                isHighlighted={(item) => {
-                                    return !!item[-1];
-                                }}
-                                header={[
-                                    t('Image'),
-                                    t('SKU'),
-                                    {
-                                        value: t('Name'),
-                                        type: 'text',
-                                        sortable: true,
-                                        editable: true
-                                    },
-                                    {
-                                        value: t('Storage'),
-                                        type: 'steps',
-                                        sortable: true,
-                                        editable: true
-                                    },
-                                    {
-                                        value: t('Price'),
-                                        type: 'number',
-                                        postFix: ' Ft',
-                                        sortable: true,
-                                        editable: true
-                                    },
-                                    {
-                                        value: t('Shop'),
-                                        type: 'select',
-                                        editable: false,
-                                        options: typeOptions
-                                    },
-                                    t('Actions')]}
-                                onChange={(index, col, value) => changeTableElement(index, col, value)}
+            <TableViewComponent
+                lines={tableLines}
+                    isHighlighted={(item) => {
+                        return !!item[-1];
+                    }}
+                    header={[
+                        t('Image'),
+                        t('SKU'),
+                        {
+                            value: t('Name'),
+                            type: 'text',
+                            sortable: true,
+                            editable: true
+                        },
+                        {
+                            value: t('Storage'),
+                            type: 'steps',
+                            sortable: true,
+                            editable: true
+                        },
+                        {
+                            value: t('Price'),
+                            type: 'number',
+                            postFix: ' Ft',
+                            sortable: true,
+                            editable: true
+                        },
+                        {
+                            value: t('Shop'),
+                            type: 'select',
+                            editable: false,
+                            options: typeOptions
+                        },
+                        t('Actions')]}
+                    onChange={(index, col, value) => changeTableElement(index, col, value)}
+                    tableLimits={tableLimits}
             />
 
             {!tableLines.length && !initialParts.length &&

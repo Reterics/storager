@@ -337,19 +337,19 @@ function Service() {
                                 editable: false
                             },
                             {
-                                value: t('status'),
+                                value: <span className="text-xxs">{t('status')}</span>,
                                 type: 'text',
                                 sortable: true,
                                 editable: false
                             },
                             {
-                                value: t('Guaranteed'),
+                                value: <span className="text-xxs">{t('Guaranteed')}</span>,
                                 type: 'text',
                                 sortable: true,
                                 editable: false
                             },
                             {
-                                value: t('Expected cost'),
+                                value: <span className="text-xxs">{t('Expected cost')}</span>,
                                 type: 'number',
                                 postFix: ' Ft',
                                 sortable: true,
