@@ -1,4 +1,10 @@
-## [1.1.4] (Unreleased)
+## [1.1.5] (Unreleased)
+
+### Features
+ - Added Service coloring on success status
+ - Added table length limit to improve rendering performance
+
+## [1.1.4] (2025-01-05)
 
 ### Bug fixes
  * Fixed CSRF Protection in PHP build

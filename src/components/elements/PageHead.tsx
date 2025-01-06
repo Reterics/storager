@@ -1,17 +1,30 @@
-import { GeneralButtons } from "../../interfaces/interfaces.ts";
+import {GeneralButtons} from "../../interfaces/interfaces.ts";
 import AlertBox from "../AlertBox.tsx";
 import {BsSearch} from "react-icons/bs";
 import {useTranslation} from "react-i18next";
 import { debounce } from 'throttle-debounce';
 import {useCallback, useRef} from "react";
+import StyledSelect from "./StyledSelect.tsx";
+import {tableViewOptions} from "../../interfaces/constants.ts";
 
 
-export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 500 }:
+export const PageHead = (
+    {
+        buttons,
+        title,
+        error,
+        onSearch,
+        debounceInterval = 500,
+        tableLimits,
+        setTableLimits
+    }:
     {
         buttons?: GeneralButtons[],
         title?: string|React.ReactNode,
         error?: string,
         onSearch?: (value: string) => void,
+        tableLimits?: number,
+        setTableLimits?: (value: number) => void,
         debounceInterval?: false | number
     }) => {
     const { t } = useTranslation();
@@ -46,6 +59,7 @@ export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 5
         }
     }, [debounceFunc, debounceInterval, onSearch]);
 
+
     return (
         <div className="flex justify-center overflow-x-auto sm:rounded-lg w-full m-auto no-print min-h-16">
             <div className="flex justify-between items-center max-w-screen-xl m-1 mt-0 p-2 pt-1 w-full">
@@ -56,6 +70,18 @@ export const PageHead = ({ buttons, title, error, onSearch, debounceInterval = 5
                 {error && <AlertBox message={error} role={"warning"} />}
 
                 <div className="flex items-center space-x-2">
+                    {setTableLimits && tableLimits && (
+                        <div className='w-20 select-no-first'>
+                            <StyledSelect
+                                options={tableViewOptions}
+                                name="role"
+                                value={tableLimits || tableViewOptions[0].value}
+                                onSelect={(e) => setTableLimits(Number((e.target as HTMLSelectElement).value))}
+                                label={false}
+                            />
+                        </div>
+                    )}
+
                     {onSearch &&
                     <div className="flex">
                         <input

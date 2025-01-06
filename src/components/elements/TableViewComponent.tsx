@@ -223,13 +223,23 @@ export const TableViewActions = ({
     );
 }
 
-const TableViewComponent = ({header, lines, children, onChange, onClick, selectedIndexes, isHighlighted}: TableViewArguments) => {
+const TableViewComponent = (
+    {
+        header,
+        lines,
+        children,
+        onChange,
+        onClick,
+        selectedIndexes,
+        isHighlighted,
+        tableLimits,
+    }: TableViewArguments) => {
     const [orderBy, setOrderBy] = useState<null|number>(null);
     const [orderType, setOrderType] = useState<OrderType>('ASC');
 
     const _header = selectedIndexes && header ? ["#", ...header] : header;
     const supportedOrderTypes = ['string', 'number'];
-    const orderedLines = !orderBy ? lines : lines.sort((a, b) => {
+    const orderedLines = (!orderBy ? lines : lines.sort((a, b) => {
         if (a[orderBy] === undefined || b[orderBy] === undefined) {
             return 0; // If key doesn't exist, treat as equal
         }
@@ -243,7 +253,7 @@ const TableViewComponent = ({header, lines, children, onChange, onClick, selecte
         } else {
             return a[orderBy] < b[orderBy] ? 1 : -1;
         }
-    })
+    })).slice(0, tableLimits ?? 10000)
     return (
         <table className="text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
             <TableViewHeader header={_header}

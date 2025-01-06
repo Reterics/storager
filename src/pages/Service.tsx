@@ -21,6 +21,7 @@ function Service() {
     const {shop} = useContext(ShopContext);
     const { t } = useTranslation();
 
+    const [tableLimits, setTableLimits] = useState<number>(100);
     const [servicedItems, setServicedItems] = useState<ServiceData[]>(dbContext?.data.services || []);
     const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(dbContext?.data.completions || []);
 
@@ -116,7 +117,7 @@ function Service() {
             item.id,
             item.client_name,
             type.replace(/,/g, ', '),
-            t(item.serviceStatus || 'status_accepted'),
+            <span key={'status_' + item.id} className={item.serviceStatus}>{t(item.serviceStatus ?? 'status_accepted')}</span>,
             t(item.guaranteed || 'no'),
             item.expected_cost || 0,
             item.date || '',
@@ -234,7 +235,11 @@ function Service() {
                         });
                     }
                 }
-            ]} onSearch={filterItems}/>}
+            ]}
+                onSearch={filterItems}
+                tableLimits={tableLimits}
+                setTableLimits={setTableLimits}
+            />}
 
             <div className={"relative flex justify-center w-full m-auto"}>
                 <div className={"mb-2 mt-1"}>
@@ -318,42 +323,45 @@ function Service() {
 
 
             {noModalActive &&
-                <div className='service-table self-center'><TableViewComponent lines={tableLines}
-                                    header={[
-                                        t('ID'),
-                                        t('Name'),
-                                        {
-                                            value: t('Type'),
-                                            type: 'text',
-                                            sortable: true,
-                                            editable: false
-                                        },
-                                        {
-                                            value: t('status'),
-                                            type: 'text',
-                                            sortable: true,
-                                            editable: false
-                                        },
-                                        {
-                                            value: t('Guaranteed'),
-                                            type: 'text',
-                                            sortable: true,
-                                            editable: false
-                                        },
-                                        {
-                                            value: t('Expected cost'),
-                                            type: 'number',
-                                            postFix: ' Ft',
-                                            sortable: true,
-                                            editable: false
-                                        },
-                                        {
-                                            value: t('Date'),
-                                            type: 'text',
-                                            sortable: true,
-                                            editable: false
-                                        },
-                                        t('Actions')]}
+                <div className='service-table self-center'>
+                    <TableViewComponent
+                        lines={tableLines}
+                        tableLimits={tableLimits}
+                        header={[
+                            t('ID'),
+                            t('Name'),
+                            {
+                                value: t('Type'),
+                                type: 'text',
+                                sortable: true,
+                                editable: false
+                            },
+                            {
+                                value: t('status'),
+                                type: 'text',
+                                sortable: true,
+                                editable: false
+                            },
+                            {
+                                value: t('Guaranteed'),
+                                type: 'text',
+                                sortable: true,
+                                editable: false
+                            },
+                            {
+                                value: t('Expected cost'),
+                                type: 'number',
+                                postFix: ' Ft',
+                                sortable: true,
+                                editable: false
+                            },
+                            {
+                                value: t('Date'),
+                                type: 'text',
+                                sortable: true,
+                                editable: false
+                            },
+                            t('Actions')]}
                 /></div>
             }
 

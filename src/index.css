@@ -48,6 +48,9 @@ table.item > tbody > tr > th:first-child:has(> img)
 
 }
 
+.service-table tbody > tr:has(span.status_delivered) {
+  background-color: rgba(0, 255, 0, 0.07);
+}
 .service-table tbody > tr > th:nth-child(2),
 .service-table tbody > tr > th:nth-child(3),
 .service-table tbody > tr > th:nth-child(6)
@@ -58,7 +61,9 @@ table.item > tbody > tr > th:first-child:has(> img)
 .service-table tbody > tr > th:nth-child(1),
 .service-table tbody > tr > th:nth-child(4),
 .service-table tbody > tr > th:nth-child(5),
-.service-table tbody > tr > th:nth-child(6)
+.service-table tbody > tr > th:nth-child(6),
+.service-table tbody > tr > th:nth-child(7),
+.service-table tbody > tr > th:nth-child(8)
 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -72,4 +77,8 @@ table.item > tbody > tr > th:first-child:has(> img)
 .service-table tbody > tr > th:nth-child(2)
 {
   max-width: 11rem;
+}
+
+.select-no-first select option:first-child {
+  display: none;
 }

@@ -97,6 +97,7 @@ export interface TableViewArguments extends TSXComponentArgument {
     onClick?: (index: number) => void,
     selectedIndexes?: { [key: number]: boolean | undefined },
     isHighlighted?: ((line: TableLineType, index: number) => boolean) | boolean | number,
+    tableLimits?: number,
 }
 
 export interface GeneralModalArguments extends TSXComponentArgument {
