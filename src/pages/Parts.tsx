@@ -94,7 +94,7 @@ function Parts() {
 
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
         const key = storeTableKeyOrder[col as number];
-        const item = parts[index] as StorePart;
+        const item: StorePart = parts[index];
 
         if (item && key) {
             changeType({
@@ -104,10 +104,9 @@ function Parts() {
             } as ChangeEvent<HTMLInputElement>, key, item);
         }
 
-        dbContext?.setData('parts', {
-            id: item.id,
-            [key]: value
-        });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        dbContext?.setData('parts', {id: item.id, [key]: item[key]});
     };
 
     const tableLines = parts.map(item => {

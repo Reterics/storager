@@ -93,7 +93,7 @@ function Items() {
 
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
         const key = storeTableKeyOrder[col as number];
-        const item = items[index] as StoreItem;
+        const item:StoreItem = items[index];
 
         if (item && key) {
             changeType({
@@ -102,10 +102,9 @@ function Items() {
                 }
             } as ChangeEvent<HTMLInputElement>, key, item);
 
-            dbContext?.setData('items', {
-                id: item.id,
-                [key]: value
-            });
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            dbContext?.setData('items', {id: item.id, [key]: item[key]});
         }
     };
 
