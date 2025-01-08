@@ -22,7 +22,28 @@ function Service() {
     const { t } = useTranslation();
 
     const [tableLimits, setTableLimits] = useState<number>(100);
-    const [servicedItems, setServicedItems] = useState<ServiceData[]>(dbContext?.data.services || []);
+    const [shopFilter, setShopFilter] = useState<string>();
+    const [searchFilter, setSearchFilter] = useState<string>('');
+
+    const filterItems = (shopFilter: string|undefined, searchFilter:string) => {
+        let items = dbContext?.data.services ?? [];
+
+        if (shopFilter) {
+            items = items.filter(item => item.service_name === shopFilter);
+        }
+
+        if (searchFilter) {
+            const lowerCaseFilter = searchFilter.toLowerCase();
+
+            items = items
+                .filter(item => item.client_name?.toLowerCase().includes(lowerCaseFilter) ||
+                    item.client_phone?.toLowerCase().includes(lowerCaseFilter))
+        }
+
+        return items;
+    };
+
+    const [servicedItems, setServicedItems] = useState<ServiceData[]>(filterItems(shopFilter, searchFilter));
     const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(dbContext?.data.completions || []);
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
@@ -39,13 +60,15 @@ function Service() {
         completed?: boolean,
         table: TableLineType[]}|null>(null);
 
-    const filterItems = (filterBy: string) => {
-        if (!filterBy) {
-            setServicedItems(dbContext?.data.services || []);
-        } else {
-            const lowerCaseFilter = filterBy.toLowerCase();
-            setServicedItems((dbContext?.data.services || []).filter(item => item.client_name?.toLowerCase().includes(lowerCaseFilter) || item.client_phone?.toLowerCase().includes(lowerCaseFilter)))
-        }
+
+    const searchItems = (filterBy: string) => {
+        setSearchFilter(filterBy)
+        setServicedItems(filterItems(shopFilter, filterBy));
+    };
+
+    const selectShopFilter = (shop: string) => {
+        setShopFilter(shop)
+        setServicedItems(filterItems(shop, searchFilter));
     };
 
     const deleteServiceHistoryFor = async (item: ServiceData) => {
@@ -114,12 +137,11 @@ function Service() {
     const tableLines = servicedItems.map(item => {
         const type = item.type?.startsWith(',') ? item.type.substring(1) : (item.type || '');
         return [
-            item.id,
+            <span key={'status_' + item.id} className={item.serviceStatus}>{item.id}</span>,
             item.client_name,
             type.replace(/,/g, ', '),
-            <span key={'status_' + item.id} className={item.serviceStatus}>{t(item.serviceStatus ?? 'status_accepted')}</span>,
-            t(item.guaranteed || 'no'),
             item.expected_cost || 0,
+            item.service_name ?? '?',
             item.date || '',
             TableViewActions({
                 onOpen: () => {
@@ -236,9 +258,11 @@ function Service() {
                     }
                 }
             ]}
-                onSearch={filterItems}
+                onSearch={searchItems}
                 tableLimits={tableLimits}
                 setTableLimits={setTableLimits}
+                shopFilter={shopFilter}
+                setShopFilter={selectShopFilter}
             />}
 
             <div className={"relative flex justify-center w-full m-auto"}>
@@ -337,21 +361,15 @@ function Service() {
                                 editable: false
                             },
                             {
-                                value: <span className="text-xxs">{t('status')}</span>,
-                                type: 'text',
-                                sortable: true,
-                                editable: false
-                            },
-                            {
-                                value: <span className="text-xxs">{t('Guaranteed')}</span>,
-                                type: 'text',
-                                sortable: true,
-                                editable: false
-                            },
-                            {
                                 value: <span className="text-xxs">{t('Expected cost')}</span>,
                                 type: 'number',
                                 postFix: ' Ft',
+                                sortable: true,
+                                editable: false
+                            },
+                            {
+                                value: t('Shop'),
+                                type: 'text',
                                 sortable: true,
                                 editable: false
                             },

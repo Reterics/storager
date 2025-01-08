@@ -3,6 +3,9 @@
 ### Features
  - Added Service coloring on success status
  - Added table length limit to improve rendering performance
+ - Removed Service status ant Guaranteed from table, and added shop
+ - Added compact UI to tables
+ - Added Shop filter to Services
 
 ## [1.1.4] (2025-01-05)
 

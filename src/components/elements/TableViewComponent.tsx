@@ -169,9 +169,9 @@ const TableViewLine = ({line, index, header, onChange, onClick, isSelected}: Tab
     }
 
     return (_line.map((column, columnIndex) => (
-        <th scope="col" key={'column_' + columnIndex + '_' + index}
-            className={"px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white p-2" +
-                (columnIndex === _line.length - 1 ? " text-right" : "") +
+        <td scope="col" key={'column_' + columnIndex + '_' + index}
+            className={"font-medium text-gray-900 whitespace-nowrap dark:text-white" +
+                (columnIndex === _line.length - 1 ? " text-right py-1" : " px-2 py-2") +
                 (typeof isSelected === 'boolean' && !columnIndex ? " text-lg" : "")
         } onClick={(e)=>onSelect(e)}>
             {header && typeof header[columnIndex] !== 'string' && header[columnIndex].editable ?
@@ -181,7 +181,7 @@ const TableViewLine = ({line, index, header, onChange, onClick, isSelected}: Tab
             {header && typeof header[columnIndex] !== 'string' &&
                 !header[columnIndex].editable && header[columnIndex].postFix
             }
-        </th>
+        </td>
     )));
 }
 
@@ -210,7 +210,7 @@ export const TableViewActions = ({
     };
 
     return (
-        <div className="inline-flex rounded-md shadow-sm" role="group">
+        <div className="inline-flex rounded-md shadow-sm align-middle" role="group">
             {onCreate && <button type="button" className={getClass(onCreate)} onClick={onCreate}><BsFillFileEarmarkFill /></button> }
             {onOpen && <button type="button" className={getClass(onOpen)} onClick={onOpen}><BsFillFolderFill /></button> }
             {onSave && <button type="button" className={getClass(onSave)} onClick={onSave}><BsFloppyFill /></button> }
@@ -263,9 +263,11 @@ const TableViewComponent = (
             {orderedLines.map((line, index) =>
                 <tr key={'key' + index} className={
                     " border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-800" +
-                    (typeof isHighlighted === 'function' && isHighlighted(line, index) ? " bg-yellow-50 dark:bg-yellow-950" : "") +
 
-                    (selectedIndexes?.[index] ? " bg-gray-300 dark:bg-gray-700" : " bg-white dark:bg-gray-900") +
+                    (index % 2  ? " bg-gray-100 dark:bg-gray-600" : " bg-white dark:bg-gray-900") +
+                    (typeof isHighlighted === 'function' && isHighlighted(line, index) ? " bg-yellow-50 dark:bg-yellow-950" : "") +
+                    (selectedIndexes?.[index] ? " bg-gray-300 dark:bg-gray-700" : "") +
+
                     (onClick ? " cursor-pointer" : "")
                 }>
                     <TableViewLine line={line} index={index} header={_header} onChange={onChange} onClick={onClick}

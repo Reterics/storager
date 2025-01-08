@@ -147,12 +147,13 @@ export interface StyledSelectOption {
 
 export interface StyledSelectArgs {
     value?: string | number | readonly string[]
-    onSelect?: ReactEventHandler<HTMLSelectElement> | undefined,
+    onSelect?: ReactEventHandler<HTMLSelectElement>,
     type?: string,
     name?: string,
     label?: string | number | boolean,
     options: StyledSelectOption[],
-    className?: string
+    className?: string,
+    compact?: boolean
 }
 
 export interface Shop extends GeneralCollectionEntry{
