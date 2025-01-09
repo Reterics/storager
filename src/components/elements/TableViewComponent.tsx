@@ -171,7 +171,7 @@ const TableViewLine = ({line, index, header, onChange, onClick, isSelected}: Tab
     return (_line.map((column, columnIndex) => (
         <td scope="col" key={'column_' + columnIndex + '_' + index}
             className={"font-medium text-gray-900 whitespace-nowrap dark:text-white" +
-                (columnIndex === _line.length - 1 ? " text-right py-1" : " px-2 py-2") +
+                (columnIndex === _line.length - 1 ? " text-right py-1 pe-1" : " px-2 py-2") +
                 (typeof isSelected === 'boolean' && !columnIndex ? " text-lg" : "")
         } onClick={(e)=>onSelect(e)}>
             {header && typeof header[columnIndex] !== 'string' && header[columnIndex].editable ?

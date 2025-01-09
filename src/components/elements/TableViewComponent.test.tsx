@@ -25,8 +25,8 @@ describe('TableViewComponent', () => {
 
         // Check header rendering
         mockHeader.forEach((header) => {
-            if (header && typeof header !== 'string') {
-                expect(screen.getByText(header.value)).toBeInTheDocument();
+            if (header && typeof header !== 'string' && typeof header.value === 'string') {
+                expect(screen.getByText(header.value )).toBeInTheDocument();
             }
         });
 
