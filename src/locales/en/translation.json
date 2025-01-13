@@ -150,5 +150,7 @@
   "Payment method": "Payment method",
   "All": "All",
   "Filter": "Filter",
-  "Only active": "Only active"
+  "Are you sure to create a new backup?": "Are you sure to create a new backup?",
+  "Only active": "Only active",
+  "Local Backup": "Local Backup"
 }

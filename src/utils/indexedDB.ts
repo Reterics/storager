@@ -5,12 +5,12 @@ const storageDBName = import.meta.env.VITE_INDEXED_DB || 'storagerDB';
 
 export function openDatabase(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open(storageDBName, 3);
+        const request = indexedDB.open(storageDBName, 4);
 
         const stores = [
             'shops', 'deleted', 'items', 'parts', 'services',
             'completions', 'settings', 'users', 'archive',
-            'types', 'mtime', 'ttl', 'images'
+            'types', 'mtime', 'ttl', 'images', 'backup'
         ];
         request.onupgradeneeded = function(event: IDBVersionChangeEvent) {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment

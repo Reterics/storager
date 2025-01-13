@@ -7,6 +7,7 @@
  - Added compact UI to tables
  - Added Shop filter to Services
  - Added Active filter to Services
+ - Added Local Backup to Settings
 
 ## [1.1.4] (2025-01-05)
 

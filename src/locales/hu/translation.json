@@ -150,5 +150,7 @@
   "Payment method": "Fizetési mód",
   "All": "Mind",
   "Filter": "Szűrés",
-  "Only active": "Csak aktív"
+  "Are you sure to create a new backup?": "Biztosan elkészíted a biztonsági mentést?",
+  "Only active": "Csak aktív",
+  "Local Backup": "Helyi biztonsági mentés"
 }
