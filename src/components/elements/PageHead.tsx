@@ -19,7 +19,9 @@ export const PageHead = (
         tableLimits,
         setTableLimits,
         shopFilter,
-        setShopFilter
+        setShopFilter,
+        activeFilter,
+        setActiveFilter
     }:
     {
         buttons?: GeneralButtons[],
@@ -30,6 +32,8 @@ export const PageHead = (
         setTableLimits?: (value: number) => void,
         shopFilter?: string|null,
         setShopFilter?: (value: string) => void,
+        activeFilter?: boolean|null,
+        setActiveFilter?: (value: boolean) => void,
         debounceInterval?: false | number
     }) => {
     const { t } = useTranslation();
@@ -43,6 +47,11 @@ export const PageHead = (
     }) || [{value: shopFilter ?? '', name: shopFilter ?? ''}] || [];
 
     shopOptions.unshift({value: '', name: t('All')})
+
+    const activeOptions = [
+        {value: '', name: t('All')},
+        {value: 'true', name: t('Only active')}
+    ]
 
 
     const buttonPY = title ? "py-2.5" : "py-1.5";
@@ -85,6 +94,18 @@ export const PageHead = (
                 {error && <AlertBox message={error} role={"warning"} />}
 
                 <div className="flex items-center space-x-2">
+                    {setActiveFilter && (
+                        <div className='w-30 select-no-first'>
+                            <StyledSelect
+                                options={activeOptions}
+                                name="role"
+                                value={activeFilter ? 'true': ''}
+                                onSelect={(e) => setActiveFilter(!!(e.target as HTMLSelectElement).value)}
+                                label={t('Filter')}
+                                compact={true}
+                            />
+                        </div>
+                    )}
                     {setShopFilter && (
                         <div className='w-30 select-no-first'>
                             <StyledSelect

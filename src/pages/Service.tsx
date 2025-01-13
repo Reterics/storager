@@ -24,8 +24,16 @@ function Service() {
     const [tableLimits, setTableLimits] = useState<number>(100);
     const [shopFilter, setShopFilter] = useState<string>();
     const [searchFilter, setSearchFilter] = useState<string>('');
+    const [activeFilter, setActiveFilter] = useState<boolean>(false);
 
-    const filterItems = (shopFilter: string|undefined, searchFilter:string) => {
+    const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(dbContext?.data.completions || []);
+    const completionFormsById = completionForms
+        .reduce((all, currentValue)=> {
+            all[currentValue.id] = currentValue;
+            return all
+        }, {} as Record<string, ServiceCompleteData>);
+
+    const filterItems = (shopFilter: string|undefined, searchFilter:string, onlyActive?: boolean) => {
         let items = dbContext?.data.services ?? [];
 
         if (shopFilter) {
@@ -40,11 +48,14 @@ function Service() {
                     item.client_phone?.toLowerCase().includes(lowerCaseFilter))
         }
 
+        if (onlyActive) {
+            items = items.filter(item => !completionFormsById[item.id + '_cd'] && item.serviceStatus !== 'status_delivered')
+        }
+
         return items;
     };
 
     const [servicedItems, setServicedItems] = useState<ServiceData[]>(filterItems(shopFilter, searchFilter));
-    const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(dbContext?.data.completions || []);
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
@@ -63,12 +74,17 @@ function Service() {
 
     const searchItems = (filterBy: string) => {
         setSearchFilter(filterBy)
-        setServicedItems(filterItems(shopFilter, filterBy));
+        setServicedItems(filterItems(shopFilter, filterBy, activeFilter));
     };
 
     const selectShopFilter = (shop: string) => {
         setShopFilter(shop)
-        setServicedItems(filterItems(shop, searchFilter));
+        setServicedItems(filterItems(shop, searchFilter, activeFilter));
+    };
+
+    const selectActiveFilter = (activeOnly: boolean) => {
+        setActiveFilter(activeOnly);
+        setServicedItems(filterItems(shopFilter, searchFilter, activeOnly));
     };
 
     const deleteServiceHistoryFor = async (item: ServiceData) => {
@@ -136,8 +152,10 @@ function Service() {
 
     const tableLines = servicedItems.map(item => {
         const type = item.type?.startsWith(',') ? item.type.substring(1) : (item.type || '');
+        const serviceCompletion = completionFormsById[item.id + '_cd'];
+
         return [
-            <span key={'status_' + item.id} className={item.serviceStatus}>{item.id}</span>,
+            <span key={'status_' + item.id} className={serviceCompletion ? 'status_delivered' : item.serviceStatus}>{item.id}</span>,
             item.client_name,
             type.replace(/,/g, ', '),
             item.expected_cost || 0,
@@ -263,6 +281,8 @@ function Service() {
                 setTableLimits={setTableLimits}
                 shopFilter={shopFilter}
                 setShopFilter={selectShopFilter}
+                activeFilter={activeFilter}
+                setActiveFilter={selectActiveFilter}
             />}
 
             <div className={"relative flex justify-center w-full m-auto"}>

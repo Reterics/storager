@@ -148,5 +148,7 @@
   "Cash": "Cash",
   "Status": "Status",
   "Payment method": "Payment method",
-  "All": "Mind"
+  "All": "All",
+  "Filter": "Filter",
+  "Only active": "Only active"
 }

@@ -6,6 +6,7 @@
  - Removed Service status ant Guaranteed from table, and added shop
  - Added compact UI to tables
  - Added Shop filter to Services
+ - Added Active filter to Services
 
 ## [1.1.4] (2025-01-05)
 
