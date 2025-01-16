@@ -9,11 +9,18 @@ import GeneralModal from "./GeneralModal.tsx";
 import FormRow from "../elements/FormRow.tsx";
 import StyledInput from "../elements/StyledInput.tsx";
 import StyledSelect from "../elements/StyledSelect.tsx";
-import {ChangeEvent} from "react";
+import {ChangeEvent, useMemo} from "react";
+import {invoiceStatusCodes} from "../../interfaces/constants.ts";
 
 
-export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPlace, shops}: InvoiceModalInput) {
+export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPlace, shops}: Readonly<InvoiceModalInput>) {
     const { t } = useTranslation();
+
+    const invoiceStatuses = useMemo<StyledSelectOption[]>(()=>
+        invoiceStatusCodes.map(status => ({
+            name: t(status.charAt(0).toUpperCase() + status.substring(1)),
+            value: status
+        })), [t]);
 
     const shopOptions: StyledSelectOption[] = (shops || []).map((key)=>{
         return {
@@ -50,7 +57,12 @@ export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPl
     const buttons: GeneralModalButtons[] = [
         {
             primary: true,
-            onClick: ()=>onSave(invoice),
+            onClick: ()=> {
+                if (invoice.status) {
+                    invoice[invoice.status] = new Date().getTime()
+                }
+                onSave(invoice)
+            },
             value: t('Save')
         },
         {
@@ -138,7 +150,7 @@ export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPl
                 label={t("Assigned Shop")}
             />
             <StyledSelect
-                options={[{name: t('Done'), value: 'done'}, {name: t('Created'), value: 'created'}]}
+                options={invoiceStatuses}
                 name="status"
                 value={invoice.status}
                 onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'status')}

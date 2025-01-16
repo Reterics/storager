@@ -216,6 +216,8 @@ export interface ShopType extends GeneralCollectionEntry {
     category?: string
 }
 
+export type InvoiceStatus = 'created' | 'done';
+
 export interface InvoiceType extends GeneralCollectionEntry {
     id: string,
     name?: string,
@@ -223,11 +225,13 @@ export interface InvoiceType extends GeneralCollectionEntry {
     phone?: string,
     tax?: string,
     notes?: string,
-    status?: string,
+    status?: InvoiceStatus,
     shop_id?: string[],
     email?: string,
     payment_method?: string,
-    total?: string
+    total?: string,
+    created?: number,
+    done?: number
 }
 
 export interface TypeModalInput {

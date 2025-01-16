@@ -46,6 +46,8 @@ function Invoices() {
                 [shops.find(shop => shop.id === (invoice.shop_id as unknown as string)) as Shop] : null;
         }
 
+        const updatedTimeTimestamp = (invoice.docUpdated ?? invoice.done) ?? invoice.created
+        const updatedTime = updatedTimeTimestamp ? new Date(updatedTimeTimestamp).toISOString().split('.')[0].replace('T', ' ') : '?'
 
         return [
             invoice.name,
@@ -53,6 +55,7 @@ function Invoices() {
             invoice.tax ?? '',
             assignedShops?.length ? assignedShops.map(a=>a.name).join(', ') : t('Minden bolt'),
             invoice.status ? t(invoice.status.charAt(0).toUpperCase() + invoice.status.substring(1)): '',
+            updatedTime,
             TableViewActions({
                 onRemove: () => deleteInvoice(invoice),
                 onEdit: () => setModalTemplate(invoice)
@@ -83,6 +86,7 @@ function Invoices() {
                                 t('Tax ID'),
                                 t('Shop'),
                                 t('Status'),
+                                t('Date'),
                                 t('Actions')]}
         />
 

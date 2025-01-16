@@ -8,6 +8,7 @@
  - Added Shop filter to Services
  - Added Active filter to Services
  - Added Local Backup to Settings
+ - Added creation and completed date to Invoices
 
 ## [1.1.4] (2025-01-05)
 
