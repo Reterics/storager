@@ -47,6 +47,16 @@ vi.mock('../components/elements/TableViewComponent', () => ({
 describe('RecycleBin Component', () => {
     const mockDBContext = {
         data: {
+            shops: [],
+            items: [],
+            parts:[],
+            services:[],
+            completions: [],
+            settings: {id: '1'},
+            users: [],
+            archive: [],
+            types: [],
+            invoices: [],
             currentUser: {
                 id: 'user1',
                 role: 'admin',
@@ -55,15 +65,15 @@ describe('RecycleBin Component', () => {
                 {
                     id: 'item1',
                     name: 'Item 1',
-                    docType: 'Type1',
-                    docUpdated: new Date().toISOString(),
+                    docType: 'types',
+                    docUpdated: new Date().getTime(),
                     shop_id: ['shop1'],
                 },
                 {
                     id: 'item2',
                     client_name: 'Client 2',
-                    docType: 'Type2',
-                    docUpdated: new Date().toISOString(),
+                    docType: 'parts',
+                    docUpdated: new Date().getTime(),
                     shop_id: ['shop1'],
                 },
             ],

@@ -3,7 +3,6 @@ import { vi } from 'vitest'
 
 const toggleTheme = vi.fn();
 const ThemeContextProviderMock = ({children}:{children: React.ReactNode}) => {
-    console.error(toggleTheme.mock.calls.length)
     return (
         <ThemeContext.Provider value={
             {

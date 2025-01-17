@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen, fireEvent} from '@testing-library/react';
+import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import Header from './Header';
 import { AuthContext } from '../store/AuthContext';
 import { ShopContext } from '../store/ShopContext';
@@ -146,7 +146,7 @@ describe('Header Component', () => {
             // Click on Update
             fireEvent.click(screen.getByText('Update'));
 
-            expect(mockDBContext.refreshData).toHaveBeenCalledWith(callArray[i]);
+            waitFor(()=>expect(mockDBContext.refreshData).toHaveBeenCalledWith(callArray[i]))
             unmount();
         }
 

@@ -1,9 +1,17 @@
-import {describe, expect, it, Mock} from "vitest";
+import {describe, expect, it, Mock, vi} from "vitest";
 import {fireEvent, render, waitFor} from "@testing-library/react";
-import {Footer} from "./Footer.tsx";
 import ThemeContextProviderMock from "../../tests/mocks/ThemeContextProviderMock.tsx";
 import {useTranslation} from "react-i18next";
 import TestingPageProvider from "../../tests/mocks/TestingPageProvider.tsx";
+
+vi.mock('react-router-dom', () => ({
+    ...vi.importActual('react-router-dom'),
+    useNavigate: () => vi.fn(),
+    useSearchParams: () => vi.fn(),
+    BrowserRouter: ({children}: {children: React.ReactNode})=><div>{children}</div>
+}));
+
+import {Footer} from "./Footer.tsx";
 
 
 describe('Footer', () => {

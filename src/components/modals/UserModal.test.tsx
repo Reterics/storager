@@ -1,6 +1,6 @@
 // UserModal.test.tsx
 
-import { render, fireEvent, waitFor } from '@testing-library/react';
+import {render, fireEvent, waitFor} from '@testing-library/react';
 import UserModal from './UserModal';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
@@ -106,7 +106,7 @@ describe('UserModal', () => {
             { id: '2', name: 'Shop 2' },
         ];
 
-        const { getByLabelText, queryByLabelText } = render(
+        const { getByLabelText, queryByLabelText, queryByText } = render(
             <RenderModal
                 onClose={onCloseMock}
                 user={user}
@@ -119,7 +119,7 @@ describe('UserModal', () => {
 
         expect(getByLabelText('Username')).toBeInTheDocument();
         expect(getByLabelText('Email')).toBeInTheDocument();
-        expect(getByLabelText('Assigned Shop')).toBeInTheDocument();
+        expect(queryByText('Assigned Shop')).toBeInTheDocument();
         expect(getByLabelText('Role')).toBeInTheDocument();
 
         // Password fields should not be rendered when user.id exists
@@ -143,7 +143,7 @@ describe('UserModal', () => {
             { id: '2', name: 'Shop 2' },
         ];
 
-        const { getByLabelText } = render(
+        const { getByLabelText, queryByText } = render(
             <RenderModal
                 onClose={onCloseMock}
                 user={user}
@@ -158,7 +158,7 @@ describe('UserModal', () => {
         expect(getByLabelText('Email')).toBeInTheDocument();
         expect(getByLabelText('Password')).toBeInTheDocument();
         expect(getByLabelText('Password Confirmation')).toBeInTheDocument();
-        expect(getByLabelText('Assigned Shop')).toBeInTheDocument();
+        expect(queryByText('Assigned Shop')).toBeInTheDocument();
         expect(getByLabelText('Role')).toBeInTheDocument();
     });
 

@@ -1,10 +1,10 @@
-import {render, fireEvent } from '@testing-library/react'
+import {render, fireEvent} from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import {PageHead} from './PageHead'
 import {BsFillPlusCircleFill} from "react-icons/bs";
 
 describe('PageHead', () => {
-    it.concurrent('renders PageHead correctly with error and search', async () => {
+    it('renders PageHead correctly with error and search', async () => {
         const search = vi.fn();
         const debounceInterval = 500;
         // Use fake timers to control debounce timing
@@ -25,14 +25,15 @@ describe('PageHead', () => {
         expect(container.getByText('PageHead Test Error')).toBeDefined();
         expect(container.getByText('PageHead Test Title')).toBeDefined();
 
-        const searchBar = container.getAllByRole('search');
+        const searchBar = container.queryByTestId('searchInput');
+        const searchButton = container.queryByTestId('searchButton');
 
-        const button = searchBar[1] as HTMLButtonElement;
+        const button = searchButton as HTMLButtonElement;
         fireEvent.click(button);
         expect(search.mock.calls.length).toEqual(1);
         search.mockReset();
 
-        const input = searchBar[0] as HTMLInputElement;
+        const input = searchBar as HTMLInputElement;
         fireEvent.change(input, { target: { value: 'T' } });
         fireEvent.keyDown(input, { key: 'T', target: input });
 
@@ -54,7 +55,7 @@ describe('PageHead', () => {
         container.unmount();
     })
 
-    it.concurrent('renders PageHead correctly without error and with search', () => {
+    it('renders PageHead correctly without error and with search', () => {
         const container = render(
             <PageHead title={'PageHead Test Title'} buttons={[
                 {
@@ -72,7 +73,7 @@ describe('PageHead', () => {
         container.unmount();
     })
 
-    it.concurrent('renders PageHead correctly without error and search', () => {
+    it('renders PageHead correctly without error and search', () => {
         const container = render(
             <PageHead title={'PageHead Test Title'} buttons={[
                 {

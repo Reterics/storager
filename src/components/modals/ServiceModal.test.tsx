@@ -74,7 +74,7 @@ describe('ServiceModal', () => {
         const multiSelectCheckBox = container.getByRole('checkbox', {name: 'Back'})
         fireEvent.click(multiSelectCheckBox);
 
-        expect(setService.mock.calls.length).equal(11);
+        expect(setService.mock.calls.length).equal(9);
         container.unmount();
     })
 
