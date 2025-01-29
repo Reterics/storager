@@ -52,6 +52,8 @@ function Service() {
             items = items.filter(item => !completionFormsById[item.id + '_cd'] && item.serviceStatus !== 'status_delivered')
         }
 
+        items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
+
         return items;
     };
 

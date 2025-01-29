@@ -9,6 +9,7 @@
  - Added Active filter to Services
  - Added Local Backup to Settings
  - Added creation and completed date to Invoices
+ - Service page orders entries by descending
 
 ## [1.1.4] (2025-01-05)
 
