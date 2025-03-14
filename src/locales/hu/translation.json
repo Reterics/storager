@@ -152,5 +152,7 @@
   "Filter": "Szűrés",
   "Are you sure to create a new backup?": "Biztosan elkészíted a biztonsági mentést?",
   "Only active": "Csak aktív",
-  "Local Backup": "Helyi biztonsági mentés"
+  "Local Backup": "Helyi biztonsági mentés",
+  "Invoice subject": "Számla tárgya",
+  "Purchase cost": "Beszerzés összege"
 }

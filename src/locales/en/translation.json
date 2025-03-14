@@ -152,5 +152,7 @@
   "Filter": "Filter",
   "Are you sure to create a new backup?": "Are you sure to create a new backup?",
   "Only active": "Only active",
-  "Local Backup": "Local Backup"
+  "Local Backup": "Local Backup",
+  "Invoice subject": "Invoice subject",
+  "Purchase cost": "Purchase cost"
 }

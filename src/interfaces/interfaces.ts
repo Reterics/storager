@@ -232,6 +232,8 @@ export interface InvoiceType extends GeneralCollectionEntry {
     total?: string,
     created?: number,
     done?: number
+    invoice_subject?: string
+    purchase_cost?: string
 }
 
 export interface TypeModalInput {

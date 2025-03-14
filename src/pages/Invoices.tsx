@@ -16,7 +16,59 @@ function Invoices() {
     const [invoices, setInvoices] = useState<InvoiceType[]>(dbContext?.data.invoices || []);
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
-    const [modalTemplate, setModalTemplate] = useState<InvoiceType|null>(null)
+    const [modalTemplate, setModalTemplate] = useState<InvoiceType|null>(null);
+    const [tableLimits, setTableLimits] = useState<number>(100);
+    const [shopFilter, setShopFilter] = useState<string>();
+    const [searchFilter, setSearchFilter] = useState<string>('');
+    const [activeFilter, setActiveFilter] = useState<boolean>(false);
+
+    const filterItems = (shopFilter?: string, searchFilter?: string, onlyActive?: boolean) => {
+        let items = dbContext?.data.invoices ?? [];
+
+        if (shopFilter) {
+            const filteredShopId = shops.find(shop => shop.name === shopFilter)?.id;
+            if (filteredShopId) {
+                items = items.filter(item => {
+                    return item.shop_id &&
+                        (item.shop_id.includes(filteredShopId) ||
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-expect-error
+                            item.shop_id === filteredShopId);
+                });
+            }
+        }
+
+        if (searchFilter) {
+            const lowerCaseFilter = searchFilter.toLowerCase();
+
+            items = items
+                .filter(item => item.name?.toLowerCase().includes(lowerCaseFilter) ||
+                    item.phone?.toLowerCase().includes(lowerCaseFilter))
+        }
+
+        if (onlyActive) {
+            items = items.filter(item => item.status !== 'done')
+        }
+
+        items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
+
+        return items;
+    };
+
+    const searchItems = (filterBy: string) => {
+        setSearchFilter(filterBy)
+        setInvoices(filterItems(shopFilter, filterBy, activeFilter));
+    };
+
+    const selectShopFilter = (shop: string) => {
+        setShopFilter(shop)
+        setInvoices(filterItems(shop, searchFilter, activeFilter));
+    };
+
+    const selectActiveFilter = (activeOnly: boolean) => {
+        setActiveFilter(activeOnly);
+        setInvoices(filterItems(shopFilter, searchFilter, activeOnly));
+    };
 
     const saveInvoice = async (type: InvoiceType) => {
         const updatedInvoices = await dbContext?.setData('invoices', type);
@@ -77,7 +129,15 @@ function Invoices() {
                     shop_id: [shops[0]?.id]
                 })
             }
-        ]} />
+        ]}
+            onSearch={searchItems}
+            tableLimits={tableLimits}
+            setTableLimits={setTableLimits}
+            shopFilter={shopFilter}
+            setShopFilter={selectShopFilter}
+            activeFilter={activeFilter}
+            setActiveFilter={selectActiveFilter}
+        />
 
         <TableViewComponent lines={tableLines}
                             header={[

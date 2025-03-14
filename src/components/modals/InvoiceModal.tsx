@@ -159,6 +159,20 @@ export default function InvoiceModal({onClose, invoice, setInvoice, onSave, inPl
         </FormRow>
         <FormRow>
             <StyledInput
+                type="text" name="total"
+                value={invoice.invoice_subject}
+                onChange={(e) => changeType(e, 'invoice_subject')}
+                label={t("Invoice subject")}
+            />
+            <StyledInput
+                type="text" name="total"
+                value={invoice.purchase_cost}
+                onChange={(e) => changeType(e, 'purchase_cost')}
+                label={t("Purchase cost")}
+            />
+        </FormRow>
+        <FormRow>
+            <StyledInput
                 type="textarea" name="notes"
                 value={invoice.notes}
                 onChange={(e) => changeType(e, 'notes')}
