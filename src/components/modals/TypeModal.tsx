@@ -16,7 +16,7 @@ export default function TypeModal({onClose, type, setType, onSave, inPlace}: Typ
             type.name = t(type.name);
             return type;
         })
-    }, []);
+    }, [t]);
 
     const changeTranslation = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;

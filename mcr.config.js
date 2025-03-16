@@ -16,20 +16,17 @@ export default {
         console.log(`coverage report generated: ${results.reportPath}`);
     },
 
-    all: {
-        dir: ['./src'],
-        filter: {
-            // exclude files
-            '**/*.html': false,
-            '**/assets/*': false,
-            '**/*.d.ts': false,
-            '**/*.json': false,
-            '**/*.test.tsx': false,
-            '**/interfaces/*.ts': false,
+    filter: {
+        '**/*.+(svg|css)': false,
+        '**/*.html': false,
+        '**/assets/*': false,
+        '**/*.d.ts': false,
+        '**/*.json': false,
+        '**/*.test.tsx': false,
+        '**/interfaces/*.ts': false,
 
-            // include files
-            '**/*.css': 'css',
-            '**/*': true
-        }
+        // include files
+        '**/*.css': 'css',
+        '**/*': true
     }
 };

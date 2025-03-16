@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {JSX, useContext, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {ServiceCompleteData, ServiceData} from "../interfaces/interfaces.ts";

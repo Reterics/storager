@@ -2,6 +2,7 @@ import {createContext, ReactNode, useState} from "react";
 import {Shop} from "../interfaces/interfaces.ts";
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ShopContext = createContext<{
     shop: Shop|null,
     setShop: (shop: Shop|null) => void,

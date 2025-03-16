@@ -39,7 +39,7 @@ export const PageHead = (
     const { t } = useTranslation();
     const ref = useRef<HTMLInputElement>(null);
     const dbContext = useContext(DBContext);
-    const shopOptions: StyledSelectOption[] = dbContext?.data.shops.map(shop => {
+    const shopOptions: StyledSelectOption[] = dbContext?.data.shops?.map(shop => {
         return {
             value: shop.name ?? '',
             name: shop.name ?? '',
@@ -151,7 +151,6 @@ export const PageHead = (
                         </button>
                     </div>}
 
-                    {/* Buttons */}
                     {(buttons || []).map((button, index) => (
                         <button
                             key={"heading-" + index}
@@ -162,6 +161,7 @@ export const PageHead = (
                                     : "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-3 "+buttonPY+" dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                             }
                             onClick={button.onClick}
+                            data-testid={button.testId}
                         >
                             {button.value}
                         </button>

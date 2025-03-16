@@ -8,6 +8,7 @@ import PageLoading from "../components/PageLoading.tsx";
 import {FIREBASE_ERRORS} from "./FirebaseErrors.ts";
 import ScreenMessage from "../components/ScreenMessage.tsx";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<IAuth>({
     user: firebaseAuth?.currentUser,
     loading: false,

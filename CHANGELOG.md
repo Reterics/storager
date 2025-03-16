@@ -1,4 +1,10 @@
-## [1.1.5] (Unreleased)
+## [1.1.6] (Unreleased)
+
+### Bug fixes
+ - Fixed Items, Parts and About test suites
+ - Fixed security vulnerabilities in npm packages and upgraded React from 19 RC to the stable 19.0.0 version
+
+## [1.1.5] (2025-01-29)
 
 ### Features
  - Added Service coloring on success status

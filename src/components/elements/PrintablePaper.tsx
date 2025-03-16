@@ -3,7 +3,7 @@ import {PDFData} from "../../interfaces/pdf.ts";
 
 
 const PrintablePaper = ({ data, ref, children}: {
-    data: PDFData, ref: RefObject<HTMLDivElement>, children: React.ReactNode
+    data: PDFData, ref: RefObject<HTMLDivElement|null>, children: React.ReactNode
 }) => {
     return (
         <div

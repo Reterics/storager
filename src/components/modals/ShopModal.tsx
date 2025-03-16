@@ -8,6 +8,7 @@ import FormRow from "../elements/FormRow.tsx";
 
 export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: ShopModalInput) {
     const { t } = useTranslation();
+    // eslint-disable-next-line
     const coordinateRegexp = /^-?[0-9\.]{3,12} -?[0-9\.]{3,12}$/;
 
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {

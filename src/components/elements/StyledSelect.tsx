@@ -1,11 +1,5 @@
-import {StyledSelectArgs, StyledSelectOption} from "../../interfaces/interfaces.ts";
+import {StyledSelectArgs} from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
-
-export const textToOptions = (strings: string[], names: string[]|undefined):  StyledSelectOption[] => {
-    return strings.map((string, index) => {
-        return {value: string, name: names ? names[index] : string}
-    });
-}
 
 
 export default function StyledSelect({

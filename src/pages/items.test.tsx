@@ -12,11 +12,10 @@ describe('Items', () => {
         vi.spyOn(window, 'confirm').mockReturnValue(true);
     })
     it('opens and closes the modal on add and edit actions', async () => {
-        const {getAllByRole, getByText} = render(<TestingPageProvider><Items /></TestingPageProvider>);
+        const {getAllByRole, getByText, getByTestId} = render(<TestingPageProvider><Items /></TestingPageProvider>);
 
         // Click the "Add" button to open the modal
-        const buttons = getAllByRole('button');
-        const addButton = buttons[0];
+        const addButton = getByTestId('addButton');
         fireEvent.click(addButton);
 
         // Expect the modal to be open

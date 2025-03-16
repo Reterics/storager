@@ -334,7 +334,8 @@ export interface ServiceCompletionModalInput {
 export interface GeneralButtons {
     value: string | React.ReactNode,
     onClick: (e?: React.MouseEvent) => void
-    primary?: boolean
+    primary?: boolean,
+    testId?: string
 }
 
 export type TableRowType = 'steps'|'text' | 'number' | 'checkbox' | 'select';

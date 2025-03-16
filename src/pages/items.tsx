@@ -143,7 +143,8 @@ function Items() {
                         shop_id: [selectedShopId],
                         storage: [1],
                         storage_limit: [5]
-                    })
+                    }),
+                    testId: 'addButton'
                 }
             ]} error={error} onSearch={filterItems}/>
 

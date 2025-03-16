@@ -1,7 +1,8 @@
 import {render, screen, fireEvent} from "@testing-library/react";
 import { vi, describe, it, expect, beforeEach } from "vitest";
-import StyledSelect, { textToOptions } from "./StyledSelect";
+import StyledSelect from "./StyledSelect";
 import { StyledSelectOption } from "../../interfaces/interfaces";
+import {textToOptions} from "../../utils/ui.ts";
 
 describe("StyledSelect", () => {
     const options: StyledSelectOption[] = [

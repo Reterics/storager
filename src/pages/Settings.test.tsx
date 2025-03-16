@@ -6,6 +6,7 @@ import Settings from './Settings';
 import { DBContext } from '../database/DBContext';
 import { vi, expect, it, beforeEach, describe } from 'vitest';
 import {StyledInputArgs} from "../interfaces/interfaces.ts";
+import {DBContextType} from "../interfaces/firebase.ts";
 
 vi.mock('../components/elements/StyledInput', () => ({
     __esModule: true,
@@ -64,7 +65,7 @@ describe('Settings Component', () => {
 
     const renderWithProviders = (ui: React.ReactElement) => {
         return render(
-            <DBContext.Provider value={mockDBContext as any}>{ui}</DBContext.Provider>
+            <DBContext.Provider value={mockDBContext as unknown as DBContextType}>{ui}</DBContext.Provider>
         );
     };
 
@@ -82,7 +83,7 @@ describe('Settings Component', () => {
         };
 
         render(
-            <DBContext.Provider value={dbContextWithoutUser as any}>
+            <DBContext.Provider value={dbContextWithoutUser as unknown as DBContextType}>
                 <Settings />
             </DBContext.Provider>
         );
@@ -163,7 +164,7 @@ describe('Settings Component', () => {
         };
 
         render(
-            <DBContext.Provider value={dbContextWithoutSettings as any}>
+            <DBContext.Provider value={dbContextWithoutSettings as unknown as DBContextType}>
                 <Settings />
             </DBContext.Provider>
         );

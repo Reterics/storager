@@ -303,6 +303,7 @@ export const FirebaseProvider = ({children}: {
         }
 
         renderAfterCalled.current = true;
+    // eslint-disable-next-line
     }, []);
 
     return <DBContext.Provider value={{

@@ -6,10 +6,7 @@ describe('About', () => {
     it('renders the About component', () => {
         render(<About />)
 
-        expect(screen.getByRole('heading', { name: 'About' })).toBeDefined();
-        expect(screen.getByRole('link', { name: 'Reterics logo StorageR' })).toBeDefined();
-
-        expect(screen.getByText('About')).toBeDefined();
-
+        expect(screen.getByTestId('version')).toBeVisible();
+        expect(screen.getByTestId('description')).toBeVisible();
     })
 })
