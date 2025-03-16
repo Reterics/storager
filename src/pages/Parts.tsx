@@ -1,4 +1,4 @@
-import {ChangeEvent, SyntheticEvent, useContext, useState} from "react";
+import {ChangeEvent, useContext, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {PageHead} from "../components/elements/PageHead.tsx";
@@ -68,12 +68,13 @@ function Parts() {
                 updatedItems = (updatedItems as StorePart[])
                     .filter((item) => item.shop_id?.includes(selectedShopId));
             }
+            sortItemsByWarn(updatedItems, selectedShopId)
             setParts(updatedItems);
         }
     };
 
     const closePart = async (item?: StorePart)=> {
-        let updatedParts = await dbContext?.setData('parts', item as StorePart);
+        let updatedParts = await dbContext?.setData('parts', item as StorePart) as StorePart[];
         if (item) {
             await dbContext?.refreshImagePointers([item]);
         }
@@ -82,28 +83,25 @@ function Parts() {
             updatedParts = (updatedParts as StorePart[])
                 .filter((item) => item.shop_id?.includes(selectedShopId));
         }
+        sortItemsByWarn(updatedParts, selectedShopId)
         setParts(updatedParts as StorePart[]);
         setModalTemplate(null);
     }
 
-    const changeType = (e: ChangeEvent<HTMLInputElement>|SyntheticEvent<HTMLSelectElement>, key: string, part: StorePart) => {
-        const obj = changeStoreType(e, key, part, selectedShopId)
-        setParts((items) =>
-            items.map(i => i === part ? (obj as StorePart) : {...i}));
-    };
-
     const changeTableElement = (index: number, col: string | number, value: unknown) => {
         const key = storeTableKeyOrder[col as number];
-        const item: StorePart = parts[index];
+        let item: StorePart = parts[index];
 
         if (item && key) {
-            changeType({
+            const changedItem = changeStoreType({
                 target: {
                     value: value
                 }
-            } as ChangeEvent<HTMLInputElement>, key, item);
+            } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item;
+            setParts((items) =>
+                items.map(i => i === item ? (changedItem as StorePart) : {...i}));
+            item = changedItem;
         }
-
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         dbContext?.setData('parts', {id: item.id, [key]: item[key]});

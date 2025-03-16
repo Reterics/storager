@@ -1,7 +1,7 @@
 import GeneralModal from "./GeneralModal.tsx";
 import {useTranslation} from "react-i18next";
 import TableViewComponent from "../elements/TableViewComponent.tsx";
-import {GeneralModalButtons, ImportShopDataArguments, StoreItem, StorePart} from "../../interfaces/interfaces.ts";
+import {GeneralModalButtons, ImportShopDataArguments, Shop, StoreItem, StorePart} from "../../interfaces/interfaces.ts";
 import {useContext, useState} from "react";
 import {DBContext} from "../../database/DBContext.ts";
 import {PageHead} from "../elements/PageHead.tsx";
@@ -19,10 +19,13 @@ export default function ImportShopData(
 
     const [isItemSelected, setIsItemSelected] = useState(false);
     const [isPartSelected, setIsPartSelected] = useState(false);
+    const [shopFilter, setShopFilter] = useState<string>();
+    const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
     const [search, setSearch] = useState('');
     const [selectedData, setSelectedData] = useState<{[key: number]: boolean | undefined}>([]);
 
     if (!shop) return null;
+    const filteredShopId = shops.find(shop => shop.name === shopFilter)?.id;
 
     const data = [
         ...(isItemSelected ? dbContext?.data.items || [] : []).map(d=> ({...d, docType: 'items'})),
@@ -35,6 +38,9 @@ export default function ImportShopData(
                     !item.sku?.toLowerCase().includes(lowerCaseFilter)) {
                     return false;
                 }
+            }
+            if (filteredShopId && !item.shop_id?.includes(filteredShopId)) {
+                return false;
             }
             return !item.shop_id?.includes(shop?.id);
         });
@@ -107,7 +113,10 @@ export default function ImportShopData(
 
     return (
         <GeneralModal buttons={buttons} inPlace={inPlace} title={title || t('Import Shop Data')} id={"ImportShopData"}>
-            <PageHead buttons={[
+            <PageHead
+                shopFilter={shopFilter}
+                setShopFilter={setShopFilter}
+                buttons={[
                 {
                     value: <span className={isItemSelected ? "" : "text-gray-400"}>{t('Items')}</span>,
                     onClick: () => {

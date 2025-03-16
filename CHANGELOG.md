@@ -5,9 +5,12 @@
  - Fixed security vulnerabilities in npm packages and upgraded React from 19 RC to the stable 19.0.0 version
  - Fixed user deletion issue
  - Fixed Multiselect 'undefined' bug
+ - Fixed translation for "Are you sure you wish to delete this Part?"
+ - Fixed ordering issue after editing or deleting Parts
 
 ### Features
  - Added Playwright E2E tests into tests/e2e
+ - Added Shop filter to ImportShopData Modal
 
 ## [1.1.5] (2025-01-29)
 
