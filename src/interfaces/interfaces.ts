@@ -122,6 +122,7 @@ export interface GeneralModalButtons {
     onClick: (e?: React.MouseEvent) => onClickReturn
     primary?: boolean
     id?: string
+    testId?: string
 }
 
 export interface StyledInputArgs {

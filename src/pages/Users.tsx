@@ -75,7 +75,8 @@ function UsersPage() {
                     onClick: () => setModalTemplate(modalTemplate ? null : {
                         id: '',
                         shop_id: [shopContext.shop?.id as string],
-                    })
+                    }),
+                    testId: 'addButton'
                 }
             ]}/>
 

@@ -32,6 +32,7 @@ export default defineConfig(({mode}) => {
       environment: 'jsdom',
       globals: true,
       setupFiles: './tests/setup.js',
+      exclude: ['tests/e2e/**/*.spec.ts'],
       coverage: {
         enabled: true,
         provider: 'custom',

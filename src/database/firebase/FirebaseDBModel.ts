@@ -116,6 +116,11 @@ export default class FirebaseDBModel extends DBModel {
             cached.deleted = true;
             cached.docUpdated = new Date().getTime();
             cached.docType = table;
+            Object.keys(cached).forEach(key => {
+                if (cached[key] === undefined) {
+                    delete cached[key];
+                }
+            });
             await setDoc(modelRef, cached, { merge: true }).catch(e => {
                 console.error(e);
             });

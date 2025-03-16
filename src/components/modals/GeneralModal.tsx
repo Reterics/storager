@@ -51,6 +51,7 @@ export default function GeneralModal({
                             <button type="button"
                                     id={button.id}
                                     key={modalId + "_button_" + index}
+                                    data-testid={button.testId}
                                     className={
                                         button.primary ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none " +
                                             "focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-1.5 " +

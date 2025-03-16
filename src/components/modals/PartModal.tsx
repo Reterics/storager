@@ -42,11 +42,13 @@ export default function PartModal({ onClose, part, setPart, onSave, inPlace, sel
         {
             primary: true,
             onClick: ()=>uploadAndSave(part),
-            value: t('Save')
+            value: t('Save'),
+            testId: 'saveButton'
         },
         {
             onClick: onClose,
-            value: t('Cancel')
+            value: t('Cancel'),
+            testId: 'cancelButton'
         }
     ];
 

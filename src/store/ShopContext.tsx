@@ -16,7 +16,7 @@ export const ShopProvider = ({ children }: {
     const [shop, setShop] = useState<Shop|null>(savedShop);
 
     const savePersistedShop = (s: Shop|null) => {
-        localStorage.setItem('shop', JSON.stringify(s));
+        localStorage.setItem('shop', s ? JSON.stringify(s) : 'null');
         setShop(s);
     };
 

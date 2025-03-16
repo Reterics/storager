@@ -3,6 +3,11 @@
 ### Bug fixes
  - Fixed Items, Parts and About test suites
  - Fixed security vulnerabilities in npm packages and upgraded React from 19 RC to the stable 19.0.0 version
+ - Fixed user deletion issue
+ - Fixed Multiselect 'undefined' bug
+
+### Features
+ - Added Playwright E2E tests into tests/e2e
 
 ## [1.1.5] (2025-01-29)
 

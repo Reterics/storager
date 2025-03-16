@@ -163,6 +163,8 @@ const Header = () => {
 
                             <li className="relative">
                                 <button
+                                    name="userMenuButton"
+                                    data-testid="userMenuButton"
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
                                     className="flex text-gray-900 hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"
                                 >
