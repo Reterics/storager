@@ -90,10 +90,12 @@ export type TableViewHeader = (string | TableHead)[];
 
 export type TableOnChangeMethod = (index: number, key: string | number, value: unknown) => void
 
+export type TableOnEditMethod = (tableLine: TableLineType, key: string | number, value: unknown) => void
+
 export interface TableViewArguments extends TSXComponentArgument {
     lines: TableLineType[]
     header?: TableViewHeader,
-    onChange?: TableOnChangeMethod,
+    onEdit?: TableOnEditMethod,
     onClick?: (index: number) => void,
     selectedIndexes?: { [key: number]: boolean | undefined },
     isHighlighted?: ((line: TableLineType, index: number) => boolean) | boolean | number,

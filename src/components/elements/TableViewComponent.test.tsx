@@ -41,7 +41,7 @@ describe('TableViewComponent', () => {
 
     it('toggles edit mode and saves changes on editable cells', () => {
         const mockOnChange = vi.fn();
-        render(<TableViewComponent header={mockHeader as (string | TableHead)[]} lines={mockLines} onChange={mockOnChange} />);
+        render(<TableViewComponent header={mockHeader as (string | TableHead)[]} lines={mockLines} onEdit={mockOnChange} />);
 
         const cell = screen.getByText('Item 1');
         fireEvent.click(cell); // Enter edit mode

@@ -1,7 +1,7 @@
-import {ChangeEvent, SyntheticEvent, useContext, useState} from 'react'
+import {ChangeEvent, useContext, useState} from 'react'
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 
-import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
+import {Shop, StoreItem,  StyledSelectOption} from "../interfaces/interfaces.ts";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import ItemModal from "../components/modals/ItemModal.tsx";
 import {DBContext} from "../database/DBContext.ts";
@@ -85,26 +85,20 @@ function Items() {
         setModalTemplate(null);
     }
 
-    const changeType = (e: ChangeEvent<HTMLInputElement>|SyntheticEvent<HTMLSelectElement>, key: string, item: StoreItem) => {
-        const obj = changeStoreType(e, key, item, selectedShopId)
-        setItems((items) =>
-            items.map(i => i === item ? (obj as StoreItem) : {...i}));
-    };
-
-    const changeTableElement = (index: number, col: string | number, value: unknown) => {
+    const changeTableElement = (id: string, col: string | number, value: unknown) => {
         const key = storeTableKeyOrder[col as number];
-        const item:StoreItem = items[index];
+        let item = items.find(p => p.id === id);
 
         if (item && key) {
-            changeType({
+            const changedItem = changeStoreType({
                 target: {
                     value: value
                 }
-            } as ChangeEvent<HTMLInputElement>, key, item);
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            dbContext?.setData('items', {id: item.id, [key]: item[key]});
+            } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item;
+            setItems((items) =>
+                items.map(i => i.id === item?.id ? (changedItem as StoreItem) : {...i}));
+            item = changedItem;
+            dbContext?.setData('items', {id: item.id, [key as keyof StoreItem]: item[key as keyof StoreItem]});
         }
     };
 
@@ -125,6 +119,7 @@ function Items() {
         ];
 
         array[-1] = storageInfo.lowStorageAlert ? 1 : 0;
+        array[-2] = item.id;
 
         return array;
     });
@@ -181,7 +176,7 @@ function Items() {
                                         options: typeOptions
                                     },
                                     t('Actions')]}
-                                onChange={(index, col, value) => changeTableElement(index, col, value)}
+                                onEdit={(tableLine, col, value) => changeTableElement(tableLine[-2] as string, col, value)}
             />
 
             {!tableLines.length && !initialItems.length &&

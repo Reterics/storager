@@ -88,10 +88,9 @@ function Parts() {
         setModalTemplate(null);
     }
 
-    const changeTableElement = (index: number, col: string | number, value: unknown) => {
+    const changeTableElement = (id: string, col: string | number, value: unknown) => {
         const key = storeTableKeyOrder[col as number];
-        let item: StorePart = parts[index];
-
+        let item = parts.find(p => p.id === id);
         if (item && key) {
             const changedItem = changeStoreType({
                 target: {
@@ -99,12 +98,10 @@ function Parts() {
                 }
             } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item;
             setParts((items) =>
-                items.map(i => i === item ? (changedItem as StorePart) : {...i}));
+                items.map(i => i.id === item?.id ? (changedItem as StorePart) : {...i}));
             item = changedItem;
+            dbContext?.setData('parts', {id: item.id, [key as keyof StorePart]: item[key as keyof StorePart]});
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        dbContext?.setData('parts', {id: item.id, [key]: item[key]});
     };
 
     const tableLines = parts.map(item => {
@@ -124,6 +121,7 @@ function Parts() {
         ];
 
         array[-1] = storageInfo.lowStorageAlert ? 1 : 0;
+        array[-2] = item.id;
 
         return array;
     });
@@ -186,7 +184,7 @@ function Parts() {
                             options: typeOptions
                         },
                         t('Actions')]}
-                    onChange={(index, col, value) => changeTableElement(index, col, value)}
+                    onEdit={(tableLine, col, value) => changeTableElement(tableLine[-2] as string, col, value)}
                     tableLimits={tableLimits}
             />
 

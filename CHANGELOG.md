@@ -7,6 +7,7 @@
  - Fixed Multiselect 'undefined' bug
  - Fixed translation for "Are you sure you wish to delete this Part?"
  - Fixed ordering issue after editing or deleting Parts
+ - Fixed editing row in Parts and Items table when it is ordered/filtered
 
 ### Features
  - Added Playwright E2E tests into tests/e2e

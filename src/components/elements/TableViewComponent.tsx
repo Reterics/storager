@@ -1,4 +1,4 @@
-import {ChangeEvent, MouseEvent, MouseEventHandler, useState} from "react";
+import {ChangeEvent, MouseEvent, MouseEventHandler, useCallback, useState} from "react";
 import {
     OrderType, StyledSelectOption,
     TableHead, TableLineElementType, TableOnChangeMethod,
@@ -69,16 +69,15 @@ const TableViewHeader = ({header, orderType, orderBy, setOrderBy, setOrderType}:
 
 
 const TableViewEditableElement = (element: TableLineElementType, options: TableHead, onChange: TableOnChangeMethod, index: number, col: number) => {
-
     const [editMode, setEditMode] = useState<boolean>(false);
     const [value, setValue] = useState<TableLineElementType>(element);
 
     if (!editMode) {
-        // Support outside changing from DB
-        if (element !== value) {
-            setValue(element)
-        }
-        return <div onClick={() => setEditMode(true)}>{element} {options.postFix}</div>;
+        return <div onClick={(e) => {
+            e.stopPropagation();
+            setValue(element);
+            setEditMode(true);
+        }}>{element} {options.postFix}</div>;
     }
 
     const closeEditMode = () => {
@@ -228,7 +227,7 @@ const TableViewComponent = (
         header,
         lines,
         children,
-        onChange,
+        onEdit,
         onClick,
         selectedIndexes,
         isHighlighted,
@@ -254,6 +253,16 @@ const TableViewComponent = (
             return a[orderBy] < b[orderBy] ? 1 : -1;
         }
     })).slice(0, tableLimits ?? 10000)
+
+    const onChange = useCallback((index: number, key: string | number, value: unknown) => {
+        const line = orderedLines[index];
+
+        if (typeof onEdit === 'function') {
+            return onEdit(line, key, value);
+        }
+        return;
+    }, [onEdit, orderedLines]);
+
     return (
         <table className="text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
             <TableViewHeader header={_header}
