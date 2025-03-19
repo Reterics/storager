@@ -156,7 +156,8 @@ export interface StyledSelectArgs {
     label?: string | number | boolean,
     options: StyledSelectOption[],
     className?: string,
-    compact?: boolean
+    compact?: boolean,
+    defaultLabel?: string,
 }
 
 export interface Shop extends GeneralCollectionEntry{

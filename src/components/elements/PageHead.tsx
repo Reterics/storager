@@ -21,7 +21,8 @@ export const PageHead = (
         shopFilter,
         setShopFilter,
         activeFilter,
-        setActiveFilter
+        setActiveFilter,
+        children
     }:
     {
         buttons?: GeneralButtons[],
@@ -34,7 +35,8 @@ export const PageHead = (
         setShopFilter?: (value: string) => void,
         activeFilter?: boolean|null,
         setActiveFilter?: (value: boolean) => void,
-        debounceInterval?: false | number
+        debounceInterval?: false | number,
+        children?: React.ReactNode,
     }) => {
     const { t } = useTranslation();
     const ref = useRef<HTMLInputElement>(null);
@@ -46,10 +48,10 @@ export const PageHead = (
         }
     }) || [{value: shopFilter ?? '', name: shopFilter ?? ''}] || [];
 
-    shopOptions.unshift({value: '', name: t('All')})
+    shopOptions.unshift({value: '', name: t('All shop')})
 
     const activeOptions = [
-        {value: '', name: t('All')},
+        {value: '', name: t('No filter')},
         {value: 'true', name: t('Only active')}
     ]
 
@@ -94,14 +96,16 @@ export const PageHead = (
                 {error && <AlertBox message={error} role={"warning"} />}
 
                 <div className="flex items-center space-x-2">
+                    {children}
                     {setActiveFilter && (
                         <div className='w-30 select-no-first'>
                             <StyledSelect
                                 options={activeOptions}
                                 name="role"
-                                value={activeFilter ? 'true': ''}
+                                value={activeFilter ? 'true': undefined}
+                                defaultLabel={activeOptions[0].name}
                                 onSelect={(e) => setActiveFilter(!!(e.target as HTMLSelectElement).value)}
-                                label={t('Filter')}
+                                label={false}
                                 compact={true}
                             />
                         </div>
@@ -111,9 +115,10 @@ export const PageHead = (
                             <StyledSelect
                                 options={shopOptions}
                                 name="role"
-                                value={shopFilter ?? ''}
+                                value={shopFilter || undefined}
+                                defaultLabel={shopOptions[0].name}
                                 onSelect={(e) => setShopFilter((e.target as HTMLSelectElement).value)}
-                                label={t('Shop')}
+                                label={false}
                                 compact={true}
                             />
                         </div>
@@ -124,8 +129,9 @@ export const PageHead = (
                                 options={tableViewOptions}
                                 name="role"
                                 value={tableLimits || tableViewOptions[0].value}
+                                defaultLabel={tableViewOptions[0].name}
                                 onSelect={(e) => setTableLimits(Number((e.target as HTMLSelectElement).value))}
-                                label={t('Max')}
+                                label={false}
                                 compact={true}
                             />
                         </div>

@@ -8,12 +8,13 @@ export default function StyledSelect({
     name,
     label,
     options,
-    compact
+    compact,
+    defaultLabel
 }: Readonly<StyledSelectArgs>) {
     const { t } = useTranslation();
 
     return (
-        <div className={compact ? "w-full group flex flex-row items-center justify-between" : "relative z-0 w-full group"}>
+        <div className={compact ? "w-auto group flex flex-row items-center justify-between" : "relative z-0 w-full group"}>
             {label !== false && (
                 <label
                     htmlFor={name}
@@ -37,7 +38,7 @@ export default function StyledSelect({
                     " dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500"}
                 required
             >
-                <option defaultChecked={true}>{t('Please Select')}</option>
+                <option defaultChecked={true}>{defaultLabel || t('Please Select')}</option>
                 {options.map((option, index) => (
                     <option key={`${name}_${option.value}_${index}`} value={option.value}>
                         {option.name}

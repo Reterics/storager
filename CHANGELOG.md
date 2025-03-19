@@ -12,6 +12,8 @@
 ### Features
  - Added Playwright E2E tests into tests/e2e
  - Added Shop filter to ImportShopData Modal
+ - PageHead extendable
+ - Added type filters to Services
 
 ## [1.1.5] (2025-01-29)
 

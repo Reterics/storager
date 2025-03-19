@@ -15,8 +15,8 @@ export const typeModalOptions = [
 export const storeTableKeyOrder = ['image', 'sku', 'name', 'storage', 'price', 'shop'];
 
 export const tableViewOptions = [
-    {"value": "50", "name": "50"},
-    {"value": "100", "name": "100"},
+    {"value": "50", "name": "Max 50"},
+    {"value": "100", "name": "Max 100"},
     {"value": "10000", "name": "All"},
 ]
 

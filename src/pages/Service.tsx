@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useMemo, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {BsFillPlusCircleFill} from "react-icons/bs";
@@ -14,6 +14,7 @@ import {PDFData} from "../interfaces/pdf.ts";
 import ListModal from "../components/modals/ListModal.tsx";
 import {completionFormToPrintable, serviceDataToPrintable} from "../utils/print.tsx";
 import {compareNormalizedStrings, generateServiceId, toUserDateTime} from "../utils/data.ts";
+import StyledSelect from "../components/elements/StyledSelect.tsx";
 
 
 function Service() {
@@ -25,6 +26,7 @@ function Service() {
     const [shopFilter, setShopFilter] = useState<string>();
     const [searchFilter, setSearchFilter] = useState<string>('');
     const [activeFilter, setActiveFilter] = useState<boolean>(false);
+    const [typeFilter, setTypeFilter] = useState<string|undefined>();
 
     const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(dbContext?.data.completions || []);
     const completionFormsById = completionForms
@@ -33,7 +35,7 @@ function Service() {
             return all
         }, {} as Record<string, ServiceCompleteData>);
 
-    const filterItems = (shopFilter: string|undefined, searchFilter:string, onlyActive?: boolean) => {
+    const filterItems = (shopFilter: string|undefined, searchFilter:string, onlyActive?: boolean, typeFilter?: string) => {
         let items = dbContext?.data.services ?? [];
 
         if (shopFilter) {
@@ -52,12 +54,28 @@ function Service() {
             items = items.filter(item => !completionFormsById[item.id + '_cd'] && item.serviceStatus !== 'status_delivered')
         }
 
+        if (typeFilter) {
+            items = items.filter(item => (item.type && item.type.includes(typeFilter)));
+        }
+
         items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
 
         return items;
     };
 
     const [servicedItems, setServicedItems] = useState<ServiceData[]>(filterItems(shopFilter, searchFilter));
+
+    const availableTypes: string[] = useMemo(() => {
+        return servicedItems.reduce((types, item) => {
+            (item.type || '').split(',').forEach(item => {
+                if (item.trim() && !types.includes(item)) {
+                    types.push(item);
+                }
+            });
+            return types;
+        }, [] as string[])
+        // eslint-disable-next-line
+    }, []);
 
     const [modalTemplate, setModalTemplate] = useState<ServiceData|null>(null);
     const [completedModalTemplate, setCompletedModalTemplate] = useState<ServiceCompleteData|null>(null);
@@ -76,18 +94,23 @@ function Service() {
 
     const searchItems = (filterBy: string) => {
         setSearchFilter(filterBy)
-        setServicedItems(filterItems(shopFilter, filterBy, activeFilter));
+        setServicedItems(filterItems(shopFilter, filterBy, activeFilter, typeFilter));
     };
 
     const selectShopFilter = (shop: string) => {
         setShopFilter(shop)
-        setServicedItems(filterItems(shop, searchFilter, activeFilter));
+        setServicedItems(filterItems(shop, searchFilter, activeFilter, typeFilter));
     };
 
     const selectActiveFilter = (activeOnly: boolean) => {
         setActiveFilter(activeOnly);
-        setServicedItems(filterItems(shopFilter, searchFilter, activeOnly));
+        setServicedItems(filterItems(shopFilter, searchFilter, activeOnly, typeFilter));
     };
+
+    const selectTypeFilter = (typeFilter: string) => {
+        setTypeFilter(typeFilter)
+        setServicedItems(filterItems(shopFilter, searchFilter, activeFilter, typeFilter));
+    }
 
     const deleteServiceHistoryFor = async (item: ServiceData) => {
         if (item.id && window.confirm(t('Are you sure you wish to delete this Service and all of its history?'))) {
@@ -285,7 +308,25 @@ function Service() {
                 setShopFilter={selectShopFilter}
                 activeFilter={activeFilter}
                 setActiveFilter={selectActiveFilter}
-            />}
+            >
+                <div className='w-30 select-no-first'>
+                    <StyledSelect
+                        options={[
+                            {
+                                name: t('All type'), value:''
+                            },
+                            ...availableTypes.map(type => ({value: type, name: type}))
+                        ]}
+                        name='type'
+                        value={typeFilter || undefined}
+                        defaultLabel={t('All type')}
+                        onSelect={(e) => selectTypeFilter((e.target as HTMLSelectElement).value)}
+                        label={false}
+                        compact={true}
+                    />
+
+                </div>
+            </PageHead>}
 
             <div className={"relative flex justify-center w-full m-auto"}>
                 <div className={"mb-2 mt-1"}>
