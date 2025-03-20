@@ -50,7 +50,7 @@ describe('TableViewComponent', () => {
         fireEvent.change(input, { target: { value: 'New Item' } });
         fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
-        expect(mockOnChange).toHaveBeenCalledWith(0, 1, 'New Item'); // Check onChange callback with row and column index
+        expect(mockOnChange).toHaveBeenCalledWith([1, "Item 1", 10,], 1, 'New Item'); // Check onChange callback with row and column index
     });
 
 
