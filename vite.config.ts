@@ -32,7 +32,7 @@ export default defineConfig(({mode}) => {
       environment: 'jsdom',
       globals: true,
       setupFiles: './tests/setup.js',
-      exclude: ['tests/e2e/**/*.spec.ts'],
+      exclude: ['tests/e2e/**/*.spec.ts', 'node_modules', 'dist', 'integrations', 'standalone-cli', '**/*.test.skip.js'],
       coverage: {
         enabled: true,
         provider: 'custom',
