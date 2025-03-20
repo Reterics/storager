@@ -38,7 +38,7 @@ export default function StyledSelect({
                     " dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500"}
                 required
             >
-                <option defaultChecked={true}>{defaultLabel || t('Please Select')}</option>
+                <option defaultChecked={true} disabled hidden={true}>{defaultLabel || t('Please Select')}</option>
                 {options.map((option, index) => (
                     <option key={`${name}_${option.value}_${index}`} value={option.value}>
                         {option.name}
