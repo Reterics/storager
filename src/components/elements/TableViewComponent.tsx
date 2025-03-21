@@ -210,14 +210,14 @@ export const TableViewActions = ({
 
     return (
         <div className="inline-flex rounded-md shadow-sm align-middle" role="group">
-            {onCreate && <button type="button" className={getClass(onCreate)} onClick={onCreate}><BsFillFileEarmarkFill /></button> }
-            {onOpen && <button type="button" className={getClass(onOpen)} onClick={onOpen}><BsFillFolderFill /></button> }
-            {onSave && <button type="button" className={getClass(onSave)} onClick={onSave}><BsFloppyFill /></button> }
-            {onCode && <button type="button" className={getClass(onCode)} onClick={onCode}><BsFileCodeFill /></button> }
-            {onPaste && <button type="button" className={getClass(onPaste)} onClick={onPaste}><BsFileText /></button> }
-            {onEdit && <button type="button" className={getClass(onEdit)} onClick={onEdit}><BsPencilSquare /></button> }
-            {onRemove && <button type="button" className={getClass(onRemove)} onClick={onRemove}><BsFillTrashFill /></button> }
-            {onPrint && <button type="button" className={getClass(onPrint)} onClick={onPrint}><BsFillPrinterFill /></button> }
+            {onCreate && <button type="button" className={getClass(onCreate)} onClick={onCreate} data-testid="button-table-create"><BsFillFileEarmarkFill /></button> }
+            {onOpen && <button type="button" className={getClass(onOpen)} onClick={onOpen} data-testid="button-table-open" ><BsFillFolderFill /></button> }
+            {onSave && <button type="button" className={getClass(onSave)} onClick={onSave} data-testid="button-table-save" ><BsFloppyFill /></button> }
+            {onCode && <button type="button" className={getClass(onCode)} onClick={onCode} data-testid="button-table-code" ><BsFileCodeFill /></button> }
+            {onPaste && <button type="button" className={getClass(onPaste)} onClick={onPaste} data-testid="button-table-paste" ><BsFileText /></button> }
+            {onEdit && <button type="button" className={getClass(onEdit)} onClick={onEdit} data-testid="button-table-edit" ><BsPencilSquare /></button> }
+            {onRemove && <button type="button" className={getClass(onRemove)} onClick={onRemove} data-testid="button-table-remove" ><BsFillTrashFill /></button> }
+            {onPrint && <button type="button" className={getClass(onPrint)} onClick={onPrint} data-testid="button-table-print" ><BsFillPrinterFill /></button> }
         </div>
     );
 }
