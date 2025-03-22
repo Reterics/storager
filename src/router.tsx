@@ -13,6 +13,8 @@ import RecycleBin from "./pages/RecycleBin.tsx";
 import Invoices from "./pages/Invoices.tsx";
 import Print from "./pages/Print.tsx";
 import Diagnostic from "./pages/Diagnostic.tsx";
+import TermsOfUse from "./pages/TermsOfUse.tsx";
+import {UserBasedLayout} from "./layouts/UserBasedLayout.tsx";
 
 
 function QueryRouter() {
@@ -46,6 +48,8 @@ function QueryRouter() {
                 return <InAppLayout><Diagnostic /></InAppLayout>;
             case 'signin':
                 return <SignInComponent />;
+            case 'terms':
+                return <UserBasedLayout><TermsOfUse/></UserBasedLayout>;
             default:
                 return <InAppLayout><Shops /></InAppLayout>;
         }

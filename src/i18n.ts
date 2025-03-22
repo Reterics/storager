@@ -4,12 +4,19 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import your translation files
 import translationEN from './locales/en/translation.json';
-import translationHU from './locales/hu/translation.json';  // Example for Hungarian
+import termsEN from './locales/en/terms.json';
+import translationHU from './locales/hu/translation.json';
+import termsHU from './locales/hu/terms.json';
 
-// Define resources
 const resources = {
-    en: { translation: translationEN },
-    hu: { translation: translationHU },
+    en: {
+        translation: translationEN,
+        terms: termsEN,
+    },
+    hu: {
+        translation: translationHU,
+        terms: termsHU,
+    },
 };
 
 i18n
