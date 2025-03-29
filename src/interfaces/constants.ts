@@ -21,3 +21,27 @@ export const tableViewOptions = [
 ]
 
 export const invoiceStatusCodes: InvoiceStatus[] = ['created', 'done'];
+
+
+export const paymentMethods = [
+    {"value": "card", "name": "Card"},
+    {"value": "cash", "name": "Cash"},
+    {"value": "transfer", "name": "Transfer"},
+];
+
+export const documentTypes = [
+    {"value": "invoice", "name": "Invoice"},
+    {"value": "receipt", "name": "Receipt"},
+    {"value": "other", "name": "Other"},
+];
+
+export const transactionTypes = [
+    {"value": "sell", "name": "Sell"},
+    {"value": "buy", "name": "Buy"},
+    {"value": "revert", "name": "Revert"},
+];
+export const transactionItemTypes = [
+    {"value": "part", "name": "Part"},
+    {"value": "item", "name": "Item"},
+    {"value": "other", "name": "Other"},
+];

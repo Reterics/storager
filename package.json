@@ -46,6 +46,7 @@
     "react-leaflet": "5.0.0",
     "react-router-dom": "^6.27.0",
     "react-signature-pad-wrapper": "4.1.0",
+    "recharts": "^2.15.1",
     "throttle-debounce": "^5.0.2"
   },
   "devDependencies": {

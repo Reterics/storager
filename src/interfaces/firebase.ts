@@ -5,7 +5,7 @@ import {
     SettingsItems,
     Shop, ShopType,
     StoreItem,
-    StorePart, StyledSelectOption,
+    StorePart, StyledSelectOption, TransactionType,
     UserData
 } from "./interfaces.ts";
 
@@ -22,13 +22,14 @@ export interface ContextData {
     archive: ContextDataValueType[],
     types: ShopType[],
     deleted: ContextDataValueType[],
-    invoices: InvoiceType[]
+    invoices: InvoiceType[],
+    transactions: TransactionType[],
 }
 
 
-export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData|InvoiceType[]
-export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive'|'invoices';
-export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType|InvoiceType;
+export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData|InvoiceType[]|TransactionType[]
+export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive'|'invoices'|'transactions';
+export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType|InvoiceType|TransactionType;
 
 export interface DBContextType {
     data: ContextData,

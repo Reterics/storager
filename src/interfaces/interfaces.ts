@@ -220,6 +220,20 @@ export interface ShopType extends GeneralCollectionEntry {
     category?: string
 }
 
+export interface TransactionType extends GeneralCollectionEntry {
+    id: string,
+    name?: string,
+    shop_id?: string,
+    cost?: number,
+    item_type?: 'part'|'item'|'other',
+    net_amount?: number,
+    gross_amount?: number,
+    payment_method?: 'card'|'cash'|'transfer',
+    document_type?: 'invoice'|'receipt'|'other',
+    type?: 'sell'|'buy'|'revert',
+    user?: string,
+}
+
 export type InvoiceStatus = 'created' | 'done';
 
 export interface InvoiceType extends GeneralCollectionEntry {

@@ -12,7 +12,7 @@ import {
     SettingsItems,
     Shop, ShopType,
     StoreItem,
-    StorePart, StyledSelectOption, UserData
+    StorePart, StyledSelectOption, TransactionType, UserData
 } from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
 import {DBContext} from "../DBContext.ts";
@@ -67,6 +67,7 @@ export const FirebaseProvider = ({children}: {
         let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
         let invoices: InvoiceType[] = [];
+        let transactions: TransactionType[] = [];
 
         users = users.map(user => {
             user.password = undefined;
@@ -105,6 +106,7 @@ export const FirebaseProvider = ({children}: {
             archive = await getCollection(firebaseCollections.archive) as ContextDataValueType[];
             types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
             invoices = await getCollection(firebaseCollections.invoices) as InvoiceType[];
+            transactions = await getCollection(firebaseCollections.transactions) as TransactionType[];
         }
 
         if (user?.shop_id?.length) {
@@ -138,7 +140,8 @@ export const FirebaseProvider = ({children}: {
             archive: archive,
             types: types,
             deleted: await firebaseModel.getAll('deleted'),
-            invoices
+            invoices,
+            transactions
         })
     }
 

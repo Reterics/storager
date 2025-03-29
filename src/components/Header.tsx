@@ -160,6 +160,14 @@ const Header = () => {
                                              "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
                                 >{t('Invoices')}</NavLink>
                             </li>}
+                            {shop && <li>
+                                <NavLink to='/?page=transactions'
+                                         onClick={handleLinkClick}
+                                         className={page === 'transactions' ?
+                                             "block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500" :
+                                             "block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"}
+                                >{t('Transactions')}</NavLink>
+                            </li>}
 
                             <li className="relative">
                                 <button
