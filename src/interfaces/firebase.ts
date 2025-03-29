@@ -5,7 +5,7 @@ import {
     SettingsItems,
     Shop, ShopType,
     StoreItem,
-    StorePart, StyledSelectOption,
+    StorePart, StyledSelectOption, TransactionType,
     UserData
 } from "./interfaces.ts";
 import {LogEntry} from "../database/firebase/FirebaseDBModel.ts";
@@ -25,12 +25,13 @@ export interface ContextData {
     deleted: ContextDataValueType[],
     invoices: InvoiceType[],
     logs: LogEntry[],
+    transactions: TransactionType[],
 }
 
 
-export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData|InvoiceType[]|LogEntry[]
-export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive'|'invoices'|'logs';
-export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType|InvoiceType|LogEntry;
+export type ContextDataCollectionType = Shop[]|StoreItem[]|StorePart[]|ShopType[]|ServiceData[]|ServiceCompleteData[]|SettingsItems|UserData[]|UserData|InvoiceType[]|LogEntry[]|TransactionType[]
+export type ContextDataType = 'shops'|'items'|'parts'|'services'|'completions'|'settings'|'users'|'types'|'archive'|'invoices'|'logs'|'transactions';
+export type ContextDataValueType = Shop|StoreItem|StorePart|ServiceData|ServiceCompleteData|SettingsItems|UserData|ShopType|InvoiceType|LogEntry|TransactionType;
 
 export interface DBContextType {
     data: ContextData,

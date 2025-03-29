@@ -16,6 +16,7 @@ import Diagnostic from "./pages/Diagnostic.tsx";
 import TermsOfUse from "./pages/TermsOfUse.tsx";
 import {UserBasedLayout} from "./layouts/UserBasedLayout.tsx";
 import Logs from "./pages/Logs.tsx";
+import Transactions from "./pages/Transactions.tsx";
 
 
 function QueryRouter() {
@@ -43,6 +44,8 @@ function QueryRouter() {
                 return <InAppLayout><RecycleBin /></InAppLayout>;
             case 'invoices':
                 return <InAppLayout><Invoices /></InAppLayout>;
+            case 'transactions':
+                return <InAppLayout><Transactions /></InAppLayout>;
             case 'print':
                 return <InAppLayout><Print /></InAppLayout>;
             case 'diag':

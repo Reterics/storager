@@ -150,5 +150,6 @@ export const defaultContextData:ContextData = {
     types: defaultTypes,
     deleted: [],
     invoices: [],
-    logs: []
+    logs: [],
+    transactions: []
 }

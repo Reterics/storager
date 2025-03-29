@@ -26,6 +26,7 @@ export const firebaseCollections = {
     types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
     invoices: import.meta.env.VITE_FIREBASE_DB_INVOICES || 'invoices',
     logs: import.meta.env.VITE_FIREBASE_DB_LOGS || 'logs',
+    transactions: import.meta.env.VITE_FIREBASE_DB_transactions || 'transactions',
 };
 
 export const logger = new STLogger();

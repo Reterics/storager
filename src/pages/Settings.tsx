@@ -1,4 +1,4 @@
-import {FormEvent, useContext, useEffect, useRef, useState} from "react";
+import {ChangeEvent, FormEvent, useContext, useEffect, useRef, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import StyledInput from "../components/elements/StyledInput.tsx";
@@ -11,6 +11,7 @@ import {downloadAsFile} from "../utils/general.ts";
 import {PageHead} from "../components/elements/PageHead.tsx";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import {CommonCollectionData} from "../interfaces/firebase.ts";
+import StyledSelect from "../components/elements/StyledSelect.tsx";
 
 
 function Service() {
@@ -176,6 +177,40 @@ function Service() {
                         </div>
                     </form>
             </div>
+            {
+                dbContext?.data.currentUser.role === 'admin' &&
+                <div className='w-full place-content-center flex flex-row'>
+                    <div className='max-w-screen-xl w-full place-items-center flex flex-row bg-white dark:bg-gray-900 shadow-md mt-4'>
+
+                        <PageHead title={t('Feature Settings')} buttons={[]}/>
+                    </div>
+                </div>
+            }
+            {
+                dbContext?.data.currentUser.role === 'admin'  &&
+                <div
+                     className="flex flex-row text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center
+                 bg-white rounded dark:bg-gray-900 p-4">
+
+                <form onSubmit={handleSubmit} className="w-full">
+                    <FormRow>
+                        <StyledSelect
+                            type="text" name="document_type"
+                            value={"off"}
+                            options={[{
+                                value: 'off',
+                                name: 'Off (Inventory mode)'
+                            },{
+                                value: 'on',
+                                name: 'On (Shop mode)'
+                            }]}
+                            onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>)}
+                            label={t("Automatic transaction creation on storage change")}
+                        />
+                        <div></div>
+                    </FormRow>
+                </form></div>
+            }
             {
                 dbContext?.data.currentUser.role === 'admin' &&
                 <div className='w-full place-content-center flex flex-row'>
