@@ -158,5 +158,7 @@
   "Local Backup": "Helyi biztonsági mentés",
   "Invoice subject": "Számla tárgya",
   "Purchase cost": "Beszerzés összege",
-  "Are you sure you wish to delete this Part?": "Biztosan törlöd az alábbi alkatrészt?"
+  "Are you sure you wish to delete this Part?": "Biztosan törlöd az alábbi alkatrészt?",
+  "Modified Date": "Módosítva",
+  "Created Date": "Készült"
 }

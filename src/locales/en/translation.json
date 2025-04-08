@@ -158,5 +158,7 @@
   "Local Backup": "Local Backup",
   "Invoice subject": "Invoice subject",
   "Purchase cost": "Purchase cost",
-  "Are you sure you wish to delete this Part?": "Are you sure you wish to delete this Part?"
+  "Are you sure you wish to delete this Part?": "Are you sure you wish to delete this Part?",
+  "Modified Date": "Modified Date",
+  "Created Date": "Created Date"
 }

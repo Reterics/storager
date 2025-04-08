@@ -99,6 +99,7 @@ function Invoices() {
         }
 
         const updatedTimeTimestamp = (invoice.docUpdated ?? invoice.done) ?? invoice.created
+        const createdTime = new Date(invoice.created!).toISOString().split('.')[0].replace('T', ' ')
         const updatedTime = updatedTimeTimestamp ? new Date(updatedTimeTimestamp).toISOString().split('.')[0].replace('T', ' ') : '?'
 
         return [
@@ -108,6 +109,7 @@ function Invoices() {
             assignedShops?.length ? assignedShops.map(a=>a.name).join(', ') : t('Minden bolt'),
             invoice.status ? t(invoice.status.charAt(0).toUpperCase() + invoice.status.substring(1)): '',
             updatedTime,
+            createdTime,
             TableViewActions({
                 onRemove: () => deleteInvoice(invoice),
                 onEdit: () => setModalTemplate(invoice)
@@ -146,7 +148,8 @@ function Invoices() {
                                 t('Tax ID'),
                                 t('Shop'),
                                 t('Status'),
-                                t('Date'),
+                                t('Modified Date'),
+                                t('Created Date'),
                                 t('Actions')]}
         />
 
