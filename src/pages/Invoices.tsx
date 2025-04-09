@@ -99,7 +99,7 @@ function Invoices() {
         }
 
         const updatedTimeTimestamp = (invoice.docUpdated ?? invoice.done) ?? invoice.created
-        const createdTime = new Date(invoice.created!).toISOString().split('.')[0].replace('T', ' ')
+        const createdTime = invoice.created ? new Date(invoice.created).toISOString().split('.')[0].replace('T', ' ') : '?'
         const updatedTime = updatedTimeTimestamp ? new Date(updatedTimeTimestamp).toISOString().split('.')[0].replace('T', ' ') : '?'
 
         return [
