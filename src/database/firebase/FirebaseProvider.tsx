@@ -31,7 +31,6 @@ export const FirebaseProvider = ({children}: {
     const [ctxData, setCtxData] = useState<ContextData|null>(null);
     const renderAfterCalled = useRef(false);
 
-
     const postProcessStoreData = async (array: StoreItem[]|StorePart[]) => {
         if (Array.isArray(array)) {
             for (const element of array) {
@@ -53,7 +52,6 @@ export const FirebaseProvider = ({children}: {
             }
         }
     };
-
 
     const getContextData = async (cache: boolean = false) => {
         let users = await getCollection(firebaseCollections.users, true) as UserData[];
@@ -299,6 +297,7 @@ export const FirebaseProvider = ({children}: {
                 .finally(() => imageModel.integrityCheck(firebaseModel.getCached('parts')))
                 .finally(() => imageModel.integrityCheck(firebaseModel.getCached('items')))
                 .finally(() => getContextData(true))
+                .finally(() => firebaseModel.setUser(authContext.user))
 
         }
 

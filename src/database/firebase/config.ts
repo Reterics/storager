@@ -40,7 +40,8 @@ export const firebaseModel = new FirebaseDBModel({
         parts: storageTTL.hot,
         archive: storageTTL.cold,
         types: storageTTL.cold,
-    }
+    },
+    storageLogs: import.meta.env.VITE_FIREBASE_DB_INVOICES === 'true'
 });
 
 const app = firebaseModel.getApp();

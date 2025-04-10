@@ -15,7 +15,6 @@ export const UserBasedLayout = ({children}: {
     if (!user) {
         return (<>
             <UserHeader />
-
         </>)
     }
 

@@ -108,3 +108,25 @@ export const readJSONFile = async (): Promise<object|null> => {
 
     return json;
 }
+
+
+export const getClientInfo = () => {
+    if (typeof navigator === 'undefined') {
+        return {
+            deviceType: 'unknown',
+            userAgent: 'unknown',
+            language: 'unknown'
+        };
+    }
+
+    const userAgent = navigator.userAgent || '';
+    const language = navigator.language || 'unknown';
+
+    const deviceType = /Mobi|Android|iPhone|iPad|Tablet/i.test(userAgent) ? 'mobile' : 'desktop';
+
+    return {
+        deviceType,
+        userAgent,
+        language
+    };
+};

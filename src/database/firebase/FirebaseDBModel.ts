@@ -15,13 +15,33 @@ import {
     writeBatch
 } from "firebase/firestore";
 import {CommonCollectionData, ContextDataValueType, TTLData} from "../../interfaces/firebase.ts";
+import {User} from "firebase/auth";
+import {getChangedFields} from "../../utils/data.ts";
+import {getClientInfo} from "../../utils/general.ts";
 
+type operationType = 'remove'|'restore'|'removePermanent'|'update'|'updateAll'|'add'
+
+interface LogEntry {
+    entity: string;
+    action: operationType;
+    uid: string;
+    email: string;
+    at: number;
+    item_id?: string;
+    changes: Record<string, unknown>;
+    device_type?: string;
+    user_agent?: string;
+}
 
 export default class FirebaseDBModel extends DBModel {
-    private _app: FirebaseApp;
-    private _db: Firestore;
+    protected _app: FirebaseApp;
+    protected _db: Firestore;
+    protected _storageLogs: boolean;
+    protected _collectionsToLog: string[];
+    protected _user: User | null | undefined;
+    protected _logFailCount: number;
 
-    constructor(options?: {ttl?: TTLData, mtime?: TTLData}) {
+    constructor(options?: {ttl?: TTLData, mtime?: TTLData, storageLogs?: boolean, collectionsToLog?: string[]}) {
         super(options);
         this._app = initializeApp({
             apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
@@ -33,6 +53,60 @@ export default class FirebaseDBModel extends DBModel {
             measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
         });
         this._db = getFirestore(this._app);
+        this._storageLogs = !!options?.storageLogs;
+        this._collectionsToLog = options?.collectionsToLog || [];
+        this._logFailCount = 0;
+    }
+
+
+    setUser(user: User | null | undefined) {
+        this._user = user;
+    }
+
+    logCatch(e: Error) {
+        console.error('Failed to log error: ', e);
+        this._logFailCount++;
+
+        if (this._logFailCount > 5) {
+            console.warn('Failed to log 5 times **in** a row. Logs are disabled');
+            this._storageLogs = false;
+        }
+    }
+
+    async log(opType: operationType, table: string, id?: string, item?: CommonCollectionData) {
+        if (!this._storageLogs || !this._collectionsToLog.includes(table)) {
+            // Logging is disabled for this type
+            return;
+        }
+
+        const oldItem = item ? this.getCachedEntry(id || item.id, table) : undefined;
+
+        let changes: Record<string, unknown> = {};
+        if (opType === 'add' && item) {
+            changes = item;
+        } else if (oldItem && item) {
+            changes = getChangedFields(oldItem, item);
+        }
+
+        const clientInfo = getClientInfo();
+
+        const logEntry: LogEntry = {
+            entity: `${table}/${id}`,
+            action: opType,
+            uid: this._user?.uid || 'unknown uid',
+            email: this._user?.email || 'unknown email',
+            device_type: clientInfo.deviceType,
+            user_agent: clientInfo.userAgent,
+            at: Date.now(),
+            item_id: id,
+            changes: changes,
+        }
+        const modelRef = await addDoc(collection(this._db, 'logs'), logEntry)
+            .catch((e) => this.logCatch(e));
+
+        if (modelRef) {
+            this._logFailCount = 0;
+        }
     }
 
     getApp() {

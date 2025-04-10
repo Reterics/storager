@@ -64,3 +64,26 @@ export const compareNormalizedStrings = (str1: string, str2: string) => {
     const normalized2 = normalizeString(str2);
     return normalized1 === normalized2;
 }
+
+export const getChangedFields = (oldObj: Record<string, unknown>, newObj: Record<string, unknown>) => {
+    const changes: Record<string, unknown> = {};
+
+    const allKeys = new Set([
+        ...Object.keys(oldObj),
+        ...Object.keys(newObj)
+    ]);
+
+    for (const key of allKeys) {
+        let oldVal = oldObj[key];
+        let newVal = newObj[key];
+
+        if (Array.isArray(oldVal)) oldVal = oldVal[0];
+        if (Array.isArray(newVal)) newVal = newVal[0];
+
+        if (oldVal !== newVal) {
+            changes[key] = { from: oldVal, to: newVal };
+        }
+    }
+
+    return changes;
+};
