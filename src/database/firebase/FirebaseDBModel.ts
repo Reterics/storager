@@ -16,21 +16,27 @@ import {
 } from "firebase/firestore";
 import {CommonCollectionData, ContextDataValueType, TTLData} from "../../interfaces/firebase.ts";
 import {User} from "firebase/auth";
-import {getChangedFields} from "../../utils/data.ts";
+import {DeviceDebugInfo, getChangedFields, getDeviceDebugInfo} from "../../utils/data.ts";
 import {getClientInfo} from "../../utils/general.ts";
+import {GeneralCollectionEntry} from "../../interfaces/interfaces.ts";
 
 type operationType = 'remove'|'restore'|'removePermanent'|'update'|'updateAll'|'add'
 
-interface LogEntry {
-    entity: string;
-    action: operationType;
-    uid: string;
-    email: string;
-    at: number;
+
+export interface LogEntry extends GeneralCollectionEntry {
+    id: string;
+    entity?: string;
+    action?: operationType;
+    uid?: string;
+    email?: string;
+    at?: number;
     item_id?: string;
-    changes: Record<string, unknown>;
+    changes?: Record<string, unknown>;
     device_type?: string;
     user_agent?: string;
+    shop_id?: string[];
+    error?: string;
+    device_info?: DeviceDebugInfo;
 }
 
 export default class FirebaseDBModel extends DBModel {
@@ -40,6 +46,7 @@ export default class FirebaseDBModel extends DBModel {
     protected _collectionsToLog: string[];
     protected _user: User | null | undefined;
     protected _logFailCount: number;
+    protected _shopId: string | undefined;
 
     constructor(options?: {ttl?: TTLData, mtime?: TTLData, storageLogs?: boolean, collectionsToLog?: string[]}) {
         super(options);
@@ -63,6 +70,10 @@ export default class FirebaseDBModel extends DBModel {
         this._user = user;
     }
 
+    setShopId(id?: string) {
+        this._shopId = id;
+    }
+
     logCatch(e: Error) {
         console.error('Failed to log error: ', e);
         this._logFailCount++;
@@ -73,7 +84,7 @@ export default class FirebaseDBModel extends DBModel {
         }
     }
 
-    async log(opType: operationType, table: string, id?: string, item?: CommonCollectionData) {
+    async log(opType: operationType, table: string, id?: string, item?: CommonCollectionData, error?: string) {
         if (!this._storageLogs || !this._collectionsToLog.includes(table)) {
             // Logging is disabled for this type
             return;
@@ -82,15 +93,16 @@ export default class FirebaseDBModel extends DBModel {
         const oldItem = item ? this.getCachedEntry(id || item.id, table) : undefined;
 
         let changes: Record<string, unknown> = {};
-        if (opType === 'add' && item) {
-            changes = item;
-        } else if (oldItem && item) {
+        if (opType !== 'add' && oldItem && item) {
             changes = getChangedFields(oldItem, item);
+            delete changes.docUpdated;
+        } else if (opType === 'add' && error && item) {
+            changes = item;
         }
 
         const clientInfo = getClientInfo();
 
-        const logEntry: LogEntry = {
+        const logEntry: Partial<LogEntry> = {
             entity: `${table}/${id}`,
             action: opType,
             uid: this._user?.uid || 'unknown uid',
@@ -99,8 +111,17 @@ export default class FirebaseDBModel extends DBModel {
             user_agent: clientInfo.userAgent,
             at: Date.now(),
             item_id: id,
-            changes: changes,
+            changes: changes
         }
+
+        if (this._shopId) {
+            logEntry.shop_id = [this._shopId];
+        }
+        if (error) {
+            logEntry.error = error
+            logEntry.device_info = getDeviceDebugInfo();
+        }
+
         const modelRef = await addDoc(collection(this._db, 'logs'), logEntry)
             .catch((e) => this.logCatch(e));
 
@@ -207,6 +228,9 @@ export default class FirebaseDBModel extends DBModel {
     }
 
     async restore(id: string): Promise<boolean> {
+        /*if (this._storageLogs) {
+            return !!(await this.removePermanent(id));
+        }*/
         const cached = this.getCachedEntry(id, 'deleted');
         // There must be a cached entry, otherwise we would not show it in UI
         if (cached) {
@@ -246,11 +270,13 @@ export default class FirebaseDBModel extends DBModel {
 
     async update(item: ContextDataValueType, table: string): Promise<void> {
         if (!item) {
+            void this.log('update', table, undefined, undefined, 'Empty item')
             return;
         }
 
         let modelRef;
         let imageCache;
+        let error;
 
         if (item && item.id) {
             // If item has an ID, update the existing document
@@ -273,6 +299,7 @@ export default class FirebaseDBModel extends DBModel {
         // Use setDoc with { merge: true } to update or create the document
         await setDoc(modelRef, item, { merge: true }).catch(e => {
             console.error(e);
+            error = e;
         });
 
         if (item && imageCache) {
@@ -280,6 +307,8 @@ export default class FirebaseDBModel extends DBModel {
             // @ts-expect-error
             item.image = imageCache;
         }
+        // We must wait to not interfere with updateCachedEntry
+        await this.log('update', table, item.id as string | undefined, item as CommonCollectionData, error);
         this.updateCachedEntry(item.id as string, table, item as CommonCollectionData);
         this.sync();
     }
@@ -331,17 +360,21 @@ export default class FirebaseDBModel extends DBModel {
 
     async add(item: { [key: string]: unknown }, table: string): Promise<void | string> {
         if (!item) {
+            void this.log('add', table, undefined, undefined, 'Empty item')
             return;
         }
-
+        let error;
         const modelRef = await addDoc(collection(this._db, table), item).catch(e => {
             console.error(e);
+            error = e.message;
         });
         if (modelRef) {
             item.id = modelRef.id;
         }
         this.appendCachedEntry(table, item as CommonCollectionData);
         this.sync();
+
+        void this.log('add', table, item.id as string | undefined, item as CommonCollectionData, error);
         return item.id as string | undefined;
     }
 }

@@ -71,3 +71,17 @@ export const completionFormToPrintable = (item: ServiceCompleteData, t: (n: stri
                 ], signature: item.signature ? item.signature : undefined
         }
 }
+
+export const formatChanges = (changes: { [key: string]: { from: string; to: string } }) => {
+        const entries = Object.entries(changes);
+
+        return entries.map(([field, { from, to }]) => (
+            <div key={field}>
+                    <strong>{capitalize(field)}</strong>: {from} → {to}
+            </div>
+        ));
+};
+
+export function capitalize(str: string) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+}

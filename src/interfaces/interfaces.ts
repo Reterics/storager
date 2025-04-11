@@ -160,7 +160,7 @@ export interface StyledSelectArgs {
     defaultLabel?: string,
 }
 
-export interface Shop extends GeneralCollectionEntry{
+export interface Shop extends GeneralCollectionEntry {
     id: string,
     name?: string,
     address?: string,

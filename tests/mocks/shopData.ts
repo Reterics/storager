@@ -149,5 +149,6 @@ export const defaultContextData:ContextData = {
     archive: [],
     types: defaultTypes,
     deleted: [],
-    invoices: []
+    invoices: [],
+    logs: []
 }

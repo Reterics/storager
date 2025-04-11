@@ -8,7 +8,7 @@ import {DBContext} from "../database/DBContext.ts";
 import logo from "../assets/logo.svg";
 import logoWhite from "../assets/logo_white.svg";
 import {
-    BsArrowClockwise,
+    BsArrowClockwise, BsCardList,
     BsDoorOpen,
     BsFillGearFill,
     BsFillPersonLinesFill,
@@ -215,6 +215,16 @@ const Header = () => {
                                                 >
                                                     <div className="text-xl me-2"><BsFillGearFill/></div>
                                                     {t('Settings')}
+                                                </NavLink>
+                                            </li>}
+                                            {isAdmin && <li>
+                                                <NavLink
+                                                    to="/?page=logs"
+                                                    onClick={handleLinkClick}
+                                                    className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                                                >
+                                                    <div className="text-xl me-2"><BsCardList /></div>
+                                                    {t('Logs')}
                                                 </NavLink>
                                             </li>}
                                             {isAdmin && <li>

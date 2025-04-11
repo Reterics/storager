@@ -25,6 +25,7 @@ export const firebaseCollections = {
     archive: import.meta.env.VITE_FIREBASE_DB_ARCHIVE || 'archive',
     types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
     invoices: import.meta.env.VITE_FIREBASE_DB_INVOICES || 'invoices',
+    logs: import.meta.env.VITE_FIREBASE_DB_LOGS || 'logs',
 };
 
 export const logger = new STLogger();
@@ -41,7 +42,8 @@ export const firebaseModel = new FirebaseDBModel({
         archive: storageTTL.cold,
         types: storageTTL.cold,
     },
-    storageLogs: import.meta.env.VITE_FIREBASE_DB_INVOICES === 'true'
+    storageLogs: import.meta.env.VITE_STORAGE_LOGS === 'true',
+    collectionsToLog: ['parts', 'items', 'shops']
 });
 
 const app = firebaseModel.getApp();

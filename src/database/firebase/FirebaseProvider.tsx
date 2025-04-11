@@ -20,6 +20,7 @@ import {AuthContext} from "../../store/AuthContext.tsx";
 import {addDoc, collection} from "firebase/firestore";
 import {ShopContext} from "../../store/ShopContext.tsx";
 import {imageModel} from "./storage.ts";
+import {LogEntry} from "./FirebaseDBModel.ts";
 
 
 export const FirebaseProvider = ({children}: {
@@ -65,15 +66,18 @@ export const FirebaseProvider = ({children}: {
         let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
         let invoices: InvoiceType[] = [];
+        let logs: LogEntry[] = [];
 
         users = users.map(user => {
             user.password = undefined;
             user.password_confirmation = undefined;
             return user;
         })
-
+console.log(authContext.user?.email)
         if (authContext.user?.email) {
             user = users.find(user => user.email === authContext.user?.email);
+            console.log(authContext.user?.email)
+
             if (!user) {
                 console.error('User is not found in the Firestore settings');
             } else if (user.role !== 'admin') {
@@ -91,6 +95,7 @@ export const FirebaseProvider = ({children}: {
                 }
             } else {
                 settings = await getCollection(firebaseCollections.settings) as SettingsItems[];
+                logs = await getCollection(firebaseCollections.logs) as unknown as LogEntry[];
             }
         }
 
@@ -136,7 +141,8 @@ export const FirebaseProvider = ({children}: {
             archive: archive,
             types: types,
             deleted: await firebaseModel.getAll('deleted'),
-            invoices
+            invoices,
+            logs: logs || []
         })
     }
 
@@ -298,6 +304,7 @@ export const FirebaseProvider = ({children}: {
                 .finally(() => imageModel.integrityCheck(firebaseModel.getCached('items')))
                 .finally(() => getContextData(true))
                 .finally(() => firebaseModel.setUser(authContext.user))
+                .finally(() => firebaseModel.setShopId(shopContext.shop?.id))
 
         }
 

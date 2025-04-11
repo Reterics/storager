@@ -80,10 +80,85 @@ export const getChangedFields = (oldObj: Record<string, unknown>, newObj: Record
         if (Array.isArray(oldVal)) oldVal = oldVal[0];
         if (Array.isArray(newVal)) newVal = newVal[0];
 
-        if (oldVal !== newVal) {
-            changes[key] = { from: oldVal, to: newVal };
+        if (oldVal !== newVal && newVal) {
+            changes[key] = { from: oldVal === undefined ? 'undefined' : oldVal, to: newVal };
         }
     }
 
     return changes;
+};
+
+
+export const getBrowserInfo = (userAgent: string) => {
+    let match: RegExpMatchArray | null;
+    let name = 'Unknown';
+    let version = '';
+
+    if ((match = userAgent.match(/Chrome\/([\d.]+)/)) && !userAgent.includes('Edg/')) {
+        name = 'Chrome';
+        version = match[1];
+    } else if ((match = userAgent.match(/Edg\/([\d.]+)/))) {
+        name = 'Edge';
+        version = match[1];
+    } else if ((match = userAgent.match(/Firefox\/([\d.]+)/))) {
+        name = 'Firefox';
+        version = match[1];
+    } else if ((match = userAgent.match(/Version\/([\d.]+).*Safari/))) {
+        name = 'Safari';
+        version = match[1];
+    } else if ((match = userAgent.match(/OPR\/([\d.]+)/))) {
+        name = 'Opera';
+        version = match[1];
+    }
+
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
+
+    return { name, version, isMobile };
+};
+
+export interface DeviceDebugScreenInfo {
+    width: number,
+    height: number,
+    availWidth: number,
+    availHeight: number,
+    orientation: string,
+}
+
+export interface DeviceDebugViewportInfo {
+    innerWidth: number,
+    innerHeight: number,
+}
+
+export interface DeviceDebugInfo {
+    language: string,
+    hardwareConcurrency: string | number,
+    devicePixelRatio: number,
+    screen: DeviceDebugScreenInfo,
+    viewport: DeviceDebugViewportInfo,
+}
+
+export const getDeviceDebugInfo = (): DeviceDebugInfo => {
+    const { width, height, availWidth, availHeight, orientation } = screen;
+    // Fallback for Safari
+    const orientationType = orientation?.type ?? (typeof window.orientation === 'number'
+            ? (Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait')
+            : 'unknown'
+    );
+
+    return {
+        language: navigator.language,
+        hardwareConcurrency: navigator.hardwareConcurrency ?? 'unknown',
+        devicePixelRatio: window.devicePixelRatio,
+        screen: {
+            width,
+            height,
+            availWidth,
+            availHeight,
+            orientation: orientationType,
+        },
+        viewport: {
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight,
+        }
+    };
 };
