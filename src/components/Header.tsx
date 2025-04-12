@@ -217,7 +217,7 @@ const Header = () => {
                                                     {t('Settings')}
                                                 </NavLink>
                                             </li>}
-                                            {isAdmin && <li>
+                                            {isAdmin && firebaseModel.isLoggingActive() && <li>
                                                 <NavLink
                                                     to="/?page=logs"
                                                     onClick={handleLinkClick}

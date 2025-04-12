@@ -9,12 +9,18 @@ import {LogEntry} from "../database/firebase/FirebaseDBModel.ts";
 import {getBrowserInfo} from "../utils/data.ts";
 import {formatChanges} from "../utils/print.tsx";
 import {BsCheck, BsX} from "react-icons/bs";
+import {firebaseModel} from "../database/firebase/config.ts";
+import {CommonCollectionData, ContextDataType} from "../interfaces/firebase.ts";
 
 
 export default function Logs() {
     const dbContext = useContext(DBContext);
     const { t } = useTranslation();
     const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
+
+    const dataKeys: {
+        [key: string]: Record<string, string>
+    } = {};
 
     const filterItems = (shopFilter: string|undefined) => {
         let items = dbContext?.data.logs ?? [];
@@ -52,13 +58,31 @@ export default function Logs() {
         return <UnauthorizedComponent />;
     }
 
+    if (!firebaseModel.isLoggingActive()) {
+        return <div>Logging is not active in the system.</div>;
+    }
     const tableLines = logs.map(log => {
+        let entityName = log.entity || '';
+        if (log.entity) {
+            const [type, id] = log.entity.split('/');
+            if (type && !dataKeys[type]) {
+                dataKeys[type] = ((dbContext?.data?.[type as ContextDataType] || []) as CommonCollectionData[])
+                    .reduce((out, currentValue) => {
+                        out[currentValue.id] = (currentValue.name || '') as string;
+                        return out;
+                    }, {} as Record<string, string>);
+            }
+            if (type && id && dataKeys[type][id]) {
+                entityName = dataKeys[type][id] as string
+            }
+        }
+
         const assignedShops = log?.shop_id?.map(id => shops.find(shop=>shop.id === id))
             .filter(a => a) as Shop[];
 
         const browserInfo = log.user_agent ? getBrowserInfo(log.user_agent) : undefined;
         const array =  [
-            <span title={log.entity}>{log.entity?.substring(0, 11)}</span>,
+            <span title={log.entity}>{entityName?.substring(0, 11)}</span>,
             <div className="flex items-center" title={log.error}>{log.action} {log.error ? <BsX className="text-lg text-red-500" /> : <BsCheck className="text-lg text-green-500" />}</div>,
             log.email || log.uid,
             log.device_type,
