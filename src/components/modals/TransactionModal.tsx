@@ -1,7 +1,7 @@
 import {
     GeneralModalButtons,
     ShopType,
-    TransactionType,
+    Transaction,
     StyledSelectOption
 } from "../../interfaces/interfaces.ts";
 import {useTranslation} from "react-i18next";
@@ -14,9 +14,9 @@ import {documentTypes, paymentMethods, transactionItemTypes, transactionTypes} f
 
 export interface TransactionModalProps {
     onClose: () => void,
-    onSave: (item: ShopType) => Promise<void>,
-    setTransaction: (item: ShopType) => void,
-    transaction: TransactionType | null,
+    onSave: (item: Transaction) => Promise<void>,
+    setTransaction: (item: Transaction) => void,
+    transaction: Transaction | null,
     inPlace: boolean,
     shops: ShopType[]
 }
@@ -31,6 +31,15 @@ export default function TransactionModal({onClose, onSave, setTransaction, trans
         } as StyledSelectOption
     });
 
+    const selectMultiShopId = (e: React.ChangeEvent<HTMLInputElement>)=> {
+        const value = e.target.value;
+
+        setTransaction({
+            ...transaction as Transaction,
+            shop_id: [value]
+        });
+    };
+
     const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
         const value = e.target.value;
 
@@ -39,7 +48,7 @@ export default function TransactionModal({onClose, onSave, setTransaction, trans
         // @ts-expect-error
         obj[key] = value;
 
-        setTransaction(obj as TransactionType);
+        setTransaction(obj as Transaction);
     };
 
     if (!transaction) {
@@ -82,8 +91,8 @@ export default function TransactionModal({onClose, onSave, setTransaction, trans
             <StyledSelect
                 options={shopOptions}
                 name="shop_id"
-                value={transaction.shop_id}
-                onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'shop_id')}
+                value={transaction.shop_id?.[0] ?? shops[0]?.id}
+                onSelect={(e) => selectMultiShopId(e as unknown as ChangeEvent<HTMLInputElement>)}
                 label={t("Assigned Shop")}
             />
         </FormRow>
@@ -105,9 +114,9 @@ export default function TransactionModal({onClose, onSave, setTransaction, trans
             />
             <StyledSelect
                 type="text" name="type"
-                value={transaction.type}
+                value={transaction.transaction_type}
                 options={transactionTypes}
-                onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'type')}
+                onSelect={(e) => changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'transaction_type')}
                 label={t("Type")}
             />
         </FormRow>

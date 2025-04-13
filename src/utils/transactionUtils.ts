@@ -1,9 +1,9 @@
-import {TransactionType} from "../interfaces/interfaces.ts";
+import {Transaction} from "../interfaces/interfaces.ts";
 
 
 export type transactionInterval = 'daily' | 'weekly' | 'monthly';
 
-export function groupTransactions(transactions: TransactionType[], interval: transactionInterval) {
+export function groupTransactions(transactions: Transaction[], interval: transactionInterval) {
     const groupFn = (timestamp: number) => {
         const date = new Date(timestamp);
 

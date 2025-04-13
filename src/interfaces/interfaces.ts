@@ -220,17 +220,22 @@ export interface ShopType extends GeneralCollectionEntry {
     category?: string
 }
 
-export interface TransactionType extends GeneralCollectionEntry {
+export type PaymentMethod = 'card'|'cash'|'transfer';
+export type DocumentType = 'invoice'|'receipt'|'other';
+export type TransactionType = 'sell'|'buy'|'revert';
+export type ItemType = 'part'|'item'|'other';
+
+export interface Transaction extends GeneralCollectionEntry {
     id: string,
     name?: string,
-    shop_id?: string,
+    shop_id?: string[],
     cost?: number,
-    item_type?: 'part'|'item'|'other',
+    item_type?: ItemType,
     net_amount?: number,
     gross_amount?: number,
-    payment_method?: 'card'|'cash'|'transfer',
-    document_type?: 'invoice'|'receipt'|'other',
-    type?: 'sell'|'buy'|'revert',
+    payment_method?: PaymentMethod,
+    document_type?: DocumentType,
+    transaction_type?: TransactionType,
     user?: string,
 }
 
@@ -246,7 +251,7 @@ export interface InvoiceType extends GeneralCollectionEntry {
     status?: InvoiceStatus,
     shop_id?: string[],
     email?: string,
-    payment_method?: string,
+    payment_method?: PaymentMethod,
     total?: string,
     created?: number,
     done?: number

@@ -12,7 +12,7 @@ import {
     SettingsItems,
     Shop, ShopType,
     StoreItem,
-    StorePart, StyledSelectOption, TransactionType, UserData
+    StorePart, StyledSelectOption, Transaction, UserData
 } from "../../interfaces/interfaces.ts";
 import PageLoading from "../../components/PageLoading.tsx";
 import {DBContext} from "../DBContext.ts";
@@ -66,7 +66,7 @@ export const FirebaseProvider = ({children}: {
         let types: ShopType[] = [];
         let archive: ContextDataValueType[] = [];
         let invoices: InvoiceType[] = [];
-        let transactions: TransactionType[] = [];
+        let transactions: Transaction[] = [];
         let logs: LogEntry[] = [];
 
         users = users.map(user => {
@@ -74,7 +74,7 @@ export const FirebaseProvider = ({children}: {
             user.password_confirmation = undefined;
             return user;
         })
-console.log(authContext.user?.email)
+
         if (authContext.user?.email) {
             user = users.find(user => user.email === authContext.user?.email);
             console.log(authContext.user?.email)
@@ -109,7 +109,7 @@ console.log(authContext.user?.email)
             archive = await getCollection(firebaseCollections.archive) as ContextDataValueType[];
             types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
             invoices = await getCollection(firebaseCollections.invoices) as InvoiceType[];
-            transactions = await getCollection(firebaseCollections.transactions) as TransactionType[];
+            transactions = await getCollection(firebaseCollections.transactions) as Transaction[];
         }
 
         if (user?.shop_id?.length) {

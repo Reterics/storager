@@ -1,7 +1,7 @@
 import {useContext, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
-import {Shop, ShopType, TransactionType} from "../interfaces/interfaces.ts";
+import {Shop, ShopType, Transaction} from "../interfaces/interfaces.ts";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import {PageHead} from "../components/elements/PageHead.tsx";
@@ -24,12 +24,12 @@ export default function Transactions() {
         let items = dbContext?.data.transactions ?? [];
 
         if (shopFilter) {
-            const filteredShopList = shops.filter(s => s.name === shopFilter).reduce((list, current)=> {
-                list.push(current.id);
-                return list
-            },[] as string[])
-
-            items = items.filter(item =>item.shop_id && filteredShopList.includes(item.shop_id));
+            const filteredShopId = shops.find(shop => shop.name === shopFilter)?.id;
+            if (filteredShopId) {
+                items = items.filter(item => {
+                    return item.shop_id && (item.shop_id.includes(filteredShopId));
+                });
+            }
         }
 
         items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
@@ -38,9 +38,9 @@ export default function Transactions() {
     };
 
     const [shopFilter, setShopFilter] = useState<string>('');
-    const [transactions, setTransactions] = useState<TransactionType[]>(filterItems(shopFilter));
+    const [transactions, setTransactions] = useState<Transaction[]>(filterItems(shopFilter));
 
-    const [modalTemplate, setModalTemplate] = useState<TransactionType|null>(null)
+    const [modalTemplate, setModalTemplate] = useState<Transaction|null>(null)
     const [pageMode, setPageMode] = useState<'list'|'chart'>('list')
     const [groupBy, setGroupBy] = useState<transactionInterval>('daily')
 
@@ -49,9 +49,9 @@ export default function Transactions() {
         setTransactions(filterItems(shop));
     };
 
-    const saveTransaction = async (type: TransactionType) => {
-        const updatedTransactions = await dbContext?.setData('transactions', type as TransactionType);
-        setTransactions(updatedTransactions as TransactionType[]);
+    const saveTransaction = async (type: Transaction) => {
+        const updatedTransactions = await dbContext?.setData('transactions', type as Transaction);
+        setTransactions(updatedTransactions as Transaction[]);
         setModalTemplate(null);
     }
 
@@ -70,7 +70,7 @@ export default function Transactions() {
 
         return [
             transaction.user,
-            transaction.type,
+            transaction.transaction_type,
             transaction.payment_method,
             transaction.document_type,
             transaction.cost,
@@ -106,7 +106,7 @@ export default function Transactions() {
                     item_type: transactionItemTypes[0].value as 'part',
                     payment_method: paymentMethods[0].value as 'card',
                     document_type: documentTypes[0].value as 'invoice',
-                    type: transactionTypes[0].value as 'sell',
+                    transaction_type: transactionTypes[0].value as 'sell',
                     cost: 0,
                     net_amount: 0,
                     gross_amount: 0,
