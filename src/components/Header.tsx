@@ -21,7 +21,7 @@ import {firebaseModel} from "../database/firebase/config.ts";
 
 
 const Header = () => {
-    const {SignOut, user} = useContext(AuthContext);
+    const {SignOut} = useContext(AuthContext);
     const dbContext = useContext(DBContext);
     const isAdmin = dbContext?.data?.currentUser?.role === 'admin';
     const {shop} = useContext(ShopContext);
@@ -176,7 +176,7 @@ const Header = () => {
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
                                     className="flex text-gray-900 hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent"
                                 >
-                                    {user?.displayName || user?.email}
+                                    {shop?.name}
                                     <svg className="w-6 h-6 inline-block ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                                     </svg>

@@ -35,9 +35,9 @@ export default function GeneralModal({
             role={"dialog"}
         >
             <div className="bg-white p-4 rounded dark:bg-gray-900 min-w-[50vw]">
-                <h1 className="font-semibold text-center text-xl text-gray-700 mb-4 dark:text-gray-200">
-                    {title || ''}
-                </h1>
+                {title && <h1 className="font-semibold text-center text-xl text-gray-700 mb-4 dark:text-gray-200">
+                    {title}
+                </h1>}
 
                 <form className={inPlace ? formClasses.inPlace : formClasses.default}>
                     {children}

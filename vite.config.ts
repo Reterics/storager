@@ -11,6 +11,9 @@ export default defineConfig(({mode}) => {
   const outDir = env.VITE_BASENAME ? './dist' + env.VITE_BASENAME : './dist';
   return {
     base: './',
+    server: {
+      host: '0.0.0.0'
+    },
     build: {
       outDir: outDir,
       emptyOutDir: true,

@@ -2,15 +2,16 @@ import {ChangeEvent, useContext, useState} from "react";
 import {DBContext} from "../database/DBContext.ts";
 import {useTranslation} from "react-i18next";
 import {PageHead} from "../components/elements/PageHead.tsx";
-import {BsFillPlusCircleFill} from "react-icons/bs";
+import {BsClipboard2PlusFill, BsFillPlusCircleFill} from "react-icons/bs";
 import {ShopContext} from "../store/ShopContext.tsx";
-import {Shop, StorePart, StyledSelectOption} from "../interfaces/interfaces.ts";
+import {InventoryModalData, Shop, StorePart, StyledSelectOption} from "../interfaces/interfaces.ts";
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 import PartModal from "../components/modals/PartModal.tsx";
 import UnauthorizedComponent from "../components/Unauthorized.tsx";
 import {extractStorageInfo, sortItemsByWarn} from "../utils/storage.ts";
 import {changeStoreType} from "../utils/events.ts";
 import {storeTableKeyOrder} from "../interfaces/constants.ts";
+import InventoryModal from "../components/modals/InventoryModal.tsx";
 
 
 function Parts() {
@@ -32,6 +33,7 @@ function Parts() {
     const error = warnings.length ? warnings.length + t(' low storage alert') : undefined;
 
     const [modalTemplate, setModalTemplate] = useState<StorePart|null>(null)
+    const [inventoryData, setInventorylData] = useState<InventoryModalData|null>(null)
 
     const typeOptions: StyledSelectOption[] = shops.map((key)=>{
         return {
@@ -134,6 +136,11 @@ function Parts() {
         <>
             <PageHead title={t('Parts')} buttons={[
                 {
+                    value: <BsClipboard2PlusFill />,
+                    onClick: () => setInventorylData(inventoryData ? null : {}),
+                    testId: 'inventoryButton'
+                },
+                {
                     value: <BsFillPlusCircleFill/>,
                     onClick: () => setModalTemplate(modalTemplate ? null : {
                         id: '',
@@ -203,6 +210,13 @@ function Parts() {
                     inPlace={false}
                     selectedShopId={selectedShopId}
                 />
+                {inventoryData && shopContext.shop && <InventoryModal
+                    onClose={() => setInventorylData(null)}
+                    onSave={() => setInventorylData(null)}
+                    inPlace={false}
+                    inventoryData={inventoryData}
+                    items={parts}
+                />}
             </div>
         </>
     )

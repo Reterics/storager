@@ -220,6 +220,10 @@ export interface ShopType extends GeneralCollectionEntry {
     category?: string
 }
 
+export interface InventoryModalData {
+    selectedItems: StoreItem[]|StorePart[];
+}
+
 export type PaymentMethod = 'card'|'cash'|'transfer';
 export type DocumentType = 'invoice'|'receipt'|'other';
 export type TransactionType = 'sell'|'buy'|'revert';
