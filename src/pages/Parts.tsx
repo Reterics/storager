@@ -33,7 +33,7 @@ function Parts() {
     const error = warnings.length ? warnings.length + t(' low storage alert') : undefined;
 
     const [modalTemplate, setModalTemplate] = useState<StorePart|null>(null)
-    const [inventoryData, setInventorylData] = useState<InventoryModalData|null>(null)
+    const [inventoryData, setInventoryData] = useState<InventoryModalData|null>(null)
 
     const typeOptions: StyledSelectOption[] = shops.map((key)=>{
         return {
@@ -91,18 +91,19 @@ function Parts() {
     }
 
     const changeTableElement = (id: string, col: string | number, value: unknown) => {
-        const key = storeTableKeyOrder[col as number];
-        let item = parts.find(p => p.id === id);
+        const key = storeTableKeyOrder[col as number] as keyof StorePart;
+        const item = parts.find(p => p.id === id);
         if (item && key) {
-            const changedItem = changeStoreType({
-                target: {
+            const changedItem = (changeStoreType({
+                currentTarget: {
                     value: value
                 }
-            } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item;
-            setParts((items) =>
-                items.map(i => i.id === item?.id ? (changedItem as StorePart) : {...i}));
-            item = changedItem;
-            dbContext?.setData('parts', {id: item.id, [key as keyof StorePart]: item[key as keyof StorePart]});
+            } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item) as StorePart;
+            dbContext?.setData('parts', {
+                id: item.id,
+                [key]: changedItem[key]
+            });
+            setParts((items) => items.map(i => i.id === item?.id ? changedItem : i));
         }
     };
 
@@ -137,7 +138,9 @@ function Parts() {
             <PageHead title={t('Parts')} buttons={[
                 {
                     value: <BsClipboard2PlusFill />,
-                    onClick: () => setInventorylData(inventoryData ? null : {}),
+                    onClick: () => setInventoryData(inventoryData ? null : {
+                        selectedItems: []
+                    }),
                     testId: 'inventoryButton'
                 },
                 {
@@ -211,8 +214,8 @@ function Parts() {
                     selectedShopId={selectedShopId}
                 />
                 {inventoryData && shopContext.shop && <InventoryModal
-                    onClose={() => setInventorylData(null)}
-                    onSave={() => setInventorylData(null)}
+                    onClose={() => setInventoryData(null)}
+                    onSave={() => setInventoryData(null)}
                     inPlace={false}
                     inventoryData={inventoryData}
                     items={parts}

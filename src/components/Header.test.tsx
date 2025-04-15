@@ -77,7 +77,7 @@ describe('Header Component', () => {
 
         // Check if essential elements are rendered
         expect(screen.getByText('Storage')).toBeInTheDocument();
-        expect(screen.getByText('Test User')).toBeInTheDocument();
+        expect(screen.getByTestId('userMenuButton')).toBeInTheDocument();
         expect(screen.getByText('Shops')).toBeInTheDocument();
 
         // Ensure shop-specific links are not rendered when shop is null
@@ -110,7 +110,7 @@ describe('Header Component', () => {
         expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 
         // Click on username to open dropdown
-        fireEvent.click(screen.getByText('Test User'));
+        fireEvent.click(screen.getByTestId('userMenuButton'));
 
         // Dropdown menu should now be visible
         expect(screen.getByText('Logout')).toBeInTheDocument();
@@ -122,7 +122,7 @@ describe('Header Component', () => {
         renderWithProviders(<Header />);
 
         // Open dropdown menu
-        fireEvent.click(screen.getByText('Test User'));
+        fireEvent.click(screen.getByTestId('userMenuButton'));
 
         fireEvent.click(screen.getByText('Logout'));
 
@@ -141,7 +141,7 @@ describe('Header Component', () => {
             const {unmount} = renderWithProviders(<Header />, { route: '/', searchParams: '?page=' + page });
 
             // Open dropdown menu
-            fireEvent.click(screen.getByText('Test User'));
+            fireEvent.click(screen.getByTestId('userMenuButton'));
 
             // Click on Update
             fireEvent.click(screen.getByText('Update'));
@@ -188,7 +188,7 @@ describe('Header Component', () => {
         renderWithProviders(<Header />);
 
         // Open dropdown menu
-        fireEvent.click(screen.getByText('Test User'));
+        fireEvent.click(screen.getByTestId('userMenuButton'));
 
         // Check for admin-specific menu items
         expect(screen.getByText('Types')).toBeInTheDocument();
@@ -204,7 +204,7 @@ describe('Header Component', () => {
         renderWithProviders(<Header />);
 
         // Open dropdown menu
-        fireEvent.click(screen.getByText('Test User'));
+        fireEvent.click(screen.getByTestId('userMenuButton'));
 
         // Admin-specific menu items should not be present
         expect(screen.queryByText('Types')).not.toBeInTheDocument();

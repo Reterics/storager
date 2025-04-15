@@ -1,7 +1,7 @@
 import {ChangeEvent, useContext, useState} from 'react'
 import TableViewComponent, {TableViewActions} from "../components/elements/TableViewComponent.tsx";
 
-import {Shop, StoreItem,  StyledSelectOption} from "../interfaces/interfaces.ts";
+import {Shop, StoreItem, StyledSelectOption} from "../interfaces/interfaces.ts";
 import {BsFillPlusCircleFill} from "react-icons/bs";
 import ItemModal from "../components/modals/ItemModal.tsx";
 import {DBContext} from "../database/DBContext.ts";
@@ -86,19 +86,20 @@ function Items() {
     }
 
     const changeTableElement = (id: string, col: string | number, value: unknown) => {
-        const key = storeTableKeyOrder[col as number];
-        let item = items.find(p => p.id === id);
+        const key = storeTableKeyOrder[col as number] as keyof StoreItem;
+        const item = items.find(p => p.id === id);
 
         if (item && key) {
-            const changedItem = changeStoreType({
-                target: {
+            const changedItem = (changeStoreType({
+                currentTarget: {
                     value: value
                 }
-            } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item;
-            setItems((items) =>
-                items.map(i => i.id === item?.id ? (changedItem as StoreItem) : {...i}));
-            item = changedItem;
-            dbContext?.setData('items', {id: item.id, [key as keyof StoreItem]: item[key as keyof StoreItem]});
+            } as ChangeEvent<HTMLInputElement>, key, item, selectedShopId) || item) as StoreItem;
+            dbContext?.setData('items', {
+                id: item.id,
+                [key]: changedItem[key]});
+
+            setItems((items) => items.map(i => i.id === item?.id ? changedItem : i));
         }
     };
 

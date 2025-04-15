@@ -46,7 +46,7 @@
     "react-leaflet": "5.0.0",
     "react-router-dom": "^6.27.0",
     "react-signature-pad-wrapper": "4.1.0",
-    "recharts": "^2.15.1",
+    "recharts": "^2.15.2",
     "throttle-debounce": "^5.0.2"
   },
   "devDependencies": {
@@ -72,7 +72,7 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.26.1",
-    "vite": "^6.2.2",
+    "vite": "6.2.6",
     "vitest": "^3.0.8",
     "vitest-monocart-coverage": "3.0.1"
   }

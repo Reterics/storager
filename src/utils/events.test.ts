@@ -10,7 +10,7 @@ vi.mock('./storage', () => ({
 describe('changeStoreType', () => {
     it('should return null if item is null', () => {
         const result = changeStoreType(
-            { target: { value: 'newValue' } } as React.ChangeEvent<HTMLInputElement>,
+            { currentTarget: { value: 'newValue' } } as React.ChangeEvent<HTMLInputElement>,
             'key',
             null
         );
