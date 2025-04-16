@@ -8,21 +8,24 @@ import {
     StorePart
 } from "../../interfaces/interfaces.ts";
 import GeneralModal from "./GeneralModal.tsx";
-import TableViewComponent from "../elements/TableViewComponent.tsx";
 import {PageHead} from "../elements/PageHead.tsx";
+import TableSelectComponent from "../elements/TableSelectComponent.tsx";
+import {BsTrashFill} from "react-icons/bs";
+import {extractStorageInfo} from "../../utils/storage.ts";
 
 export interface InventoryModalProps {
     inPlace?: boolean,
     onClose: () => void,
     onSave: (inventoryData: InventoryModalData) => onClickReturn,
     inventoryData: InventoryModalData,
-    items: StorePart[] | StoreItem[]
+    items: StorePart[] | StoreItem[],
+    selectedShopId: string
 }
 
-export default function InventoryModal({onClose, onSave, inventoryData, items, inPlace}: InventoryModalProps) {
+export default function InventoryModal({onClose, onSave, inventoryData, items, inPlace, selectedShopId}: InventoryModalProps) {
     const {t} = useTranslation();
-    const [selectedData, setSelectedData] = useState<{[key: number]: boolean | undefined}>([]);
     const [search, setSearch] = useState('');
+    const [selectedMap, setSelectedMap] = useState<Record<string, number>>({});
 
     const data = items
         .filter(item => {
@@ -35,15 +38,6 @@ export default function InventoryModal({onClose, onSave, inventoryData, items, i
             }
             return true;
         });
-
-    const tableLines = data.map(item => {
-        return [
-            item.name || item.sku,
-            1,
-            ''
-        ]
-    })
-
 
     const buttons: GeneralModalButtons[] = [
         {
@@ -66,9 +60,9 @@ export default function InventoryModal({onClose, onSave, inventoryData, items, i
                 title={t('Inventory')}
                 buttons={[
                     {
-                        value: t('Deselect All'),
+                        value: <BsTrashFill size={16} />,
                         onClick: () => {
-                            setSelectedData({})
+                            setSelectedMap({})
                         }
                     }
                 ]}
@@ -77,29 +71,17 @@ export default function InventoryModal({onClose, onSave, inventoryData, items, i
                 }}
             />
             <div className={"flex flex-1 overflow-y-auto flex-wrap"}>
-                <TableViewComponent
-                    lines={tableLines}
-                    header={[
-                        {
-                            value: t('Name'),
-                            type: "text",
-                        },
-                        {
-                            value: t('Storage'),
-                            type: 'steps',
-                            editable: true
-                        },
-                        {
-                            value: t(''),
-                            type: 'text'
-                        },
-                    ]}
-                    selectedIndexes={selectedData}
-                    onClick={(index) => {
-                        selectedData[index] = !selectedData[index];
+                <TableSelectComponent<StoreItem>
+                    items={data}
+                    selectedItems={selectedMap}
+                    onChange={setSelectedMap}
+                    itemRenderer={(item) => {
+                        const storageInfo = extractStorageInfo(item, selectedShopId);
 
-                        setSelectedData({...selectedData});
+                        return [item.sku, item.name, `${item.price} Ft`, storageInfo.storage];
                     }}
+                    headers={[t('SKU'), t('Name'), t('Price'), t('Storage')]}
+                    getId={(item) => item.id}
                 />
             </div>
         </GeneralModal>

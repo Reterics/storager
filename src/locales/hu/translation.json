@@ -160,5 +160,9 @@
   "Purchase cost": "Beszerzés összege",
   "Are you sure you wish to delete this Part?": "Biztosan törlöd az alábbi alkatrészt?",
   "Modified Date": "Módosítva",
-  "Created Date": "Készült"
+  "Created Date": "Készült",
+  "Labor Fee": "Munkadíj",
+  "Inventory": "Leltár",
+  "Selected Count": "Kiválasztva",
+  "Transactions": "Tranzakciók"
 }

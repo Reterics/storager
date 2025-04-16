@@ -8,7 +8,6 @@ import StyledSelect from "./StyledSelect.tsx";
 import {tableViewOptions} from "../../interfaces/constants.ts";
 import {DBContext} from "../../database/DBContext.ts";
 
-
 export const PageHead = (
     {
         buttons,
@@ -23,21 +22,21 @@ export const PageHead = (
         activeFilter,
         setActiveFilter,
         children
-    }:
-    {
+    }: {
         buttons?: GeneralButtons[],
-        title?: string|React.ReactNode,
+        title?: string | React.ReactNode,
         error?: string,
         onSearch?: (value: string) => void,
         tableLimits?: number,
         setTableLimits?: (value: number) => void,
-        shopFilter?: string|null,
+        shopFilter?: string | null,
         setShopFilter?: (value: string) => void,
-        activeFilter?: boolean|null,
+        activeFilter?: boolean | null,
         setActiveFilter?: (value: boolean) => void,
         debounceInterval?: false | number,
         children?: React.ReactNode,
-    }) => {
+    }
+) => {
     const { t } = useTranslation();
     const ref = useRef<HTMLInputElement>(null);
     const dbContext = useContext(DBContext);
@@ -48,15 +47,12 @@ export const PageHead = (
         }
     }) || [{value: shopFilter ?? '', name: shopFilter ?? ''}] || [];
 
-    shopOptions.unshift({value: '', name: t('All shop')})
+    shopOptions.unshift({ value: '', name: t('All shop') });
 
     const activeOptions = [
-        {value: '', name: t('No filter')},
-        {value: 'true', name: t('Only active')}
-    ]
-
-
-    const buttonPY = title ? "py-2.5" : "py-1.5";
+        { value: '', name: t('No filter') },
+        { value: 'true', name: t('Only active') }
+    ];
 
     const onClickSearch = () => {
         if (ref.current && onSearch) {
@@ -75,66 +71,58 @@ export const PageHead = (
     );
 
     const handleKeyPress = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!onSearch || !e.target) {
-            return;
-        }
+        if (!onSearch || !e.target) return;
         if (e.key === "Enter") {
-            onSearch((e.target as HTMLInputElement).value as string);
+            onSearch((e.target as HTMLInputElement).value);
         } else if (typeof debounceInterval === "number") {
-            debounceFunc((e.target as HTMLInputElement).value as string)
+            debounceFunc((e.target as HTMLInputElement).value);
         }
     }, [debounceFunc, debounceInterval, onSearch]);
 
-
     return (
-        <div className="flex self-center max-w-screen-xl w-full no-print min-h-16">
-            <div className="flex justify-between items-center max-w-screen-xl m-1 mt-0 p-2 pt-1 w-full">
-                <h1 className="text-xl font-bold leading-none tracking-tight text-gray-900 lg:text-2xl dark:text-white">
-                    {title}
-                </h1>
-
-                {error && <AlertBox message={error} role={"warning"} />}
-
-                <div className="flex items-center space-x-2">
+        <div className="flex self-center max-w-screen-xl w-full no-print min-h-fit">
+            <div className="flex justify-between items-center w-full px-0 py-1 gap-2 flex-wrap">
+                <div className="flex items-center gap-2 flex-wrap">
+                    {title && <h1 className="ps-1 text-lg font-semibold text-gray-900 dark:text-white">
+                        {title}
+                    </h1>}
                     {children}
+                    {error && <AlertBox message={error} role={"warning"} />}
+                </div>
+
+                <div className="flex items-center gap-1 flex-wrap">
                     {setActiveFilter && (
-                        <div className='w-30 select-no-first'>
-                            <StyledSelect
-                                options={activeOptions}
-                                name="role"
-                                value={activeFilter ? 'true': undefined}
-                                defaultLabel={activeOptions[0].name}
-                                onSelect={(e) => setActiveFilter(!!(e.target as HTMLSelectElement).value)}
-                                label={false}
-                                compact={true}
-                            />
-                        </div>
+                        <StyledSelect
+                            options={activeOptions}
+                            name="active"
+                            value={activeFilter ? 'true' : undefined}
+                            defaultLabel={activeOptions[0].name}
+                            onSelect={(e) => setActiveFilter(!!(e.target as HTMLSelectElement).value)}
+                            label={false}
+                            compact={true}
+                        />
                     )}
                     {setShopFilter && (
-                        <div className='w-30 select-no-first'>
-                            <StyledSelect
-                                options={shopOptions}
-                                name="role"
-                                value={shopFilter || undefined}
-                                defaultLabel={shopOptions[0].name}
-                                onSelect={(e) => setShopFilter((e.target as HTMLSelectElement).value)}
-                                label={false}
-                                compact={true}
-                            />
-                        </div>
+                        <StyledSelect
+                            options={shopOptions}
+                            name="shop"
+                            value={shopFilter || undefined}
+                            defaultLabel={shopOptions[0].name}
+                            onSelect={(e) => setShopFilter((e.target as HTMLSelectElement).value)}
+                            label={false}
+                            compact={true}
+                        />
                     )}
                     {setTableLimits && tableLimits && (
-                        <div className='w-30 select-no-first'>
-                            <StyledSelect
-                                options={tableViewOptions}
-                                name="role"
-                                value={tableLimits || tableViewOptions[0].value}
-                                defaultLabel={tableViewOptions[0].name}
-                                onSelect={(e) => setTableLimits(Number((e.target as HTMLSelectElement).value))}
-                                label={false}
-                                compact={true}
-                            />
-                        </div>
+                        <StyledSelect
+                            options={tableViewOptions}
+                            name="tableLimit"
+                            value={tableLimits || tableViewOptions[0].value}
+                            defaultLabel={tableViewOptions[0].name}
+                            onSelect={(e) => setTableLimits(Number((e.target as HTMLSelectElement).value))}
+                            label={false}
+                            compact={true}
+                        />
                     )}
 
                     {onSearch &&
@@ -144,14 +132,14 @@ export const PageHead = (
                             onKeyDown={handleKeyPress}
                             type="text"
                             data-testid="searchInput"
-                            className="block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600"
+                            className="block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600"
                             placeholder={t('Search...')}
                         />
                         <button
                             onClick={onClickSearch}
                             type="button"
                             data-testid="searchButton"
-                            className="px-2.5 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-r-lg focus:ring-2 focus:ring-gray-400 focus:outline-none"
+                            className="px-2.5 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-r-md focus:ring-2 focus:ring-gray-400 focus:outline-none"
                         >
                             <BsSearch size={18} />
                         </button>
@@ -162,9 +150,11 @@ export const PageHead = (
                             key={"heading-" + index}
                             type="button"
                             className={
-                                button.primary
-                                    ? "text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-md px-3 "+buttonPY+" dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-                                    : "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-md px-3 "+buttonPY+" dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                "text-sm font-medium rounded " +
+                                (button.primary
+                                    ? "text-white bg-gray-800 hover:bg-gray-900"
+                                    : "text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-600") +
+                                (typeof button.value === "string" ? " px-3 py-1.5" : " px-3 py-2.5")
                             }
                             onClick={button.onClick}
                             data-testid={button.testId}
