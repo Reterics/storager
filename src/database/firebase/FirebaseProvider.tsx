@@ -4,7 +4,7 @@ import {
     ContextData,
     ContextDataValueType
 } from "../../interfaces/firebase.ts";
-import {db, firebaseCollections, firebaseModel, getCollection} from "./config.ts";
+import {db, firebaseCollections, firebaseModel, getCollection, modules} from "./config.ts";
 import {
     InvoiceType,
     ServiceCompleteData,
@@ -96,7 +96,8 @@ export const FirebaseProvider = ({children}: {
                 }
             } else {
                 settings = await getCollection(firebaseCollections.settings) as SettingsItems[];
-                logs = await getCollection(firebaseCollections.logs) as unknown as LogEntry[];
+                logs = modules.storageLogs ?
+                    (await getCollection(firebaseCollections.logs) as unknown as LogEntry[]) : [];
             }
         }
 
@@ -109,7 +110,8 @@ export const FirebaseProvider = ({children}: {
             archive = await getCollection(firebaseCollections.archive) as ContextDataValueType[];
             types = await getCollection(firebaseCollections.types) as ContextDataValueType[];
             invoices = await getCollection(firebaseCollections.invoices) as InvoiceType[];
-            transactions = await getCollection(firebaseCollections.transactions) as Transaction[];
+            transactions = modules.transactions ?
+                (await getCollection(firebaseCollections.transactions) as Transaction[]) : [];
         }
 
         if (user?.shop_id?.length) {

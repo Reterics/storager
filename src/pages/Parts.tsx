@@ -17,11 +17,14 @@ import {changeStoreType} from "../utils/events.ts";
 import {storeTableKeyOrder} from "../interfaces/constants.ts";
 import InventoryModal from "../components/modals/InventoryModal.tsx";
 
+import {confirm, popup} from "../components/modalExporter.ts";
+import {modules} from "../database/firebase/config.ts";
+
 
 function Parts() {
     const dbContext = useContext(DBContext);
     const shopContext = useContext(ShopContext);
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     const [tableLimits, setTableLimits] = useState<number>(100);
     const selectedShopId = shopContext.shop ? shopContext.shop.id : dbContext?.data.shops[0]?.id as string;
@@ -36,10 +39,11 @@ function Parts() {
 
     const error = warnings.length ? warnings.length + t(' low storage alert') : undefined;
 
-    const [modalTemplate, setModalTemplate] = useState<StorePart|null>(null)
-    const [inventoryData, setInventoryData] = useState<InventoryModalData|null>(null)
+    const [modalTemplate, setModalTemplate] = useState<StorePart | null>(null)
+    const [inventoryData, setInventoryData] = useState<InventoryModalData | null>(null)
+    const [laborFee, setLaborFee] = useState<string>('')
 
-    const typeOptions: StyledSelectOption[] = shops.map((key)=>{
+    const typeOptions: StyledSelectOption[] = shops.map((key) => {
         return {
             "name": key.name,
             "value": key.id
@@ -79,7 +83,7 @@ function Parts() {
         }
     };
 
-    const closePart = async (item?: StorePart)=> {
+    const closePart = async (item?: StorePart) => {
         let updatedParts = await dbContext?.setData('parts', item as StorePart) as StorePart[];
         if (item) {
             await dbContext?.refreshImagePointers([item]);
@@ -114,8 +118,8 @@ function Parts() {
     const tableLines = parts.map(item => {
         const storageInfo = extractStorageInfo(item, selectedShopId);
 
-        const array =  [
-            item.image ? <img src={item.image} width="40" alt="image for item" /> : '',
+        const array = [
+            item.image ? <img src={item.image} width="40" alt="image for item"/> : '',
             item.sku,
             item.name || '',
             storageInfo.storage,
@@ -134,14 +138,14 @@ function Parts() {
     });
 
     if (!dbContext?.data.currentUser) {
-        return <UnauthorizedComponent />;
+        return <UnauthorizedComponent/>;
     }
 
     return (
         <>
             <PageHead title={t('Parts')} buttons={[
                 {
-                    value: <BsClipboard2PlusFill />,
+                    value: <BsClipboard2PlusFill/>,
                     onClick: () => setInventoryData(inventoryData ? null : {
                         selectedItems: []
                     }),
@@ -158,26 +162,43 @@ function Parts() {
                     testId: 'addButton'
                 }
             ]}
-                error={error}
-                onSearch={filterItems}
-                tableLimits={tableLimits}
-                setTableLimits={setTableLimits}
+                      error={error}
+                      onSearch={filterItems}
+                      tableLimits={tableLimits}
+                      setTableLimits={setTableLimits}
             >
-                <div className="flex max-w-32">
+                {modules.transactions &&<div className="flex max-w-32">
                     <input
+                        value={laborFee}
+                        onChange={(e) => setLaborFee(e.target.value)}
                         type="text"
                         data-testid="laborFee"
                         className="block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         placeholder={t('Labor Fee')}
                     />
                     <button
+                        onClick={async () => {
+                            const laborFeeNumeric = Number.parseInt(laborFee);
+                            if (Number.isNaN(laborFeeNumeric) || laborFee.trim() === '') {
+                                return void popup(t('Please provide a valid number for labor fee'));
+                            }
+                            const response = await confirm(
+                                <div>{t('Are you sure to save the following labor fee?')}
+                                    <br />
+                                    {laborFeeNumeric} Ft
+                                </div>);
+
+                            if (response) {
+                                // TODO: Add labor fee
+                            }
+                        }}
                         type="button"
                         data-testid="laborFeeButton"
                         className="px-2.5 py-2 text-gray-800 bg-white hover:bg-gray-100 border-y border-r border-gray-300 rounded-r-md focus:ring-2 focus:ring-gray-800 focus:outline-none"
                     >
                         <BsFloppy size={18} />
                     </button>
-                </div>
+                </div> }
             </PageHead>
 
             <TableViewComponent

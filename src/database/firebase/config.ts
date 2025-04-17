@@ -14,6 +14,11 @@ const storageTTL = {
     cold: refreshRate.hours * 24 * 7,
 }
 
+export const modules = {
+    storageLogs: import.meta.env.VITE_STORAGE_LOGS === 'true',
+    transactions: import.meta.env.VITE_TRANSACTIONS === 'true',
+};
+
 export const firebaseCollections = {
     shops: import.meta.env.VITE_FIREBASE_DB_SHOPS || 'shops',
     items: import.meta.env.VITE_FIREBASE_DB_ITEMS || 'items',
@@ -26,7 +31,7 @@ export const firebaseCollections = {
     types: import.meta.env.VITE_FIREBASE_DB_TYPES || 'types',
     invoices: import.meta.env.VITE_FIREBASE_DB_INVOICES || 'invoices',
     logs: import.meta.env.VITE_FIREBASE_DB_LOGS || 'logs',
-    transactions: import.meta.env.VITE_FIREBASE_DB_transactions || 'transactions',
+    transactions: import.meta.env.VITE_FIREBASE_DB_TRANSACTIONS || 'transactions',
 };
 
 export const logger = new STLogger();
@@ -43,7 +48,7 @@ export const firebaseModel = new FirebaseDBModel({
         archive: storageTTL.cold,
         types: storageTTL.cold,
     },
-    storageLogs: import.meta.env.VITE_STORAGE_LOGS === 'true',
+    storageLogs: modules.storageLogs,
     collectionsToLog: ['parts', 'items', 'shops']
 });
 
