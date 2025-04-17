@@ -14,10 +14,9 @@
   height: 100%;
 }
 
-@media print
-{
-  .no-print, .no-print *
-  {
+@media print {
+  .no-print,
+  .no-print * {
     display: none !important;
   }
 }
@@ -45,8 +44,7 @@ table > tbody > tr > td:first-child:has(> img) {
   width: 40px;
 }
 
-table > tbody > tr > td:first-child > img
-{
+table > tbody > tr > td:first-child > img {
   width: 40px;
   max-height: 40px;
   object-fit: contain;
@@ -57,18 +55,15 @@ table > tbody > tr > td:first-child > img
 }
 .service-table tbody > tr > th:nth-child(2),
 .service-table tbody > tr > th:nth-child(3),
-.service-table tbody > tr > th:nth-child(6)
-{
+.service-table tbody > tr > th:nth-child(6) {
   text-wrap: wrap;
 }
 
-.service-table tbody > tr > th:nth-child(6)
-{
+.service-table tbody > tr > th:nth-child(6) {
   max-width: 5rem;
 }
 
-.service-table tbody > tr > th:nth-child(2)
-{
+.service-table tbody > tr > th:nth-child(2) {
   max-width: 11rem;
 }
 

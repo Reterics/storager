@@ -1,102 +1,125 @@
-import StyledInput from "../elements/StyledInput.tsx";
-import {GeneralModalButtons, Shop, ShopModalInput} from "../../interfaces/interfaces.ts";
-import {GeoPoint} from "firebase/firestore";
-import GeneralModal from "./GeneralModal.tsx";
-import {useTranslation} from "react-i18next";
-import FormRow from "../elements/FormRow.tsx";
+import StyledInput from '../elements/StyledInput.tsx';
+import {
+  GeneralModalButtons,
+  Shop,
+  ShopModalInput,
+} from '../../interfaces/interfaces.ts';
+import {GeoPoint} from 'firebase/firestore';
+import GeneralModal from './GeneralModal.tsx';
+import {useTranslation} from 'react-i18next';
+import FormRow from '../elements/FormRow.tsx';
 
+export default function ShopModal({
+  onClose,
+  shop,
+  setShop,
+  onSave,
+  inPlace,
+}: ShopModalInput) {
+  const {t} = useTranslation();
+  // eslint-disable-next-line
+  const coordinateRegexp = /^-?[0-9\.]{3,12} -?[0-9\.]{3,12}$/;
 
-export default function ShopModal({ onClose, shop, setShop, onSave, inPlace }: ShopModalInput) {
-    const { t } = useTranslation();
-    // eslint-disable-next-line
-    const coordinateRegexp = /^-?[0-9\.]{3,12} -?[0-9\.]{3,12}$/;
+  const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const value = e.target.value;
 
-    const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
-        const value = e.target.value;
+    const obj = {...shop};
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    obj[key] = value;
 
-        const obj = {...shop};
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        obj[key] = value;
+    setShop(obj as Shop);
+  };
 
-        setShop(obj as Shop);
-    };
+  const changeCoordinates = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const [lat, lon] = value.split(' ');
 
-    const changeCoordinates = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const [lat, lon] = value.split(' ');
-
-        if (lat && lon && !Number.isNaN(lat) && !Number.isNaN(lon)) {
-            setShop({...shop, coordinates: new GeoPoint(Number(lat), Number(lon))} as Shop);
-        } else if (!value) {
-            setShop({...shop, coordinates: undefined} as Shop);
-        }
+    if (lat && lon && !Number.isNaN(lat) && !Number.isNaN(lon)) {
+      setShop({
+        ...shop,
+        coordinates: new GeoPoint(Number(lat), Number(lon)),
+      } as Shop);
+    } else if (!value) {
+      setShop({...shop, coordinates: undefined} as Shop);
     }
+  };
 
+  if (!shop) return null;
 
-    if (!shop) return null;
+  const buttons: GeneralModalButtons[] = [
+    {
+      primary: true,
+      onClick: () => onSave(shop),
+      value: t('Save'),
+    },
+    {
+      onClick: onClose,
+      value: t('Cancel'),
+    },
+  ];
 
-    const buttons: GeneralModalButtons[] = [
-        {
-            primary: true,
-            onClick: ()=>onSave(shop),
-            value: t('Save')
-        },
-        {
-            onClick: onClose,
-            value: t('Cancel')
-        }
-    ];
+  return (
+    <GeneralModal
+      buttons={buttons}
+      inPlace={inPlace}
+      title={shop.id ? t('Edit Shop') : t('Add Shop')}
+      id={'ShopModal'}
+    >
+      <FormRow>
+        <StyledInput
+          type='text'
+          name='name'
+          value={shop.name}
+          onChange={(e) => changeType(e, 'name')}
+          label='Name'
+        />
+      </FormRow>
 
-    return (<GeneralModal  buttons={buttons} inPlace={inPlace}
-                           title={shop.id ? t('Edit Shop') : t('Add Shop')} id={'ShopModal'}>
+      <FormRow>
+        <StyledInput
+          type='text'
+          name='coordinates'
+          value={
+            shop && shop.coordinates instanceof GeoPoint
+              ? shop.coordinates?.latitude + ' ' + shop.coordinates?.longitude
+              : ''
+          }
+          onChange={(e) => {
+            const match = coordinateRegexp.test(e.target.value);
+            if (!e.target.value.trim() || match) {
+              changeCoordinates(e);
+            }
+          }}
+          label='Coordinates'
+          pattern='[0-9\.]{3,12}[ ]{1}[0-9\.]{3,12}'
+          maxLength={25}
+        />
+        <StyledInput
+          type='text'
+          name='phone'
+          value={shop.phone}
+          onChange={(e) => changeType(e, 'phone')}
+          label='Phone'
+        />
+      </FormRow>
+      <FormRow>
+        <StyledInput
+          type='text'
+          name='address'
+          value={shop.address}
+          onChange={(e) => changeType(e, 'address')}
+          label='Address'
+        />
 
-        <FormRow>
-            <StyledInput
-                type="text" name="name"
-                value={shop.name}
-                onChange={(e) => changeType(e, 'name')}
-                label="Name"
-            />
-        </FormRow>
-
-
-        <FormRow>
-            <StyledInput
-                type="text" name="coordinates"
-                value={shop && shop.coordinates instanceof GeoPoint ?
-                    shop.coordinates?.latitude + ' ' + shop.coordinates?.longitude : ''}
-                onChange={(e) => {
-                    const match = coordinateRegexp.test(e.target.value)
-                    if (!e.target.value.trim() || match) {
-                        changeCoordinates(e);
-                    }
-                }}
-                label="Coordinates"
-                pattern="[0-9\.]{3,12}[ ]{1}[0-9\.]{3,12}"
-                maxLength={25}
-            />
-            <StyledInput
-                type="text" name="phone"
-                value={shop.phone}
-                onChange={(e) => changeType(e, 'phone')}
-                label="Phone"
-            />
-        </FormRow>
-        <FormRow>
-            <StyledInput
-                type="text" name="address"
-                value={shop.address}
-                onChange={(e) => changeType(e, 'address')}
-                label="Address"
-            />
-
-            <StyledInput
-                type="text" name="email"
-                value={shop.email}
-                onChange={(e) => changeType(e, 'email')}
-                label="Email"
-            />
-        </FormRow>
-    </GeneralModal>)
+        <StyledInput
+          type='text'
+          name='email'
+          value={shop.email}
+          onChange={(e) => changeType(e, 'email')}
+          label='Email'
+        />
+      </FormRow>
+    </GeneralModal>
+  );
 }

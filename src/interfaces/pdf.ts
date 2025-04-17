@@ -1,6 +1,5 @@
-
 interface PDFKVPair {
-    [key: string]: string;
+  [key: string]: string;
 }
 
 type PDFCol = PDFKVPair | string | undefined;

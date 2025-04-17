@@ -1,17 +1,16 @@
-import {DBManagerOptions, DBType} from "../interfaces/db.ts";
-
+import {DBManagerOptions, DBType} from '../interfaces/db.ts';
 
 export default class DBManager {
-    protected _type: DBType;
-    constructor(options?: DBManagerOptions) {
-        this._type = options?.db || this.detectConfig();
-    }
+  protected _type: DBType;
+  constructor(options?: DBManagerOptions) {
+    this._type = options?.db || this.detectConfig();
+  }
 
-    detectConfig():DBType {
-        if (!import.meta.env.VITE_FIREBASE_APIKEY) {
-            console.warn('There is no Firebase APIKey found, fallback to SQL');
-            return 'sql'
-        }
-        return 'firebase'
+  detectConfig(): DBType {
+    if (!import.meta.env.VITE_FIREBASE_APIKEY) {
+      console.warn('There is no Firebase APIKey found, fallback to SQL');
+      return 'sql';
     }
+    return 'firebase';
+  }
 }
