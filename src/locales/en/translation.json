@@ -164,5 +164,13 @@
   "Labor Fee": "Labor Fee",
   "Inventory": "Inventory",
   "Selected Count": "Selected Count",
-  "Transactions": "Transactions"
+  "Transactions": "Transactions",
+  "Payment": "Payment",
+  "Document": "Document",
+  "Cost": "Cost",
+  "Net Amount": "Net Amount",
+  "Gross Amount": "Gross Amount",
+  "Daily": "Daily",
+  "Weekly": "Weekly",
+  "Monthly": "Monthly"
 }

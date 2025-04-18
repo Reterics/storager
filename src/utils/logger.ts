@@ -109,7 +109,7 @@ export default class STLogger {
         break;
       default:
         this._consoleLog(
-          `%c${timestamp} %c${callerInfo || ''}%c ${message} ${!callerInfo ? (new Error().stack?.split('\n')[3]): ''}`,
+          `%c${timestamp} %c${callerInfo || ''}%c ${message} ${!callerInfo ? new Error().stack?.split('\n')[3] : ''}`,
           'color: gray; font-weight: bold;',
           style.labelStyle,
           style.messageStyle
@@ -122,7 +122,7 @@ export default class STLogger {
     while (this._logs[this._logs.length - i] === log) {
       i++;
     }
-    return i-1
+    return i - 1;
   }
 
   protected appendLog(log: string) {
@@ -143,7 +143,7 @@ export default class STLogger {
     const stack = err.stack?.split('\n');
 
     if (stack && stack.length >= 4) {
-      const msg = stack[3].trim()
+      const msg = stack[3].trim();
       return msg.substring(msg.lastIndexOf('/') + 1, msg.length - 1);
     }
     return 'unknown';
@@ -162,23 +162,26 @@ export default class STLogger {
       .join(', ');
     const timestamp = this.getTimestamp();
     const type = 'INFO';
-    const sameWithLast = this.isSameWithLastN(`${timestamp} ${type}: ${message}`)
+    const sameWithLast = this.isSameWithLastN(
+      `${timestamp} ${type}: ${message}`
+    );
 
     this.appendLog(`${timestamp} ${type}: ${message}`);
 
     if (sameWithLast) {
-      const stack = sameWithLast < 3 ?
-        new Error().stack?.split('\n')[2 + sameWithLast] : ''
+      const stack =
+        sameWithLast < 3
+          ? new Error().stack?.split('\n')[2 + sameWithLast]
+          : '';
       if (!stack) {
         if (this._repeatTimeout) {
           clearTimeout(this._repeatTimeout);
         }
         this._repeatTimeout = setTimeout(() => {
           this._consoleLog('+' + sameWithLast + ' for ' + message);
-
         }, 20);
       } else {
-        this._consoleLog('+' + sameWithLast+ (stack || ''));
+        this._consoleLog('+' + sameWithLast + (stack || ''));
       }
     } else {
       this.printLog(timestamp, type, message, this.getCallerInfo());

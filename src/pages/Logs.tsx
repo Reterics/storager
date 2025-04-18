@@ -13,6 +13,7 @@ import {formatChanges} from '../utils/print.tsx';
 import {BsCheck, BsX} from 'react-icons/bs';
 import {firebaseModel} from '../database/firebase/config.ts';
 import {CommonCollectionData, ContextDataType} from '../interfaces/firebase.ts';
+import {getIconForDeviceType} from '../utils/typedIcons.tsx';
 
 export default function Logs() {
   const dbContext = useContext(DBContext);
@@ -107,7 +108,7 @@ export default function Logs() {
         )}
       </div>,
       log.email || log.uid,
-      log.device_type,
+      getIconForDeviceType(log.device_type),
       <span
         title={log.user_agent + '\n' + log.device_info}
         onClick={() => {

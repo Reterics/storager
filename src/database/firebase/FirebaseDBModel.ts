@@ -36,6 +36,8 @@ type operationType =
   | 'updateAll'
   | 'add';
 
+export type DeviceType = 'mobile' | 'tablet' | 'desktop' | 'unknown';
+
 export interface LogEntry extends GeneralCollectionEntry {
   id: string;
   entity?: string;
@@ -45,7 +47,7 @@ export interface LogEntry extends GeneralCollectionEntry {
   at?: number;
   item_id?: string;
   changes?: Record<string, unknown>;
-  device_type?: string;
+  device_type?: DeviceType;
   user_agent?: string;
   shop_id?: string[];
   error?: string;

@@ -164,5 +164,13 @@
   "Labor Fee": "Munkadíj",
   "Inventory": "Leltár",
   "Selected Count": "Kiválasztva",
-  "Transactions": "Tranzakciók"
+  "Transactions": "Tranzakciók",
+  "Payment": "Fizetés",
+  "Document": "Dokumentum",
+  "Cost": "Költség",
+  "Net Amount": "Nettó ár",
+  "Gross Amount": "Bruttó ár",
+  "Daily": "Napi",
+  "Weekly": "Heti",
+  "Monthly": "Havi"
 }

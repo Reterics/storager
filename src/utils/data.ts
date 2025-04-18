@@ -172,3 +172,12 @@ export const getDeviceDebugInfo = (): DeviceDebugInfo => {
     },
   };
 };
+
+export const formatCurrency = (value: number, currency: string = 'HUF') => {
+  return new Intl.NumberFormat('hu-HU', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: currency === 'HUF' ? 0 : 2,
+    maximumFractionDigits: currency === 'HUF' ? 0 : 2,
+  }).format(value);
+};

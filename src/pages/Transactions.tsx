@@ -32,6 +32,12 @@ import {
   transactionItemTypes,
   transactionTypes,
 } from '../interfaces/constants.ts';
+import {
+  getIconForDocumentType,
+  getIconForPaymentMethod,
+  getIconForTransactionType,
+} from '../utils/typedIcons.tsx';
+import {formatCurrency} from '../utils/data.ts';
 
 export default function Transactions() {
   const dbContext = useContext(DBContext);
@@ -98,12 +104,12 @@ export default function Transactions() {
   const tableLines = transactions.map((transaction) => {
     return [
       transaction.user,
-      transaction.transaction_type,
-      transaction.payment_method,
-      transaction.document_type,
-      transaction.cost,
-      transaction.net_amount,
-      transaction.gross_amount,
+      getIconForTransactionType(transaction.transaction_type),
+      getIconForPaymentMethod(transaction.payment_method),
+      getIconForDocumentType(transaction.document_type),
+      formatCurrency(transaction.cost || 0),
+      formatCurrency(transaction.net_amount || 0),
+      formatCurrency(transaction.gross_amount || 0),
       new Date(transaction.docUpdated!)
         .toISOString()
         .replace(/T/, ' ')
@@ -192,8 +198,8 @@ export default function Transactions() {
           header={[
             t('User'),
             t('Type'),
-            t('Payment Method'),
-            t('Document Type'),
+            t('Payment'),
+            t('Document'),
             t('Cost'),
             t('Net Amount'),
             t('Gross Amount'),

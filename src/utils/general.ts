@@ -1,4 +1,5 @@
 import {TextFile} from '../interfaces/interfaces.ts';
+import {DeviceType} from '../database/firebase/FirebaseDBModel.ts';
 
 export const downloadAsFile = (
   name: string,
@@ -110,7 +111,11 @@ export const readJSONFile = async (): Promise<object | null> => {
   return json;
 };
 
-export const getClientInfo = () => {
+export const getClientInfo = (): {
+  deviceType: DeviceType;
+  userAgent: string;
+  language: string;
+} => {
   if (typeof navigator === 'undefined') {
     return {
       deviceType: 'unknown',
