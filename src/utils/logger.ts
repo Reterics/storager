@@ -1,6 +1,7 @@
 export default class STLogger {
   private _logs: string[];
-  protected _timeout: NodeJS.Timeout | undefined;
+  protected _syncTimeout: NodeJS.Timeout | undefined;
+  protected _repeatTimeout: NodeJS.Timeout | undefined;
   _styles: {
     INFO: {labelStyle: string; messageStyle: string};
     WARN: {labelStyle: string; messageStyle: string};
@@ -11,11 +12,12 @@ export default class STLogger {
   private readonly _consoleWarn: (...data: string[] | object[]) => void;
 
   constructor() {
+    this._syncTimeout = undefined;
     this._logs = [];
     this._styles = {
       INFO: {
         labelStyle:
-          'color: white; background-color: gray; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
+          'color: white; background-color: #353535; padding: 2px 4px; border-radius: 1px; font-weight: 400;',
         messageStyle: 'color: lightgray;',
       },
       WARN: {
@@ -72,16 +74,17 @@ export default class STLogger {
   }
 
   sync(ms = 2000) {
-    if (this._timeout) {
-      clearTimeout(this._timeout);
+    if (this._syncTimeout) {
+      clearTimeout(this._syncTimeout);
     }
-    this._timeout = setTimeout(() => this.save(), ms);
+    this._syncTimeout = setTimeout(() => this.save(), ms);
   }
 
   protected printLog(
     timestamp: string,
     type: 'INFO' | 'ERROR' | 'WARN',
-    message: string
+    message: string,
+    callerInfo?: string
   ) {
     const style = this._styles[type];
 
@@ -106,12 +109,20 @@ export default class STLogger {
         break;
       default:
         this._consoleLog(
-          `%c${timestamp} %c${type}%c ${message}`,
+          `%c${timestamp} %c${callerInfo || ''}%c ${message} ${!callerInfo ? (new Error().stack?.split('\n')[3]): ''}`,
           'color: gray; font-weight: bold;',
           style.labelStyle,
           style.messageStyle
         );
     }
+  }
+
+  protected isSameWithLastN(log: string) {
+    let i = 1;
+    while (this._logs[this._logs.length - i] === log) {
+      i++;
+    }
+    return i-1
   }
 
   protected appendLog(log: string) {
@@ -123,7 +134,19 @@ export default class STLogger {
   }
 
   protected getTimestamp() {
-    return new Date().toISOString().substring(5);
+    const iso = new Date().toISOString();
+    return `[${iso.substring(5, 10)} ${iso.substring(11, 19)}]`;
+  }
+
+  protected getCallerInfo(): string {
+    const err = new Error();
+    const stack = err.stack?.split('\n');
+
+    if (stack && stack.length >= 4) {
+      const msg = stack[3].trim()
+      return msg.substring(msg.lastIndexOf('/') + 1, msg.length - 1);
+    }
+    return 'unknown';
   }
 
   log(...args: string[]) {
@@ -139,10 +162,28 @@ export default class STLogger {
       .join(', ');
     const timestamp = this.getTimestamp();
     const type = 'INFO';
+    const sameWithLast = this.isSameWithLastN(`${timestamp} ${type}: ${message}`)
 
     this.appendLog(`${timestamp} ${type}: ${message}`);
 
-    this.printLog(timestamp, type, message);
+    if (sameWithLast) {
+      const stack = sameWithLast < 3 ?
+        new Error().stack?.split('\n')[2 + sameWithLast] : ''
+      if (!stack) {
+        if (this._repeatTimeout) {
+          clearTimeout(this._repeatTimeout);
+        }
+        this._repeatTimeout = setTimeout(() => {
+          this._consoleLog('+' + sameWithLast + ' for ' + message);
+
+        }, 20);
+      } else {
+        this._consoleLog('+' + sameWithLast+ (stack || ''));
+      }
+    } else {
+      this.printLog(timestamp, type, message, this.getCallerInfo());
+    }
+
     if (objs.length) {
       this._consoleLog(...objs);
     }
@@ -161,10 +202,11 @@ export default class STLogger {
       .join(', ');
     const timestamp = this.getTimestamp();
     const type = 'ERROR';
+    const callerInfo = this.getCallerInfo();
 
     this.appendLog(`${timestamp} ${type}: ${message}`);
 
-    this.printLog(timestamp, type, message);
+    this.printLog(timestamp, type, message, callerInfo);
     if (objs.length) {
       this._consoleError(...objs);
     }
@@ -183,10 +225,11 @@ export default class STLogger {
       .join(', ');
     const timestamp = this.getTimestamp();
     const type = 'WARN';
+    const callerInfo = this.getCallerInfo();
 
     this.appendLog(`${timestamp} ${type}: ${message}`);
 
-    this.printLog(timestamp, type, message);
+    this.printLog(timestamp, type, message, callerInfo);
     if (objs.length) {
       this._consoleWarn(...objs);
     }
