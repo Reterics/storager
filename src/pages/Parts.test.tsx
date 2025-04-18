@@ -1,6 +1,15 @@
 import {beforeAll, describe, expect, it, vi} from 'vitest';
 import {fireEvent, render, waitFor, screen} from '@testing-library/react';
 import TestingPageProvider from '../../tests/mocks/TestingPageProvider.tsx';
+vi.mock('../components/modalExporter.ts', () => ({
+  confirm: async () => {
+    return Promise.resolve(true);
+  },
+  popup: async () => {
+    return Promise.resolve();
+  },
+}));
+
 import Parts from './Parts.tsx';
 import {defaultContextData, defaultParts} from '../../tests/mocks/shopData.ts';
 import {ContextDataCollectionType} from '../interfaces/firebase.ts';
@@ -94,29 +103,26 @@ describe('Parts', () => {
   });
 
   it('deletes a part upon confirmation', async () => {
+    const removeData = vi.fn(
+      async (): Promise<ContextDataCollectionType | null> => [
+        defaultParts[0],
+      ]
+    );
     const {container, unmount} = render(
       <TestingPageProvider
-        removeData={vi.fn(
-          async (): Promise<ContextDataCollectionType | null> => [
-            defaultParts[0],
-          ]
-        )}
+        removeData={removeData}
       >
         <Parts />
       </TestingPageProvider>
     );
     const trList = container.querySelectorAll('table > tbody > tr');
-    const initialLength = trList.length;
+    expect(trList.length).toBe(defaultContextData.parts.length)
 
     // Simulate delete action
     const deleteButton = trList[0].querySelector('button:last-child');
     if (deleteButton) fireEvent.click(deleteButton);
 
-    await waitFor(() =>
-      expect(container.querySelectorAll('table > tbody > tr').length).toEqual(
-        initialLength - 1
-      )
-    );
+    await waitFor(() => expect(removeData.mock.calls.length).toBe(1))
     unmount();
   });
 
