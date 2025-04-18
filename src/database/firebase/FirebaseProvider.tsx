@@ -31,6 +31,7 @@ import {addDoc, collection} from 'firebase/firestore';
 import {ShopContext} from '../../store/ShopContext.tsx';
 import {imageModel} from './storage.ts';
 import {LogEntry} from './FirebaseDBModel.ts';
+import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 
 export const FirebaseProvider = ({children}: {children: ReactNode}) => {
   const authContext = useContext(AuthContext);
@@ -410,7 +411,8 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         updateLatest: updateLatestContext,
       }}
     >
-      {ctxData && children}
+      {ctxData && ctxData.currentUser && children}
+      {ctxData && !ctxData.currentUser && <UnauthorizedComponent />}
       {!ctxData && <PageLoading />}
     </DBContext.Provider>
   );

@@ -1,4 +1,4 @@
-import {ChangeEvent, useContext, useState} from 'react';
+import {ChangeEvent, useContext, useEffect, useMemo, useState} from 'react';
 import {DBContext} from '../database/DBContext.ts';
 import {useTranslation} from 'react-i18next';
 import {PageHead} from '../components/elements/PageHead.tsx';
@@ -18,7 +18,6 @@ import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import PartModal from '../components/modals/PartModal.tsx';
-import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import {extractStorageInfo, sortItemsByWarn} from '../utils/storage.ts';
 import {changeStoreType} from '../utils/events.ts';
 import {storeTableKeyOrder} from '../interfaces/constants.ts';
@@ -33,17 +32,31 @@ function Parts() {
   const {t} = useTranslation();
 
   const [tableLimits, setTableLimits] = useState<number>(100);
-  const selectedShopId = shopContext.shop
-    ? shopContext.shop.id
-    : (dbContext?.data.shops[0]?.id as string);
+  const selectedShopId = shopContext.shop?.id as string;
 
-  const initialParts = (dbContext?.data.parts || []).filter((item) =>
-    item.shop_id?.includes(selectedShopId)
+  const [filterText, setFilterText] = useState<string>('');
+
+  const filterItems = (items: StorePart[], filterBy: string) => {
+    if (!filterBy) {
+      return items;
+    }
+    const lowerCaseFilter = filterBy.toLowerCase();
+    return items.filter(
+      (item) =>
+        item.name?.toLowerCase().includes(lowerCaseFilter) ||
+        item.sku?.toLowerCase().includes(lowerCaseFilter)
+    );
+  };
+
+  const [allParts, setAllParts] = useState<StorePart[]>([]);
+  const warnings = useMemo(
+    () => sortItemsByWarn(allParts, selectedShopId),
+    [allParts, selectedShopId]
   );
-
-  const warnings = sortItemsByWarn(initialParts, selectedShopId);
-
-  const [parts, setParts] = useState<StorePart[]>(initialParts);
+  const parts = useMemo(
+    () => filterItems(allParts, filterText),
+    [allParts, filterText]
+  );
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
   const error = warnings.length
@@ -56,32 +69,30 @@ function Parts() {
   );
   const [laborFee, setLaborFee] = useState<string>('');
 
-  const typeOptions: StyledSelectOption[] = shops.map((key) => {
-    return {
-      name: key.name,
-      value: key.id,
-    } as StyledSelectOption;
-  });
+  const typeOptions: StyledSelectOption[] = useMemo(
+    () =>
+      shops.map((key) => ({
+        name: key.name || '',
+        value: key.id,
+      })),
+    [shops]
+  );
 
-  const filterItems = (filterBy: string) => {
-    if (!filterBy) {
-      setParts(initialParts);
-    } else {
-      const lowerCaseFilter = filterBy.toLowerCase();
-      setParts(
-        initialParts.filter(
-          (item) =>
-            item.name?.toLowerCase().includes(lowerCaseFilter) ||
-            item.sku?.toLowerCase().includes(lowerCaseFilter)
-        )
-      );
-    }
-  };
+  useEffect(() => {
+    const selectedShopId = shopContext.shop?.id;
+    if (!selectedShopId) return;
+
+    const updatedParts = (dbContext?.data.parts || []).filter((item) =>
+      item.shop_id?.includes(selectedShopId)
+    );
+
+    setAllParts(updatedParts);
+  }, [dbContext?.data, shopContext.shop]); // no need for shopContext.shop since it's static
 
   const deletePart = async (item: StorePart) => {
     if (
       item.id &&
-      window.confirm(t('Are you sure you wish to delete this Part?'))
+      (await confirm(t('Are you sure you wish to delete this Part?')))
     ) {
       let updatedItems;
       if (item.shop_id && item.shop_id?.length > 1) {
@@ -108,7 +119,6 @@ function Parts() {
         );
       }
       sortItemsByWarn(updatedItems, selectedShopId);
-      setParts(updatedItems);
     }
   };
 
@@ -127,7 +137,6 @@ function Parts() {
       );
     }
     sortItemsByWarn(updatedParts, selectedShopId);
-    setParts(updatedParts as StorePart[]);
     setModalTemplate(null);
   };
 
@@ -153,9 +162,6 @@ function Parts() {
         id: item.id,
         [key]: changedItem[key],
       });
-      setParts((items) =>
-        items.map((i) => (i.id === item?.id ? changedItem : i))
-      );
     }
   };
 
@@ -184,10 +190,6 @@ function Parts() {
 
     return array;
   });
-
-  if (!dbContext?.data.currentUser) {
-    return <UnauthorizedComponent />;
-  }
 
   return (
     <>
@@ -223,7 +225,7 @@ function Parts() {
           },
         ]}
         error={error}
-        onSearch={filterItems}
+        onSearch={(e) => setFilterText(e)}
         tableLimits={tableLimits}
         setTableLimits={setTableLimits}
       >
@@ -308,7 +310,7 @@ function Parts() {
         tableLimits={tableLimits}
       />
 
-      {!tableLines.length && !initialParts.length && (
+      {!tableLines.length && !allParts.length && (
         <div className='text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 p-2 max-w-screen-xl w-full shadow-md self-center'>
           {t('There is no parts in selected shop: ') + shopContext.shop?.name}
         </div>
