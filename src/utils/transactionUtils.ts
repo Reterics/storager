@@ -29,26 +29,41 @@ export function groupTransactions(
     return '';
   };
 
-  const map = new Map<string, {date: string; cost: number; gross: number}>();
+  const map = new Map<
+    string,
+    {
+      date: string;
+      cost: number;
+      gross: number;
+      net: number;
+      margin: number;
+      count: number;
+    }
+  >();
 
   for (const tx of transactions) {
     const key = groupFn(tx.docUpdated!);
+    const cost = Number(tx.cost || 0);
+    const net = Number(tx.net_amount || 0);
+
     const existing = map.get(key);
     if (existing) {
-      existing.cost += Number(tx.cost || 0);
+      existing.cost += cost;
       existing.gross += Number(tx.gross_amount || 0);
+      existing.net += net;
+      existing.margin += net - cost;
+      existing.count += 1;
     } else {
       map.set(key, {
         date: key,
         cost: Number(tx.cost || 0),
         gross: Number(tx.gross_amount || 0),
+        net: Number(tx.net_amount || 0),
+        margin: net - cost,
+        count: 1,
       });
     }
   }
-
-  console.error(
-    Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date))
-  );
 
   return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
 }

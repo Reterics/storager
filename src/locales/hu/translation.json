@@ -172,5 +172,20 @@
   "Gross Amount": "Bruttó ár",
   "Daily": "Napi",
   "Weekly": "Heti",
-  "Monthly": "Havi"
+  "Monthly": "Havi",
+  "Total Revenue": "Teljes Forgalom",
+  "Net Income": "Nettó Árbevétel",
+  "Total Cost": "Összes költség",
+  "Total Profit": "Teljes Profit",
+  "Products Sold": "Eladott Termékek",
+  "Financial Overview": "Pénzügyi Összesítő",
+  "Transaction Types": "Tranzakció Típusok",
+  "Profit Margin": "Árrés",
+  "Unknown": "Ismeretlen",
+  "sell": "Eladás",
+  "buy": "Vásárlás",
+  "revert": "Sztornó",
+  "labor": "Munkadíj",
+  "Net": "Nettó",
+  "Gross": "Bruttó"
 }

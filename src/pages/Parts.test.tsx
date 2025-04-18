@@ -104,25 +104,21 @@ describe('Parts', () => {
 
   it('deletes a part upon confirmation', async () => {
     const removeData = vi.fn(
-      async (): Promise<ContextDataCollectionType | null> => [
-        defaultParts[0],
-      ]
+      async (): Promise<ContextDataCollectionType | null> => [defaultParts[0]]
     );
     const {container, unmount} = render(
-      <TestingPageProvider
-        removeData={removeData}
-      >
+      <TestingPageProvider removeData={removeData}>
         <Parts />
       </TestingPageProvider>
     );
     const trList = container.querySelectorAll('table > tbody > tr');
-    expect(trList.length).toBe(defaultContextData.parts.length)
+    expect(trList.length).toBe(defaultContextData.parts.length);
 
     // Simulate delete action
     const deleteButton = trList[0].querySelector('button:last-child');
     if (deleteButton) fireEvent.click(deleteButton);
 
-    await waitFor(() => expect(removeData.mock.calls.length).toBe(1))
+    await waitFor(() => expect(removeData.mock.calls.length).toBe(1));
     unmount();
   });
 

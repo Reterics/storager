@@ -236,7 +236,7 @@ export interface InventoryModalData {
 
 export type PaymentMethod = 'card' | 'cash' | 'transfer';
 export type DocumentType = 'invoice' | 'receipt' | 'other';
-export type TransactionType = 'sell' | 'buy' | 'revert';
+export type TransactionType = 'sell' | 'buy' | 'revert' | 'labor';
 export type ItemType = 'part' | 'item' | 'other';
 
 export interface Transaction extends GeneralCollectionEntry {
