@@ -16,7 +16,7 @@ export const serviceDataToPrintable = (
   settings: SettingsItems,
   t: (n: string) => string,
   printNow = true
-): PrintableDataProps | null => {
+): PrintableDataProps => {
   return {
     printNow: printNow,
     data: [
@@ -57,7 +57,7 @@ export const completionFormToPrintable = (
   item: ServiceCompleteData,
   t: (n: string) => string,
   printNow = true
-): PrintableDataProps | null => {
+): PrintableDataProps => {
   return {
     printNow: printNow,
     data: [

@@ -1,4 +1,4 @@
-import {useContext, useMemo, useState} from 'react';
+import {useContext, useEffect, useMemo, useState} from 'react';
 import {DBContext} from '../database/DBContext.ts';
 import {useTranslation} from 'react-i18next';
 import {BsFillPlusCircleFill} from 'react-icons/bs';
@@ -6,8 +6,7 @@ import {PageHead} from '../components/elements/PageHead.tsx';
 import {
   ServiceCompleteData,
   ServiceData,
-  SettingsItems,
-  TableLineType,
+  ServiceLineData,
 } from '../interfaces/interfaces.ts';
 import ServiceModal from '../components/modals/ServiceModal.tsx';
 import TableViewComponent, {
@@ -17,18 +16,12 @@ import ServiceCompletionModal from '../components/modals/ServiceCompletionModal.
 import {ShopContext} from '../store/ShopContext.tsx';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import PrintableVersionFrame from '../components/modals/PrintableVersionFrame.tsx';
-import {PDFData} from '../interfaces/pdf.ts';
+import {PrintViewData} from '../interfaces/pdf.ts';
 import ListModal from '../components/modals/ListModal.tsx';
-import {
-  completionFormToPrintable,
-  serviceDataToPrintable,
-} from '../utils/print.tsx';
-import {
-  compareNormalizedStrings,
-  generateServiceId,
-  toUserDateTime,
-} from '../utils/data.ts';
+import {compareNormalizedStrings, generateServiceId} from '../utils/data.ts';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
+import {filterServices, getServiceLineData} from '../utils/service.ts';
+import {confirm} from '../components/modalExporter.ts';
 
 function Service() {
   const dbContext = useContext(DBContext);
@@ -52,53 +45,12 @@ function Service() {
     {} as Record<string, ServiceCompleteData>
   );
 
-  const filterItems = (
-    shopFilter: string | undefined,
-    searchFilter: string,
-    onlyActive?: boolean,
-    typeFilter?: string
-  ) => {
-    let items = dbContext?.data.services ?? [];
-
-    if (shopFilter) {
-      items = items.filter((item) => item.service_name === shopFilter);
-    }
-
-    if (searchFilter) {
-      const lowerCaseFilter = searchFilter.toLowerCase();
-
-      items = items.filter(
-        (item) =>
-          item.client_name?.toLowerCase().includes(lowerCaseFilter) ||
-          item.client_phone?.toLowerCase().includes(lowerCaseFilter)
-      );
-    }
-
-    if (onlyActive) {
-      items = items.filter(
-        (item) =>
-          !completionFormsById[item.id + '_cd'] &&
-          item.serviceStatus !== 'status_delivered'
-      );
-    }
-
-    if (typeFilter) {
-      items = items.filter(
-        (item) => item.type && item.type.includes(typeFilter)
-      );
-    }
-
-    items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
-
-    return items;
-  };
-
   const [servicedItems, setServicedItems] = useState<ServiceData[]>(
-    filterItems(shopFilter, searchFilter)
+    filterServices(dbContext?.data.services ?? [], completionFormsById)
   );
 
   const availableTypes: string[] = useMemo(() => {
-    return servicedItems.reduce((types, item) => {
+    return (dbContext?.data.services || []).reduce((types, item) => {
       (item.type || '').split(',').forEach((item) => {
         if (item.trim() && !types.includes(item)) {
           types.push(item);
@@ -106,59 +58,46 @@ function Service() {
       });
       return types;
     }, [] as string[]);
-    // eslint-disable-next-line
-  }, []);
+  }, [dbContext?.data.services]);
 
   const [modalTemplate, setModalTemplate] = useState<ServiceData | null>(null);
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<ServiceCompleteData | null>(null);
-  const [printViewData, setPrintViewData] = useState<{
-    data: PDFData;
-    signature?: string;
-    printNow?: boolean;
-  } | null>(null);
+  const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
+    null
+  );
 
-  const [selectedServiceLines, setSelectedServiceLines] = useState<{
-    id: string;
-    name: string;
-    completed?: boolean;
-    table: TableLineType[];
-  } | null>(null);
+  const [selectedServiceLines, setSelectedServiceLines] =
+    useState<ServiceLineData | null>(null);
 
-  const searchItems = (filterBy: string) => {
-    setSearchFilter(filterBy);
+  useEffect(() => {
     setServicedItems(
-      filterItems(shopFilter, filterBy, activeFilter, typeFilter)
+      filterServices(
+        dbContext?.data.services || [],
+        completionFormsById,
+        shopFilter,
+        searchFilter,
+        activeFilter,
+        typeFilter
+      )
     );
-  };
-
-  const selectShopFilter = (shop: string) => {
-    setShopFilter(shop);
-    setServicedItems(filterItems(shop, searchFilter, activeFilter, typeFilter));
-  };
-
-  const selectActiveFilter = (activeOnly: boolean) => {
-    setActiveFilter(activeOnly);
-    setServicedItems(
-      filterItems(shopFilter, searchFilter, activeOnly, typeFilter)
-    );
-  };
-
-  const selectTypeFilter = (typeFilter: string) => {
-    setTypeFilter(typeFilter);
-    setServicedItems(
-      filterItems(shopFilter, searchFilter, activeFilter, typeFilter)
-    );
-  };
+  }, [
+    shopFilter,
+    searchFilter,
+    activeFilter,
+    typeFilter,
+    dbContext?.data.services,
+    completionFormsById,
+  ]);
 
   const deleteServiceHistoryFor = async (item: ServiceData) => {
     if (
       item.id &&
-      window.confirm(
+      (await confirm(
         t(
           'Are you sure you wish to delete this Service and all of its history?'
         )
-      )
+      ))
     ) {
       const completions = completionForms?.filter(
         (c) => c.service_id === item.id
@@ -209,7 +148,9 @@ function Service() {
         serviceData.client_name
       )
     ) {
-      if (confirm(t('Do you want to save this item as a new service form?'))) {
+      if (
+        await confirm(t('Do you want to save this item as a new service form?'))
+      ) {
         // if there is an item with different client names, we regenerate the id
         serviceData.id = generateServiceId(
           updatedItems,
@@ -273,96 +214,17 @@ function Service() {
             setSelectedServiceLines(null);
             return;
           }
-          const completionFormId = item.id + '_cd';
-          const serviceForm = item;
-          const completionForm = completionForms.find(
-            (completionForm) => completionForm.id === completionFormId
+          const newLine = getServiceLineData(
+            item,
+            completionForms,
+            dbContext?.data.archive || [],
+            t,
+            dbContext?.data.settings,
+            setPrintViewData,
+            setPrintViewData
           );
 
-          const list = (dbContext?.data.archive || []).filter(
-            (data) => data.docParent === serviceForm.id
-          );
-
-          list.sort((b, a) => {
-            if (!b.docUpdated || !a.docUpdated) {
-              return 0;
-            }
-            return b.docUpdated - a.docUpdated;
-          });
-
-          if (!list.find((d) => d.docUpdated === serviceForm.docUpdated)) {
-            list.push(serviceForm);
-          }
-          if (completionForm) {
-            list.push(completionForm);
-          }
-          setSelectedServiceLines({
-            id: item.id,
-            name: item.client_name || item.id,
-            completed: !!completionForm,
-            table: list.map((data, index) => {
-              const serviceData = data as ServiceData;
-
-              let version = index + 1;
-              let name = t('Service Form');
-              const isCompletionForm =
-                completionForm && index === list.length - 1;
-              if (isCompletionForm) {
-                version = 1;
-                name = t('Service Completion Form');
-              }
-
-              return [
-                index + 1,
-                name,
-                version,
-                serviceData.docUpdated
-                  ? toUserDateTime(new Date(serviceData.docUpdated))
-                  : serviceData.date,
-                TableViewActions({
-                  onPrint: () => {
-                    if (isCompletionForm) {
-                      setPrintViewData(
-                        completionFormToPrintable(data, t, true)
-                      );
-                    } else {
-                      setPrintViewData(
-                        serviceDataToPrintable(
-                          data,
-                          dbContext?.data.settings || ({} as SettingsItems),
-                          t,
-                          true
-                        )
-                      );
-                    }
-
-                    // const docType = data.docType || (isCompletionForm ? 'completions' : 'services');
-                    //
-                    // window.open(`?page=print&id=${data.id}&type=${docType}&print=true`, '_blank')
-                  },
-                  onOpen: () => {
-                    if (isCompletionForm) {
-                      setPrintViewData(
-                        completionFormToPrintable(data, t, true)
-                      );
-                    } else {
-                      setPrintViewData(
-                        serviceDataToPrintable(
-                          data,
-                          dbContext?.data.settings || ({} as SettingsItems),
-                          t,
-                          false
-                        )
-                      );
-                    }
-                    // const docType = data.docType || (isCompletionForm ? 'completions' : 'services');
-                    //
-                    // window.open(`?page=print&id=${data.id}&type=${docType}`, '_blank');
-                  },
-                }),
-              ];
-            }),
-          });
+          setSelectedServiceLines(newLine);
           window.scrollTo({top: 0, behavior: 'smooth'});
         },
         onEdit: () => {
@@ -415,13 +277,13 @@ function Service() {
               },
             },
           ]}
-          onSearch={searchItems}
+          onSearch={setSearchFilter}
           tableLimits={tableLimits}
           setTableLimits={setTableLimits}
           shopFilter={shopFilter}
-          setShopFilter={selectShopFilter}
+          setShopFilter={setShopFilter}
           activeFilter={activeFilter}
-          setActiveFilter={selectActiveFilter}
+          setActiveFilter={setActiveFilter}
         >
           <div className='w-30 select-no-first'>
             <StyledSelect
@@ -436,7 +298,7 @@ function Service() {
               value={typeFilter || undefined}
               defaultLabel={t('All type')}
               onSelect={(e) =>
-                selectTypeFilter((e.target as HTMLSelectElement).value)
+                setTypeFilter((e.target as HTMLSelectElement).value)
               }
               label={false}
               compact={true}

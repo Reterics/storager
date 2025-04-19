@@ -307,6 +307,13 @@ export type ServiceStatus =
   | 'status_ready'
   | 'status_delivered';
 
+export interface ServiceLineData {
+  id: string;
+  name: string;
+  completed?: boolean;
+  table: TableLineType[];
+}
+
 export interface ServiceData extends GeneralCollectionEntry {
   id: string;
   client_name?: string;
@@ -409,6 +416,7 @@ export interface SettingsItems extends GeneralCollectionEntry {
   useSSL?: boolean;
 
   serviceAgreement?: string;
+  rentalConditions?: string;
   itemTypes?: string;
   partTypes?: string;
   serviceTypes?: string;
