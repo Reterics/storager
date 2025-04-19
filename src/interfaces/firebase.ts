@@ -1,5 +1,7 @@
 import {
   InvoiceType,
+  Lease,
+  LeaseCompletion,
   ServiceCompleteData,
   ServiceData,
   SettingsItems,
@@ -28,6 +30,8 @@ export interface ContextData {
   invoices: InvoiceType[];
   logs: LogEntry[];
   transactions: Transaction[];
+  leases: Lease[];
+  leaseCompletions: LeaseCompletion[];
 }
 
 export type ContextDataCollectionType =
@@ -42,7 +46,9 @@ export type ContextDataCollectionType =
   | UserData
   | InvoiceType[]
   | LogEntry[]
-  | Transaction[];
+  | Transaction[]
+  | Lease[]
+  | LeaseCompletion[];
 export type ContextDataType =
   | 'shops'
   | 'items'
@@ -55,7 +61,9 @@ export type ContextDataType =
   | 'archive'
   | 'invoices'
   | 'logs'
-  | 'transactions';
+  | 'transactions'
+  | 'leases'
+  | 'leaseCompletions';
 export type ContextDataValueType =
   | Shop
   | StoreItem
@@ -67,7 +75,9 @@ export type ContextDataValueType =
   | ShopType
   | InvoiceType
   | LogEntry
-  | Transaction;
+  | Transaction
+  | Lease
+  | LeaseCompletion;
 
 export interface DBContextType {
   data: ContextData;

@@ -151,5 +151,7 @@ export const defaultContextData:ContextData = {
     deleted: [],
     invoices: [],
     logs: [],
-    transactions: []
+    transactions: [],
+    leases: [],
+    leaseCompletions: []
 }

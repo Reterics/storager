@@ -381,6 +381,35 @@ export interface ServiceCompletionModalInput {
   inPlace?: boolean;
 }
 
+export interface Lease extends GeneralCollectionEntry {
+  id: string;
+  client_name?: string;
+  client_email?: string;
+  client_phone?: string;
+  service_name?: string;
+  service_address?: string;
+  service_email?: string;
+  serviceStatus?: ServiceStatus;
+  expected_cost?: string;
+  type?: string;
+  signature?: string;
+  date?: string;
+  onUpdate?: boolean;
+}
+
+export interface LeaseCompletion extends GeneralCollectionEntry {
+  lease_id?: string;
+  id: string;
+  client_name?: string;
+  client_email?: string;
+  client_phone?: string;
+  service_name?: string;
+  service_address?: string;
+  service_email?: string;
+  date?: string;
+  signature?: string;
+}
+
 export interface GeneralButtons {
   value: string | React.ReactNode;
   onClick: (e?: React.MouseEvent) => void;

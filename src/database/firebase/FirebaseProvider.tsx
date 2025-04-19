@@ -13,6 +13,8 @@ import {
 } from './config.ts';
 import {
   InvoiceType,
+  Lease,
+  LeaseCompletion,
   ServiceCompleteData,
   ServiceData,
   SettingsItems,
@@ -86,6 +88,8 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
     let archive: ContextDataValueType[] = [];
     let invoices: InvoiceType[] = [];
     let transactions: Transaction[] = [];
+    let leases: Lease[] = [];
+    let leaseCompletions: LeaseCompletion[] = [];
     let logs: LogEntry[] = [];
 
     users = users.map((user) => {
@@ -96,7 +100,6 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
 
     if (authContext.user?.email) {
       user = users.find((user) => user.email === authContext.user?.email);
-      console.log(authContext.user?.email);
 
       if (!user) {
         console.error('User is not found in the Firestore settings');
@@ -151,6 +154,14 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
             firebaseCollections.transactions
           )) as Transaction[])
         : [];
+      leases = modules.leasing
+        ? ((await getCollection(firebaseCollections.leases)) as Transaction[])
+        : [];
+      leaseCompletions = modules.leasing
+        ? ((await getCollection(
+            firebaseCollections.leaseCompletions
+          )) as Transaction[])
+        : [];
     }
 
     if (user?.shop_id?.length) {
@@ -196,6 +207,8 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
       invoices,
       logs: logs || [],
       transactions,
+      leases,
+      leaseCompletions,
     });
   };
 

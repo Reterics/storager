@@ -17,6 +17,7 @@ const storageTTL = {
 export const modules = {
   storageLogs: import.meta.env.VITE_STORAGE_LOGS === 'true',
   transactions: import.meta.env.VITE_TRANSACTIONS === 'true',
+  leasing: import.meta.env.VITE_LEASING === 'true',
 };
 
 export const firebaseCollections = {
@@ -32,6 +33,9 @@ export const firebaseCollections = {
   invoices: import.meta.env.VITE_FIREBASE_DB_INVOICES || 'invoices',
   logs: import.meta.env.VITE_FIREBASE_DB_LOGS || 'logs',
   transactions: import.meta.env.VITE_FIREBASE_DB_TRANSACTIONS || 'transactions',
+  leases: import.meta.env.VITE_FIREBASE_DB_LEASES || 'leases',
+  leaseCompletions:
+    import.meta.env.VITE_FIREBASE_DB_LEASE_COMPLETIONS || 'lease_completions',
 };
 
 export const logger = new STLogger();
@@ -47,6 +51,8 @@ export const firebaseModel = new FirebaseDBModel({
     parts: storageTTL.hot,
     archive: storageTTL.cold,
     types: storageTTL.cold,
+    leases: storageTTL.cold,
+    leaseCompletions: storageTTL.cold,
   },
   storageLogs: modules.storageLogs,
   collectionsToLog: ['parts', 'items', 'shops'],

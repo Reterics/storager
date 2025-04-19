@@ -18,7 +18,11 @@ import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import PrintableVersionFrame from '../components/modals/PrintableVersionFrame.tsx';
 import {PrintViewData} from '../interfaces/pdf.ts';
 import ListModal from '../components/modals/ListModal.tsx';
-import {compareNormalizedStrings, generateServiceId} from '../utils/data.ts';
+import {
+  compareNormalizedStrings,
+  generateServiceId,
+  reduceToRecordById,
+} from '../utils/data.ts';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
 import {filterServices, getServiceLineData} from '../utils/service.ts';
 import {confirm} from '../components/modalExporter.ts';
@@ -37,13 +41,7 @@ function Service() {
   const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(
     dbContext?.data.completions || []
   );
-  const completionFormsById = completionForms.reduce(
-    (all, currentValue) => {
-      all[currentValue.id] = currentValue;
-      return all;
-    },
-    {} as Record<string, ServiceCompleteData>
-  );
+  const completionFormsById = reduceToRecordById(completionForms);
 
   const [servicedItems, setServicedItems] = useState<ServiceData[]>(
     filterServices(dbContext?.data.services ?? [], completionFormsById)

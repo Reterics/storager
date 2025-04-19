@@ -1,4 +1,4 @@
-import {ServiceData, Shop} from '../interfaces/interfaces.ts';
+import {Lease, ServiceData, Shop} from '../interfaces/interfaces.ts';
 import {ContextDataValueType} from '../interfaces/firebase.ts';
 
 export const toUserDateTime = (date: Date) => {
@@ -19,7 +19,7 @@ export const toUserDateTime = (date: Date) => {
 };
 
 export const generateServiceId = (
-  servicedItems: ServiceData[],
+  servicedItems: ServiceData[] | Lease[],
   currentShopId?: string,
   shops: Shop[] = [],
   deleted: ContextDataValueType[] = []
@@ -181,3 +181,14 @@ export const formatCurrency = (value: number, currency: string = 'HUF') => {
     maximumFractionDigits: currency === 'HUF' ? 0 : 2,
   }).format(value);
 };
+
+export const reduceToRecordById = <T extends {id: string}>(
+  array: T[]
+): Record<string, T> =>
+  array.reduce(
+    (acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    },
+    {} as Record<string, T>
+  );

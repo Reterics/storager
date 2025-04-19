@@ -17,6 +17,7 @@ import TermsOfUse from './pages/TermsOfUse.tsx';
 import {UserBasedLayout} from './layouts/UserBasedLayout.tsx';
 import Logs from './pages/Logs.tsx';
 import Transactions from './pages/Transactions.tsx';
+import Leases from './pages/Leases.tsx';
 
 function QueryRouter() {
   const [searchParams] = useSearchParams();
@@ -83,6 +84,12 @@ function QueryRouter() {
         return (
           <InAppLayout>
             <Transactions />
+          </InAppLayout>
+        );
+      case 'leases':
+        return (
+          <InAppLayout>
+            <Leases />
           </InAppLayout>
         );
       case 'print':

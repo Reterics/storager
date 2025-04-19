@@ -2,6 +2,8 @@ import {TableViewActions} from '../components/elements/TableViewComponent.tsx';
 import {toUserDateTime} from './data.ts';
 import {completionFormToPrintable, serviceDataToPrintable} from './print.tsx';
 import {
+  Lease,
+  LeaseCompletion,
   ServiceCompleteData,
   ServiceData,
   SettingsItems,
@@ -68,8 +70,8 @@ export function getServiceLineData(
 }
 
 export function filterServices(
-  items: ServiceData[],
-  completionFormsById: Record<string, ServiceCompleteData>,
+  items: ServiceData[] | Lease[],
+  completionFormsById: Record<string, ServiceCompleteData | LeaseCompletion>,
   shopFilter?: string,
   searchFilter?: string,
   activeFilter?: boolean,
