@@ -8,7 +8,6 @@ import {
   ServiceLineData,
 } from '../interfaces/interfaces.ts';
 import {generateServiceId, reduceToRecordById} from '../utils/data.ts';
-import {filterServices} from '../utils/service.ts';
 import {PrintViewData} from '../interfaces/pdf.ts';
 import TableViewComponent, {
   TableViewActions,
@@ -16,7 +15,7 @@ import TableViewComponent, {
 import PrintableVersionFrame from '../components/modals/PrintableVersionFrame.tsx';
 import {PageHead} from '../components/elements/PageHead.tsx';
 import {BsFillPlusCircleFill} from 'react-icons/bs';
-import StyledSelect from '../components/elements/StyledSelect.tsx';
+import {filterLeases, getLeaseLineData} from '../utils/lease.ts';
 
 function Leases() {
   const dbContext = useContext(DBContext);
@@ -27,7 +26,6 @@ function Leases() {
   const [shopFilter, setShopFilter] = useState<string>();
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<boolean>(false);
-  const [typeFilter, setTypeFilter] = useState<string | undefined>();
 
   const [completionForms] = useState<LeaseCompletion[]>(
     dbContext?.data.leaseCompletions || []
@@ -35,7 +33,7 @@ function Leases() {
   const completionFormsById = reduceToRecordById(completionForms);
 
   const [leases, setLeases] = useState<Lease[]>(
-    filterServices(dbContext?.data.leases ?? [], completionFormsById)
+    filterLeases(dbContext?.data.leases ?? [], completionFormsById)
   );
 
   const [modalTemplate, setModalTemplate] = useState<Lease | null>(null);
@@ -49,20 +47,18 @@ function Leases() {
 
   useEffect(() => {
     setLeases(
-      filterServices(
+      filterLeases(
         dbContext?.data.leases || [],
         completionFormsById,
         shopFilter,
         searchFilter,
-        activeFilter,
-        typeFilter
+        activeFilter
       )
     );
   }, [
     shopFilter,
     searchFilter,
     activeFilter,
-    typeFilter,
     dbContext?.data.leases,
     completionFormsById,
   ]);
@@ -87,6 +83,18 @@ function Leases() {
             setSelectedLeaseLines(null);
             return;
           }
+
+          const newLine = getLeaseLineData(
+            item,
+            completionForms,
+            dbContext?.data.archive || [],
+            t,
+            dbContext?.data.settings,
+            setPrintViewData,
+            setPrintViewData
+          );
+
+          setSelectedLeaseLines(newLine);
 
           window.scrollTo({top: 0, behavior: 'smooth'});
         },
@@ -142,27 +150,7 @@ function Leases() {
           setShopFilter={setShopFilter}
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
-        >
-          <div className='w-30 select-no-first'>
-            <StyledSelect
-              options={[
-                {
-                  name: t('All type'),
-                  value: '',
-                },
-                //...availableTypes.map((type) => ({value: type, name: type})),
-              ]}
-              name='type'
-              value={typeFilter || undefined}
-              defaultLabel={t('All type')}
-              onSelect={(e) =>
-                setTypeFilter((e.target as HTMLSelectElement).value)
-              }
-              label={false}
-              compact={true}
-            />
-          </div>
-        </PageHead>
+        />
       )}
       <div className={'relative flex justify-center w-full m-auto'}>
         <div className={'mb-2 mt-1'}>
