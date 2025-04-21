@@ -28,6 +28,7 @@ export default function PartModal({
 
   const shopPartCategoryOptions =
     dbContext?.getType('part', i18n.language === 'hu' ? 'hu' : 'en') || [];
+  const isAdmin = dbContext?.data.currentUser?.role === 'admin';
   const shopIndex = part ? getShopIndex(part, selectedShopId) : -1;
 
   const changeType = (
@@ -123,6 +124,29 @@ export default function PartModal({
         <MediaBrowse image={part?.image} onClick={() => setGallery(true)} />
       </FormRow>
 
+      {isAdmin && (
+        <FormRow>
+          <StyledInput
+            type='number'
+            name='cost'
+            value={part.cost}
+            onChange={(e) => changeType(e, 'cost')}
+            label={t('Cost')}
+            pattern='[0-9]+'
+            maxLength={11}
+          />
+          <StyledInput
+            type='number'
+            name='net_price'
+            value={part.net_price}
+            onChange={(e) => changeType(e, 'net_price')}
+            label={t('Net Price')}
+            pattern='[0-9]+'
+            maxLength={11}
+          />
+          <div />
+        </FormRow>
+      )}
       <FormRow>
         <StyledInput
           type='number'

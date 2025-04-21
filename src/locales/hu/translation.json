@@ -190,7 +190,7 @@
   "Gross": "Bruttó",
   "Rental Conditions": "Bérlés feltételek",
   "Rental Form": "Bérlés Űrlap",
-  "Item and rental details": "Készülés és a bérlés adatai",
+  "Item and rental details": "Készülék és a bérlés adatai",
   "status_leased": "Bérlés alatt",
   "status_returned": "Készülék visszaadva",
   "Rental Return Form": "Bérlés Visszavételi Űrlap",
@@ -198,5 +198,9 @@
   "Lease Date": "Bérlés dátuma",
   "Rental cost": "Bérlés költsége",
   "Rental Description": "Bérlés további leírása",
-  "Leases": "Bérlés"
+  "Leases": "Bérlés",
+  "Net Price": "Nettó Ár",
+  "Identity Card": "Személyigazolvány Szám",
+  "Resident Card": "Lacímkártya Szám",
+  "Renter": "Bérbeadó"
 }

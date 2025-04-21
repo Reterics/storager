@@ -27,6 +27,7 @@ export default function ItemModal({
 
   const selectTypeOptions =
     dbContext?.getType('item', i18n.language === 'hu' ? 'hu' : 'en') || [];
+  const isAdmin = dbContext?.data.currentUser?.role === 'admin';
 
   const [gallery, setGallery] = useState<boolean>(false);
   const shopIndex = item ? getShopIndex(item, selectedShopId) : -1;
@@ -121,6 +122,30 @@ export default function ItemModal({
 
         <MediaBrowse image={item?.image} onClick={() => setGallery(true)} />
       </FormRow>
+
+      {isAdmin && (
+        <FormRow>
+          <StyledInput
+            type='number'
+            name='cost'
+            value={item.cost}
+            onChange={(e) => changeType(e, 'cost')}
+            label={t('Cost')}
+            pattern='[0-9]+'
+            maxLength={11}
+          />
+          <StyledInput
+            type='number'
+            name='net_price'
+            value={item.net_price}
+            onChange={(e) => changeType(e, 'net_price')}
+            label={t('Net Price')}
+            pattern='[0-9]+'
+            maxLength={11}
+          />
+          <div />
+        </FormRow>
+      )}
 
       <FormRow>
         <StyledInput

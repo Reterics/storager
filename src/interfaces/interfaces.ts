@@ -199,6 +199,10 @@ export interface StoreItem extends GeneralCollectionEntry {
   storage?: number[];
   shop_id?: string[];
   storage_limit?: number[];
+
+  // Frontend restricted keys:
+  cost?: number;
+  net_price?: number;
 }
 
 export interface ItemModalInput {
@@ -221,6 +225,10 @@ export interface StorePart extends GeneralCollectionEntry {
   storage?: number[];
   shop_id?: string[];
   storage_limit?: number[];
+
+  // Frontend restricted keys:
+  cost?: number;
+  net_price?: number;
 }
 
 export interface ShopType extends GeneralCollectionEntry {
@@ -394,6 +402,9 @@ export interface Lease extends GeneralCollectionEntry {
   client_name?: string;
   client_email?: string;
   client_phone?: string;
+  client_address?: string;
+  client_identity_card?: string;
+  client_resident_card?: string;
   service_name?: string;
   service_address?: string;
   service_email?: string;

@@ -75,6 +75,13 @@ export default function LeaseModal({
           onChange={(e) => changeType(e, 'client_name')}
           label={t('Name')}
         />
+        <StyledInput
+          type='text'
+          name='client_address'
+          value={lease.client_address}
+          onChange={(e) => changeType(e, 'client_address')}
+          label={t('Address')}
+        />
       </FormRow>
 
       <FormRow>
@@ -94,9 +101,26 @@ export default function LeaseModal({
         />
       </FormRow>
 
+      <FormRow>
+        <StyledInput
+          type='text'
+          name='client_identity_card'
+          value={lease.client_identity_card}
+          onChange={(e) => changeType(e, 'client_identity_card')}
+          label={t('Identity Card')}
+        />
+        <StyledInput
+          type='text'
+          name='client_resident_card'
+          value={lease.client_resident_card}
+          onChange={(e) => changeType(e, 'client_resident_card')}
+          label={t('Resident Card')}
+        />
+      </FormRow>
+
       {!lease.onUpdate && (
         <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
-          {t('Recipient')}
+          {t('Renter')}
         </h3>
       )}
 
