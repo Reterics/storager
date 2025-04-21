@@ -1,7 +1,11 @@
 import {JSX, useContext, useState} from 'react';
 import {DBContext} from '../database/DBContext.ts';
 import {useTranslation} from 'react-i18next';
-import {ServiceCompleteData, ServiceData} from '../interfaces/interfaces.ts';
+import {
+  ServiceCompleteData,
+  ServiceData,
+  serviceStatusList,
+} from '../interfaces/interfaces.ts';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
@@ -215,7 +219,7 @@ function Diagnostic() {
           ) : (
             occurence.client_name
           ),
-          t(serviceItem?.serviceStatus || 'status_accepted'),
+          t(serviceItem?.serviceStatus || serviceStatusList[0]),
           t(serviceItem?.guaranteed || 'no'),
           serviceItem?.expected_cost || 0,
           occurence.date || '',

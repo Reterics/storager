@@ -11,11 +11,12 @@ import {
 } from '../interfaces/interfaces.ts';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import {TFunction} from 'i18next';
 
 export const getPrintableData = (
   dbContext: DBContextType | null,
   id: string,
-  t: (key: string) => string,
+  t: TFunction,
   docType?: string,
   printNow?: boolean
 ): PrintableDataProps | null => {

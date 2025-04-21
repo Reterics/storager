@@ -35,7 +35,7 @@ export const firebaseCollections = {
   transactions: import.meta.env.VITE_FIREBASE_DB_TRANSACTIONS || 'transactions',
   leases: import.meta.env.VITE_FIREBASE_DB_LEASES || 'leases',
   leaseCompletions:
-    import.meta.env.VITE_FIREBASE_DB_LEASE_COMPLETIONS || 'lease_completions',
+    import.meta.env.VITE_FIREBASE_DB_LEASE_COMPLETIONS || 'leaseCompletions',
 };
 
 export const logger = new STLogger();

@@ -45,7 +45,7 @@
   "Client": "Ügyfél",
   "Phone": "Telefon",
   "Email": "Email",
-  "Item and service details": "Készülék és javítás adatai adatai",
+  "Item and service details": "Készülék és javítás adatai",
   "Type": "Típus",
   "Description": "Leírás",
   "Accessories": "Átvett tartozékok",
@@ -188,5 +188,15 @@
   "labor": "Munkadíj",
   "Net": "Nettó",
   "Gross": "Bruttó",
-  "Rental Conditions": "Bérlés feltételek"
+  "Rental Conditions": "Bérlés feltételek",
+  "Rental Form": "Bérlés Űrlap",
+  "Item and rental details": "Készülés és a bérlés adatai",
+  "status_leased": "Bérlés alatt",
+  "status_returned": "Készülék visszaadva",
+  "Rental Return Form": "Bérlés Visszavételi Űrlap",
+  "Leasing Form": "Bérlés Űrlap",
+  "Lease Date": "Bérlés dátuma",
+  "Rental cost": "Bérlés költsége",
+  "Rental Description": "Bérlés további leírása",
+  "Leases": "Bérlés"
 }

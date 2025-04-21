@@ -5,7 +5,7 @@ const storageDBName = import.meta.env.VITE_INDEXED_DB || 'storagerDB';
 
 export function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(storageDBName, 4);
+    const request = indexedDB.open(storageDBName, 6);
 
     const stores = [
       'shops',
@@ -20,6 +20,8 @@ export function openDatabase(): Promise<IDBDatabase> {
       'types',
       'mtime',
       'ttl',
+      'leases',
+      'leaseCompletions',
       'images',
       'backup',
     ];

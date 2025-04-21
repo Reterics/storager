@@ -1,4 +1,4 @@
-import {ServiceCompleteData, ServiceData} from "../../src/interfaces/interfaces";
+import {ServiceCompleteData, ServiceData, serviceStatusList} from '../../src/interfaces/interfaces';
 
 
 export const serviceDataList:ServiceData[] = [
@@ -20,7 +20,7 @@ export const serviceDataList:ServiceData[] = [
         phone: '06300000',
         description: 'description',
         coordinates: undefined,
-        serviceStatus: 'status_accepted',
+        serviceStatus: serviceStatusList[0],
         signature: '',
         date: '2022-02-02',
         onUpdate: true

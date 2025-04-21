@@ -4,15 +4,17 @@ import {completionFormToPrintable, serviceDataToPrintable} from './print.tsx';
 import {
   ServiceCompleteData,
   ServiceData,
+  serviceStatusList,
   SettingsItems,
 } from '../interfaces/interfaces.ts';
 import {PrintViewData} from '../interfaces/pdf.ts';
+import {TFunction} from 'i18next';
 
 export function getServiceLineData(
   item: ServiceData,
   completionForms: ServiceCompleteData[],
   archive: (ServiceData | ServiceCompleteData)[],
-  t: (key: string) => string,
+  t: TFunction,
   settings: SettingsItems | undefined,
   onPrint: (data: PrintViewData) => void,
   onOpen: (data: PrintViewData) => void
@@ -93,7 +95,7 @@ export function filterServices(
     items = items.filter(
       (item) =>
         !completionFormsById[item.id + '_cd'] &&
-        item.serviceStatus !== 'status_delivered'
+        item.serviceStatus !== serviceStatusList[serviceStatusList.length - 1]
     );
   }
 

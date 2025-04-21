@@ -37,6 +37,10 @@ export default abstract class DBModel {
         archive: (await loadFromIndexedDB('archive')) as CommonCollectionData[],
         types: (await loadFromIndexedDB('types')) as CommonCollectionData[],
         deleted: (await loadFromIndexedDB('deleted')) as CommonCollectionData[],
+        leases: (await loadFromIndexedDB('leases')) as CommonCollectionData[],
+        leaseCompletions: (await loadFromIndexedDB(
+          'leaseCompletions'
+        )) as CommonCollectionData[],
       };
       ttl = (await loadFromIndexedDB('ttl')) as TTLData;
       mtime = (await loadFromIndexedDB('mtime')) as TTLData;
@@ -44,13 +48,7 @@ export default abstract class DBModel {
       console.error(e);
     }
 
-    if (
-      cache &&
-      cache.users &&
-      cache.settings &&
-      cache.users.length &&
-      cache.settings.length
-    ) {
+    if (cache && cache.users && cache.settings && cache.users.length) {
       this._cache = cache;
     }
     if (ttl) {
@@ -73,6 +71,11 @@ export default abstract class DBModel {
       await saveToIndexedDB('archive', this._cache['archive']);
       await saveToIndexedDB('types', this._cache['types']);
       await saveToIndexedDB('deleted', this._cache['deleted']);
+      await saveToIndexedDB('leases', this._cache['leases']);
+      await saveToIndexedDB(
+        'leaseCompletions',
+        this._cache['leaseCompletions']
+      );
       await saveToIndexedDB('ttl', this._ttl);
       await saveToIndexedDB('mtime', this._mtime);
     } catch (e) {
@@ -85,7 +88,7 @@ export default abstract class DBModel {
       clearTimeout(this._timeout);
     }
     this._timeout = setTimeout(() => {
-      this.savePersisted();
+      void this.savePersisted();
     }, ms);
   }
 

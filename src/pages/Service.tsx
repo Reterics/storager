@@ -7,6 +7,7 @@ import {
   ServiceCompleteData,
   ServiceData,
   ServiceLineData,
+  serviceStatusList,
 } from '../interfaces/interfaces.ts';
 import ServiceModal from '../components/modals/ServiceModal.tsx';
 import TableViewComponent, {
@@ -197,7 +198,11 @@ function Service() {
     return [
       <span
         key={'status_' + item.id}
-        className={serviceCompletion ? 'status_delivered' : item.serviceStatus}
+        className={
+          serviceCompletion
+            ? serviceStatusList[serviceStatusList.length - 1]
+            : item.serviceStatus
+        }
       >
         {item.id}
       </span>,
@@ -264,7 +269,7 @@ function Service() {
                     ? null
                     : {
                         id: id,
-                        serviceStatus: 'status_accepted',
+                        serviceStatus: serviceStatusList[0],
                         date: new Date().toISOString().split('T')[0],
                         service_address: shop?.address || '',
                         service_name: shop?.name || '',

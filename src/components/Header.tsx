@@ -59,6 +59,7 @@ const Header = () => {
         firebaseModel.invalidateCache('deleted');
         firebaseModel.invalidateCache('archive');
         firebaseModel.invalidateCache('services');
+        firebaseModel.invalidateCache('leaseCompletions');
         firebaseModel.invalidateCache('completions');
         await dbContext?.refreshData('users');
         break;

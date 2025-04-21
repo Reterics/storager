@@ -1,6 +1,10 @@
 import {describe, it, expect} from 'vitest';
 import {filterServices} from './service.ts';
-import type {ServiceData, ServiceCompleteData} from '../interfaces/interfaces';
+import {
+  ServiceData,
+  ServiceCompleteData,
+  serviceStatusList,
+} from '../interfaces/interfaces';
 
 const mockService = (
   id: string,
@@ -10,7 +14,7 @@ const mockService = (
   client_name: 'John Doe',
   client_phone: '123456789',
   service_name: 'Main Shop',
-  serviceStatus: 'status_accepted',
+  serviceStatus: serviceStatusList[0],
   type: 'console',
   docUpdated: 1000,
   ...overrides,

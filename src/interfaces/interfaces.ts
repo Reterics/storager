@@ -299,13 +299,21 @@ export interface PartModalInput {
   selectedShopId?: string;
 }
 
-export type ServiceStatus =
-  | 'status_accepted'
-  | 'status_in_progress'
-  | 'status_waiting_parts'
-  | 'status_waiting_feedback'
-  | 'status_ready'
-  | 'status_delivered';
+// Do not change first and last variable without careful consideration
+export const serviceStatusList = [
+  'status_accepted',
+  'status_in_progress',
+  'status_waiting_parts',
+  'status_waiting_feedback',
+  'status_ready',
+  'status_delivered',
+] as const;
+
+export type ServiceStatus = (typeof serviceStatusList)[number];
+
+export const leaseStatusList = ['status_leased', 'status_returned'] as const;
+
+export type LeaseStatus = (typeof leaseStatusList)[number];
 
 export interface ServiceLineData {
   id: string;
@@ -389,7 +397,11 @@ export interface Lease extends GeneralCollectionEntry {
   service_name?: string;
   service_address?: string;
   service_email?: string;
-  serviceStatus?: ServiceStatus;
+  description?: string;
+  note?: string;
+  accessories?: string;
+  lease_status?: LeaseStatus;
+
   expected_cost?: string;
   type?: string;
   signature?: string;
@@ -406,8 +418,33 @@ export interface LeaseCompletion extends GeneralCollectionEntry {
   service_name?: string;
   service_address?: string;
   service_email?: string;
+
+  description?: string;
+  accessories?: string;
+  lease_date?: string;
+  rental_cost?: string;
+  rental_description?: string;
   date?: string;
   signature?: string;
+}
+
+export interface LeaseModalProps {
+  id?: string;
+  onClose: () => void;
+  lease: Lease;
+  onSave: (currentLease: Lease) => onClickReturn;
+  setLease: (lease: Lease) => void;
+  inPlace?: boolean;
+  settings?: SettingsItems;
+}
+
+export interface LeaseCompletionModalProps {
+  id?: string;
+  onClose: () => void;
+  formData: LeaseCompletion;
+  onSave: (currentLease: LeaseCompletion) => onClickReturn;
+  setFromData: (lease: LeaseCompletion) => void;
+  inPlace?: boolean;
 }
 
 export interface GeneralButtons {

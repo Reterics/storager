@@ -1,9 +1,11 @@
 import {
   ServiceCompleteData,
   ServiceData,
+  serviceStatusList,
   SettingsItems,
 } from '../interfaces/interfaces.ts';
 import {PDFData} from '../interfaces/pdf.ts';
+import {TFunction} from 'i18next';
 
 export interface PrintableDataProps {
   data: PDFData;
@@ -14,7 +16,7 @@ export interface PrintableDataProps {
 export const serviceDataToPrintable = (
   item: ServiceData,
   settings: SettingsItems,
-  t: (n: string) => string,
+  t: TFunction,
   printNow = true
 ): PrintableDataProps => {
   return {
@@ -33,7 +35,7 @@ export const serviceDataToPrintable = (
       {'': t('Item and service details')},
       [{[t('Type')]: (item.type || '')?.split(',').join(', ')}],
       [{[t('Description')]: item.description || ''}],
-      [{[t('status')]: t(item.serviceStatus || 'status_accepted')}],
+      [{[t('status')]: t(item.serviceStatus || serviceStatusList[0])}],
       [{[t('Guaranteed')]: item.guaranteed || ''}],
       [{[t('Accessories')]: item.accessories || ''}],
       [{[t('Repair Description')]: item.repair_description || ''}],
@@ -55,7 +57,7 @@ export const serviceDataToPrintable = (
 
 export const completionFormToPrintable = (
   item: ServiceCompleteData,
-  t: (n: string) => string,
+  t: TFunction,
   printNow = true
 ): PrintableDataProps => {
   return {

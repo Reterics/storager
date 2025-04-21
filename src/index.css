@@ -53,6 +53,9 @@ table > tbody > tr > td:first-child > img {
 .service-table tbody > tr:has(span.status_delivered) {
   background-color: rgba(0, 255, 0, 0.07);
 }
+.service-table.lease-table tbody > tr:has(span.status_returned) {
+  background-color: rgba(0, 255, 0, 0.07);
+}
 .service-table tbody > tr > th:nth-child(2),
 .service-table tbody > tr > th:nth-child(3),
 .service-table tbody > tr > th:nth-child(6) {
