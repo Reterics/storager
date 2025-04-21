@@ -131,10 +131,12 @@ export default function Transactions() {
       formatCurrency(transaction.cost || 0),
       formatCurrency(transaction.net_amount || 0),
       formatCurrency(transaction.gross_amount || 0),
-      new Date(transaction.docUpdated!)
-        .toISOString()
-        .replace(/T/, ' ')
-        .slice(0, 16),
+      transaction.docUpdated
+        ? new Date(transaction.docUpdated)
+            .toISOString()
+            .replace(/T/, ' ')
+            .slice(0, 16)
+        : '?',
       TableViewActions({
         onRemove: () => deletePart(transaction),
         onEdit: () => setModalTemplate(transaction),

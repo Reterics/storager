@@ -253,6 +253,7 @@ export interface Transaction extends GeneralCollectionEntry {
   shop_id?: string[];
   cost?: number;
   item_type?: ItemType;
+  item_id?: string;
   net_amount?: number;
   gross_amount?: number;
   payment_method?: PaymentMethod;

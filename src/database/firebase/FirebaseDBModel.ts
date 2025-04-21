@@ -22,11 +22,19 @@ import {
 import {User} from 'firebase/auth';
 import {
   DeviceDebugInfo,
+  FieldChange,
   getChangedFields,
   getDeviceDebugInfo,
 } from '../../utils/data.ts';
 import {getClientInfo} from '../../utils/general.ts';
-import {GeneralCollectionEntry} from '../../interfaces/interfaces.ts';
+import {
+  GeneralCollectionEntry,
+  ItemType,
+  StoreItem,
+  StorePart,
+  Transaction,
+  TransactionType,
+} from '../../interfaces/interfaces.ts';
 
 type operationType =
   | 'remove'
@@ -46,6 +54,7 @@ export interface LogEntry extends GeneralCollectionEntry {
   email?: string;
   at?: number;
   item_id?: string;
+  item_name?: string;
   changes?: Record<string, unknown>;
   device_type?: DeviceType;
   user_agent?: string;
@@ -58,6 +67,7 @@ export default class FirebaseDBModel extends DBModel {
   protected _app: FirebaseApp;
   protected _db: Firestore;
   protected _storageLogs: boolean;
+  protected _transactions: boolean;
   protected _collectionsToLog: string[];
   protected _user: User | null | undefined;
   protected _logFailCount: number;
@@ -67,6 +77,7 @@ export default class FirebaseDBModel extends DBModel {
     ttl?: TTLData;
     mtime?: TTLData;
     storageLogs?: boolean;
+    transactions?: boolean;
     collectionsToLog?: string[];
   }) {
     super(options);
@@ -81,6 +92,7 @@ export default class FirebaseDBModel extends DBModel {
     });
     this._db = getFirestore(this._app);
     this._storageLogs = !!options?.storageLogs;
+    this._transactions = !!options?.transactions;
     this._collectionsToLog = options?.collectionsToLog || [];
     this._logFailCount = 0;
   }
@@ -104,6 +116,64 @@ export default class FirebaseDBModel extends DBModel {
     if (this._logFailCount > 5) {
       console.warn('Failed to log 5 times **in** a row. Logs are disabled');
       this._storageLogs = false;
+    }
+  }
+
+  async addTransaction(
+    id: string,
+    table: ItemType,
+    item: StorePart | StoreItem,
+    changes?: FieldChange,
+    transactionType?: TransactionType
+  ): Promise<void> {
+    if (!this._transactions) {
+      return;
+    }
+    const diff = changes ? Number(changes.from) - Number(changes.to) : 1;
+
+    const netPrice = item.net_price || (item.price || 0) / 1.27; // for VAT: ((item.price || 0) * 0.2126);
+
+    let trType = transactionType || 'sell';
+    if (!transactionType && changes) {
+      trType = diff > 0 ? 'sell' : 'buy';
+    }
+
+    const transaction: Partial<Transaction> = {
+      name: item.name || trType + ' ' + trType,
+      cost: (item.cost || netPrice || 0) * diff,
+      item_type: table,
+      item_id: id || item.id,
+      net_amount: netPrice * diff,
+      gross_amount: (item.price || netPrice * 1.27) * diff,
+      payment_method: 'cash',
+      document_type: 'receipt',
+      transaction_type: trType,
+      user:
+        this._user?.email ||
+        this._user?.displayName ||
+        this._user?.uid ||
+        'unknown',
+      docUpdated: new Date().getTime(),
+    };
+
+    if (this._shopId) {
+      transaction.shop_id = [this._shopId];
+    }
+    if (changes && item.shop_id) {
+      transaction.shop_id = [item.shop_id[changes.index]];
+    }
+
+    const modelRef = await addDoc(
+      collection(this._db, 'transactions'),
+      transaction
+    ).catch((e) => console.error('Failed to add transaction', e));
+
+    if (modelRef) {
+      transaction.id = modelRef.id;
+      this.appendCachedEntry(
+        'transactions',
+        transaction as CommonCollectionData
+      );
     }
   }
 
@@ -142,6 +212,7 @@ export default class FirebaseDBModel extends DBModel {
       user_agent: clientInfo.userAgent,
       at: Date.now(),
       item_id: id,
+      item_name: (item?.name ?? '') as string,
       changes: changes,
     };
 
@@ -153,12 +224,29 @@ export default class FirebaseDBModel extends DBModel {
       logEntry.device_info = getDeviceDebugInfo();
     }
 
+    if (
+      opType === 'update' &&
+      ['parts', 'items'].includes(table) &&
+      !error &&
+      changes?.storage &&
+      item
+    ) {
+      await this.addTransaction(
+        id || item.id,
+        table as ItemType,
+        (oldItem ? {...oldItem, ...item} : item) as StorePart | StoreItem,
+        changes?.storage as FieldChange
+      );
+    }
+
     const modelRef = await addDoc(collection(this._db, 'logs'), logEntry).catch(
       (e) => this.logCatch(e)
     );
 
     if (modelRef) {
       this._logFailCount = 0;
+      logEntry.id = modelRef.id;
+      this.appendCachedEntry('logs', logEntry as CommonCollectionData);
     }
   }
 

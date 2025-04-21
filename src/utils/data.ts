@@ -1,5 +1,8 @@
 import {Lease, ServiceData, Shop} from '../interfaces/interfaces.ts';
-import {ContextDataValueType} from '../interfaces/firebase.ts';
+import {
+  CommonCollectionData,
+  ContextDataValueType,
+} from '../interfaces/firebase.ts';
 
 export const toUserDateTime = (date: Date) => {
   const datePart = date.toLocaleDateString('en-CA', {
@@ -67,25 +70,48 @@ export const compareNormalizedStrings = (str1: string, str2: string) => {
   return normalized1 === normalized2;
 };
 
+export type FieldChange = {
+  from: string | number | boolean;
+  to: string | number | boolean;
+  index: number;
+};
+
 export const getChangedFields = (
-  oldObj: Record<string, unknown>,
-  newObj: Record<string, unknown>
+  oldObj: CommonCollectionData,
+  newObj: CommonCollectionData
 ) => {
-  const changes: Record<string, unknown> = {};
+  const changes: Record<string, FieldChange> = {};
 
   const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
 
   for (const key of allKeys) {
-    let oldVal = oldObj[key];
-    let newVal = newObj[key];
+    const oldVal = oldObj[key];
+    const newVal = newObj[key];
 
-    if (Array.isArray(oldVal)) oldVal = oldVal[0];
-    if (Array.isArray(newVal)) newVal = newVal[0];
+    if (Array.isArray(oldVal) || Array.isArray(newVal)) {
+      const oldArr = Array.isArray(oldVal) ? oldVal : [];
+      const newArr = Array.isArray(newVal) ? newVal : [];
+      const maxLength = Math.max(oldArr.length, newArr.length);
 
-    if (oldVal !== newVal && newVal) {
+      for (let i = 0; i < maxLength; i++) {
+        if (
+          oldArr[i] !== newArr[i] &&
+          newArr[i] !== undefined &&
+          newArr[i] !== null
+        ) {
+          changes[key] = {
+            //changes[`${key}[${i}]`]
+            from: oldArr[i] === undefined ? 'undefined' : oldArr[i],
+            to: newArr[i],
+            index: i,
+          };
+        }
+      }
+    } else if (oldVal !== newVal && newVal !== undefined && newVal !== null) {
       changes[key] = {
         from: oldVal === undefined ? 'undefined' : oldVal,
         to: newVal,
+        index: 0,
       };
     }
   }

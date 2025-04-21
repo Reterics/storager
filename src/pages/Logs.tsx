@@ -70,8 +70,8 @@ export default function Logs() {
     return <div>Logging is not active in the system.</div>;
   }
   const tableLines = logs.map((log) => {
-    let entityName = log.entity || '';
-    if (log.entity) {
+    let entityName = (log.item_name && log.entity) || '';
+    if (!log.item_name && log.entity) {
       const [type, id] = log.entity.split('/');
       if (type && !dataKeys[type]) {
         dataKeys[type] = (

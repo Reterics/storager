@@ -55,6 +55,7 @@ export const firebaseModel = new FirebaseDBModel({
     leaseCompletions: storageTTL.cold,
   },
   storageLogs: modules.storageLogs,
+  transactions: modules.transactions,
   collectionsToLog: ['parts', 'items', 'shops'],
 });
 
