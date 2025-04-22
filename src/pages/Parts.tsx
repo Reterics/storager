@@ -328,9 +328,31 @@ function Parts() {
         {inventoryData && shopContext.shop && (
           <InventoryModal
             onClose={() => setInventoryData(null)}
-            onSave={() => setInventoryData(null)}
+            onSave={(data) => {
+              for (const id of Object.keys(data)) {
+                const item = parts.find((p) => p.id === id);
+                if (item) {
+                  const storageInfo = extractStorageInfo(item, selectedShopId);
+
+                  const changedItem = (changeStoreType(
+                    {
+                      currentTarget: {
+                        value: storageInfo.storage - data[id],
+                      },
+                    } as unknown as ChangeEvent<HTMLInputElement>,
+                    'storage',
+                    item,
+                    selectedShopId
+                  ) || item) as StorePart;
+                  dbContext?.setData('parts', {
+                    id: item.id,
+                    storage: changedItem.storage,
+                  });
+                }
+              }
+              setInventoryData(null);
+            }}
             inPlace={false}
-            inventoryData={inventoryData}
             items={parts}
             selectedShopId={selectedShopId}
           />

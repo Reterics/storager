@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 export interface TableSelectComponentProps<T> {
   items: T[];
   selectedItems: Record<string, number>;
-  onChange: (updated: Record<string, number>) => void;
+  onChange: (updated: Record<string, number>, item: T) => void;
   itemRenderer: (item: T) => React.ReactNode[];
   headers: React.ReactNode[];
   getId: (item: T) => string;
@@ -23,7 +23,7 @@ export default function TableSelectComponent<T>({
 }: TableSelectComponentProps<T>) {
   const {t} = useTranslation();
 
-  const handleChange = (id: string, delta: number) => {
+  const handleChange = (id: string, delta: number, item: T) => {
     const current = selectedItems[id] || 0;
     const updatedCount = current + delta;
 
@@ -38,7 +38,7 @@ export default function TableSelectComponent<T>({
       updated[id] = maxCount;
     }
 
-    onChange(updated);
+    onChange(updated, item);
   };
 
   return (
@@ -76,7 +76,7 @@ export default function TableSelectComponent<T>({
               <td className='px-3 py-2 text-center flex justify-center items-center gap-3'>
                 <button
                   type='button'
-                  onClick={() => handleChange(id, -1)}
+                  onClick={() => handleChange(id, -1, item)}
                   className='text-red-600 hover:text-red-800 disabled:opacity-40'
                   disabled={count <= 0}
                 >
@@ -84,7 +84,7 @@ export default function TableSelectComponent<T>({
                 </button>
                 <button
                   type='button'
-                  onClick={() => handleChange(id, 1)}
+                  onClick={() => handleChange(id, 1, item)}
                   className='text-green-600 hover:text-green-800'
                 >
                   <BsPlusCircle size={18} />

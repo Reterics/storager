@@ -2,7 +2,6 @@ import {useTranslation} from 'react-i18next';
 import {useState} from 'react';
 import {
   GeneralModalButtons,
-  InventoryModalData,
   onClickReturn,
   StoreItem,
   StorePart,
@@ -16,8 +15,7 @@ import {extractStorageInfo} from '../../utils/storage.ts';
 export interface InventoryModalProps {
   inPlace?: boolean;
   onClose: () => void;
-  onSave: (inventoryData: InventoryModalData) => onClickReturn;
-  inventoryData: InventoryModalData;
+  onSave: (selectedMap: Record<string, number>) => onClickReturn;
   items: StorePart[] | StoreItem[];
   selectedShopId: string;
 }
@@ -25,7 +23,6 @@ export interface InventoryModalProps {
 export default function InventoryModal({
   onClose,
   onSave,
-  inventoryData,
   items,
   inPlace,
   selectedShopId,
@@ -50,7 +47,7 @@ export default function InventoryModal({
   const buttons: GeneralModalButtons[] = [
     {
       primary: true,
-      onClick: () => onSave(inventoryData),
+      onClick: () => onSave(selectedMap),
       value: t('Save'),
       testId: 'saveButton',
     },
@@ -81,7 +78,17 @@ export default function InventoryModal({
         <TableSelectComponent<StoreItem>
           items={data}
           selectedItems={selectedMap}
-          onChange={setSelectedMap}
+          onChange={(data, item) => {
+            const storageInfo = extractStorageInfo(item, selectedShopId);
+            const diff = storageInfo.storage - data[item.id];
+
+            if (diff >= 0) {
+              setSelectedMap(data);
+            } else if (diff < 0) {
+              data[item.id] = storageInfo.storage;
+              setSelectedMap(data);
+            }
+          }}
           itemRenderer={(item) => {
             const storageInfo = extractStorageInfo(item, selectedShopId);
 
