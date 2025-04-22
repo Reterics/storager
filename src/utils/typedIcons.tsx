@@ -13,6 +13,7 @@ import {
   BsFileEarmark,
   BsFileEarmarkText,
   BsFillSendFill,
+  BsPersonLinesFill,
   BsPhone,
   BsReceipt,
   BsTablet,
@@ -48,12 +49,15 @@ export const getIconForTransactionType = (
 ) => {
   switch (transactionType) {
     case 'sell':
-      return <BsArrowUpRight size={18} title={'invoice'} />;
+      return <BsArrowUpRight size={18} title={'sell'} />;
     case 'buy':
-      return <BsArrowDownLeft size={18} title={'receipt'} />;
+      return <BsArrowDownLeft size={18} title={'buy'} />;
     case 'revert':
-      return <BsArrowCounterclockwise size={18} title={'other'} />;
+      return <BsArrowCounterclockwise size={18} title={'revert'} />;
+    case 'labor':
+      return <BsPersonLinesFill size={18} title={'labor'} />;
   }
+  return '';
 };
 
 export const getIconForDeviceType = (type?: DeviceType) => {

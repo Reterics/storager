@@ -13,6 +13,7 @@ import {
   Shop,
   StorePart,
   StyledSelectOption,
+  Transaction,
 } from '../interfaces/interfaces.ts';
 import TableViewComponent, {
   TableViewActions,
@@ -256,7 +257,19 @@ function Parts() {
                 );
 
                 if (response) {
-                  // TODO: Add labor fee
+                  const netPrice = laborFeeNumeric / 1.27;
+
+                  dbContext?.setData('transactions', {
+                    net_amount: netPrice,
+                    cost: netPrice,
+                    gross_amount: laborFeeNumeric,
+                    item_type: 'other',
+                    payment_method: 'cash',
+                    document_type: 'receipt',
+                    transaction_type: 'labor',
+                    user: dbContext?.data.currentUser?.email,
+                    shop_id: [selectedShopId],
+                  } as Transaction);
                 }
               }}
               type='button'

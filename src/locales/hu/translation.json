@@ -202,5 +202,9 @@
   "Net Price": "Nettó Ár",
   "Identity Card": "Személyigazolvány Szám",
   "Resident Card": "Lacímkártya Szám",
-  "Renter": "Bérbeadó"
+  "Renter": "Bérbeadó",
+  "Are you sure to save the following labor fee?": "Biztosan elmented az alábbi munkadíjat?",
+  "Please provide a valid number for labor fee": "Kérlek adj meg valódi értéket a munkadíjhoz.",
+  "Alert": "Figyelmeztetés",
+  "Confirmation": "Megerősítés"
 }
