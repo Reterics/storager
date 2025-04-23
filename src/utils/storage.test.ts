@@ -17,6 +17,7 @@ describe('Storage Utils', () => {
     expect(extractedData).toStrictEqual({
       shopIndex: 1,
       storage: 2,
+      price: 0,
       storageLimit: 2,
       lowStorageAlert: false,
     });
@@ -34,6 +35,7 @@ describe('Storage Utils', () => {
     expect(extractedData).toStrictEqual({
       shopIndex: 1,
       storage: 1,
+      price: 0,
       storageLimit: 13,
       lowStorageAlert: true,
     });
@@ -51,6 +53,7 @@ describe('Storage Utils', () => {
     expect(extractedData).toStrictEqual({
       shopIndex: 2,
       storage: 0,
+      price: 0,
       storageLimit: 5,
       lowStorageAlert: true,
     });

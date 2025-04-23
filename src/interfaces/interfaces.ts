@@ -194,7 +194,7 @@ export interface StoreItem extends GeneralCollectionEntry {
   sku?: string;
   description?: string;
   image?: string;
-  price?: number;
+  price?: number[];
   type?: string;
   storage?: number[];
   shop_id?: string[];
@@ -220,7 +220,7 @@ export interface StorePart extends GeneralCollectionEntry {
   sku?: string;
   description?: string;
   image?: string;
-  price?: number;
+  price?: number[];
   category?: string;
   storage?: number[];
   shop_id?: string[];
@@ -540,6 +540,7 @@ export interface TextFile {
 export interface StorageInfo {
   shopIndex: number;
   storage: number;
+  price: number;
   storageLimit: number;
   lowStorageAlert: boolean;
 }

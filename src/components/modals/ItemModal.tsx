@@ -169,7 +169,7 @@ export default function ItemModal({
         <StyledInput
           type='number'
           name='price'
-          value={item.price}
+          value={item.price?.[shopIndex]}
           onChange={(e) => changeType(e, 'price')}
           label={t('Price')}
           pattern='[0-9]+'

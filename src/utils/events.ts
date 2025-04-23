@@ -12,7 +12,7 @@ export const changeStoreType = (
 
   const value = (e.currentTarget as HTMLInputElement | HTMLSelectElement).value;
 
-  const multiShopKeys = ['storage_limit', 'shop_id', 'storage'] as const;
+  const multiShopKeys = ['storage_limit', 'shop_id', 'storage', 'price'] as const;
 
   if (!multiShopKeys.includes(key as (typeof multiShopKeys)[number])) {
     return {
@@ -21,7 +21,7 @@ export const changeStoreType = (
     };
   }
 
-  const storeKey = key as 'storage_limit' | 'shop_id' | 'storage';
+  const storeKey = key as 'storage_limit' | 'shop_id' | 'storage' | 'price';
   const shopIndex = getShopIndex(item, shopId);
 
   if (shopIndex < 0) return {...item};

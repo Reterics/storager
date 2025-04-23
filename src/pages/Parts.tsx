@@ -178,7 +178,7 @@ function Parts() {
       item.sku,
       item.name || '',
       storageInfo.storage,
-      Number(item.price || 0),
+      storageInfo.price,
       shopContext.shop ? shopContext.shop.name : t('Nincs megadva'),
       TableViewActions({
         onRemove: () => deletePart(item),

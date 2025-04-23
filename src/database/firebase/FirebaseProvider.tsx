@@ -68,6 +68,12 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         ) {
           element.storage_limit = [Number(element.storage_limit)];
         }
+        if (
+          typeof element.price === 'number' ||
+          typeof element.price === 'string'
+        ) {
+          element.price = new Array(element.shop_id?.length || 1).fill(Number(element.price));
+        }
       }
     }
   };

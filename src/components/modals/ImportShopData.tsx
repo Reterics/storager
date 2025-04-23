@@ -67,7 +67,7 @@ export default function ImportShopData({
         ? Number(item.storage_limit[0])
         : 5;
 
-    return [item.sku, item.name || '', stLimit, Number(item.price || 0)];
+    return [item.sku, item.name || '', stLimit, Number(item.price?.[0] || 0)];
   });
 
   const buttons: GeneralModalButtons[] = [
@@ -90,10 +90,14 @@ export default function ImportShopData({
               if (!data.storage_limit) {
                 data.storage_limit = [5];
               }
+              if (!data.price) {
+                data.price = [0];
+              }
               if (shop?.id) {
                 data.shop_id.push(shop.id);
                 data.storage_limit.push(data.storage_limit[0]);
                 data.storage.push(0);
+                data.price.push(data.price[0]);
                 out[data.docType].push(data as StoreItem | StorePart);
               }
             }

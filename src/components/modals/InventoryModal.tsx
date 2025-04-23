@@ -95,7 +95,7 @@ export default function InventoryModal({
             return [
               item.sku,
               item.name,
-              `${item.price} Ft`,
+              `${storageInfo.price} Ft`,
               storageInfo.storage,
             ];
           }}

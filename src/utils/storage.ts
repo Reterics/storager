@@ -13,6 +13,7 @@ export const extractStorageInfo = (
 ): StorageInfo => {
   const shopIndex = getShopIndex(item, shopId);
   const storage = item.storage && item.storage[shopIndex];
+  const price = item.price && item.price[shopIndex];
   const stLimit =
     item.storage_limit &&
     (item.storage_limit[shopIndex] || item.storage_limit[shopIndex] === 0)
@@ -22,6 +23,7 @@ export const extractStorageInfo = (
   return {
     shopIndex: shopIndex,
     storage: Number(storage || 0),
+    price: Number(price || 0),
     storageLimit: stLimit,
     lowStorageAlert: storage === undefined || Number(storage) < stLimit,
   };

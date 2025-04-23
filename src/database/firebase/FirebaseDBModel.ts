@@ -131,7 +131,10 @@ export default class FirebaseDBModel extends DBModel {
     }
     const diff = changes ? Number(changes.from) - Number(changes.to) : 1;
 
-    const netPrice = item.net_price || (item.price || 0) / 1.27; // for VAT: ((item.price || 0) * 0.2126);
+    const defaultPrice = item.shop_id && this._shopId && item.price ?
+      item.price[item.shop_id.findIndex(d => d === this._shopId)] : 0;
+
+    const netPrice = item.net_price || defaultPrice / 1.27; // for VAT: ((item.price || 0) * 0.2126);
 
     let trType = transactionType || 'sell';
     if (!transactionType && changes) {
@@ -144,7 +147,7 @@ export default class FirebaseDBModel extends DBModel {
       item_type: table,
       item_id: id || item.id,
       net_amount: netPrice * diff,
-      gross_amount: (item.price || netPrice * 1.27) * diff,
+      gross_amount: (defaultPrice || netPrice * 1.27) * diff,
       payment_method: 'cash',
       document_type: 'receipt',
       transaction_type: trType,
