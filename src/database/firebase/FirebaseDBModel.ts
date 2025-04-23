@@ -131,8 +131,10 @@ export default class FirebaseDBModel extends DBModel {
     }
     const diff = changes ? Number(changes.from) - Number(changes.to) : 1;
 
-    const defaultPrice = item.shop_id && this._shopId && item.price ?
-      item.price[item.shop_id.findIndex(d => d === this._shopId)] : 0;
+    const defaultPrice =
+      item.shop_id && this._shopId && item.price
+        ? item.price[item.shop_id.findIndex((d) => d === this._shopId)]
+        : 0;
 
     const netPrice = item.net_price || defaultPrice / 1.27; // for VAT: ((item.price || 0) * 0.2126);
 

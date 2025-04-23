@@ -55,6 +55,7 @@ export default function StyledFile({
           id={name}
           type='file'
           name={name}
+          data-testid='file-input'
           onChange={handleFileChange}
           accept={accept}
         />

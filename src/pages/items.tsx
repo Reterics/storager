@@ -75,6 +75,7 @@ function Items() {
         item.shop_id.splice(indexToRemove, 1);
         item.storage?.splice(indexToRemove, 1);
         item.storage_limit?.splice(indexToRemove, 1);
+        item.price?.splice(indexToRemove, 1);
         updatedItems = (await dbContext?.setData(
           'items',
           item as StoreItem
@@ -185,6 +186,7 @@ function Items() {
                       shop_id: [selectedShopId],
                       storage: [1],
                       storage_limit: [5],
+                      price: [0],
                     }
               ),
             testId: 'addButton',

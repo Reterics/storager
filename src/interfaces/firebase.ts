@@ -109,7 +109,7 @@ export interface DBContextType {
 
 export interface CommonCollectionData {
   id: string;
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | undefined; // TODO: Add array here
 }
 
 export interface KVCollectionStore {

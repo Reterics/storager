@@ -72,7 +72,9 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
           typeof element.price === 'number' ||
           typeof element.price === 'string'
         ) {
-          element.price = new Array(element.shop_id?.length || 1).fill(Number(element.price));
+          element.price = new Array(element.shop_id?.length || 1).fill(
+            Number(element.price)
+          );
         }
       }
     }
@@ -253,7 +255,14 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
   };
 
   const removePermanentCtxData = async (id: string) => {
-    return await firebaseModel.removePermanent(id);
+    const deleted = await firebaseModel.removePermanent(id);
+    if (ctxData && ctxData.deleted && deleted) {
+      ctxData.deleted = [...deleted];
+      setCtxData({
+        ...ctxData,
+      });
+    }
+    return deleted;
   };
 
   const updateContextData = async (

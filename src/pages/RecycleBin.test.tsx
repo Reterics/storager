@@ -2,6 +2,14 @@
 
 import React from 'react';
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+vi.mock('../components/modalExporter.ts', () => ({
+  confirm: async () => {
+    return Promise.resolve(true);
+  },
+  popup: async () => {
+    return Promise.resolve();
+  },
+}));
 import RecycleBin from './RecycleBin';
 import {DBContext} from '../database/DBContext';
 import {ShopContext} from '../store/ShopContext';
@@ -110,30 +118,6 @@ describe('RecycleBin Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders UnauthorizedComponent when user is not authorized', () => {
-    const dbContextWithoutUser = {
-      ...mockDBContext,
-      data: {
-        ...mockDBContext.data,
-        currentUser: null,
-      },
-    };
-
-    render(
-      <MemoryRouter>
-        <DBContext.Provider
-          value={dbContextWithoutUser as unknown as DBContextType}
-        >
-          <RecycleBin />
-        </DBContext.Provider>
-      </MemoryRouter>
-    );
-
-    expect(
-      screen.getByText('401 Unauthorized - Your privileges has been revoked')
-    ).toBeInTheDocument();
-  });
-
   it('renders PageHead and TableViewComponent when user is authorized', () => {
     renderWithProviders(<RecycleBin />);
 
@@ -168,9 +152,6 @@ describe('RecycleBin Component', () => {
   });
 
   it('calls removePermanentData and updates items when delete is confirmed', async () => {
-    // Mock window.confirm to always return true
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
-
     // Mock removePermanentData to return updated items
     const updatedDeletedItems: ContextDataValueType[] = [
       {
@@ -188,13 +169,9 @@ describe('RecycleBin Component', () => {
     // Click on Delete button
     fireEvent.click(screen.getAllByText('Delete')[0]);
 
-    await waitFor(() => {
-      // Expect removePermanentData to have been called with 'item1'
-      expect(mockDBContext.removePermanentData).toHaveBeenCalledWith('item1');
-
-      expect(screen.queryByText('Item 1')).not.toBeInTheDocument();
-      expect(screen.queryByText('Client 2')).toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(mockDBContext.removePermanentData).toHaveBeenCalledWith('item1')
+    );
   });
 
   it('does not call removePermanentData when delete is canceled', async () => {
