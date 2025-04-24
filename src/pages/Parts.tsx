@@ -193,40 +193,45 @@ function Parts() {
     return array;
   });
 
+  const headButtons = [
+    {
+      value: <BsFillPlusCircleFill />,
+      onClick: () =>
+        setModalTemplate(
+          modalTemplate
+            ? null
+            : {
+                id: '',
+                shop_id: [selectedShopId],
+                storage: [1],
+                storage_limit: [5],
+                price: [0],
+              }
+        ),
+      testId: 'addButton',
+    },
+  ];
+
+  if (modules.transactions) {
+    headButtons.unshift({
+      value: <BsClipboard2PlusFill />,
+      onClick: () =>
+        setInventoryData(
+          inventoryData
+            ? null
+            : {
+                selectedItems: [],
+              }
+        ),
+      testId: 'inventoryButton',
+    });
+  }
+
   return (
     <>
       <PageHead
         title={t('Parts')}
-        buttons={[
-          {
-            value: <BsClipboard2PlusFill />,
-            onClick: () =>
-              setInventoryData(
-                inventoryData
-                  ? null
-                  : {
-                      selectedItems: [],
-                    }
-              ),
-            testId: 'inventoryButton',
-          },
-          {
-            value: <BsFillPlusCircleFill />,
-            onClick: () =>
-              setModalTemplate(
-                modalTemplate
-                  ? null
-                  : {
-                      id: '',
-                      shop_id: [selectedShopId],
-                      storage: [1],
-                      storage_limit: [5],
-                      price: [0],
-                    }
-              ),
-            testId: 'addButton',
-          },
-        ]}
+        buttons={headButtons}
         error={error}
         onSearch={(e) => setFilterText(e)}
         tableLimits={tableLimits}
