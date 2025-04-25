@@ -64,6 +64,7 @@ export default function InventoryModal({
         title={t('Inventory')}
         buttons={[
           {
+            testId: 'trashButton',
             value: <BsTrashFill size={16} />,
             onClick: () => {
               setSelectedMap({});

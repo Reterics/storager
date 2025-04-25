@@ -98,7 +98,7 @@ export default class FirebaseDBModel extends DBModel {
   }
 
   isLoggingActive() {
-    return this._storageLogs && this._collectionsToLog.length;
+    return !!(this._storageLogs && this._collectionsToLog.length);
   }
 
   setUser(user: User | null | undefined) {

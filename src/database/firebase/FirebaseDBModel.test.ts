@@ -10,9 +10,12 @@ import {
   setDoc,
   deleteDoc,
   addDoc,
+  writeBatch,
   DocumentSnapshot,
   DocumentReference,
+  DocumentData,
 } from 'firebase/firestore';
+import {User} from 'firebase/auth';
 
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(),
@@ -30,6 +33,7 @@ vi.mock('firebase/firestore', () => ({
   setDoc: vi.fn(),
   addDoc: vi.fn(),
   deleteDoc: vi.fn(),
+  writeBatch: vi.fn(),
 }));
 
 describe('FirebaseDBModel', () => {
@@ -213,6 +217,148 @@ describe('FirebaseDBModel', () => {
         {id: '1', name: 'item1'},
         {id: '2', name: 'item2'},
       ]);
+    });
+  });
+
+  describe('logging features', () => {
+    it('should set user and shopId correctly', () => {
+      model.setUser({uid: 'u1', email: 'user@example.com'} as User);
+      model.setShopId('shop123');
+      expect(model['_user']?.email).toBe('user@example.com');
+      expect(model['_shopId']).toBe('shop123');
+    });
+
+    it('should handle logCatch increment and disable logs after multiple failures', () => {
+      const error = new Error('test error');
+      for (let i = 0; i < 6; i++) {
+        model.logCatch(error);
+      }
+      expect(model['_logFailCount']).toBeGreaterThan(5);
+      expect(model['_storageLogs']).toBe(false);
+    });
+
+    it('should report logging active status correctly', () => {
+      expect(model.isLoggingActive()).toBe(false);
+      model['_storageLogs'] = true;
+      model['_collectionsToLog'] = ['items'];
+      expect(model.isLoggingActive()).toBe(true);
+    });
+
+    it('should call addTransaction and cache transaction entry', async () => {
+      const mockRef = {id: 'trx123'};
+      vi.mocked(addDoc).mockResolvedValueOnce(
+        mockRef as DocumentReference<unknown, DocumentData>
+      );
+      model['_transactions'] = true;
+      model['_user'] = {uid: 'uid', email: 'me@example.com'} as User;
+      model['_shopId'] = 'shop1';
+
+      const item = {
+        id: 'item1',
+        name: 'Item',
+        shop_id: ['shop1'],
+        price: [100],
+        cost: 50,
+      };
+      await model.addTransaction('item1', 'item', item, {
+        from: 10,
+        to: 5,
+        index: 0,
+      });
+
+      const trx = model.getCachedEntry('trx123', 'transactions');
+      expect(trx).toBeDefined();
+      expect(trx?.transaction_type).toBe('sell');
+    });
+  });
+
+  describe('log()', () => {
+    beforeEach(() => {
+      model.setUser({uid: 'uid', email: 'test@example.com'} as User);
+      model.setShopId('shop123');
+      model['_collectionsToLog'] = ['items'];
+      model['_storageLogs'] = true;
+    });
+
+    it('should skip logging if disabled', async () => {
+      model['_storageLogs'] = false;
+      const result = await model.log('update', 'items', 'id123', {id: 'id123'});
+      expect(result).toBeUndefined();
+    });
+
+    it('should add log entry with changes for update', async () => {
+      model.updateCache('items', [{id: 'id123', name: 'Old'}]);
+      vi.mocked(addDoc).mockResolvedValueOnce({
+        id: 'log1',
+      } as DocumentReference);
+
+      await model.log('update', 'items', 'id123', {id: 'id123', name: 'New'});
+
+      const log = model.getCachedEntry('log1', 'logs');
+      expect(log).toBeDefined();
+      expect(log?.changes).toHaveProperty('name');
+    });
+
+    it('should log errors during log entry creation', async () => {
+      const error = new Error('log failure');
+      vi.mocked(addDoc).mockRejectedValueOnce(error);
+
+      await model.log(
+        'add',
+        'items',
+        'id123',
+        {id: 'id123', name: 'New'},
+        'insert failed'
+      );
+
+      expect(model['_logFailCount']).toBeGreaterThan(0);
+    });
+
+    it('should not call transaction logging for non-update', async () => {
+      const spy = vi.spyOn(model, 'addTransaction');
+      vi.mocked(addDoc).mockResolvedValueOnce({
+        id: 'log-add',
+      } as DocumentReference);
+
+      await model.log('add', 'items', 'id123', {id: 'id123', name: 'Fresh'});
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAll', () => {
+    it('should update multiple items including with image caching and generated ID', async () => {
+      const mockWriteBatch = {
+        set: vi.fn(),
+        commit: vi.fn().mockResolvedValue(undefined),
+      };
+      const mockDocSpy = vi.mocked(doc);
+      const mockCollectionSpy = vi.mocked(collection);
+
+      vi.mocked(writeBatch).mockReturnValue(mockWriteBatch as never);
+      mockDocSpy.mockImplementation(() => ({id: 'auto123'}) as never);
+      mockCollectionSpy.mockReturnValue({} as never);
+
+      const items = [
+        {
+          id: '1',
+          name: 'With ID',
+          image: 'https://firebase/image.jpg',
+        },
+        null,
+        {
+          name: 'No ID',
+          image: 'https://firebase/image.jpg',
+        },
+      ];
+
+      await model.updateAll(items as never, 'items');
+
+      expect(writeBatch).toHaveBeenCalled();
+      expect(mockWriteBatch.set).toHaveBeenCalledTimes(2);
+      expect(mockWriteBatch.commit).toHaveBeenCalled();
+      expect(model.getCachedEntry('1', 'items')).toBeDefined();
+      expect(model.getCachedEntry('auto123', 'items')).toBeDefined();
     });
   });
 });

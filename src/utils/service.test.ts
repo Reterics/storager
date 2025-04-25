@@ -1,10 +1,12 @@
-import {describe, it, expect} from 'vitest';
-import {filterServices} from './service.ts';
+import {describe, it, expect, vi} from 'vitest';
+import {filterServices, getServiceLineData} from './service.ts';
 import {
   ServiceData,
   ServiceCompleteData,
   serviceStatusList,
 } from '../interfaces/interfaces';
+import {JSX} from 'react';
+import {TFunction} from 'i18next';
 
 const mockService = (
   id: string,
@@ -80,5 +82,99 @@ describe('filterServices', () => {
     );
     expect(result).toHaveLength(1);
     expect(result[0].type).toContain('console');
+  });
+});
+
+describe('getServiceLineData', () => {
+  const mockT = (key: string) => key;
+  const mockOnPrint = vi.fn();
+  const mockOnOpen = vi.fn();
+
+  const item: ServiceData = {
+    id: 'srv1',
+    client_name: 'Jane Doe',
+    docUpdated: 1000,
+    serviceStatus: 'status_in_progress',
+  };
+
+  const archive: ServiceData[] = [
+    {
+      id: 'arch1',
+      docParent: 'srv1',
+      docUpdated: 500,
+      serviceStatus: 'status_accepted',
+    },
+    {
+      id: 'arch2',
+      docParent: 'srv1',
+      docUpdated: 800,
+      serviceStatus: 'status_in_progress',
+    },
+  ];
+
+  const completionForms: ServiceCompleteData[] = [
+    {id: 'srv1_cd', docParent: 'srv1', docUpdated: 1500},
+  ];
+
+  it('should return correct table rows with completion form', () => {
+    const result = getServiceLineData(
+      item,
+      completionForms,
+      archive,
+      mockT as TFunction<'translation', undefined>,
+      {id: 's1'},
+      mockOnPrint,
+      mockOnOpen
+    );
+
+    expect(result.id).toBe('srv1');
+    expect(result.name).toBe('Jane Doe');
+    expect(result.completed).toBe(true);
+    expect(result.table.length).toBe(4); // 2 archives + item + completion
+
+    const [firstRow] = result.table;
+    expect(firstRow[1]).toBe('Service Form');
+    expect(firstRow[2]).toBe(1);
+  });
+
+  it('should call proper onPrint and onOpen for completion form', () => {
+    const result = getServiceLineData(
+      item,
+      completionForms,
+      archive,
+      mockT as TFunction<'translation', undefined>,
+      {id: 's1'},
+      mockOnPrint,
+      mockOnOpen
+    );
+
+    const lastRow = result.table[result.table.length - 1];
+    const actions = lastRow[4];
+
+    (actions as JSX.Element).props.children[1].props.onClick(); // onPrint
+    (actions as JSX.Element).props.children[7].props.onClick(); // onOpen
+
+    expect(mockOnPrint).toHaveBeenCalled();
+    expect(mockOnOpen).toHaveBeenCalled();
+  });
+
+  it('should not duplicate item if already in archive list', () => {
+    const itemDup: ServiceData = {
+      id: 'srv2',
+      client_name: 'Jim Beam',
+      docUpdated: 2000,
+      serviceStatus: 'status_ready',
+    };
+    const archiveDup = [{id: 'arch2', docParent: 'srv2', docUpdated: 2000}];
+    const result = getServiceLineData(
+      itemDup,
+      [],
+      archiveDup,
+      mockT as TFunction<'translation', undefined>,
+      undefined,
+      vi.fn(),
+      vi.fn()
+    );
+    expect(result.table.length).toBe(1);
   });
 });
