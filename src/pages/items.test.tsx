@@ -5,7 +5,7 @@ import Items from './items.tsx';
 import {
   defaultContextData,
   defaultItems,
-  defaultParts,
+  defaultParts, defaultShop,
 } from '../../tests/mocks/shopData.ts';
 import AuthContextProviderMock from '../../tests/mocks/AuthContextProviderMock.tsx';
 import {ContextDataCollectionType} from '../interfaces/firebase.ts';
@@ -42,7 +42,7 @@ describe('Items', () => {
     );
   });
 
-  it('filters parts based on search input', async () => {
+  it('filters items based on search input', async () => {
     const {container, getByPlaceholderText, unmount} = render(
       <TestingPageProvider>
         <Items />
@@ -98,18 +98,64 @@ describe('Items', () => {
     unmount();
   });
 
-  it('deletes a part upon confirmation', async () => {
-    const {container, unmount} = render(
-      <TestingPageProvider
-        removeData={vi.fn(
-          async (): Promise<ContextDataCollectionType | null> => [
-            defaultItems[0],
-          ]
-        )}
-      >
+  it('deletes items after confirmation', async () => {
+    const removeData = vi.fn(
+      async (): Promise<ContextDataCollectionType | null> => [defaultItems[0]],
+    );
+    const setData = vi.fn(
+      async () => {
+        return [defaultItems[1]];
+      },
+    );
+
+    const multiShopItem = {
+      ...defaultItems[0],
+      shop_id: [defaultShop.id, 'shop2'],
+      storage: [5, 10],
+      storage_limit: [10, 20],
+      price: [100, 200],
+    };
+
+    const ctxDataOverride = {
+      ...defaultContextData,
+      items: [multiShopItem, defaultItems[1]],
+      shops: [defaultShop, { id: 'shop2', name: 'Another Shop' }],
+      currentUser: defaultContextData.currentUser,
+    };
+
+    const { container } = render(
+      <TestingPageProvider removeData={removeData} setData={setData} ctxDataOverride={ctxDataOverride}>
         <Items />
       </TestingPageProvider>
     );
+
+    const trList = container.querySelectorAll('table > tbody > tr');
+    const initialLength = trList.length;
+
+    // Simulate delete action
+    let deleteButton = trList[0].querySelector('button:last-child');
+    if (deleteButton) fireEvent.click(deleteButton);
+
+    await waitFor(() => expect(setData).toHaveBeenCalled());
+    await waitFor(() => expect(removeData).not.toHaveBeenCalled());
+    await waitFor(() => expect(container.querySelectorAll('table > tbody > tr').length).toEqual(initialLength - 1));
+
+    deleteButton = container.querySelector('table > tbody > tr button:last-child');
+    if (deleteButton) fireEvent.click(deleteButton);
+    await waitFor(() => expect(removeData).toHaveBeenCalled());
+  });
+
+  it('deletes an single-shop item after confirmation', async () => {
+    const removeData = vi.fn(
+      async (): Promise<ContextDataCollectionType | null> => [defaultItems[0]]
+    );
+
+    const { container } = render(
+      <TestingPageProvider removeData={removeData}>
+        <Items />
+      </TestingPageProvider>
+    );
+
     const trList = container.querySelectorAll('table > tbody > tr');
     const initialLength = trList.length;
 
@@ -117,12 +163,8 @@ describe('Items', () => {
     const deleteButton = trList[0].querySelector('button:last-child');
     if (deleteButton) fireEvent.click(deleteButton);
 
-    await waitFor(() =>
-      expect(container.querySelectorAll('table > tbody > tr').length).toEqual(
-        initialLength - 1
-      )
-    );
-    unmount();
+    await waitFor(() => expect(removeData).toHaveBeenCalled());
+    await waitFor(() => expect(container.querySelectorAll('table > tbody > tr').length).toEqual(initialLength - 1));
   });
 
   it.concurrent('Should not render if no user active', () => {
@@ -169,6 +211,51 @@ describe('Items', () => {
     );
     expect(renderResult.container.querySelector('#ItemModal')).toBeDefined();
   });
+
+  it('edits an item directly from table edit', async () => {
+    const setData = vi.fn();
+    const { container } = render(
+      <TestingPageProvider setData={setData}>
+        <Items />
+      </TestingPageProvider>
+    );
+
+    const editableCells = container.querySelectorAll('td > div');
+    if (editableCells.length > 0) {
+      fireEvent.click(editableCells[0]);
+
+      const input = await waitFor(() => container.querySelector('td input'));
+      fireEvent.change(input!, { target: { value: 'ChangedName' } });
+      fireEvent.keyDown(input!, { key: 'Enter', code: 'Enter' });
+    }
+
+    await waitFor(() => expect(setData).toHaveBeenCalled());
+  });
+
+  it('saves a new item via ItemModal', async () => {
+    const setData = vi.fn(async () => []);
+    const refreshImagePointers = vi.fn();
+    const { getByTestId, getByText, queryByText } = render(
+      <TestingPageProvider setData={setData} refreshImagePointers={refreshImagePointers}>
+        <Items />
+      </TestingPageProvider>
+    );
+
+    const addButton = getByTestId('addButton');
+    fireEvent.click(addButton);
+
+    await waitFor(() => expect(getByText('Edit Item')).toBeInTheDocument());
+
+    const saveButton = getByText('Save');
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(setData).toHaveBeenCalled();
+      expect(refreshImagePointers).toHaveBeenCalled();
+      expect(queryByText('Edit Item')).not.toBeInTheDocument();
+    });
+  });
+
 
   afterAll(() => {
     vi.restoreAllMocks();

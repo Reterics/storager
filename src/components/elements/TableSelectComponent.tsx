@@ -77,7 +77,7 @@ export default function TableSelectComponent<T>({
                 <button
                   type='button'
                   onClick={() => handleChange(id, -1, item)}
-                  className='text-red-600 hover:text-red-800 disabled:opacity-40'
+                  className='text-red-600 hover:text-red-800 disabled:opacity-40 remove-icon'
                   disabled={count <= 0}
                 >
                   <BsDashCircle size={18} />
@@ -85,7 +85,7 @@ export default function TableSelectComponent<T>({
                 <button
                   type='button'
                   onClick={() => handleChange(id, 1, item)}
-                  className='text-green-600 hover:text-green-800'
+                  className='text-green-600 hover:text-green-800 add-icon'
                 >
                   <BsPlusCircle size={18} />
                 </button>

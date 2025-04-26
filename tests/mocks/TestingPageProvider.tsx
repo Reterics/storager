@@ -12,9 +12,13 @@ const TestingPageProvider = ({
     children,
     ctxDataOverride,
     removeData= vi.fn(),
+    setData= vi.fn(),
+    refreshImagePointers= vi.fn(),
 }: {
     children: ReactNode, ctxDataOverride?: ContextData,
     removeData?: Mock<()=>Promise<ContextDataValueType[] | null>>,
+    setData?: Mock<()=>Promise<ContextDataValueType[] | null>>,
+    refreshImagePointers?: Mock<()=>Promise<void>>,
 }) => {
 
     vi.mock('react-router-dom', () => ({
@@ -33,6 +37,8 @@ const TestingPageProvider = ({
                 <ShopContextProviderMock>
                     <DBContextProviderMock
                         removeData={removeData}
+                        setData={setData}
+                        refreshImagePointers={refreshImagePointers}
                         ctxDataOverride={ctxDataOverride}>
                         <div
                             className="w-full h-full m-auto flex flex-col text-black dark:text-white bg-[#ebebeb] dark:bg-black flex-1 min-h-svh">
