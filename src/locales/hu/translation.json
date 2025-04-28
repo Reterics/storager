@@ -206,5 +206,7 @@
   "Are you sure to save the following labor fee?": "Biztosan elmented az alábbi munkadíjat?",
   "Please provide a valid number for labor fee": "Kérlek adj meg valódi értéket a munkadíjhoz.",
   "Alert": "Figyelmeztetés",
-  "Confirmation": "Megerősítés"
+  "Confirmation": "Megerősítés",
+  "By signing in, you agree to our": "A bejelentkezéssel elfogadod az ",
+  "Terms and Conditions": "ÁSZF-et"
 }

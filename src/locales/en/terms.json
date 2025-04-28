@@ -2,7 +2,7 @@
   "title": "Terms of Use",
   "general.title": "1. General Information",
   "general.appName": "Application Name: StorageR",
-  "general.provider": "Service Provider: Reterics Attila EV. (registered sole proprietorship in Hungary)",
+  "general.provider": "Service Provider: Reterics Attila EV.",
   "general.address": "Address: 8985 Becsvölgye, Arany János út 5/A",
   "general.tax": "Tax number: 57823357-1-40",
   "general.reg": "Registration number: 56484076",
@@ -29,11 +29,12 @@
   "scope.text2": "Users must use the system lawfully and as intended.",
   "liability.title": "5. Service Provider’s Liability",
   "liability.items": [
-    "Strives to maintain continuous availability, but 100% uptime is not guaranteed.",
-    "Not responsible for data loss caused by the user.",
+    "StorageR is licensed under the MIT License and provided \"as is\" without warranties of any kind.",
+    "The Service Provider strives to maintain continuous availability, but 100% uptime is not guaranteed.",
+    "The Service Provider is not responsible for data loss caused by the user.",
     "No liability for indirect or consequential damages.",
-    "Not liable for third-party failures (e.g., Firebase, hosting).",
-    "Liability is limited to the fees paid in the last 3 months."
+    "The Service Provider’s liability for paid services (such as custom developments, deployment, or hosting) is limited to the total amount of fees paid in the last 3 months preceding any claim.",
+    "The Service Provider is not liable for failures of third-party providers (e.g., Firebase, hosting)."
   ],
   "user.title": "6. User Responsibilities",
   "user.items": [

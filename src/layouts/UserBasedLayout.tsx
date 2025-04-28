@@ -12,7 +12,10 @@ export const UserBasedLayout = ({children}: {children: ReactNode}) => {
   if (!user) {
     return (
       <>
-        <UserHeader />
+          <UserHeader />
+          <div className="my-2">
+              {children}
+          </div>
       </>
     );
   }

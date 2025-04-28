@@ -2,7 +2,7 @@
   "title": "Felhasználási feltételek",
   "general.title": "1. Általános információk",
   "general.appName": "Alkalmazás neve: StorageR",
-  "general.provider": "Szolgáltató: Reterics Attila EV. (nyilvántartott egyéni vállalkozó Magyarországon)",
+  "general.provider": "Szolgáltató: Reterics Attila EV.",
   "general.address": "Székhely: 8985 Becsvölgye, Arany János út 5/A",
   "general.tax": "Adószám: 57823357-1-40",
   "general.reg": "Nyilvántartási szám: 56484076",
@@ -29,11 +29,12 @@
   "scope.text2": "A felhasználóknak jogszerűen kell használniuk a rendszert, annak rendeltetésének megfelelően.",
   "liability.title": "5. Szolgáltató felelőssége",
   "liability.items": [
-    "Törekszik a folyamatos elérhetőségre, de 100%-os rendelkezésre állást nem garantál.",
-    "Nem vállal felelősséget a felhasználó által okozott adatvesztésért.",
-    "Nem vállal felelősséget közvetett vagy következményes károkért.",
-    "Harmadik fél hibáiért (pl. Firebase, tárhely) nem felel.",
-    "Felelőssége legfeljebb az elmúlt 3 hónap díjáig terjed."
+    "A StorageR alkalmazás az MIT licenc alapján kerül biztosításra, és „adott állapotában” („as is”) használható, bármilyen garancia nélkül.",
+    "A Szolgáltató törekszik a folyamatos elérhetőség biztosítására, de a 100%-os rendelkezésre állást nem garantálja.",
+    "A Szolgáltató nem vállal felelősséget a felhasználó által okozott adatvesztésért.",
+    "A Szolgáltató nem vállal felelősséget közvetett vagy következményes károkért.",
+    "A Szolgáltató által nyújtott díjköteles szolgáltatások (például egyedi fejlesztések, telepítések vagy üzemeltetés) esetében a felelősség maximum az igényt megelőző utolsó 3 hónapban kifizetett díjak összegére korlátozódik.",
+    "A Szolgáltató nem felel harmadik fél szolgáltatásainak hibáiért (pl. Firebase, tárhelyszolgáltató)."
   ],
   "user.title": "6. Felhasználó kötelezettségei",
   "user.items": [
