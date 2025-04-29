@@ -87,7 +87,10 @@ const TableViewHeader = ({
               {typeof head !== 'string' &&
                 head.sortable &&
                 orderType === 'DSC' && (
-                  <div className='text-xl ms-1 sort' onClick={() => updateOrderBy(index)}>
+                  <div
+                    className='text-xl ms-1 sort'
+                    onClick={() => updateOrderBy(index)}
+                  >
                     <BsSortUp />
                   </div>
                 )}
@@ -95,7 +98,10 @@ const TableViewHeader = ({
               {typeof head !== 'string' &&
                 head.sortable &&
                 orderType === 'ASC' && (
-                  <div className='text-xl ms-1 sort' onClick={() => updateOrderBy(index)}>
+                  <div
+                    className='text-xl ms-1 sort'
+                    onClick={() => updateOrderBy(index)}
+                  >
                     <BsSortDown />
                   </div>
                 )}
@@ -139,7 +145,11 @@ const TableViewEditableElement = (
   };
 
   const closeButton = (
-    <div className='text-sm ms-1' onClick={() => closeEditMode()} data-testid={'inline-close-button'}>
+    <div
+      className='text-sm ms-1'
+      onClick={() => closeEditMode()}
+      data-testid={'inline-close-button'}
+    >
       <BsFillXCircleFill />
     </div>
   );
@@ -254,7 +264,8 @@ const TableViewLine = ({
       }
       onClick={(e) => onSelect(e)}
     >
-      {header && header[columnIndex] &&
+      {header &&
+      header[columnIndex] &&
       typeof header[columnIndex] !== 'string' &&
       header[columnIndex].editable
         ? TableViewEditableElement(
@@ -266,7 +277,8 @@ const TableViewLine = ({
           )
         : column}
 
-      {header && header[columnIndex] &&
+      {header &&
+        header[columnIndex] &&
         typeof header[columnIndex] !== 'string' &&
         !header[columnIndex].editable &&
         header[columnIndex].postFix}

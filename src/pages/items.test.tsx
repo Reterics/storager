@@ -5,7 +5,8 @@ import Items from './items.tsx';
 import {
   defaultContextData,
   defaultItems,
-  defaultParts, defaultShop,
+  defaultParts,
+  defaultShop,
 } from '../../tests/mocks/shopData.ts';
 import AuthContextProviderMock from '../../tests/mocks/AuthContextProviderMock.tsx';
 import {ContextDataCollectionType} from '../interfaces/firebase.ts';
@@ -100,13 +101,11 @@ describe('Items', () => {
 
   it('deletes items after confirmation', async () => {
     const removeData = vi.fn(
-      async (): Promise<ContextDataCollectionType | null> => [defaultItems[0]],
+      async (): Promise<ContextDataCollectionType | null> => [defaultItems[0]]
     );
-    const setData = vi.fn(
-      async () => {
-        return [defaultItems[1]];
-      },
-    );
+    const setData = vi.fn(async () => {
+      return [defaultItems[1]];
+    });
 
     const multiShopItem = {
       ...defaultItems[0],
@@ -119,12 +118,16 @@ describe('Items', () => {
     const ctxDataOverride = {
       ...defaultContextData,
       items: [multiShopItem, defaultItems[1]],
-      shops: [defaultShop, { id: 'shop2', name: 'Another Shop' }],
+      shops: [defaultShop, {id: 'shop2', name: 'Another Shop'}],
       currentUser: defaultContextData.currentUser,
     };
 
-    const { container } = render(
-      <TestingPageProvider removeData={removeData} setData={setData} ctxDataOverride={ctxDataOverride}>
+    const {container} = render(
+      <TestingPageProvider
+        removeData={removeData}
+        setData={setData}
+        ctxDataOverride={ctxDataOverride}
+      >
         <Items />
       </TestingPageProvider>
     );
@@ -138,9 +141,15 @@ describe('Items', () => {
 
     await waitFor(() => expect(setData).toHaveBeenCalled());
     await waitFor(() => expect(removeData).not.toHaveBeenCalled());
-    await waitFor(() => expect(container.querySelectorAll('table > tbody > tr').length).toEqual(initialLength - 1));
+    await waitFor(() =>
+      expect(container.querySelectorAll('table > tbody > tr').length).toEqual(
+        initialLength - 1
+      )
+    );
 
-    deleteButton = container.querySelector('table > tbody > tr button:last-child');
+    deleteButton = container.querySelector(
+      'table > tbody > tr button:last-child'
+    );
     if (deleteButton) fireEvent.click(deleteButton);
     await waitFor(() => expect(removeData).toHaveBeenCalled());
   });
@@ -150,7 +159,7 @@ describe('Items', () => {
       async (): Promise<ContextDataCollectionType | null> => [defaultItems[0]]
     );
 
-    const { container } = render(
+    const {container} = render(
       <TestingPageProvider removeData={removeData}>
         <Items />
       </TestingPageProvider>
@@ -164,7 +173,11 @@ describe('Items', () => {
     if (deleteButton) fireEvent.click(deleteButton);
 
     await waitFor(() => expect(removeData).toHaveBeenCalled());
-    await waitFor(() => expect(container.querySelectorAll('table > tbody > tr').length).toEqual(initialLength - 1));
+    await waitFor(() =>
+      expect(container.querySelectorAll('table > tbody > tr').length).toEqual(
+        initialLength - 1
+      )
+    );
   });
 
   it.concurrent('Should not render if no user active', () => {
@@ -214,7 +227,7 @@ describe('Items', () => {
 
   it('edits an item directly from table edit', async () => {
     const setData = vi.fn();
-    const { container } = render(
+    const {container} = render(
       <TestingPageProvider setData={setData}>
         <Items />
       </TestingPageProvider>
@@ -225,8 +238,8 @@ describe('Items', () => {
       fireEvent.click(editableCells[0]);
 
       const input = await waitFor(() => container.querySelector('td input'));
-      fireEvent.change(input!, { target: { value: 'ChangedName' } });
-      fireEvent.keyDown(input!, { key: 'Enter', code: 'Enter' });
+      fireEvent.change(input!, {target: {value: 'ChangedName'}});
+      fireEvent.keyDown(input!, {key: 'Enter', code: 'Enter'});
     }
 
     await waitFor(() => expect(setData).toHaveBeenCalled());
@@ -235,8 +248,11 @@ describe('Items', () => {
   it('saves a new item via ItemModal', async () => {
     const setData = vi.fn(async () => []);
     const refreshImagePointers = vi.fn();
-    const { getByTestId, getByText, queryByText } = render(
-      <TestingPageProvider setData={setData} refreshImagePointers={refreshImagePointers}>
+    const {getByTestId, getByText, queryByText} = render(
+      <TestingPageProvider
+        setData={setData}
+        refreshImagePointers={refreshImagePointers}
+      >
         <Items />
       </TestingPageProvider>
     );
@@ -255,7 +271,6 @@ describe('Items', () => {
       expect(queryByText('Edit Item')).not.toBeInTheDocument();
     });
   });
-
 
   afterAll(() => {
     vi.restoreAllMocks();

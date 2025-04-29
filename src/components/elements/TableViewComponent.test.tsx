@@ -143,13 +143,11 @@ describe('TableViewComponent', () => {
     render(
       <TableViewComponent
         header={[
-          { value: 'ID', editable: false, type: 'text' },
-          { value: 'Name', editable: false, type: 'text' },
-          { value: 'Quantity', editable: true, type: 'steps' },
+          {value: 'ID', editable: false, type: 'text'},
+          {value: 'Name', editable: false, type: 'text'},
+          {value: 'Quantity', editable: true, type: 'steps'},
         ]}
-        lines={[
-          [1, 'Item 1', 5],
-        ]}
+        lines={[[1, 'Item 1', 5]]}
         onEdit={mockOnChange}
       />
     );
@@ -159,8 +157,8 @@ describe('TableViewComponent', () => {
 
     const input = await screen.findByDisplayValue(5);
 
-    fireEvent.change(input, { target: { value: '4' } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    fireEvent.change(input, {target: {value: '4'}});
+    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
 
     expect(mockOnChange).toHaveBeenCalledWith([1, 'Item 1', 5], 2, '4');
   });
@@ -169,12 +167,8 @@ describe('TableViewComponent', () => {
     const mockOnChange = vi.fn();
     render(
       <TableViewComponent
-        header={[
-          { value: 'Quantity', editable: true, type: 'number' },
-        ]}
-        lines={[
-          [5],
-        ]}
+        header={[{value: 'Quantity', editable: true, type: 'number'}]}
+        lines={[[5]]}
         onEdit={mockOnChange}
       />
     );
@@ -183,8 +177,8 @@ describe('TableViewComponent', () => {
     fireEvent.click(cell);
 
     const input = await screen.findByDisplayValue('5');
-    fireEvent.change(input, { target: { value: '10' } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    fireEvent.change(input, {target: {value: '10'}});
+    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
 
     expect(mockOnChange).toHaveBeenCalled();
   });
@@ -193,12 +187,8 @@ describe('TableViewComponent', () => {
     const mockOnChange = vi.fn();
     render(
       <TableViewComponent
-        header={[
-          { value: 'Name', editable: true, type: 'text' },
-        ]}
-        lines={[
-          ['Item 1'],
-        ]}
+        header={[{value: 'Name', editable: true, type: 'text'}]}
+        lines={[['Item 1']]}
         onEdit={mockOnChange}
       />
     );
@@ -209,8 +199,8 @@ describe('TableViewComponent', () => {
     // 2. wait until input appears
     const input = await screen.findByDisplayValue('Item 1');
 
-    fireEvent.change(input, { target: { value: 'Updated Name' } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    fireEvent.change(input, {target: {value: 'Updated Name'}});
+    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
 
     expect(mockOnChange).toHaveBeenCalled();
   });
@@ -220,13 +210,19 @@ describe('TableViewComponent', () => {
     render(
       <TableViewComponent
         header={[
-          { value: 'ID', editable: false, type: 'text' },
-          { value: 'Name', editable: false, type: 'text' },
-          { value: 'Type', editable: true, type: 'select', options: [{ name: 'Option1', value: 'option1' }, { name: 'Option2', value: 'option2' }] },
+          {value: 'ID', editable: false, type: 'text'},
+          {value: 'Name', editable: false, type: 'text'},
+          {
+            value: 'Type',
+            editable: true,
+            type: 'select',
+            options: [
+              {name: 'Option1', value: 'option1'},
+              {name: 'Option2', value: 'option2'},
+            ],
+          },
         ]}
-        lines={[
-          [1, 'Item 1', 'option1'],
-        ]}
+        lines={[[1, 'Item 1', 'option1']]}
         onEdit={mockOnChange}
       />
     );
@@ -235,15 +231,19 @@ describe('TableViewComponent', () => {
     fireEvent.click(cell);
 
     const select = await screen.findByRole('combobox');
-    fireEvent.change(select, { target: { value: 'option2' } });
+    fireEvent.change(select, {target: {value: 'option2'}});
 
     const closeButton = screen.getByTestId('inline-close-button');
     fireEvent.click(closeButton);
 
-    expect(mockOnChange).toHaveBeenCalledWith([1, 'Item 1', 'option1'], 2, 'option2');
+    expect(mockOnChange).toHaveBeenCalledWith(
+      [1, 'Item 1', 'option1'],
+      2,
+      'option2'
+    );
   });
   it('sorts rows correctly when clicking headers', async () => {
-    const { container } = render(
+    const {container} = render(
       <TableViewComponent
         header={mockHeader}
         lines={[
@@ -343,7 +343,9 @@ describe('TableViewComponent', () => {
       />
     );
 
-    const nameHeader = screen.getByText('Name').querySelector('.sort') as Element;
+    const nameHeader = screen
+      .getByText('Name')
+      .querySelector('.sort') as Element;
     expect(nameHeader).toBeInTheDocument();
     fireEvent.click(nameHeader); // ASC
 
@@ -352,6 +354,6 @@ describe('TableViewComponent', () => {
 
     fireEvent.click(nameHeader); // DSC
     rows = screen.getAllByRole('row');
-    expect(rows[1]).toHaveTextContent('1B 5')
+    expect(rows[1]).toHaveTextContent('1B 5');
   });
 });
