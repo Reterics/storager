@@ -65,8 +65,8 @@ describe('SignIn', () => {
 
   it('hide inputs and button when loading is true', () => {
     renderWithProviders({...mockContextValue, loading: true});
-    expect(screen.getByLabelText('Your email')).not.toBeVisible();
-    expect(screen.getByLabelText('Password')).not.toBeVisible();
+    expect(screen.queryByLabelText('Your email')).toBe(null);
+    expect(screen.queryByLabelText('Password')).toBe(null);
     expect(
       screen.queryByRole('button', {name: /Sign in/i})
     ).not.toBeInTheDocument();
