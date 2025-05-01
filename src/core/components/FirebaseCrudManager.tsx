@@ -127,7 +127,7 @@ export default function FirebaseCrudManager<
       if (
         f.key === 'shop_id' &&
         Array.isArray(f.options) &&
-        f.editable === false
+        !f.editable
       ) {
         return (
           f.options?.find((opt) =>

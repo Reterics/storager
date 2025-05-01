@@ -226,7 +226,7 @@ function Items() {
           {
             value: t('Shop'),
             type: 'select',
-            editable: true,
+            editable: false,
             options: typeOptions,
           },
           t('Actions'),
