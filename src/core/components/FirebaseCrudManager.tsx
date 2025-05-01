@@ -1,15 +1,28 @@
 import {useContext, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {ContextDataType, ContextDataValueType, GenericContextEntityType} from '../../interfaces/firebase.ts';
+import {
+  ContextDataType,
+  ContextDataValueType,
+  GenericContextEntityType,
+} from '../../interfaces/firebase.ts';
 import {DBContext} from '../../database/DBContext.ts';
 import {ShopContext} from '../../store/ShopContext.tsx';
-import {StorePart, StyledSelectOption, TableHead, TableLineType, TableRowType} from '../../interfaces/interfaces.ts';
-import TableViewComponent, {TableViewActions} from '../../components/elements/TableViewComponent.tsx';
+import {
+  StorageInfo,
+  StorePart,
+  StyledSelectOption,
+  TableHead,
+  TableLineType,
+  TableRowType,
+} from '../../interfaces/interfaces.ts';
+import TableViewComponent, {
+  TableViewActions,
+} from '../../components/elements/TableViewComponent.tsx';
 import {PageHead} from '../../components/elements/PageHead.tsx';
 import FormModal from './FormModal.tsx';
 import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {sortItemsByWarn} from '../../utils/storage.ts';
-
+import {extractStorageInfo, sortItemsByWarn} from '../../utils/storage.ts';
+import {multiShopKeys} from '../../utils/events.ts';
 
 export type FieldType =
   | 'text'
@@ -42,19 +55,19 @@ interface FirebaseCrudManagerProps {
   fields: CrudField[];
 }
 
-export default function FirebaseCrudManager<T extends GenericContextEntityType>({
-  entityType,
-  title,
-  fields
-}: FirebaseCrudManagerProps) {
+export default function FirebaseCrudManager<
+  T extends GenericContextEntityType,
+>({entityType, title, fields}: FirebaseCrudManagerProps) {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
-  const { t } = useTranslation();
+  const {t} = useTranslation();
 
   const selectedShopId = shopContext.shop?.id;
   const [tableLimits, setTableLimits] = useState<number>(100);
   const [filterText, setFilterText] = useState<string>('');
-  const [modalData, setModalData] = useState<GenericContextEntityType | null>(null);
+  const [modalData, setModalData] = useState<GenericContextEntityType | null>(
+    null
+  );
 
   const filterItems = (items: StorePart[], filterBy: string) => {
     if (!filterBy) {
@@ -68,49 +81,74 @@ export default function FirebaseCrudManager<T extends GenericContextEntityType>(
     );
   };
   const data = useMemo(() => {
-    const allData = (dbContext?.data?.[entityType] || []) as GenericContextEntityType[];
-    if (!selectedShopId || !Array.isArray(allData)) return filterItems(allData, filterText);
+    const allData = (dbContext?.data?.[entityType] ||
+      []) as GenericContextEntityType[];
+    if (!selectedShopId || !Array.isArray(allData))
+      return filterItems(allData, filterText);
     return filterItems(
       allData.filter((entry) => entry.shop_id?.includes?.(selectedShopId)),
-      filterText)
+      filterText
+    );
   }, [dbContext?.data, entityType, filterText, selectedShopId]);
 
-  const isStorageItem = !!(fields.find(f => f.key === 'storage') &&
-    fields.find(f => f.key === 'storage_limit'));
+  const isStorageItem = !!(
+    fields.find((f) => f.key === 'storage') &&
+    fields.find((f) => f.key === 'storage_limit')
+  );
 
   const warnings = useMemo(
-    () => isStorageItem ? sortItemsByWarn(data, selectedShopId) : [],
+    () => (isStorageItem ? sortItemsByWarn(data, selectedShopId) : []),
     [data, selectedShopId, isStorageItem]
   );
   const error = warnings.length
     ? warnings.length + t(' low storage alert')
     : undefined;
 
-  const visibleFields = fields
-    .filter(f => f.visible || f.visible === undefined)
+  const visibleFields = fields.filter(
+    (f) => f.visible || f.visible === undefined
+  );
 
-  const headers = visibleFields
-    .map((f: CrudField) => {
-      if (!f.editable) return f.label;
-      return {
-        value: f.label,
-        type: f.type,
-        editable: true,
-        sortable: f.sortable,
-        postFix: f.postFix,
-        options: f.options
-      };
-    }) as TableHead[];
+  const headers = visibleFields.map((f: CrudField) => {
+    if (!f.editable) return f.label;
+    return {
+      value: f.label,
+      type: f.type,
+      editable: true,
+      sortable: f.sortable,
+      postFix: f.postFix,
+      options: f.options,
+    };
+  }) as TableHead[];
 
   const tableLines = data.map((entry: ContextDataValueType) => {
-    const line = visibleFields
-      .map((f: CrudField) => {
-        const key = f.key as keyof ContextDataValueType
-        if (f.key === 'shop_id' && Array.isArray(f.options) && f.editable === false) {
-          return f.options?.find(opt => (entry[key] as unknown as string[]).includes(opt.value))?.name || entry[key];
+    let storageInfo: StorageInfo | undefined;
+    const line = visibleFields.map((f: CrudField) => {
+      const key = f.key as keyof ContextDataValueType;
+      if (
+        f.key === 'shop_id' &&
+        Array.isArray(f.options) &&
+        f.editable === false
+      ) {
+        return (
+          f.options?.find((opt) =>
+            (entry[key] as unknown as string[]).includes(opt.value)
+          )?.name || entry[key]
+        );
+      } else if (
+        multiShopKeys.includes(f.key as (typeof multiShopKeys)[number])
+      ) {
+        storageInfo = storageInfo || extractStorageInfo(entry, selectedShopId);
+        switch (f.key) {
+          case 'storage_limit':
+            return storageInfo.storageLimit;
+          case 'storage':
+            return storageInfo.storage;
+          case 'price':
+            return storageInfo.price;
         }
-        return entry[key];
-      }) as TableLineType
+      }
+      return entry[key];
+    }) as TableLineType;
     line.push(
       TableViewActions({
         onEdit: () => setModalData(entry),
@@ -119,11 +157,11 @@ export default function FirebaseCrudManager<T extends GenericContextEntityType>(
             await dbContext?.removeData(entityType, entry.id);
             await dbContext?.refreshData(entityType);
           }
-        }
+        },
       })
     );
-    // inject custom hidden ids
-    line[-1] = 0;
+
+    line[-1] = storageInfo?.lowStorageAlert ? 1 : 0;
     line[-2] = entry.id;
     return line;
   });
@@ -142,7 +180,10 @@ export default function FirebaseCrudManager<T extends GenericContextEntityType>(
           {
             value: <BsFillPlusCircleFill />,
             onClick: () =>
-              setModalData({ id: '', shop_id: selectedShopId ? [selectedShopId] : [] } as T),
+              setModalData({
+                id: '',
+                shop_id: selectedShopId ? [selectedShopId] : [],
+              } as T),
           },
         ]}
         error={error}
@@ -159,7 +200,7 @@ export default function FirebaseCrudManager<T extends GenericContextEntityType>(
           const id = line[-2];
           const found = data.find((entry) => entry.id === id);
           if (!found) return;
-          const newItem = { ...found, [key]: value };
+          const newItem = {...found, [key]: value};
           dbContext?.setData(entityType, newItem);
         }}
         isHighlighted={(line) => line[-1] === 1}
