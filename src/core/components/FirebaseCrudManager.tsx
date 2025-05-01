@@ -1,4 +1,4 @@
-import {useContext, useMemo, useState} from 'react';
+import {ReactNode, useContext, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   ContextDataType,
@@ -8,6 +8,7 @@ import {
 import {DBContext} from '../../database/DBContext.ts';
 import {ShopContext} from '../../store/ShopContext.tsx';
 import {
+  GeneralButtons,
   StorageInfo,
   StorePart,
   StyledSelectOption,
@@ -53,11 +54,13 @@ interface FirebaseCrudManagerProps {
   entityType: ContextDataType;
   title: string;
   fields: CrudField[];
+  extraButtons?: GeneralButtons[];
+  children?: ReactNode;
 }
 
 export default function FirebaseCrudManager<
   T extends GenericContextEntityType,
->({entityType, title, fields}: FirebaseCrudManagerProps) {
+>({entityType, title, fields, extraButtons, children}: FirebaseCrudManagerProps) {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
   const {t} = useTranslation();
@@ -185,12 +188,13 @@ export default function FirebaseCrudManager<
                 shop_id: selectedShopId ? [selectedShopId] : [],
               } as T),
           },
+          ...(extraButtons || [])
         ]}
         error={error}
         onSearch={(e) => setFilterText(e)}
         tableLimits={tableLimits}
         setTableLimits={setTableLimits}
-      />
+      >{children}</PageHead>
       <TableViewComponent
         lines={tableLines}
         header={[...headers, t('Actions')]}

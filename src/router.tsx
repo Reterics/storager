@@ -19,6 +19,7 @@ import Logs from './pages/Logs.tsx';
 import Transactions from './pages/Transactions.tsx';
 import Leases from './pages/Leases.tsx';
 import ItemsPage from './core/pages/ItemsPage.tsx';
+import PartsPage from './core/pages/PartsPage.tsx';
 
 function QueryRouter() {
   const [searchParams] = useSearchParams();
@@ -37,6 +38,12 @@ function QueryRouter() {
         return (
           <InAppLayout>
             <ItemsPage />
+          </InAppLayout>
+        );
+      case 'parts-core':
+        return (
+          <InAppLayout>
+            <PartsPage />
           </InAppLayout>
         );
       case 'parts':
