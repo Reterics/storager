@@ -64,20 +64,22 @@ export type ContextDataType =
   | 'transactions'
   | 'leases'
   | 'leaseCompletions';
-export type ContextDataValueType =
-  | Shop
+export type GenericContextEntityType =
   | StoreItem
   | StorePart
+  | UserData
+  | InvoiceType
+  | LogEntry
+  | Transaction;
+export type ContextDataValueType =
+  | Shop
+  | ShopType
   | ServiceData
   | ServiceCompleteData
   | SettingsItems
-  | UserData
-  | ShopType
-  | InvoiceType
-  | LogEntry
-  | Transaction
   | Lease
-  | LeaseCompletion;
+  | LeaseCompletion
+  | GenericContextEntityType;
 
 export interface DBContextType {
   data: ContextData;

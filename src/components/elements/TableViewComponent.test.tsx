@@ -227,7 +227,7 @@ describe('TableViewComponent', () => {
       />
     );
 
-    const cell = screen.getByText('option1');
+    const cell = screen.getByText('Option1');
     fireEvent.click(cell);
 
     const select = await screen.findByRole('combobox');

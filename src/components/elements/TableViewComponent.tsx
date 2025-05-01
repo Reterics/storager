@@ -124,6 +124,13 @@ const TableViewEditableElement = (
   const [value, setValue] = useState<TableLineElementType>(element);
 
   if (!editMode) {
+    const displayValue =
+      Array.isArray(options.options) && typeof element === 'string' ?
+        (options.options.find(opt => opt.value === value)?.name || element)
+        : Array.isArray(options.options) && Array.isArray(element) ?
+          (options.options.find(opt => (element as string[]).includes(opt.value))?.name || element)
+          : element;
+
     return (
       <div
         onClick={(e) => {
@@ -132,7 +139,7 @@ const TableViewEditableElement = (
           setEditMode(true);
         }}
       >
-        {element} {options.postFix}
+        {displayValue} {options.postFix}
       </div>
     );
   }

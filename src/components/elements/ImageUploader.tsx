@@ -24,7 +24,7 @@ export const ImageUploader = ({
       const data = await response
         .json()
         .catch((error) => console.error('Failed to parse images', error));
-      setImages(data);
+      setImages(data || []);
     }
   };
 
