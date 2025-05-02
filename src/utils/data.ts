@@ -218,3 +218,13 @@ export const reduceToRecordById = <T extends {id: string}>(
     },
     {} as Record<string, T>
   );
+
+export const toSelectOptions = <T extends ContextDataValueType>(
+  array: T[],
+  key = 'name'
+) => {
+  return array.map((item) => ({
+    name: (item[key as keyof ContextDataValueType] ?? '') as string,
+    value: item.id,
+  }));
+};

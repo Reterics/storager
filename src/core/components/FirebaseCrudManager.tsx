@@ -60,7 +60,13 @@ interface FirebaseCrudManagerProps {
 
 export default function FirebaseCrudManager<
   T extends GenericContextEntityType,
->({entityType, title, fields, extraButtons, children}: FirebaseCrudManagerProps) {
+>({
+  entityType,
+  title,
+  fields,
+  extraButtons,
+  children,
+}: FirebaseCrudManagerProps) {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
   const {t} = useTranslation();
@@ -127,11 +133,7 @@ export default function FirebaseCrudManager<
     let storageInfo: StorageInfo | undefined;
     const line = visibleFields.map((f: CrudField) => {
       const key = f.key as keyof ContextDataValueType;
-      if (
-        f.key === 'shop_id' &&
-        Array.isArray(f.options) &&
-        !f.editable
-      ) {
+      if (f.key === 'shop_id' && Array.isArray(f.options) && !f.editable) {
         return (
           f.options?.find((opt) =>
             (entry[key] as unknown as string[]).includes(opt.value)
@@ -182,19 +184,22 @@ export default function FirebaseCrudManager<
         buttons={[
           {
             value: <BsFillPlusCircleFill />,
+            testId: 'managerAddButton',
             onClick: () =>
               setModalData({
                 id: '',
                 shop_id: selectedShopId ? [selectedShopId] : [],
               } as T),
           },
-          ...(extraButtons || [])
+          ...(extraButtons || []),
         ]}
         error={error}
         onSearch={(e) => setFilterText(e)}
         tableLimits={tableLimits}
         setTableLimits={setTableLimits}
-      >{children}</PageHead>
+      >
+        {children}
+      </PageHead>
       <TableViewComponent
         lines={tableLines}
         header={[...headers, t('Actions')]}
