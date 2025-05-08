@@ -10,7 +10,24 @@ import {useTheme} from '../store/ThemeContext';
 import {IAuth, Shop} from '../interfaces/interfaces.ts';
 import {DBContextType} from '../interfaces/firebase.ts';
 
-// Mock useTheme
+vi.mock('../database/firebase/config', async () => {
+  const actual = await vi.importActual('../database/firebase/config');
+  return {
+    ...actual,
+    firebaseModel: {
+      invalidateCache: vi.fn(),
+      isLoggingActive: vi.fn().mockReturnValue(false), // default false unless overridden
+    },
+    modules: {
+      leasing: false,
+      transactions: false,
+    },
+  };
+});
+
+import * as configModule from '../database/firebase/config';
+
+
 vi.mock('../store/ThemeContext', () => ({
   useTheme: vi.fn(),
 }));
@@ -241,5 +258,56 @@ describe('Header Component', () => {
     expect(screen.queryByText('Recycle Bin')).not.toBeInTheDocument();
     expect(screen.queryByText('Settings')).not.toBeInTheDocument();
     expect(screen.queryByText('Users')).not.toBeInTheDocument();
+  });
+
+  it('shows Logs menu item when logging is active and user is admin', () => {
+    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    mockDBContext.data.currentUser.role = 'admin';
+
+    (configModule.firebaseModel.isLoggingActive as Mock).mockReturnValue(true);
+
+    renderWithProviders(<Header />);
+    fireEvent.click(screen.getByTestId('userMenuButton'));
+
+    expect(screen.getByText('Logs')).toBeInTheDocument();
+  });
+
+  it('renders Invoices, Transactions, and Leases when shop exists and modules are enabled', () => {
+    (useTheme as Mock).mockReturnValue({theme: 'light'});
+
+    mockShopContext.shop = {
+      id: 'shop1',
+      name: 'Shop 1',
+    };
+
+    configModule.modules.leasing = true;
+    configModule.modules.transactions = true;
+
+    renderWithProviders(<Header />, {
+      route: '/',
+      searchParams: '?page=invoices',
+    });
+
+    expect(screen.getByText('Invoices')).toBeInTheDocument();
+    expect(screen.getByText('Transactions')).toBeInTheDocument();
+    expect(screen.getByText('Leases')).toBeInTheDocument();
+  });
+
+  it('shows loading icon when update is triggered', async () => {
+    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    mockDBContext.data.currentUser.role = 'admin';
+
+    const {container} = renderWithProviders(<Header />, {
+      route: '/',
+      searchParams: '?page=settings',
+    });
+
+    fireEvent.click(screen.getByTestId('userMenuButton'));
+    fireEvent.click(screen.getByText('Update'));
+
+    await waitFor(() => {
+      const spinner = container.querySelector('svg');
+      expect(spinner).toBeInTheDocument();
+    });
   });
 });

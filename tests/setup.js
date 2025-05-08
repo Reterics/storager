@@ -1,24 +1,30 @@
-import {afterEach, vi, beforeAll} from 'vitest'
-import { cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom/vitest'
+import { afterEach, vi, beforeAll } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 
-const changeLanguageMock = vi.fn();
+let currentLanguage = 'en';
 
-// runs a clean after each test case (e.g. clearing jsdom)
+const changeLanguageMock = vi.fn((lang) => {
+    currentLanguage = lang;
+    return Promise.resolve(); // mimic async behavior
+});
+
 afterEach(() => {
     cleanup();
-})
+    currentLanguage = 'en'; // reset language after each test
+    changeLanguageMock.mockClear();
+});
 
-beforeAll(async () => {
+beforeAll(() => {
     vi.mock('react-i18next', () => ({
-        useTranslation: ()=> {
+        useTranslation: () => {
             return {
-                t: (s) => s,
+                t: (key) => key,
                 i18n: {
-                    language: changeLanguageMock.mock.calls.length % 1 ? 'hu' : 'en',
+                    language: currentLanguage,
                     changeLanguage: changeLanguageMock,
-                }
-            }
-        }
+                },
+            };
+        },
     }));
-})
+});
