@@ -9,6 +9,8 @@ import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import InvoiceModal from '../components/modals/InvoiceModal.tsx';
+import {formatDateTimeLocal} from '../utils/data.ts';
+import {ShopContext} from '../store/ShopContext.tsx';
 
 function Invoices() {
   const dbContext = useContext(DBContext);
@@ -18,6 +20,7 @@ function Invoices() {
     dbContext?.data.invoices || []
   );
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
+  const {shop} = useContext(ShopContext);
 
   const [modalTemplate, setModalTemplate] = useState<InvoiceType | null>(null);
   const [tableLimits, setTableLimits] = useState<number>(100);
@@ -123,13 +126,10 @@ function Invoices() {
     const updatedTimeTimestamp =
       invoice.docUpdated ?? invoice.done ?? invoice.created;
     const createdTime = invoice.created
-      ? new Date(invoice.created).toISOString().split('.')[0].replace('T', ' ')
+      ? formatDateTimeLocal(invoice.created)
       : '?';
     const updatedTime = updatedTimeTimestamp
-      ? new Date(updatedTimeTimestamp)
-          .toISOString()
-          .split('.')[0]
-          .replace('T', ' ')
+      ? formatDateTimeLocal(updatedTimeTimestamp)
       : '?';
 
     return [
@@ -171,7 +171,7 @@ function Invoices() {
                       tax: '',
                       notes: '',
                       status: 'created',
-                      shop_id: [shops[0]?.id],
+                      shop_id: [shop?.id || shops[0]?.id],
                     }
               ),
           },

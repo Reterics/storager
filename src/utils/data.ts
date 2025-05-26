@@ -228,3 +228,18 @@ export const toSelectOptions = <T extends ContextDataValueType>(
     value: item.id,
   }));
 };
+
+export const formatDateTimeLocal = (input: Date|number) => {
+  if (typeof input === 'number' && Number.isNaN(input)) {
+    return '?';
+  }
+  const date = input instanceof Date ? input : new Date(input);
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  const mm = pad(date.getMonth() + 1);
+  const dd = pad(date.getDate());
+  const hh = pad(date.getHours());
+  const min = pad(date.getMinutes());
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+};
