@@ -2,10 +2,22 @@ import {Transaction} from '../interfaces/interfaces.ts';
 
 export type transactionInterval = 'daily' | 'weekly' | 'monthly';
 
+export interface GroupedTransactionData {
+  date: string;
+  cost: number;
+  gross: number;
+  net: number;
+  margin: number;
+  marginPercent: number;
+  grossMarginPercent: number;
+  count: number;
+  products?: Record<string, number>; // Map of product names to counts
+}
+
 export function groupTransactions(
   transactions: Transaction[],
   interval: transactionInterval
-) {
+): GroupedTransactionData[] {
   const groupFn = (timestamp: number) => {
     const date = new Date(timestamp);
 
@@ -29,38 +41,51 @@ export function groupTransactions(
     return '';
   };
 
-  const map = new Map<
-    string,
-    {
-      date: string;
-      cost: number;
-      gross: number;
-      net: number;
-      margin: number;
-      count: number;
-    }
-  >();
+  const map = new Map<string, GroupedTransactionData>();
 
   for (const tx of transactions) {
     const key = groupFn(tx.docUpdated!);
     const cost = Number(tx.cost || 0);
     const net = Number(tx.net_amount || 0);
+    const gross = Number(tx.gross_amount || 0);
+    const margin = net - cost;
+    const productName = tx.name || 'Unknown';
+
+    // Calculate margin percentages
+    const marginPercent = cost > 0 ? (margin / cost) * 100 : 0;
+    const grossMarginPercent = gross > 0 ? (margin / gross) * 100 : 0;
 
     const existing = map.get(key);
     if (existing) {
       existing.cost += cost;
-      existing.gross += Number(tx.gross_amount || 0);
+      existing.gross += gross;
       existing.net += net;
-      existing.margin += net - cost;
+      existing.margin += margin;
       existing.count += 1;
+
+      // Track product names and counts
+      if (!existing.products) {
+        existing.products = {};
+      }
+      existing.products[productName] =
+        (existing.products[productName] || 0) + 1;
+
+      // Recalculate percentages based on updated totals
+      existing.marginPercent =
+        existing.cost > 0 ? (existing.margin / existing.cost) * 100 : 0;
+      existing.grossMarginPercent =
+        existing.gross > 0 ? (existing.margin / existing.gross) * 100 : 0;
     } else {
       map.set(key, {
         date: key,
-        cost: Number(tx.cost || 0),
-        gross: Number(tx.gross_amount || 0),
-        net: Number(tx.net_amount || 0),
-        margin: net - cost,
+        cost,
+        gross,
+        net,
+        margin,
+        marginPercent,
+        grossMarginPercent,
         count: 1,
+        products: {[productName]: 1},
       });
     }
   }

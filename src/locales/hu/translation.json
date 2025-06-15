@@ -208,5 +208,21 @@
   "Alert": "Figyelmeztetés",
   "Confirmation": "Megerősítés",
   "By signing in, you agree to our": "A bejelentkezéssel elfogadod az ",
-  "Terms and Conditions": "ÁSZF-et"
+  "Terms and Conditions": "ÁSZF-et",
+
+  "Reports": "Jelentések",
+  "Summary Dashboard": "Összefoglaló",
+  "Cost Overview": "Költségáttekintés",
+  "Net Income Overview": "Nettó Bevétel Áttekintés",
+  "Gross Revenue Overview": "Bruttó Bevétel Áttekintés",
+  "Gross Revenue": "Bruttó Bevétel",
+  "Profit Overview": "Nyereség Áttekintés",
+  "Profit": "Nyereség",
+  "Profit Margin Analysis": "Haszonkulcs Elemzés",
+  "Margin % (ROI)": "Haszonkulcs % (ROI)",
+  "Gross Margin %": "Bruttó Haszonkulcs %",
+  "Products Sold Over Time": "Eladott Termékek Időbeli Alakulása",
+  "Products Sold by Name": "Eladott Termékek Név Szerint",
+  "Quantity Sold": "Eladott Mennyiség",
+  "Total Products": "Összes termék"
 }

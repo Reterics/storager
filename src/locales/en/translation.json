@@ -208,5 +208,21 @@
   "Alert": "Alert",
   "Confirmation": "Confirmation",
   "By signing in, you agree to our": "By signing in, you agree to our",
-  "Terms and Conditions.": "Terms and Conditions."
+  "Terms and Conditions.": "Terms and Conditions.",
+
+  "Reports": "Reports",
+  "Summary Dashboard": "Summary Dashboard",
+  "Cost Overview": "Cost Overview",
+  "Net Income Overview": "Net Income Overview",
+  "Gross Revenue Overview": "Gross Revenue Overview",
+  "Gross Revenue": "Gross Revenue",
+  "Profit Overview": "Profit Overview",
+  "Profit": "Profit",
+  "Profit Margin Analysis": "Profit Margin Analysis",
+  "Margin % (ROI)": "Margin % (ROI)",
+  "Gross Margin %": "Gross Margin %",
+  "Products Sold Over Time": "Products Sold Over Time",
+  "Products Sold by Name": "Products Sold by Name",
+  "Quantity Sold": "Quantity Sold",
+  "Total Products": "Total Products"
 }

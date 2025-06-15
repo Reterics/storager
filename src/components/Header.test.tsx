@@ -27,7 +27,6 @@ vi.mock('../database/firebase/config', async () => {
 
 import * as configModule from '../database/firebase/config';
 
-
 vi.mock('../store/ThemeContext', () => ({
   useTheme: vi.fn(),
 }));

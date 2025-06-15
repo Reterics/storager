@@ -15,11 +15,11 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  AreaChart,
   Area,
   PieChart,
   Pie,
   Cell,
+  ComposedChart,
 } from 'recharts';
 import {
   BsCashStack,
@@ -203,10 +203,71 @@ export default function Reports() {
         ))}
       </div>
 
+      <div className='grid grid-cols-1 gap-4 p-4'>
+        <div className='flex flex-col h-[40vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            {t('Summary Dashboard')}
+          </h2>
+          <div className='flex-1'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <ComposedChart data={groupTransactions(transactions, groupBy)}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='date' />
+                <YAxis yAxisId='left' />
+                <YAxis yAxisId='right' orientation='right' />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(Number(value))}
+                />
+                <Legend />
+                <Bar
+                  yAxisId='left'
+                  dataKey='count'
+                  fill='#8884d8'
+                  name={t('Products Sold')}
+                  barSize={20}
+                />
+                <Line
+                  yAxisId='right'
+                  type='monotone'
+                  dataKey='cost'
+                  stroke='#ff7300'
+                  name={t('Cost')}
+                  strokeWidth={2}
+                />
+                <Line
+                  yAxisId='right'
+                  type='monotone'
+                  dataKey='net'
+                  stroke='#00bcd4'
+                  name={t('Net')}
+                  strokeWidth={2}
+                />
+                <Line
+                  yAxisId='right'
+                  type='monotone'
+                  dataKey='gross'
+                  stroke='#82ca9d'
+                  name={t('Gross')}
+                  strokeWidth={2}
+                />
+                <Area
+                  yAxisId='right'
+                  type='monotone'
+                  dataKey='margin'
+                  fill='rgba(136, 132, 216, 0.3)'
+                  stroke='#8884d8'
+                  name={t('Profit')}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4'>
         <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
           <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Financial Overview')}
+            {t('Cost Overview')}
           </h2>
           <div className='flex-1'>
             <ResponsiveContainer width='100%' height='100%'>
@@ -223,24 +284,93 @@ export default function Reports() {
                   dataKey='cost'
                   stroke='#8884d8'
                   name={t('Cost')}
+                  strokeWidth={2}
+                  dot={{r: 3}}
+                  activeDot={{r: 5}}
                 />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            {t('Net Income Overview')}
+          </h2>
+          <div className='flex-1'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <LineChart data={groupTransactions(transactions, groupBy)}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='date' />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(Number(value))}
+                />
+                <Legend />
                 <Line
                   type='monotone'
                   dataKey='net'
                   stroke='#00bcd4'
-                  name={t('Net')}
+                  name={t('Net Income')}
+                  strokeWidth={2}
+                  dot={{r: 3}}
+                  activeDot={{r: 5}}
                 />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            {t('Gross Revenue Overview')}
+          </h2>
+          <div className='flex-1'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <LineChart data={groupTransactions(transactions, groupBy)}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='date' />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(Number(value))}
+                />
+                <Legend />
                 <Line
                   type='monotone'
                   dataKey='gross'
                   stroke='#82ca9d'
-                  name={t('Gross')}
+                  name={t('Gross Revenue')}
+                  strokeWidth={2}
+                  dot={{r: 3}}
+                  activeDot={{r: 5}}
                 />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            {t('Profit Overview')}
+          </h2>
+          <div className='flex-1'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <LineChart data={groupTransactions(transactions, groupBy)}>
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='date' />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(Number(value))}
+                />
+                <Legend />
                 <Line
                   type='monotone'
                   dataKey='margin'
                   stroke='#ff7300'
                   name={t('Profit')}
+                  strokeWidth={2}
+                  dot={{r: 3}}
+                  activeDot={{r: 5}}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -279,39 +409,97 @@ export default function Reports() {
 
         <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
           <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Profit Margin')}
+            {t('Profit Margin Analysis')}
           </h2>
           <div className='flex-1'>
             <ResponsiveContainer width='100%' height='100%'>
-              <AreaChart data={groupTransactions(transactions, groupBy)}>
+              <ComposedChart data={groupTransactions(transactions, groupBy)}>
                 <defs>
                   <linearGradient id='colorNet' x1='0' y1='0' x2='0' y2='1'>
                     <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
                     <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
                   </linearGradient>
+                  <linearGradient
+                    id='colorMarginPercent'
+                    x1='0'
+                    y1='0'
+                    x2='0'
+                    y2='1'
+                  >
+                    <stop offset='5%' stopColor='#82ca9d' stopOpacity={0.8} />
+                    <stop offset='95%' stopColor='#82ca9d' stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient
+                    id='colorGrossMarginPercent'
+                    x1='0'
+                    y1='0'
+                    x2='0'
+                    y2='1'
+                  >
+                    <stop offset='5%' stopColor='#ff7300' stopOpacity={0.8} />
+                    <stop offset='95%' stopColor='#ff7300' stopOpacity={0} />
+                  </linearGradient>
                 </defs>
                 <XAxis dataKey='date' />
-                <YAxis />
+                <YAxis
+                  yAxisId='left'
+                  tickFormatter={(value) => formatCurrency(value)}
+                />
+                <YAxis
+                  yAxisId='right'
+                  orientation='right'
+                  tickFormatter={(value) => `${value.toFixed(1)}%`}
+                />
                 <CartesianGrid strokeDasharray='3 3' />
                 <Tooltip
-                  formatter={(value: number) => formatCurrency(Number(value))}
+                  formatter={(value: number, name) => {
+                    if (
+                      name === t('Margin % (ROI)') ||
+                      name === t('Gross Margin %')
+                    ) {
+                      return [`${value.toFixed(1)}%`, name];
+                    }
+                    return [formatCurrency(Number(value)), name];
+                  }}
                 />
+                <Legend />
                 <Area
+                  yAxisId='left'
                   type='monotone'
                   dataKey='margin'
                   stroke='#8884d8'
-                  fillOpacity={1}
+                  fillOpacity={0.6}
                   fill='url(#colorNet)'
                   name={t('Profit Margin')}
                 />
-              </AreaChart>
+                <Line
+                  yAxisId='right'
+                  type='monotone'
+                  dataKey='marginPercent'
+                  stroke='#82ca9d'
+                  strokeWidth={2}
+                  dot={{r: 3}}
+                  activeDot={{r: 5}}
+                  name={t('Margin % (ROI)')}
+                />
+                <Line
+                  yAxisId='right'
+                  type='monotone'
+                  dataKey='grossMarginPercent'
+                  stroke='#ff7300'
+                  strokeWidth={2}
+                  dot={{r: 3}}
+                  activeDot={{r: 5}}
+                  name={t('Gross Margin %')}
+                />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
           <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Products Sold')}
+            {t('Products Sold Over Time')}
           </h2>
           <div className='flex-1'>
             <ResponsiveContainer width='100%' height='100%'>
@@ -319,9 +507,69 @@ export default function Reports() {
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='date' />
                 <YAxis />
-                <Tooltip />
+                <Tooltip
+                  content={({active, payload, label}) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      return (
+                        <div className='bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded shadow-md'>
+                          <p className='font-semibold'>{label}</p>
+                          <p>{`${t('Total Products')}: ${data.count}`}</p>
+                          {data.products &&
+                            Object.entries(data.products).map(
+                              ([name, count], idx) => (
+                                <p key={idx}>{`${name}: ${count}`}</p>
+                              )
+                            )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
                 <Legend />
                 <Bar dataKey='count' fill='#8884d8' name={t('Products Sold')} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            {t('Products Sold by Name')}
+          </h2>
+          <div className='flex-1'>
+            <ResponsiveContainer width='100%' height='100%'>
+              <BarChart
+                data={(() => {
+                  // Aggregate products across all time periods
+                  const productCounts: Record<string, number> = {};
+                  const groupedData = groupTransactions(transactions, groupBy);
+
+                  groupedData.forEach((period) => {
+                    if (period.products) {
+                      Object.entries(period.products).forEach(
+                        ([name, count]) => {
+                          productCounts[name] =
+                            (productCounts[name] || 0) + (count as number);
+                        }
+                      );
+                    }
+                  });
+
+                  // Convert to array format for the chart
+                  return Object.entries(productCounts)
+                    .map(([name, count]) => ({name, count}))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 10); // Show top 10 products
+                })()}
+              >
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey='count' fill='#82ca9d' name={t('Quantity Sold')} />
               </BarChart>
             </ResponsiveContainer>
           </div>
