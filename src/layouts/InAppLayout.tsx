@@ -13,13 +13,15 @@ export const InAppLayout = ({children}: {children: ReactNode}) => {
 
   return (
     <FirebaseProvider>
-      <Header />
-      <div className='main-container p-2 flex flex-col h-full flex-1'>
-        {loading && <PageLoading />}
+      <div className="flex flex-col h-screen overflow-hidden">
+        <Header />
+        <div className='main-container p-2 flex flex-col flex-1 overflow-y-auto overflow-x-auto'>
+          {loading && <PageLoading />}
 
-        {!loading && children}
+          {!loading && children}
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </FirebaseProvider>
   );
 };

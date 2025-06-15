@@ -28,22 +28,22 @@ export const Footer = () => {
   const page = searchParams.get('page');
 
   return (
-    <footer className='bg-white rounded-lg shadow m-4 dark:bg-gray-800 no-print'>
-      <div className='w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between'>
-        <span className='text-sm text-gray-500 sm:text-center dark:text-gray-400'>
-          © 2024{' '}
+    <footer className='bg-white rounded-lg shadow m-1 dark:bg-gray-800 no-print'>
+      <div className='w-full mx-auto max-w-screen-xl py-1 px-2 md:flex md:items-center md:justify-between'>
+        <span className='text-xs text-gray-500 sm:text-center dark:text-gray-400'>
+          © {new Date().getFullYear()}{' '}
           <a href={'mailto:' + settings.email} className='hover:underline'>
             {settings.companyName}
           </a>
           .
         </span>
-        <ul className='flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0'>
+        <ul className='flex flex-wrap items-center text-xs font-medium text-gray-500 dark:text-gray-400'>
           {page === 'service' && (
-            <li className='ms-1'>
+            <li className='ms-0.5'>
               <a href='?page=diag'>{t('Diagnostic')}</a>
             </li>
           )}
-          <li className='ms-1'>
+          <li className='ms-0.5'>
             {page === 'service' && ' | '}
             <a
               href='#'
@@ -57,7 +57,7 @@ export const Footer = () => {
                 : t('Hungarian language')}
             </a>
           </li>
-          <li className='ms-1'>
+          <li className='ms-0.5'>
             |{' '}
             <a
               href='#'
@@ -67,7 +67,7 @@ export const Footer = () => {
               {theme?.theme === 'dark' ? t('Light Mode') : t('Dark Mode')}
             </a>
           </li>
-          <li className='ms-1'>
+          <li className='ms-0.5'>
             |{' '}
             <a href='?page=about'>
               StorageR v{import.meta.env.PACKAGE_VERSION}
