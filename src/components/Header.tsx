@@ -1,6 +1,6 @@
 import {NavLink, useSearchParams} from 'react-router-dom';
 import {AuthContext} from '../store/AuthContext.tsx';
-import {useContext, useState} from 'react';
+import {useContext, useState, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useTheme} from '../store/ThemeContext.tsx';
 import {ShopContext} from '../store/ShopContext.tsx';
@@ -15,6 +15,16 @@ import {
   BsFillPersonLinesFill,
   BsFillTrash3Fill,
   BsListUl,
+  BsShop,
+  BsTools,
+  BsWrench,
+  BsCreditCard,
+  BsChevronDown,
+  BsX,
+  BsBoxes,
+  BsReceipt,
+  BsClipboardCheck,
+  BsThreeDots,
 } from 'react-icons/bs';
 import LoadingIcon from './elements/LoadingIcon.tsx';
 import {flushSync} from 'react-dom';
@@ -32,11 +42,27 @@ const Header = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [navbarOpen, setNavbarOpen] = useState(false); // State for the navbar collapse
-
   const [isLoading, setIsLoading] = useState(false);
 
+  const navbarRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close dropdown and navbar
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navbarOpen && navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
+        setNavbarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [navbarOpen]);
+
   const handleLinkClick = () => {
-    setDropdownOpen(false); // Close dropdown when link is clicked
+    setDropdownOpen(false);
+    setNavbarOpen(false); // Close both dropdown and navbar when link is clicked
   };
 
   const updatePageData = async () => {
@@ -104,62 +130,37 @@ const Header = () => {
 
   return (
     <header className='no-print'>
-      <nav className='w-full bg-white border-gray-200 dark:bg-gray-900'>
-        <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
+      <nav className='w-full bg-white border-gray-200 dark:bg-gray-900 shadow-sm'>
+        <div className='max-w-screen-xl flex items-center justify-between mx-auto p-2 md:p-4'>
           <a href='?page=about' className='flex items-center'>
             <img
               src={isDarkTheme ? logoWhite : logo}
-              width={30}
-              height={32}
-              className='h-8 mr-3'
+              width={28}
+              height={30}
+              className='h-7 md:h-8 mr-2 md:mr-3'
               alt='StorageR Logo'
             />
-            <div className='self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex'>
+            <div className='self-center text-xl md:text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex'>
               Storage
-              <div className='text-sm pt-1 text'>R</div>
+              <div className='text-xs md:text-sm pt-1 text'>R</div>
             </div>
           </a>
-          <button
-            onClick={() => setNavbarOpen(!navbarOpen)} // Toggle navbar open/close
-            className='inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600'
-            aria-controls='navbar-default'
-            aria-expanded={navbarOpen}
-          >
-            <span className='sr-only'>Open main menu</span>
-            <svg
-              className='w-5 h-5'
-              aria-hidden='true'
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 17 14'
-            >
-              <path
-                stroke='currentColor'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M1 1h15M1 7h15M1 13h15'
-              />
-            </svg>
-          </button>
-          <div
-            className={`${navbarOpen ? 'block' : 'hidden'} w-full md:block md:w-auto`}
-            id='navbar-default'
-            role='navigation'
-          >
-            <ul className='font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700'>
+
+          <div className='hidden md:flex md:items-center'>
+            <ul className='font-medium flex flex-row space-x-1 lg:space-x-4 items-center'>
               <li>
                 <NavLink
                   to='/?page='
                   onClick={handleLinkClick}
                   className={
                     page === 'shops'
-                      ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                      : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                      ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                      : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                   }
                   aria-current='page'
                 >
-                  {t('Shops')}
+                  <BsShop className='mr-1 text-lg' />
+                  <span className='hidden lg:inline'>{t('Shops')}</span>
                 </NavLink>
               </li>
               {shop && (
@@ -169,11 +170,13 @@ const Header = () => {
                     onClick={handleLinkClick}
                     className={
                       page === 'items'
-                        ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                        : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                     }
+                    title={t('Items')}
                   >
-                    {t('Items')}
+                    <BsBoxes className='mr-1 text-lg' />
+                    <span className='hidden lg:inline'>{t('Items')}</span>
                   </NavLink>
                 </li>
               )}
@@ -184,11 +187,13 @@ const Header = () => {
                     onClick={handleLinkClick}
                     className={
                       page === 'parts'
-                        ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                        : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                     }
+                    title={t('Parts')}
                   >
-                    {t('Parts')}
+                    <BsTools className='mr-1 text-lg' />
+                    <span className='hidden lg:inline'>{t('Parts')}</span>
                   </NavLink>
                 </li>
               )}
@@ -199,11 +204,13 @@ const Header = () => {
                     onClick={handleLinkClick}
                     className={
                       page === 'service'
-                        ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                        : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                     }
+                    title={t('Service')}
                   >
-                    {t('Service')}
+                    <BsWrench className='mr-1 text-lg' />
+                    <span className='hidden lg:inline'>{t('Service')}</span>
                   </NavLink>
                 </li>
               )}
@@ -214,11 +221,13 @@ const Header = () => {
                     onClick={handleLinkClick}
                     className={
                       page === 'leases'
-                        ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                        : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                     }
+                    title={t('Leases')}
                   >
-                    {t('Leases')}
+                    <BsClipboardCheck className='mr-1 text-lg' />
+                    <span className='hidden lg:inline'>{t('Leases')}</span>
                   </NavLink>
                 </li>
               )}
@@ -229,11 +238,13 @@ const Header = () => {
                     onClick={handleLinkClick}
                     className={
                       page === 'invoices'
-                        ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                        : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                     }
+                    title={t('Invoices')}
                   >
-                    {t('Invoices')}
+                    <BsReceipt className='mr-1 text-lg' />
+                    <span className='hidden lg:inline'>{t('Invoices')}</span>
                   </NavLink>
                 </li>
               )}
@@ -244,123 +255,117 @@ const Header = () => {
                     onClick={handleLinkClick}
                     className={
                       page === 'transactions'
-                        ? 'block py-2 pl-3 pr-4 text-white bg-gray-900 rounded md:bg-transparent md:text-gray-700 md:p-0 dark:text-white md:dark:text-gray-500'
-                        : 'block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
+                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                     }
+                    title={t('Transactions')}
                   >
-                    {t('Transactions')}
+                    <BsCreditCard className='mr-1 text-lg' />
+                    <span className='hidden lg:inline'>{t('Transactions')}</span>
                   </NavLink>
                 </li>
               )}
 
-              <li className='relative'>
+              {/* User Menu Dropdown */}
+              <li className='relative ml-1'>
                 <button
                   name='userMenuButton'
                   data-testid='userMenuButton'
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className='flex text-gray-900 hover:bg-gray-500 md:hover:bg-transparent md:border-0 md:hover:text-gray-900 md:p-0 dark:text-white md:dark:hover:text-gray-900 dark:hover:bg-gray-900 dark:hover:text-white md:dark:hover:bg-transparent'
+                  className='flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
+                  title={shop?.name}
                 >
-                  {shop?.name}
-                  <svg
-                    className='w-6 h-6 inline-block ml-2'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M19 9l-7 7-7-7'
-                    />
-                  </svg>
+                  <span className='hidden md:inline mr-1 max-w-[100px] lg:max-w-[200px] truncate'>{shop?.name}</span>
+                  <BsChevronDown className='text-sm' />
                 </button>
 
                 {dropdownOpen && (
-                  <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-50'>
+                  <div className='absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-50'>
+                    <div className='p-2 border-b border-gray-200 dark:border-gray-700'>
+                      <div className='text-sm font-medium text-gray-900 dark:text-white truncate'>{shop?.name}</div>
+                    </div>
                     <ul className='py-1'>
                       {isAdmin && (
-                        <li>
-                          <NavLink
-                            to='/?page=types'
-                            onClick={handleLinkClick}
-                            className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
-                          >
-                            <div className='text-xl me-2'>
-                              <BsListUl />
-                            </div>
-                            {t('Types')}
-                          </NavLink>
-                        </li>
-                      )}
-                      {isAdmin && (
-                        <li>
-                          <NavLink
-                            to='/?page=recycle'
-                            onClick={handleLinkClick}
-                            className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
-                          >
-                            <div className='text-xl me-2'>
-                              <BsFillTrash3Fill />
-                            </div>
-                            {t('Recycle Bin')}
-                          </NavLink>
-                        </li>
+                        <>
+                          <li className='px-3 py-1 text-xs text-gray-500 dark:text-gray-400 uppercase'>
+                            {t('Admin')}
+                          </li>
+                          <li>
+                            <NavLink
+                              to='/?page=types'
+                              onClick={handleLinkClick}
+                              className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                            >
+                              <div className='text-lg me-2'>
+                                <BsListUl />
+                              </div>
+                              {t('Types')}
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to='/?page=recycle'
+                              onClick={handleLinkClick}
+                              className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                            >
+                              <div className='text-lg me-2'>
+                                <BsFillTrash3Fill />
+                              </div>
+                              {t('Recycle Bin')}
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to='/?page=settings'
+                              onClick={handleLinkClick}
+                              className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                            >
+                              <div className='text-lg me-2'>
+                                <BsFillGearFill />
+                              </div>
+                              {t('Settings')}
+                            </NavLink>
+                          </li>
+                          {firebaseModel.isLoggingActive() && (
+                            <li>
+                              <NavLink
+                                to='/?page=logs'
+                                onClick={handleLinkClick}
+                                className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                              >
+                                <div className='text-lg me-2'>
+                                  <BsCardList />
+                                </div>
+                                {t('Logs')}
+                              </NavLink>
+                            </li>
+                          )}
+                          <li>
+                            <NavLink
+                              to='/?page=users'
+                              onClick={handleLinkClick}
+                              className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                            >
+                              <div className='text-lg me-2'>
+                                <BsFillPersonLinesFill />
+                              </div>
+                              {t('Users')}
+                            </NavLink>
+                          </li>
+                          <li className='border-t border-gray-200 dark:border-gray-700 mt-1'></li>
+                        </>
                       )}
                       <li>
                         <button
                           onClick={() => updatePageData()}
                           className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
                         >
-                          <div className='text-xl me-2'>
+                          <div className='text-lg me-2'>
                             <BsArrowClockwise />
                           </div>
                           {t('Update')}
                         </button>
                       </li>
-                      {isAdmin && (
-                        <li>
-                          <NavLink
-                            to='/?page=settings'
-                            onClick={handleLinkClick}
-                            className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
-                          >
-                            <div className='text-xl me-2'>
-                              <BsFillGearFill />
-                            </div>
-                            {t('Settings')}
-                          </NavLink>
-                        </li>
-                      )}
-                      {isAdmin && firebaseModel.isLoggingActive() && (
-                        <li>
-                          <NavLink
-                            to='/?page=logs'
-                            onClick={handleLinkClick}
-                            className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
-                          >
-                            <div className='text-xl me-2'>
-                              <BsCardList />
-                            </div>
-                            {t('Logs')}
-                          </NavLink>
-                        </li>
-                      )}
-                      {isAdmin && (
-                        <li>
-                          <NavLink
-                            to='/?page=users'
-                            onClick={handleLinkClick}
-                            className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
-                          >
-                            <div className='text-xl me-2'>
-                              <BsFillPersonLinesFill />
-                            </div>
-                            {t('Users')}
-                          </NavLink>
-                        </li>
-                      )}
                       <li>
                         <button
                           onClick={() => {
@@ -369,7 +374,7 @@ const Header = () => {
                           }}
                           className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
                         >
-                          <div className='text-xl me-2'>
+                          <div className='text-lg me-2'>
                             <BsDoorOpen />
                           </div>
                           {t('Logout')}
@@ -381,7 +386,249 @@ const Header = () => {
               </li>
             </ul>
           </div>
+
+          {/* Mobile Navigation Toggle */}
+          <div className='flex items-center md:hidden'>
+            <button
+              onClick={() => setNavbarOpen(!navbarOpen)}
+              className='inline-flex items-center p-1 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600'
+              aria-controls='navbar-mobile'
+              aria-expanded={navbarOpen}
+            >
+              <span className='sr-only'>Open main menu</span>
+              {navbarOpen ? (
+                <BsX className='w-6 h-6' />
+              ) : (
+                <BsThreeDots className='w-6 h-6' />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {navbarOpen && (
+          <div 
+            ref={navbarRef}
+            className='md:hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50'
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setNavbarOpen(false);
+            }}
+          >
+            <div
+              style={{
+                zIndex: "1001"
+              }}
+              className='fixed inset-y-0 z-50 right-0 max-w-[280px] w-full bg-white dark:bg-gray-800 shadow-xl transform transition-transform ease-in-out duration-300'
+            >
+              <div className='flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700'>
+                <div className='text-lg font-semibold text-gray-900 dark:text-white'>{shop?.name || t('Menu')}</div>
+                <button 
+                  onClick={() => setNavbarOpen(false)}
+                  className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'
+                >
+                  <BsX className='w-6 h-6' />
+                </button>
+              </div>
+
+              <div className='overflow-y-auto h-full pb-20'>
+                <div className='p-2'>
+                  <div className='grid grid-cols-3 gap-2'>
+                    <NavLink
+                      to='/?page='
+                      onClick={handleLinkClick}
+                      className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                        page === 'shops' 
+                          ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <BsShop className='text-xl mb-1' />
+                      <span className='text-xs'>{t('Shops')}</span>
+                    </NavLink>
+
+                    {shop && (
+                      <NavLink
+                        to='/?page=items'
+                        onClick={handleLinkClick}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                          page === 'items' 
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <BsBoxes className='text-xl mb-1' />
+                        <span className='text-xs'>{t('Items')}</span>
+                      </NavLink>
+                    )}
+
+                    {shop && (
+                      <NavLink
+                        to='/?page=parts'
+                        onClick={handleLinkClick}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                          page === 'parts' 
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <BsTools className='text-xl mb-1' />
+                        <span className='text-xs'>{t('Parts')}</span>
+                      </NavLink>
+                    )}
+
+                    {shop && (
+                      <NavLink
+                        to='/?page=service'
+                        onClick={handleLinkClick}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                          page === 'service' 
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <BsWrench className='text-xl mb-1' />
+                        <span className='text-xs'>{t('Service')}</span>
+                      </NavLink>
+                    )}
+
+                    {shop && modules.leasing && (
+                      <NavLink
+                        to='/?page=leases'
+                        onClick={handleLinkClick}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                          page === 'leases' 
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <BsClipboardCheck className='text-xl mb-1' />
+                        <span className='text-xs'>{t('Leases')}</span>
+                      </NavLink>
+                    )}
+
+                    {shop && (
+                      <NavLink
+                        to='/?page=invoices'
+                        onClick={handleLinkClick}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                          page === 'invoices' 
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <BsReceipt className='text-xl mb-1' />
+                        <span className='text-xs'>{t('Invoices')}</span>
+                      </NavLink>
+                    )}
+
+                    {shop && modules.transactions && (
+                      <NavLink
+                        to='/?page=transactions'
+                        onClick={handleLinkClick}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg ${
+                          page === 'transactions' 
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <BsCreditCard className='text-xl mb-1' />
+                        <span className='text-xs'>{t('Transactions')}</span>
+                      </NavLink>
+                    )}
+                  </div>
+                </div>
+
+                {isAdmin && (
+                  <div className='mt-4 border-t border-gray-200 dark:border-gray-700'>
+                    <div className='px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase'>
+                      {t('Admin')}
+                    </div>
+                    <ul>
+                      <li>
+                        <NavLink
+                          to='/?page=types'
+                          onClick={handleLinkClick}
+                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                        >
+                          <BsListUl className='mr-3 text-lg' />
+                          {t('Types')}
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to='/?page=recycle'
+                          onClick={handleLinkClick}
+                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                        >
+                          <BsFillTrash3Fill className='mr-3 text-lg' />
+                          {t('Recycle Bin')}
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to='/?page=settings'
+                          onClick={handleLinkClick}
+                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                        >
+                          <BsFillGearFill className='mr-3 text-lg' />
+                          {t('Settings')}
+                        </NavLink>
+                      </li>
+                      {firebaseModel.isLoggingActive() && (
+                        <li>
+                          <NavLink
+                            to='/?page=logs'
+                            onClick={handleLinkClick}
+                            className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                          >
+                            <BsCardList className='mr-3 text-lg' />
+                            {t('Logs')}
+                          </NavLink>
+                        </li>
+                      )}
+                      <li>
+                        <NavLink
+                          to='/?page=users'
+                          onClick={handleLinkClick}
+                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                        >
+                          <BsFillPersonLinesFill className='mr-3 text-lg' />
+                          {t('Users')}
+                        </NavLink>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
+                <div className='mt-4 border-t border-gray-200 dark:border-gray-700'>
+                  <ul>
+                    <li>
+                      <button
+                        onClick={() => updatePageData()}
+                        className='flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                      >
+                        <BsArrowClockwise className='mr-3 text-lg' />
+                        {t('Update')}
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          handleLinkClick();
+                          SignOut();
+                        }}
+                        className='flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                      >
+                        <BsDoorOpen className='mr-3 text-lg' />
+                        {t('Logout')}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
     </header>
   );

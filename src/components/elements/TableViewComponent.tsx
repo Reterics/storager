@@ -473,7 +473,7 @@ const TableViewComponent = ({
   );
 
   return (
-    <table className='text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center'>
+    <table className='text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full min-w-screen-xl shadow-md mx-auto'>
       <TableViewHeader
         header={_header}
         orderType={orderType}

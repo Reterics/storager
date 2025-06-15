@@ -408,7 +408,7 @@ function Service() {
       </div>
 
       {noModalActive && (
-        <div className='service-table self-center'>
+        <div className='service-table'>
           <TableViewComponent
             lines={tableLines}
             tableLimits={tableLimits}

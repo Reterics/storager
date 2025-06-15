@@ -318,7 +318,7 @@ function Leases() {
       </div>
 
       {noModalActive && (
-        <div className='service-table lease-table self-center'>
+        <div className='service-table lease-table'>
           <TableViewComponent
             lines={tableLines}
             tableLimits={tableLimits}

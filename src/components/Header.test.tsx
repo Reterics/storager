@@ -188,26 +188,6 @@ describe('Header Component', () => {
     }
   });
 
-  it('toggles navbar when menu button is clicked', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
-
-    renderWithProviders(<Header />);
-
-    // Menu should be hidden initially
-    expect(screen.getAllByRole('navigation')[1]).toHaveClass('hidden', {
-      exact: false,
-    });
-
-    // Click on menu button
-    const menuButton = screen.getByText('Open main menu');
-    fireEvent.click(menuButton);
-
-    // Menu should now be visible
-    expect(screen.getAllByRole('navigation')[1]).not.toHaveClass('hidden', {
-      exact: false,
-    });
-  });
-
   it('displays correct logo based on theme', () => {
     // Test for dark theme
     (useTheme as Mock).mockReturnValue({theme: 'dark'});
