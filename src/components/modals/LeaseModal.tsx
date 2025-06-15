@@ -64,7 +64,7 @@ export default function LeaseModal({
       title={lease.onUpdate ? t('Rental Return Form') : t('Rental Form')}
       id={id || 'ServiceModal'}
     >
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2 mb-1'>
+      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2 mb-1'>
         {t('Client')}
       </h3>
       <FormRow>
@@ -119,7 +119,7 @@ export default function LeaseModal({
       </FormRow>
 
       {!lease.onUpdate && (
-        <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
+        <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2'>
           {t('Renter')}
         </h3>
       )}
@@ -155,7 +155,7 @@ export default function LeaseModal({
         </FormRow>
       )}
 
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
+      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2'>
         {t('Item and rental details')}
       </h3>
 
@@ -205,21 +205,25 @@ export default function LeaseModal({
 
       {!lease.onUpdate && (
         <pre
-          className={settings?.rentalConditions ? 'mt-2 mb-2 max-w-[80vw]' : ''}
+          className={
+            settings?.rentalConditions
+              ? 'mt-2 mb-2 max-w-full overflow-x-auto text-sm sm:text-base'
+              : ''
+          }
         >
           {settings?.rentalConditions}
         </pre>
       )}
 
       {!lease.onUpdate && (
-        <h3 className='font-semibold text-center text-xl text-gray-700 mb-4'>
+        <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mb-4'>
           {t('Signature')}
         </h3>
       )}
 
       {!lease.onUpdate && (
         <FormRow>
-          <div className='relative w-[40rem] h-80 border border-gray-600 self-center justify-self-center'>
+          <div className='relative w-full max-w-[40rem] h-60 sm:h-80 border border-gray-600 self-center justify-self-center'>
             <SignaturePad
               ref={signaturePadRef}
               debounceInterval={500}

@@ -6,7 +6,11 @@ import {PageHead} from '../components/elements/PageHead.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
-import {BsFillTrash3Fill, BsTrash, BsArrowCounterclockwise} from 'react-icons/bs';
+import {
+  BsFillTrash3Fill,
+  BsTrash,
+  BsArrowCounterclockwise,
+} from 'react-icons/bs';
 import {confirm} from '../components/modalExporter.ts';
 import {sleep} from '../utils/general.ts';
 
@@ -17,7 +21,9 @@ function RecycleBin() {
   const [items, setItems] = useState<ContextDataValueType[]>(
     dbContext?.data.deleted || []
   );
-  const [selectedIndexes, setSelectedIndexes] = useState<Record<number, boolean>>({});
+  const [selectedIndexes, setSelectedIndexes] = useState<
+    Record<number, boolean>
+  >({});
   const [isSelecting, setIsSelecting] = useState<boolean>(false);
   const [backupInfo, setBackupInfo] = useState<{
     time: string | null;
@@ -62,9 +68,9 @@ function RecycleBin() {
     if (!isSelecting) {
       setIsSelecting(true);
     }
-    setSelectedIndexes(prev => ({
+    setSelectedIndexes((prev) => ({
       ...prev,
-      [index]: !prev[index]
+      [index]: !prev[index],
     }));
   };
 
@@ -74,8 +80,8 @@ function RecycleBin() {
     }
 
     // Check if all items are currently selected
-    const allSelected = items.length > 0 && 
-      items.every((_, index) => selectedIndexes[index]);
+    const allSelected =
+      items.length > 0 && items.every((_, index) => selectedIndexes[index]);
 
     if (allSelected) {
       // If all are selected, deselect all
@@ -91,10 +97,12 @@ function RecycleBin() {
   };
 
   const getSelectedItems = () => {
-    return Object.entries(selectedIndexes)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .filter(([_, isSelected]) => isSelected)
-      .map(([index]) => items[parseInt(index)]);
+    return (
+      Object.entries(selectedIndexes)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .filter(([_, isSelected]) => isSelected)
+        .map(([index]) => items[parseInt(index)])
+    );
   };
 
   const createBackup = (itemsToBackup: ContextDataValueType[]) => {
@@ -108,7 +116,7 @@ function RecycleBin() {
   const deletePermanent = async (id: string) => {
     if (await confirm(t('Are you sure you want to delete permanently?'))) {
       // Create backup of the single item
-      const itemToDelete = items.find(item => item.id === id);
+      const itemToDelete = items.find((item) => item.id === id);
       if (itemToDelete) {
         createBackup([itemToDelete]);
       }
@@ -120,11 +128,15 @@ function RecycleBin() {
     const selectedItems = getSelectedItems();
     if (selectedItems.length === 0) return;
 
-    if (await confirm(t('Are you sure you want to delete all selected items permanently?'))) {
+    if (
+      await confirm(
+        t('Are you sure you want to delete all selected items permanently?')
+      )
+    ) {
       // Create backup before deletion
       createBackup(selectedItems);
 
-      const allIds = selectedItems.map(item => item.id);
+      const allIds = selectedItems.map((item) => item.id);
       const chunkSize = 250;
 
       // We delete max 250 in one go, and wait 1 second between each chunk, This is very conservative - avoids all limits.
@@ -138,7 +150,9 @@ function RecycleBin() {
       }
 
       // Delete items all together
-      await dbContext?.removePermanentDataList(selectedItems.map(item => item.id))
+      await dbContext?.removePermanentDataList(
+        selectedItems.map((item) => item.id)
+      );
 
       // Clear selection after deletion
       setSelectedIndexes({});
@@ -152,13 +166,17 @@ function RecycleBin() {
     setIsRestoring(true);
 
     try {
-      if (await confirm(t('Are you sure you want to restore items from the backup?'))) {
+      if (
+        await confirm(
+          t('Are you sure you want to restore items from the backup?')
+        )
+      ) {
         // Restore items one by one
         for (const item of backupInfo.items) {
           // Check if the item is not already in the recycle bin
-          if (!items.some(existingItem => existingItem.id === item.id)) {
+          if (!items.some((existingItem) => existingItem.id === item.id)) {
             // Determine the item type based on its properties
-            const itemType = item.docType
+            const itemType = item.docType;
             if (itemType && dbContext) {
               // Add the item back to its original collection
               await dbContext.setData(itemType, item);
@@ -222,7 +240,8 @@ function RecycleBin() {
                     onClick={toggleSelectAll}
                     className='flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 mr-2 transition-colors duration-200'
                   >
-                    {items.length > 0 && items.every((_, index) => selectedIndexes[index])
+                    {items.length > 0 &&
+                    items.every((_, index) => selectedIndexes[index])
                       ? t('Deselect All')
                       : t('Select All')}
                   </button>
@@ -269,8 +288,8 @@ function RecycleBin() {
               </h3>
               <p className='text-sm text-blue-600 dark:text-blue-300'>
                 {t('Last backup')}:{' '}
-                {new Date(backupInfo.time || '').toLocaleString()} - {backupInfo.count}{' '}
-                {t('items')}
+                {new Date(backupInfo.time || '').toLocaleString()} -{' '}
+                {backupInfo.count} {t('items')}
               </p>
             </div>
             <button

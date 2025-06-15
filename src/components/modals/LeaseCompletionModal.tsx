@@ -61,7 +61,7 @@ export default function LeaseCompletionModal({
       title={t('Rental Return Form')}
       id={id || 'LeaseCompletionModal'}
     >
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2 mb-1'>
+      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2 mb-1'>
         {t('Client')}
       </h3>
       <FormRow>
@@ -91,7 +91,7 @@ export default function LeaseCompletionModal({
         />
       </FormRow>
 
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
+      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2'>
         {t('Recipient')}
       </h3>
 
@@ -122,7 +122,7 @@ export default function LeaseCompletionModal({
         />
       </FormRow>
 
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
+      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2'>
         {t('Item and rental details')}
       </h3>
 
@@ -184,11 +184,11 @@ export default function LeaseCompletionModal({
         <div></div>
       </FormRow>
 
-      <h3 className='font-semibold text-center text-xl text-gray-700 mb-4'>
+      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mb-4'>
         {t('Signature')}
       </h3>
       <FormRow>
-        <div className='relative w-[28rem] h-56 border border-gray-600 self-center mb-2 justify-self-center'>
+        <div className='relative w-full max-w-[28rem] h-48 sm:h-56 border border-gray-600 self-center mb-2 justify-self-center'>
           <SignaturePad
             ref={signaturePadRef}
             debounceInterval={500}

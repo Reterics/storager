@@ -75,7 +75,7 @@ describe('FormRow', () => {
     const node = container.querySelector('div.grid');
 
     expect(node).toBeDefined();
-    expect(node?.className).toEqual('grid md:gap-6 mb-1');
+    expect(node?.className).toEqual('grid gap-4 md:gap-6 mb-3 md:mb-1');
 
     expect(screen.getByText('10.Node')).toBeDefined();
   });

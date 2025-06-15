@@ -159,8 +159,8 @@ describe('FirebaseDBModel', () => {
     it('should delete multiple documents and update cache', async () => {
       const ids = ['id1', 'id2'];
       model.updateCache('deleted', [
-        { id: 'id1', docType: 'items' },
-        { id: 'id2', docType: 'services' },
+        {id: 'id1', docType: 'items'},
+        {id: 'id2', docType: 'services'},
       ]);
 
       const deleteMock = vi.fn();
@@ -173,14 +173,26 @@ describe('FirebaseDBModel', () => {
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      vi.mocked(doc).mockImplementation((db, collection, id) => ({ db, collection, id }));
+      vi.mocked(doc).mockImplementation((db, collection, id) => ({
+        db,
+        collection,
+        id,
+      }));
 
       const result = await model.removeAllPermanent(ids);
 
       expect(writeBatch).toHaveBeenCalledWith(model.getDB());
       expect(deleteMock).toHaveBeenCalledTimes(2);
-      expect(deleteMock).toHaveBeenCalledWith({ db: model.getDB(), collection: 'items', id: 'id1' });
-      expect(deleteMock).toHaveBeenCalledWith({ db: model.getDB(), collection: 'services', id: 'id2' });
+      expect(deleteMock).toHaveBeenCalledWith({
+        db: model.getDB(),
+        collection: 'items',
+        id: 'id1',
+      });
+      expect(deleteMock).toHaveBeenCalledWith({
+        db: model.getDB(),
+        collection: 'services',
+        id: 'id2',
+      });
       expect(commitMock).toHaveBeenCalled();
 
       expect(model.getCachedEntry('id1', 'deleted')).toBeUndefined();
@@ -188,7 +200,6 @@ describe('FirebaseDBModel', () => {
       expect(result).toEqual([]);
     });
   });
-
 
   describe('update', () => {
     it('should update a document in Firestore and cache', async () => {

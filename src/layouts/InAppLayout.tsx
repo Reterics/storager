@@ -13,7 +13,7 @@ export const InAppLayout = ({children}: {children: ReactNode}) => {
 
   return (
     <FirebaseProvider>
-      <div className="flex flex-col h-screen overflow-hidden">
+      <div className='flex flex-col h-screen overflow-hidden'>
         <Header />
         <div className='main-container p-2 flex flex-col flex-1 overflow-y-auto overflow-x-auto'>
           {loading && <PageLoading />}

@@ -49,7 +49,11 @@ const Header = () => {
   // Handle click outside to close dropdown and navbar
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (navbarOpen && navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
+      if (
+        navbarOpen &&
+        navbarRef.current &&
+        !navbarRef.current.contains(event.target as Node)
+      ) {
         setNavbarOpen(false);
       }
     };
@@ -261,7 +265,9 @@ const Header = () => {
                     title={t('Transactions')}
                   >
                     <BsCreditCard className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>{t('Transactions')}</span>
+                    <span className='hidden lg:inline'>
+                      {t('Transactions')}
+                    </span>
                   </NavLink>
                 </li>
               )}
@@ -275,14 +281,18 @@ const Header = () => {
                   className='flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
                   title={shop?.name}
                 >
-                  <span className='hidden md:inline mr-1 max-w-[100px] lg:max-w-[200px] truncate'>{shop?.name}</span>
+                  <span className='hidden md:inline mr-1 max-w-[100px] lg:max-w-[200px] truncate'>
+                    {shop?.name}
+                  </span>
                   <BsChevronDown className='text-sm' />
                 </button>
 
                 {dropdownOpen && (
                   <div className='absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-50'>
                     <div className='p-2 border-b border-gray-200 dark:border-gray-700'>
-                      <div className='text-sm font-medium text-gray-900 dark:text-white truncate'>{shop?.name}</div>
+                      <div className='text-sm font-medium text-gray-900 dark:text-white truncate'>
+                        {shop?.name}
+                      </div>
                     </div>
                     <ul className='py-1'>
                       {isAdmin && (
@@ -407,7 +417,7 @@ const Header = () => {
 
         {/* Mobile Navigation Drawer */}
         {navbarOpen && (
-          <div 
+          <div
             ref={navbarRef}
             className='md:hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50'
             onClick={(e) => {
@@ -416,13 +426,15 @@ const Header = () => {
           >
             <div
               style={{
-                zIndex: "1001"
+                zIndex: '1001',
               }}
               className='fixed inset-y-0 z-50 right-0 max-w-[280px] w-full bg-white dark:bg-gray-800 shadow-xl transform transition-transform ease-in-out duration-300'
             >
               <div className='flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700'>
-                <div className='text-lg font-semibold text-gray-900 dark:text-white'>{shop?.name || t('Menu')}</div>
-                <button 
+                <div className='text-lg font-semibold text-gray-900 dark:text-white'>
+                  {shop?.name || t('Menu')}
+                </div>
+                <button
                   onClick={() => setNavbarOpen(false)}
                   className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'
                 >
@@ -437,8 +449,8 @@ const Header = () => {
                       to='/?page='
                       onClick={handleLinkClick}
                       className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                        page === 'shops' 
-                          ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                        page === 'shops'
+                          ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
@@ -451,8 +463,8 @@ const Header = () => {
                         to='/?page=items'
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                          page === 'items' 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          page === 'items'
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
@@ -466,8 +478,8 @@ const Header = () => {
                         to='/?page=parts'
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                          page === 'parts' 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          page === 'parts'
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
@@ -481,8 +493,8 @@ const Header = () => {
                         to='/?page=service'
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                          page === 'service' 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          page === 'service'
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
@@ -496,8 +508,8 @@ const Header = () => {
                         to='/?page=leases'
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                          page === 'leases' 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          page === 'leases'
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
@@ -511,8 +523,8 @@ const Header = () => {
                         to='/?page=invoices'
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                          page === 'invoices' 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          page === 'invoices'
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
@@ -526,8 +538,8 @@ const Header = () => {
                         to='/?page=transactions'
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
-                          page === 'transactions' 
-                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' 
+                          page === 'transactions'
+                            ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >

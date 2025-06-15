@@ -401,7 +401,9 @@ export default class FirebaseDBModel extends DBModel {
     return this.getAll('deleted');
   }
 
-  async removeAllPermanent(idList: string[]): Promise<ContextDataValueType[] | null> {
+  async removeAllPermanent(
+    idList: string[]
+  ): Promise<ContextDataValueType[] | null> {
     if (idList.length === 0) return this.getAll('deleted');
 
     const batch = writeBatch(this._db);

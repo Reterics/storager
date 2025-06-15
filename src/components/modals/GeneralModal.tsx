@@ -32,9 +32,9 @@ export default function GeneralModal({
       style={{zIndex: 999}}
       role={'dialog'}
     >
-      <div className='bg-white p-4 rounded dark:bg-gray-900 min-w-[50vw]'>
+      <div className='bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-[95vw] sm:w-auto sm:min-w-[50vw] max-w-[95vw] sm:max-w-[80vw]'>
         {title && (
-          <h1 className='font-semibold text-center text-xl text-gray-700 mb-4 dark:text-gray-200'>
+          <h1 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mb-3 sm:mb-4 dark:text-gray-200'>
             {title}
           </h1>
         )}
@@ -45,7 +45,7 @@ export default function GeneralModal({
         <div className='hidden loading-parent'>
           <LoadingIcon />
         </div>
-        <div className='flex justify-between mt-2'>
+        <div className='flex flex-col sm:flex-row sm:justify-between gap-3 mt-4 sm:mt-2'>
           {(buttons || []).map((button, index) => (
             <button
               type='button'

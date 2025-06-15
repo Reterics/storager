@@ -95,7 +95,9 @@ export interface DBContextType {
   ) => Promise<ContextDataCollectionType | null>;
   restoreData: (id: string) => Promise<ContextDataCollectionType | null>;
   removePermanentData: (id: string) => Promise<ContextDataValueType[] | null>;
-  removePermanentDataList: (id: string[]) => Promise<ContextDataValueType[] | null>;
+  removePermanentDataList: (
+    id: string[]
+  ) => Promise<ContextDataValueType[] | null>;
   refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>;
   uploadDataBatch: (
     key: ContextDataType,
