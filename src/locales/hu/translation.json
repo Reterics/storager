@@ -224,5 +224,8 @@
   "Products Sold Over Time": "Eladott Termékek Időbeli Alakulása",
   "Products Sold by Name": "Eladott Termékek Név Szerint",
   "Quantity Sold": "Eladott Mennyiség",
-  "Total Products": "Összes termék"
+  "Total Products": "Összes termék",
+  "items selected": "elem kiválasztva",
+  "Delete Selected": "Kiválasztottak törlése",
+  "Are you sure you want to delete all selected items permanently?": "Biztosan törölni szeretnéd véglegesen a kiválasztott elemeket?"
 }

@@ -265,6 +265,17 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
     return deleted;
   };
 
+  const removePermanentCtxDataList = async (id: string[]) => {
+    const deleted = await firebaseModel.removeAllPermanent(id);
+    if (ctxData && ctxData.deleted && deleted) {
+      ctxData.deleted = [...deleted];
+      setCtxData({
+        ...ctxData,
+      });
+    }
+    return deleted;
+  };
+
   const updateContextData = async (
     key: ContextDataType,
     item: ContextDataValueType,
@@ -433,6 +444,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         removeData: removeContextData,
         restoreData: restoreContextData,
         removePermanentData: removePermanentCtxData,
+        removePermanentDataList: removePermanentCtxDataList,
         refreshImagePointers: postProcessStoreData,
         uploadDataBatch: updateContextBatched,
         getType: getType,

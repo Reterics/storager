@@ -137,3 +137,5 @@ export const getClientInfo = (): {
     language,
   };
 };
+
+export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

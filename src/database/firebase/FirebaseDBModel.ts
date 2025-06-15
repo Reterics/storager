@@ -401,6 +401,28 @@ export default class FirebaseDBModel extends DBModel {
     return this.getAll('deleted');
   }
 
+  async removeAllPermanent(idList: string[]): Promise<ContextDataValueType[] | null> {
+    if (idList.length === 0) return this.getAll('deleted');
+
+    const batch = writeBatch(this._db);
+
+    for (const id of idList) {
+      const cached = this.getCachedEntry(id, 'deleted');
+      if (cached && cached.docType) {
+        batch.delete(doc(this._db, cached.docType as string, id));
+        this.removeCachedEntry(id, 'deleted');
+      } else if (cached) {
+        console.error(`Cannot delete ${id}: invalid docType`);
+      } else {
+        console.error(`Cannot delete ${id}: missing`);
+      }
+    }
+
+    await batch.commit();
+    this.sync();
+    return this.getAll('deleted');
+  }
+
   async update(item: ContextDataValueType, table: string): Promise<void> {
     if (!item) {
       void this.log('update', table, undefined, undefined, 'Empty item');

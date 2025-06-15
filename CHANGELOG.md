@@ -15,6 +15,8 @@
  - Added Shop filter to ImportShopData Modal
  - PageHead extendable
  - Added type filters to Services
+ - Added max limits to Transactions page
+ - Added bulk selection to Recycle Bin
 
 ## [1.1.5] (2025-01-29)
 

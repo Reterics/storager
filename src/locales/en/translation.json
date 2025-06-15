@@ -224,5 +224,8 @@
   "Products Sold Over Time": "Products Sold Over Time",
   "Products Sold by Name": "Products Sold by Name",
   "Quantity Sold": "Quantity Sold",
-  "Total Products": "Total Products"
+  "Total Products": "Total Products",
+  "items selected": "items selected",
+  "Delete Selected": "Delete Selected",
+  "Are you sure you want to delete all selected items permanently?": "Are you sure you want to delete all selected items permanently?"
 }

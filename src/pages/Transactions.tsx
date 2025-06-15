@@ -52,6 +52,7 @@ export default function Transactions() {
   );
 
   const [modalTemplate, setModalTemplate] = useState<Transaction | null>(null);
+  const [tableLimits, setTableLimits] = useState<number>(100);
 
   const selectShopFilter = (shop: string) => {
     setShopFilter(shop);
@@ -140,6 +141,8 @@ export default function Transactions() {
               ),
           },
         ]}
+        tableLimits={tableLimits}
+        setTableLimits={setTableLimits}
         shopFilter={shopFilter}
         setShopFilter={selectShopFilter}
       />
