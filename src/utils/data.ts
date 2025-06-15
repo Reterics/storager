@@ -229,7 +229,7 @@ export const toSelectOptions = <T extends ContextDataValueType>(
   }));
 };
 
-export const formatDateTimeLocal = (input: Date|number) => {
+export const formatDateTimeLocal = (input: Date | number) => {
   if (typeof input === 'number' && Number.isNaN(input)) {
     return '?';
   }

@@ -20,6 +20,7 @@ import Transactions from './pages/Transactions.tsx';
 import Leases from './pages/Leases.tsx';
 import ItemsPage from './core/pages/ItemsPage.tsx';
 import PartsPage from './core/pages/PartsPage.tsx';
+import Reports from './pages/Reports.tsx';
 
 function QueryRouter() {
   const [searchParams] = useSearchParams();
@@ -98,6 +99,12 @@ function QueryRouter() {
         return (
           <InAppLayout>
             <Transactions />
+          </InAppLayout>
+        );
+      case 'reports':
+        return (
+          <InAppLayout>
+            <Reports />
           </InAppLayout>
         );
       case 'leases':
