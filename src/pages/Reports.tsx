@@ -5,34 +5,33 @@ import {Shop, Transaction} from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import {PageHead} from '../components/elements/PageHead.tsx';
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
   Area,
-  PieChart,
-  Pie,
+  Bar,
+  BarChart,
+  CartesianGrid,
   Cell,
   ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import {
-  BsCashStack,
-  BsGraphUpArrow,
+  BsBarChartLine,
   BsBoxSeam,
-  BsCoin,
   BsCartCheck,
+  BsCashStack,
+  BsCoin,
+  BsGraphUpArrow,
+  BsGrid1X2,
   BsListUl,
 } from 'react-icons/bs';
-import {
-  groupTransactions,
-  transactionInterval,
-} from '../utils/transactionUtils.ts';
+import {groupTransactions, transactionInterval} from '../utils/transactionUtils.ts';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
 import {formatCurrency} from '../utils/data.ts';
 import {useNavigate} from 'react-router-dom';
@@ -43,6 +42,7 @@ export default function Reports() {
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
   const [shopFilter, setShopFilter] = useState<string>('');
   const [groupBy, setGroupBy] = useState<transactionInterval>('daily');
+  const [activeTab, setActiveTab] = useState<'general' | 'items'>('general');
   const pieColors = [
     '#8884d8',
     '#82ca9d',
@@ -94,6 +94,9 @@ export default function Reports() {
     )
   ).map(([name, value]) => ({name, value}));
 
+  const groupedData = groupTransactions(transactions, groupBy);
+  const lastNonEmpty = [...groupedData].reverse().find(g => g.products && Object.keys(g.products).length > 0);
+
   return (
     <>
       <PageHead
@@ -124,6 +127,10 @@ export default function Reports() {
                 name: t('Monthly'),
                 value: 'monthly',
               },
+              {
+                name: t('Yearly'),
+                value: 'yearly',
+              },
             ]}
             name='type'
             value={groupBy || undefined}
@@ -137,6 +144,35 @@ export default function Reports() {
           />
         </div>
       </PageHead>
+
+      <div className="flex border-b border-gray-200 dark:border-gray-700 px-4 mb-4">
+        <button
+          className={`py-2 px-4 font-medium text-sm focus:outline-none ${
+            activeTab === 'general'
+              ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+          onClick={() => setActiveTab('general')}
+        >
+          <div className="flex items-center gap-2">
+            <BsBarChartLine />
+            {t('General Reports')}
+          </div>
+        </button>
+        <button
+          className={`py-2 px-4 font-medium text-sm focus:outline-none ${
+            activeTab === 'items'
+              ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+          onClick={() => setActiveTab('items')}
+        >
+          <div className="flex items-center gap-2">
+            <BsGrid1X2 />
+            {t('Item Reports')}
+          </div>
+        </button>
+      </div>
 
       <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 px-4 mt-2'>
         {[
@@ -203,378 +239,486 @@ export default function Reports() {
         ))}
       </div>
 
-      <div className='grid grid-cols-1 gap-4 p-4'>
-        <div className='flex flex-col h-[40vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Summary Dashboard')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <ComposedChart data={groupTransactions(transactions, groupBy)}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='date' />
-                <YAxis yAxisId='left' />
-                <YAxis yAxisId='right' orientation='right' />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(Number(value))}
-                />
-                <Legend />
-                <Bar
-                  yAxisId='left'
-                  dataKey='count'
-                  fill='#8884d8'
-                  name={t('Products Sold')}
-                  barSize={20}
-                />
-                <Line
-                  yAxisId='right'
-                  type='monotone'
-                  dataKey='cost'
-                  stroke='#ff7300'
-                  name={t('Cost')}
-                  strokeWidth={2}
-                />
-                <Line
-                  yAxisId='right'
-                  type='monotone'
-                  dataKey='net'
-                  stroke='#00bcd4'
-                  name={t('Net')}
-                  strokeWidth={2}
-                />
-                <Line
-                  yAxisId='right'
-                  type='monotone'
-                  dataKey='gross'
-                  stroke='#82ca9d'
-                  name={t('Gross')}
-                  strokeWidth={2}
-                />
-                <Area
-                  yAxisId='right'
-                  type='monotone'
-                  dataKey='margin'
-                  fill='rgba(136, 132, 216, 0.3)'
-                  stroke='#8884d8'
-                  name={t('Profit')}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4'>
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Cost Overview')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <LineChart data={groupTransactions(transactions, groupBy)}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(Number(value))}
-                />
-                <Legend />
-                <Line
-                  type='monotone'
-                  dataKey='cost'
-                  stroke='#8884d8'
-                  name={t('Cost')}
-                  strokeWidth={2}
-                  dot={{r: 3}}
-                  activeDot={{r: 5}}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Net Income Overview')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <LineChart data={groupTransactions(transactions, groupBy)}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(Number(value))}
-                />
-                <Legend />
-                <Line
-                  type='monotone'
-                  dataKey='net'
-                  stroke='#00bcd4'
-                  name={t('Net Income')}
-                  strokeWidth={2}
-                  dot={{r: 3}}
-                  activeDot={{r: 5}}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Gross Revenue Overview')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <LineChart data={groupTransactions(transactions, groupBy)}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(Number(value))}
-                />
-                <Legend />
-                <Line
-                  type='monotone'
-                  dataKey='gross'
-                  stroke='#82ca9d'
-                  name={t('Gross Revenue')}
-                  strokeWidth={2}
-                  dot={{r: 3}}
-                  activeDot={{r: 5}}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Profit Overview')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <LineChart data={groupTransactions(transactions, groupBy)}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip
-                  formatter={(value: number) => formatCurrency(Number(value))}
-                />
-                <Legend />
-                <Line
-                  type='monotone'
-                  dataKey='margin'
-                  stroke='#ff7300'
-                  name={t('Profit')}
-                  strokeWidth={2}
-                  dot={{r: 3}}
-                  activeDot={{r: 5}}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Transaction Types')}
-          </h2>
-          <div className='flex-1 flex items-center justify-center'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <PieChart>
-                <Tooltip />
-                <Legend />
-                <Pie
-                  data={transactionPieData}
-                  dataKey='value'
-                  nameKey='name'
-                  cx='50%'
-                  cy='50%'
-                  outerRadius={80}
-                  label
-                >
-                  {transactionPieData.map((_entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={pieColors[index % pieColors.length]}
+      {activeTab === 'general' ? (
+        <>
+          <div className='grid grid-cols-1 gap-4 p-4'>
+            <div className='flex flex-col h-[40vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Summary Dashboard')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <ComposedChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis yAxisId='left' />
+                    <YAxis yAxisId='right' orientation='right' />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(Number(value))}
                     />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
+                    <Legend />
+                    <Bar
+                      yAxisId='left'
+                      dataKey='count'
+                      fill='#8884d8'
+                      name={t('Products Sold')}
+                      barSize={20}
+                    />
+                    <Line
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='cost'
+                      stroke='#ff7300'
+                      name={t('Cost')}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='net'
+                      stroke='#00bcd4'
+                      name={t('Net')}
+                      strokeWidth={2}
+                    />
+                    <Line
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='gross'
+                      stroke='#82ca9d'
+                      name={t('Gross')}
+                      strokeWidth={2}
+                    />
+                    <Area
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='margin'
+                      fill='rgba(136, 132, 216, 0.3)'
+                      stroke='#8884d8'
+                      name={t('Profit')}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Profit Margin Analysis')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <ComposedChart data={groupTransactions(transactions, groupBy)}>
-                <defs>
-                  <linearGradient id='colorNet' x1='0' y1='0' x2='0' y2='1'>
-                    <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
-                    <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient
-                    id='colorMarginPercent'
-                    x1='0'
-                    y1='0'
-                    x2='0'
-                    y2='1'
-                  >
-                    <stop offset='5%' stopColor='#82ca9d' stopOpacity={0.8} />
-                    <stop offset='95%' stopColor='#82ca9d' stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient
-                    id='colorGrossMarginPercent'
-                    x1='0'
-                    y1='0'
-                    x2='0'
-                    y2='1'
-                  >
-                    <stop offset='5%' stopColor='#ff7300' stopOpacity={0.8} />
-                    <stop offset='95%' stopColor='#ff7300' stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey='date' />
-                <YAxis
-                  yAxisId='left'
-                  tickFormatter={(value) => formatCurrency(value)}
-                />
-                <YAxis
-                  yAxisId='right'
-                  orientation='right'
-                  tickFormatter={(value) => `${value.toFixed(1)}%`}
-                />
-                <CartesianGrid strokeDasharray='3 3' />
-                <Tooltip
-                  formatter={(value: number, name) => {
-                    if (
-                      name === t('Margin % (ROI)') ||
-                      name === t('Gross Margin %')
-                    ) {
-                      return [`${value.toFixed(1)}%`, name];
-                    }
-                    return [formatCurrency(Number(value)), name];
-                  }}
-                />
-                <Legend />
-                <Area
-                  yAxisId='left'
-                  type='monotone'
-                  dataKey='margin'
-                  stroke='#8884d8'
-                  fillOpacity={0.6}
-                  fill='url(#colorNet)'
-                  name={t('Profit Margin')}
-                />
-                <Line
-                  yAxisId='right'
-                  type='monotone'
-                  dataKey='marginPercent'
-                  stroke='#82ca9d'
-                  strokeWidth={2}
-                  dot={{r: 3}}
-                  activeDot={{r: 5}}
-                  name={t('Margin % (ROI)')}
-                />
-                <Line
-                  yAxisId='right'
-                  type='monotone'
-                  dataKey='grossMarginPercent'
-                  stroke='#ff7300'
-                  strokeWidth={2}
-                  dot={{r: 3}}
-                  activeDot={{r: 5}}
-                  name={t('Gross Margin %')}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4'>
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Cost Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(Number(value))}
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='cost'
+                      stroke='#8884d8'
+                      name={t('Cost')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Products Sold Over Time')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <BarChart data={groupTransactions(transactions, groupBy)}>
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='date' />
-                <YAxis />
-                <Tooltip
-                  content={({active, payload, label}) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className='bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded shadow-md'>
-                          <p className='font-semibold'>{label}</p>
-                          <p>{`${t('Total Products')}: ${data.count}`}</p>
-                          {data.products &&
-                            Object.entries(data.products).map(
-                              ([name, count], idx) => (
-                                <p key={idx}>{`${name}: ${count}`}</p>
-                              )
-                            )}
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Legend />
-                <Bar dataKey='count' fill='#8884d8' name={t('Products Sold')} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Net Income Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(Number(value))}
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='net'
+                      stroke='#00bcd4'
+                      name={t('Net Income')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-        <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-          <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-            {t('Products Sold by Name')}
-          </h2>
-          <div className='flex-1'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <BarChart
-                data={(() => {
-                  // Aggregate products across all time periods
-                  const productCounts: Record<string, number> = {};
-                  const groupedData = groupTransactions(transactions, groupBy);
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Gross Revenue Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(Number(value))}
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='gross'
+                      stroke='#82ca9d'
+                      name={t('Gross Revenue')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
-                  groupedData.forEach((period) => {
-                    if (period.products) {
-                      Object.entries(period.products).forEach(
-                        ([name, count]) => {
-                          productCounts[name] =
-                            (productCounts[name] || 0) + (count as number);
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Profit Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(Number(value))}
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='margin'
+                      stroke='#ff7300'
+                      name={t('Profit')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Transaction Types')}
+              </h2>
+              <div className='flex-1 flex items-center justify-center'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <PieChart>
+                    <Tooltip />
+                    <Legend />
+                    <Pie
+                      data={transactionPieData}
+                      dataKey='value'
+                      nameKey='name'
+                      cx='50%'
+                      cy='50%'
+                      outerRadius={80}
+                      label
+                    >
+                      {transactionPieData.map((_entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={pieColors[index % pieColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Profit Margin Analysis')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <ComposedChart data={groupTransactions(transactions, groupBy)}>
+                    <defs>
+                      <linearGradient id='colorNet' x1='0' y1='0' x2='0' y2='1'>
+                        <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
+                        <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient
+                        id='colorMarginPercent'
+                        x1='0'
+                        y1='0'
+                        x2='0'
+                        y2='1'
+                      >
+                        <stop offset='5%' stopColor='#82ca9d' stopOpacity={0.8} />
+                        <stop offset='95%' stopColor='#82ca9d' stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient
+                        id='colorGrossMarginPercent'
+                        x1='0'
+                        y1='0'
+                        x2='0'
+                        y2='1'
+                      >
+                        <stop offset='5%' stopColor='#ff7300' stopOpacity={0.8} />
+                        <stop offset='95%' stopColor='#ff7300' stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey='date' />
+                    <YAxis
+                      yAxisId='left'
+                      tickFormatter={(value) => formatCurrency(value)}
+                    />
+                    <YAxis
+                      yAxisId='right'
+                      orientation='right'
+                      tickFormatter={(value) => `${value.toFixed(1)}%`}
+                    />
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <Tooltip
+                      formatter={(value: number, name) => {
+                        if (
+                          name === t('Margin % (ROI)') ||
+                          name === t('Gross Margin %')
+                        ) {
+                          return [`${value.toFixed(1)}%`, name];
                         }
-                      );
-                    }
-                  });
-
-                  // Convert to array format for the chart
-                  return Object.entries(productCounts)
-                    .map(([name, count]) => ({name, count}))
-                    .sort((a, b) => b.count - a.count)
-                    .slice(0, 10); // Show top 10 products
-                })()}
-              >
-                <CartesianGrid strokeDasharray='3 3' />
-                <XAxis dataKey='name' />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey='count' fill='#82ca9d' name={t('Quantity Sold')} />
-              </BarChart>
-            </ResponsiveContainer>
+                        return [formatCurrency(Number(value)), name];
+                      }}
+                    />
+                    <Legend />
+                    <Area
+                      yAxisId='left'
+                      type='monotone'
+                      dataKey='margin'
+                      stroke='#8884d8'
+                      fillOpacity={0.6}
+                      fill='url(#colorNet)'
+                      name={t('Profit Margin')}
+                    />
+                    <Line
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='marginPercent'
+                      stroke='#82ca9d'
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                      name={t('Margin % (ROI)')}
+                    />
+                    <Line
+                      yAxisId='right'
+                      type='monotone'
+                      dataKey='grossMarginPercent'
+                      stroke='#ff7300'
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                      name={t('Gross Margin %')}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <>
+
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4'>
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Products Sold Over Time')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <BarChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      content={({active, payload, label}) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className='bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded shadow-md'>
+                              <p className='font-semibold'>{label}</p>
+                              <p>{`${t('Total Products')}: ${data.count}`}</p>
+                              {data.products &&
+                                Object.entries(data.products).map(
+                                  ([name, count], idx) => (
+                                    <p key={idx}>{`${name}: ${count}`}</p>
+                                  )
+                                )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey='count' fill='#8884d8' name={t('Products Sold')} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Products Sold by Name')}
+              </h2>
+              {lastNonEmpty ? <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
+                {t('Showing data for')}: <strong>{lastNonEmpty.date}</strong>
+              </p> : <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
+                {t('No product sales data available')}
+              </p>}
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <BarChart
+                    data={(() => {
+                      const productCounts: Record<string, number> = {};
+
+                      if (lastNonEmpty?.products) {
+                        Object.entries(lastNonEmpty.products).forEach(([name, count]) => {
+                          productCounts[name] = count;
+                        });
+                      }
+
+                      return Object.entries(productCounts)
+                        .map(([name, count]) => ({ name, count }))
+                        .sort((a, b) => b.count - a.count)
+                        .slice(0, 10);
+                    })()}
+                  >
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='name' />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey='count' fill='#82ca9d' name={t('Quantity Sold')} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Item Revenue Contribution')}
+              </h2>
+              {lastNonEmpty ? <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
+                {t('Showing data for')}: <strong>{lastNonEmpty.date}</strong>
+              </p> : <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
+                {t('No product sales data available')}
+              </p>}
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <PieChart>
+                    <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+                    <Legend />
+                    <Pie
+                      data={(() => {
+                        return Object.entries(lastNonEmpty?.productsRevenue || {})
+                          .map(([name, value]) => ({ name, value }))
+                          .sort((a, b) => b.value - a.value)
+                          .slice(0, 8);
+                      })()}
+                      dataKey='value'
+                      nameKey='name'
+                      cx='50%'
+                      cy='50%'
+                      outerRadius={80}
+                      label
+                    >
+                      {Array(8).fill(0).map((_entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={pieColors[index % pieColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Item Profit Margin Comparison')}
+              </h2>
+              {lastNonEmpty ? <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
+                {t('Showing data for')}: <strong>{lastNonEmpty.date}</strong>
+              </p> : <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
+                {t('No product sales data available')}
+              </p>}
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <BarChart
+                    data={(() => {
+                      const productMargins: Record<string, { revenue: number; cost: number }> = {};
+
+                      if (lastNonEmpty?.productsRevenue && lastNonEmpty?.productsCost) {
+                        Object.keys(lastNonEmpty.productsRevenue).forEach((name) => {
+                          const revenue = lastNonEmpty.productsRevenue?.[name] || 0;
+                          const cost = lastNonEmpty.productsCost?.[name] || 0;
+
+                          if (!productMargins[name]) {
+                            productMargins[name] = { revenue: 0, cost: 0 };
+                          }
+
+                          productMargins[name].revenue += revenue;
+                          productMargins[name].cost += cost;
+                        });
+                      }
+
+                      return Object.entries(productMargins)
+                        .map(([name, data]) => {
+                          const margin = data.revenue - data.cost;
+                          return {
+                            name,
+                            margin,
+                            marginPercent: data.cost > 0 ? (margin / data.cost) * 100 : 0,
+                          };
+                        })
+                        .sort((a, b) => b.margin - a.margin)
+                        .slice(0, 10)
+                    })()}
+                    layout="vertical"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={100} />
+                    <Tooltip 
+                      formatter={(value: number, name) => {
+                        if (name === t('Margin %')) {
+                          return [`${value.toFixed(1)}%`, name];
+                        }
+                        return [formatCurrency(Number(value)), name];
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="margin" fill="#8884d8" name={t('Profit Margin')} />
+                    <Bar dataKey="marginPercent" fill="#82ca9d" name={t('Margin %')} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
