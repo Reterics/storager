@@ -87,8 +87,8 @@ export const PageHead = ({
 
   return (
     <div className='flex self-center max-w-screen-xl w-full no-print min-h-fit'>
-      <div className='flex justify-between items-center w-full px-0 py-1 gap-2 flex-wrap'>
-        <div className='flex items-center gap-2 flex-wrap'>
+      <div className='flex justify-between items-center w-full px-0 py-1 gap-1 flex-wrap'>
+        <div className='flex flex-1 items-center gap-2 flex-wrap'>
           {title && (
             <h1 className='ps-1 text-lg font-semibold text-gray-900 dark:text-white'>
               {title}

@@ -100,7 +100,7 @@ export default function Reports() {
   return (
     <>
       <PageHead
-        title={t('Reports')}
+        title={null}
         shopFilter={shopFilter}
         setShopFilter={selectShopFilter}
         buttons={[
@@ -112,6 +112,29 @@ export default function Reports() {
           },
         ]}
       >
+        <div className='flex flex-1 gap-2 border-b border-gray-200 dark:border-gray-700'>
+          {[
+            { key: 'general', label: t('General Reports'), icon: <BsBarChartLine /> },
+            { key: 'items', label: t('Item Reports'), icon: <BsGrid1X2 /> },
+          ].map(({ key, label, icon }) => {
+            const isActive = activeTab === key;
+
+            return (
+              <button
+                key={key}
+                className={`py-2 px-3 text-sm font-medium flex items-center gap-2 rounded-md transition-colors
+            ${
+                  isActive
+                    ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 shadow-sm'
+                    : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'
+                }`}
+                onClick={() => setActiveTab(key as typeof activeTab)}
+              >
+                {icon} {label}
+              </button>
+            );
+          })}
+        </div>
         <div className='w-30 select-no-first'>
           <StyledSelect
             options={[
@@ -145,36 +168,8 @@ export default function Reports() {
         </div>
       </PageHead>
 
-      <div className="flex border-b border-gray-200 dark:border-gray-700 px-4 mb-4">
-        <button
-          className={`py-2 px-4 font-medium text-sm focus:outline-none ${
-            activeTab === 'general'
-              ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
-              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-          }`}
-          onClick={() => setActiveTab('general')}
-        >
-          <div className="flex items-center gap-2">
-            <BsBarChartLine />
-            {t('General Reports')}
-          </div>
-        </button>
-        <button
-          className={`py-2 px-4 font-medium text-sm focus:outline-none ${
-            activeTab === 'items'
-              ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-500 dark:border-blue-500'
-              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-          }`}
-          onClick={() => setActiveTab('items')}
-        >
-          <div className="flex items-center gap-2">
-            <BsGrid1X2 />
-            {t('Item Reports')}
-          </div>
-        </button>
-      </div>
 
-      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 px-4 mt-2'>
+      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-2'>
         {[
           {
             label: t('Total Revenue'),
@@ -241,7 +236,7 @@ export default function Reports() {
 
       {activeTab === 'general' ? (
         <>
-          <div className='grid grid-cols-1 gap-4 p-4'>
+          <div className='grid grid-cols-1 gap-4 py-4'>
             <div className='flex flex-col h-[40vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Summary Dashboard')}
@@ -302,7 +297,7 @@ export default function Reports() {
             </div>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 pb-4'>
             <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Cost Overview')}
@@ -539,7 +534,7 @@ export default function Reports() {
       ) : (
         <>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 py-4'>
             <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Products Sold Over Time')}
