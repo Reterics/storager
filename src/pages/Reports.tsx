@@ -31,7 +31,10 @@ import {
   BsGrid1X2,
   BsListUl,
 } from 'react-icons/bs';
-import {groupTransactions, transactionInterval} from '../utils/transactionUtils.ts';
+import {
+  groupTransactions,
+  transactionInterval,
+} from '../utils/transactionUtils.ts';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
 import {formatCurrency} from '../utils/data.ts';
 import {useNavigate} from 'react-router-dom';
@@ -95,13 +98,27 @@ export default function Reports() {
   ).map(([name, value]) => ({name, value}));
 
   const groupedData = groupTransactions(transactions, groupBy);
-  const lastNonEmpty = [...groupedData].reverse().find(g => g.products && Object.keys(g.products).length > 0);
+  const lastNonEmpty = [...groupedData]
+    .reverse()
+    .find((g) => g.products && Object.keys(g.products).length > 0);
   // For items page show actual day
-  const gross = activeTab === 'items' ? lastNonEmpty?.gross || 0 : groupedData.reduce((sum, g) => sum + (g.gross || 0), 0);
-  const net = activeTab === 'items' ? lastNonEmpty?.net || 0 : groupedData.reduce((sum, g) => sum + (g.net || 0), 0);
-  const cost = activeTab === 'items' ? lastNonEmpty?.cost || 0 : groupedData.reduce((sum, g) => sum + (g.cost || 0), 0);
+  const gross =
+    activeTab === 'items'
+      ? lastNonEmpty?.gross || 0
+      : groupedData.reduce((sum, g) => sum + (g.gross || 0), 0);
+  const net =
+    activeTab === 'items'
+      ? lastNonEmpty?.net || 0
+      : groupedData.reduce((sum, g) => sum + (g.net || 0), 0);
+  const cost =
+    activeTab === 'items'
+      ? lastNonEmpty?.cost || 0
+      : groupedData.reduce((sum, g) => sum + (g.cost || 0), 0);
   const count = activeTab === 'items' ? lastNonEmpty?.count || 0 : net - cost;
-  const profit = activeTab === 'items' ? net - cost : groupedData.reduce((sum, g) => sum + (g.count || 0), 0);
+  const profit =
+    activeTab === 'items'
+      ? net - cost
+      : groupedData.reduce((sum, g) => sum + (g.count || 0), 0);
 
   return (
     <>
@@ -120,9 +137,13 @@ export default function Reports() {
       >
         <div className='flex flex-1 gap-2 border-b border-gray-200 dark:border-gray-700'>
           {[
-            { key: 'general', label: t('General Reports'), icon: <BsBarChartLine /> },
-            { key: 'items', label: t('Item Reports'), icon: <BsGrid1X2 /> },
-          ].map(({ key, label, icon }) => {
+            {
+              key: 'general',
+              label: t('General Reports'),
+              icon: <BsBarChartLine />,
+            },
+            {key: 'items', label: t('Item Reports'), icon: <BsGrid1X2 />},
+          ].map(({key, label, icon}) => {
             const isActive = activeTab === key;
 
             return (
@@ -130,16 +151,26 @@ export default function Reports() {
                 key={key}
                 className={`py-2 px-3 text-sm font-medium flex items-center gap-2 rounded-md transition-colors
             ${
-                  isActive
-                    ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 shadow-sm'
-                    : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'
-                }`}
+              isActive
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 shadow-sm'
+                : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'
+            }`}
                 onClick={() => setActiveTab(key as typeof activeTab)}
               >
                 {icon} {label}
               </button>
             );
           })}
+          <div className='text-sm text-gray-500 dark:text-gray-400 align-middle flex-1 content-center'>
+            {lastNonEmpty && activeTab === 'items'
+              ? t('Showing data for')
+              : activeTab === 'items'
+                ? t('No product sales data available')
+                : null}
+            {lastNonEmpty && activeTab === 'items' && (
+              <strong className='ms-1'>{lastNonEmpty.date}</strong>
+            )}
+          </div>
         </div>
         <div className='w-30 select-no-first'>
           <StyledSelect
@@ -173,7 +204,6 @@ export default function Reports() {
           />
         </div>
       </PageHead>
-
 
       <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-2'>
         {[
@@ -231,13 +261,17 @@ export default function Reports() {
               </h2>
               <div className='flex-1'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <ComposedChart data={groupTransactions(transactions, groupBy)}>
+                  <ComposedChart
+                    data={groupTransactions(transactions, groupBy)}
+                  >
                     <CartesianGrid strokeDasharray='3 3' />
                     <XAxis dataKey='date' />
                     <YAxis yAxisId='left' />
                     <YAxis yAxisId='right' orientation='right' />
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(Number(value))}
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
                     />
                     <Legend />
                     <Bar
@@ -297,7 +331,9 @@ export default function Reports() {
                     <XAxis dataKey='date' />
                     <YAxis />
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(Number(value))}
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
                     />
                     <Legend />
                     <Line
@@ -325,7 +361,9 @@ export default function Reports() {
                     <XAxis dataKey='date' />
                     <YAxis />
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(Number(value))}
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
                     />
                     <Legend />
                     <Line
@@ -353,7 +391,9 @@ export default function Reports() {
                     <XAxis dataKey='date' />
                     <YAxis />
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(Number(value))}
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
                     />
                     <Legend />
                     <Line
@@ -381,7 +421,9 @@ export default function Reports() {
                     <XAxis dataKey='date' />
                     <YAxis />
                     <Tooltip
-                      formatter={(value: number) => formatCurrency(Number(value))}
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
                     />
                     <Legend />
                     <Line
@@ -434,11 +476,21 @@ export default function Reports() {
               </h2>
               <div className='flex-1'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <ComposedChart data={groupTransactions(transactions, groupBy)}>
+                  <ComposedChart
+                    data={groupTransactions(transactions, groupBy)}
+                  >
                     <defs>
                       <linearGradient id='colorNet' x1='0' y1='0' x2='0' y2='1'>
-                        <stop offset='5%' stopColor='#8884d8' stopOpacity={0.8} />
-                        <stop offset='95%' stopColor='#8884d8' stopOpacity={0} />
+                        <stop
+                          offset='5%'
+                          stopColor='#8884d8'
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset='95%'
+                          stopColor='#8884d8'
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                       <linearGradient
                         id='colorMarginPercent'
@@ -447,8 +499,16 @@ export default function Reports() {
                         x2='0'
                         y2='1'
                       >
-                        <stop offset='5%' stopColor='#82ca9d' stopOpacity={0.8} />
-                        <stop offset='95%' stopColor='#82ca9d' stopOpacity={0} />
+                        <stop
+                          offset='5%'
+                          stopColor='#82ca9d'
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset='95%'
+                          stopColor='#82ca9d'
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                       <linearGradient
                         id='colorGrossMarginPercent'
@@ -457,8 +517,16 @@ export default function Reports() {
                         x2='0'
                         y2='1'
                       >
-                        <stop offset='5%' stopColor='#ff7300' stopOpacity={0.8} />
-                        <stop offset='95%' stopColor='#ff7300' stopOpacity={0} />
+                        <stop
+                          offset='5%'
+                          stopColor='#ff7300'
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset='95%'
+                          stopColor='#ff7300'
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey='date' />
@@ -521,7 +589,6 @@ export default function Reports() {
         </>
       ) : (
         <>
-
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 py-4'>
             <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
@@ -554,7 +621,11 @@ export default function Reports() {
                       }}
                     />
                     <Legend />
-                    <Bar dataKey='count' fill='#8884d8' name={t('Products Sold')} />
+                    <Bar
+                      dataKey='count'
+                      fill='#8884d8'
+                      name={t('Products Sold')}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -564,11 +635,7 @@ export default function Reports() {
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Products Sold by Name')}
               </h2>
-              {lastNonEmpty ? <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
-                {t('Showing data for')}: <strong>{lastNonEmpty.date}</strong>
-              </p> : <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
-                {t('No product sales data available')}
-              </p>}
+
               <div className='flex-1'>
                 <ResponsiveContainer width='100%' height='100%'>
                   <BarChart
@@ -576,13 +643,15 @@ export default function Reports() {
                       const productCounts: Record<string, number> = {};
 
                       if (lastNonEmpty?.products) {
-                        Object.entries(lastNonEmpty.products).forEach(([name, count]) => {
-                          productCounts[name] = count;
-                        });
+                        Object.entries(lastNonEmpty.products).forEach(
+                          ([name, count]) => {
+                            productCounts[name] = count;
+                          }
+                        );
                       }
 
                       return Object.entries(productCounts)
-                        .map(([name, count]) => ({ name, count }))
+                        .map(([name, count]) => ({name, count}))
                         .sort((a, b) => b.count - a.count)
                         .slice(0, 10);
                     })()}
@@ -592,7 +661,11 @@ export default function Reports() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey='count' fill='#82ca9d' name={t('Quantity Sold')} />
+                    <Bar
+                      dataKey='count'
+                      fill='#82ca9d'
+                      name={t('Quantity Sold')}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -602,20 +675,21 @@ export default function Reports() {
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Item Revenue Contribution')}
               </h2>
-              {lastNonEmpty ? <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
-                {t('Showing data for')}: <strong>{lastNonEmpty.date}</strong>
-              </p> : <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
-                {t('No product sales data available')}
-              </p>}
               <div className='flex-1'>
                 <ResponsiveContainer width='100%' height='100%'>
                   <PieChart>
-                    <Tooltip formatter={(value: number) => formatCurrency(Number(value))} />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
+                    />
                     <Legend />
                     <Pie
                       data={(() => {
-                        return Object.entries(lastNonEmpty?.productsRevenue || {})
-                          .map(([name, value]) => ({ name, value }))
+                        return Object.entries(
+                          lastNonEmpty?.productsRevenue || {}
+                        )
+                          .map(([name, value]) => ({name, value}))
                           .sort((a, b) => b.value - a.value)
                           .slice(0, 8);
                       })()}
@@ -626,12 +700,14 @@ export default function Reports() {
                       outerRadius={80}
                       label
                     >
-                      {Array(8).fill(0).map((_entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={pieColors[index % pieColors.length]}
-                        />
-                      ))}
+                      {Array(8)
+                        .fill(0)
+                        .map((_entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={pieColors[index % pieColors.length]}
+                          />
+                        ))}
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
@@ -642,29 +718,33 @@ export default function Reports() {
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Item Profit Margin Comparison')}
               </h2>
-              {lastNonEmpty ? <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
-                {t('Showing data for')}: <strong>{lastNonEmpty.date}</strong>
-              </p> : <p className='text-sm text-gray-500 dark:text-gray-400 mb-2'>
-                {t('No product sales data available')}
-              </p>}
               <div className='flex-1'>
                 <ResponsiveContainer width='100%' height='100%'>
                   <BarChart
                     data={(() => {
-                      const productMargins: Record<string, { revenue: number; cost: number }> = {};
+                      const productMargins: Record<
+                        string,
+                        {revenue: number; cost: number}
+                      > = {};
 
-                      if (lastNonEmpty?.productsRevenue && lastNonEmpty?.productsCost) {
-                        Object.keys(lastNonEmpty.productsRevenue).forEach((name) => {
-                          const revenue = lastNonEmpty.productsRevenue?.[name] || 0;
-                          const cost = lastNonEmpty.productsCost?.[name] || 0;
+                      if (
+                        lastNonEmpty?.productsRevenue &&
+                        lastNonEmpty?.productsCost
+                      ) {
+                        Object.keys(lastNonEmpty.productsRevenue).forEach(
+                          (name) => {
+                            const revenue =
+                              lastNonEmpty.productsRevenue?.[name] || 0;
+                            const cost = lastNonEmpty.productsCost?.[name] || 0;
 
-                          if (!productMargins[name]) {
-                            productMargins[name] = { revenue: 0, cost: 0 };
+                            if (!productMargins[name]) {
+                              productMargins[name] = {revenue: 0, cost: 0};
+                            }
+
+                            productMargins[name].revenue += revenue;
+                            productMargins[name].cost += cost;
                           }
-
-                          productMargins[name].revenue += revenue;
-                          productMargins[name].cost += cost;
-                        });
+                        );
                       }
 
                       return Object.entries(productMargins)
@@ -673,18 +753,19 @@ export default function Reports() {
                           return {
                             name,
                             margin,
-                            marginPercent: data.cost > 0 ? (margin / data.cost) * 100 : 0,
+                            marginPercent:
+                              data.cost > 0 ? (margin / data.cost) * 100 : 0,
                           };
                         })
                         .sort((a, b) => b.margin - a.margin)
-                        .slice(0, 10)
+                        .slice(0, 10);
                     })()}
-                    layout="vertical"
+                    layout='vertical'
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={100} />
-                    <Tooltip 
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis type='number' />
+                    <YAxis dataKey='name' type='category' width={100} />
+                    <Tooltip
                       formatter={(value: number, name) => {
                         if (name === t('Margin %')) {
                           return [`${value.toFixed(1)}%`, name];
@@ -693,8 +774,16 @@ export default function Reports() {
                       }}
                     />
                     <Legend />
-                    <Bar dataKey="margin" fill="#8884d8" name={t('Profit Margin')} />
-                    <Bar dataKey="marginPercent" fill="#82ca9d" name={t('Margin %')} />
+                    <Bar
+                      dataKey='margin'
+                      fill='#8884d8'
+                      name={t('Profit Margin')}
+                    />
+                    <Bar
+                      dataKey='marginPercent'
+                      fill='#82ca9d'
+                      name={t('Margin %')}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

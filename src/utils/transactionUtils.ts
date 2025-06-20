@@ -75,7 +75,7 @@ export function groupTransactions(
   }
 
   // Prepopulate empty buckets
-  keys.forEach(key => {
+  keys.forEach((key) => {
     if (!map.has(key)) {
       map.set(key, {
         date: key,
@@ -119,16 +119,19 @@ export function groupTransactions(
       existing.productsRevenue ??= {};
       existing.productsCost ??= {};
 
-      existing.products[productName] = (existing.products[productName] || 0) + quantity;
-      existing.productsRevenue[productName] = (existing.productsRevenue[productName] || 0) + gross;
-      existing.productsCost[productName] = (existing.productsCost[productName] || 0) + cost;
+      existing.products[productName] =
+        (existing.products[productName] || 0) + quantity;
+      existing.productsRevenue[productName] =
+        (existing.productsRevenue[productName] || 0) + gross;
+      existing.productsCost[productName] =
+        (existing.productsCost[productName] || 0) + cost;
 
       // Recalculate percentages based on updated totals
       existing.marginPercent =
         existing.cost > 0 ? (existing.margin / existing.cost) * 100 : 0;
       existing.grossMarginPercent =
         existing.gross > 0 ? (existing.margin / existing.gross) * 100 : 0;
-    }/* else {
+    } /* else {
       map.set(key, {
         date: key,
         cost,

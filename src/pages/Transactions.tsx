@@ -148,6 +148,7 @@ export default function Transactions() {
         shopFilter={shopFilter}
         setShopFilter={selectShopFilter}
       />
+      <div className='mb-2 mt-1' />
 
       <TableViewComponent
         lines={tableLines}

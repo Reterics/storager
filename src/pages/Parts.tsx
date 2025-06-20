@@ -234,6 +234,7 @@ function Parts() {
       >
         {modules.transactions && <LaborFeeInput />}
       </PageHead>
+      <div className='mb-2 mt-1' />
 
       <TableViewComponent
         lines={tableLines}

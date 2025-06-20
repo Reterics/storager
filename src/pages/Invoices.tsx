@@ -184,6 +184,7 @@ function Invoices() {
         activeFilter={activeFilter}
         setActiveFilter={selectActiveFilter}
       />
+      <div className='mb-2 mt-1' />
 
       <TableViewComponent
         lines={tableLines}

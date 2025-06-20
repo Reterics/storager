@@ -195,6 +195,7 @@ function Items() {
         error={error}
         onSearch={filterItems}
       />
+      <div className='mb-2 mt-1' />
 
       <TableViewComponent
         lines={tableLines}
