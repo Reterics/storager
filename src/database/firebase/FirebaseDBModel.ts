@@ -146,6 +146,7 @@ export default class FirebaseDBModel extends DBModel {
     const transaction: Partial<Transaction> = {
       name: item.name || trType + ' ' + trType,
       cost: (item.cost || netPrice || 0) * diff,
+      quantity: diff,
       item_type: table,
       item_id: id || item.id,
       net_amount: netPrice * diff,

@@ -43,7 +43,7 @@ export function groupTransactions(
   const map = new Map<string, GroupedTransactionData>();
 
   const now = new Date();
-  let keys: string[] = [];
+  const keys: string[] = [];
 
   if (interval === 'daily') {
     for (let i = 0; i < 30; i++) {
@@ -98,12 +98,13 @@ export function groupTransactions(
     const cost = Number(tx.cost || 0);
     const net = Number(tx.net_amount || 0);
     const gross = Number(tx.gross_amount || 0);
+    const quantity = Number(tx.quantity || 1);
     const margin = net - cost;
     const productName = tx.name || 'Unknown';
 
     // Calculate margin percentages
-    const marginPercent = cost > 0 ? (margin / cost) * 100 : 0;
-    const grossMarginPercent = gross > 0 ? (margin / gross) * 100 : 0;
+    // const marginPercent = cost > 0 ? (margin / cost) * 100 : 0;
+    // const grossMarginPercent = gross > 0 ? (margin / gross) * 100 : 0;
 
     const existing = map.get(key);
     if (existing) {
@@ -111,14 +112,14 @@ export function groupTransactions(
       existing.gross += gross;
       existing.net += net;
       existing.margin += margin;
-      existing.count += 1;
+      existing.count += quantity;
 
       // Track product names and counts
       existing.products ??= {};
       existing.productsRevenue ??= {};
       existing.productsCost ??= {};
 
-      existing.products[productName] = (existing.products[productName] || 0) + 1;
+      existing.products[productName] = (existing.products[productName] || 0) + quantity;
       existing.productsRevenue[productName] = (existing.productsRevenue[productName] || 0) + gross;
       existing.productsCost[productName] = (existing.productsCost[productName] || 0) + cost;
 
@@ -127,7 +128,7 @@ export function groupTransactions(
         existing.cost > 0 ? (existing.margin / existing.cost) * 100 : 0;
       existing.grossMarginPercent =
         existing.gross > 0 ? (existing.margin / existing.gross) * 100 : 0;
-    } else {
+    }/* else {
       map.set(key, {
         date: key,
         cost,
@@ -139,7 +140,7 @@ export function groupTransactions(
         count: 1,
         products: {[productName]: 1},
       });
-    }
+    }*/
   }
 
   return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));

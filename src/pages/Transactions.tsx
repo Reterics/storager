@@ -91,6 +91,7 @@ export default function Transactions() {
       getIconForTransactionType(transaction.transaction_type),
       getIconForPaymentMethod(transaction.payment_method),
       getIconForDocumentType(transaction.document_type),
+      transaction.quantity || '',
       formatCurrency(transaction.cost || 0),
       formatCurrency(transaction.net_amount || 0),
       formatCurrency(transaction.gross_amount || 0),
@@ -136,6 +137,7 @@ export default function Transactions() {
                       cost: 0,
                       net_amount: 0,
                       gross_amount: 0,
+                      quantity: 0,
                       name: '',
                     }
               ),
@@ -154,6 +156,7 @@ export default function Transactions() {
           t('Type'),
           t('Payment'),
           t('Document'),
+          t('Qty.'),
           t('Cost'),
           t('Net Amount'),
           t('Gross Amount'),

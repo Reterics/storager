@@ -96,6 +96,12 @@ export default function Reports() {
 
   const groupedData = groupTransactions(transactions, groupBy);
   const lastNonEmpty = [...groupedData].reverse().find(g => g.products && Object.keys(g.products).length > 0);
+  // For items page show actual day
+  const gross = activeTab === 'items' ? lastNonEmpty?.gross || 0 : groupedData.reduce((sum, g) => sum + (g.gross || 0), 0);
+  const net = activeTab === 'items' ? lastNonEmpty?.net || 0 : groupedData.reduce((sum, g) => sum + (g.net || 0), 0);
+  const cost = activeTab === 'items' ? lastNonEmpty?.cost || 0 : groupedData.reduce((sum, g) => sum + (g.cost || 0), 0);
+  const count = activeTab === 'items' ? lastNonEmpty?.count || 0 : net - cost;
+  const profit = activeTab === 'items' ? net - cost : groupedData.reduce((sum, g) => sum + (g.count || 0), 0);
 
   return (
     <>
@@ -174,45 +180,27 @@ export default function Reports() {
           {
             label: t('Total Revenue'),
             icon: <BsCashStack className='text-green-500 text-xl' />,
-            value: formatCurrency(
-              transactions.reduce(
-                (sum, tx) => sum + Number(tx.gross_amount || 0),
-                0
-              )
-            ),
+            value: formatCurrency(gross),
           },
           {
             label: t('Net Income'),
             icon: <BsGraphUpArrow className='text-blue-500 text-xl' />,
-            value: formatCurrency(
-              transactions.reduce(
-                (sum, tx) => sum + Number(tx.net_amount || 0),
-                0
-              )
-            ),
+            value: formatCurrency(net),
           },
           {
             label: t('Total Cost'),
             icon: <BsBoxSeam className='text-orange-500 text-xl' />,
-            value: formatCurrency(
-              transactions.reduce((sum, tx) => sum + Number(tx.cost || 0), 0)
-            ),
+            value: formatCurrency(cost),
           },
           {
             label: t('Total Profit'),
             icon: <BsCoin className='text-yellow-500 text-xl' />,
-            value: formatCurrency(
-              transactions.reduce(
-                (sum, tx) =>
-                  sum + (Number(tx.net_amount || 0) - Number(tx.cost || 0)),
-                0
-              )
-            ),
+            value: formatCurrency(profit),
           },
           {
             label: t('Products Sold'),
             icon: <BsCartCheck className='text-purple-500 text-xl' />,
-            value: transactions.length.toLocaleString(),
+            value: count.toLocaleString(),
           },
         ].map((card, idx) => (
           <div

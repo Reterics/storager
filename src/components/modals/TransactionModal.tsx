@@ -166,6 +166,13 @@ export default function TransactionModal({
       <FormRow>
         <StyledInput
           type='text'
+          name='quantity'
+          value={transaction.quantity}
+          onChange={(e) => changeType(e, 'quantity')}
+          label={t('Quantity')}
+        />
+        <StyledInput
+          type='text'
           name='cost'
           value={transaction.cost}
           onChange={(e) => changeType(e, 'cost')}
