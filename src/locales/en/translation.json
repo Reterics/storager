@@ -227,5 +227,10 @@
   "Total Products": "Total Products",
   "items selected": "items selected",
   "Delete Selected": "Delete Selected",
-  "Are you sure you want to delete all selected items permanently?": "Are you sure you want to delete all selected items permanently?"
+  "Are you sure you want to delete all selected items permanently?": "Are you sure you want to delete all selected items permanently?",
+  "Item Revenue Contribution": "Item Revenue Contribution",
+  "Item Profit Margin Comparison": "Item Profit Margin Comparison",
+  "Showing data for": "Showing data for",
+  "General Reports": "General Reports",
+  "Item Reports": "Item Reports"
 }

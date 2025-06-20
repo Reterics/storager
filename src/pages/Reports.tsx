@@ -86,21 +86,28 @@ export default function Reports() {
     return <UnauthorizedComponent />;
   }
 
-  const transactionPieData = Object.entries(
-    transactions.reduce(
-      (acc, cur) => {
-        const key = t(cur.transaction_type || 'Unknown');
-        acc[key] = (acc[key] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    )
-  ).map(([name, value]) => ({name, value}));
-
   const groupedData = groupTransactions(transactions, groupBy);
   const lastNonEmpty = [...groupedData]
     .reverse()
     .find((g) => g.products && Object.keys(g.products).length > 0);
+
+  const transactionTypeMap: Record<string, number> = {};
+
+  for (const group of groupedData) {
+    if (group.types) {
+      for (const [type, count] of Object.entries(group.types)) {
+        transactionTypeMap[type] = (transactionTypeMap[type] || 0) + count;
+      }
+    }
+  }
+
+  const transactionPieData = Object.entries(transactionTypeMap).map(
+    ([name, value]) => ({
+      name: t(name),
+      value,
+    })
+  );
+
   // For items page show actual day
   const gross =
     activeTab === 'items'
@@ -255,8 +262,8 @@ export default function Reports() {
       {activeTab === 'general' ? (
         <>
           <div className='grid grid-cols-1 gap-4 py-4'>
-            <div className='flex flex-col h-[40vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4'>
                 {t('Summary Dashboard')}
               </h2>
               <div className='flex-1'>
@@ -320,157 +327,7 @@ export default function Reports() {
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 pb-4'>
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-                {t('Cost Overview')}
-              </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
-                    <YAxis />
-                    <Tooltip
-                      formatter={(value: number) =>
-                        formatCurrency(Number(value))
-                      }
-                    />
-                    <Legend />
-                    <Line
-                      type='monotone'
-                      dataKey='cost'
-                      stroke='#8884d8'
-                      name={t('Cost')}
-                      strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-                {t('Net Income Overview')}
-              </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
-                    <YAxis />
-                    <Tooltip
-                      formatter={(value: number) =>
-                        formatCurrency(Number(value))
-                      }
-                    />
-                    <Legend />
-                    <Line
-                      type='monotone'
-                      dataKey='net'
-                      stroke='#00bcd4'
-                      name={t('Net Income')}
-                      strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-                {t('Gross Revenue Overview')}
-              </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
-                    <YAxis />
-                    <Tooltip
-                      formatter={(value: number) =>
-                        formatCurrency(Number(value))
-                      }
-                    />
-                    <Legend />
-                    <Line
-                      type='monotone'
-                      dataKey='gross'
-                      stroke='#82ca9d'
-                      name={t('Gross Revenue')}
-                      strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-                {t('Profit Overview')}
-              </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
-                    <YAxis />
-                    <Tooltip
-                      formatter={(value: number) =>
-                        formatCurrency(Number(value))
-                      }
-                    />
-                    <Legend />
-                    <Line
-                      type='monotone'
-                      dataKey='margin'
-                      stroke='#ff7300'
-                      name={t('Profit')}
-                      strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
-                {t('Transaction Types')}
-              </h2>
-              <div className='flex-1 flex items-center justify-center'>
-                <ResponsiveContainer width='100%' height='100%'>
-                  <PieChart>
-                    <Tooltip />
-                    <Legend />
-                    <Pie
-                      data={transactionPieData}
-                      dataKey='value'
-                      nameKey='name'
-                      cx='50%'
-                      cy='50%'
-                      outerRadius={80}
-                      label
-                    >
-                      {transactionPieData.map((_entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={pieColors[index % pieColors.length]}
-                        />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Profit Margin Analysis')}
               </h2>
@@ -585,12 +442,162 @@ export default function Reports() {
                 </ResponsiveContainer>
               </div>
             </div>
+
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Transaction Types')}
+              </h2>
+              <div className='flex-1 flex items-center justify-center'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <PieChart>
+                    <Tooltip />
+                    <Legend />
+                    <Pie
+                      data={transactionPieData}
+                      dataKey='value'
+                      nameKey='name'
+                      cx='50%'
+                      cy='50%'
+                      outerRadius={80}
+                      label
+                    >
+                      {transactionPieData.map((_entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={pieColors[index % pieColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Cost Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='cost'
+                      stroke='#8884d8'
+                      name={t('Cost')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Net Income Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='net'
+                      stroke='#00bcd4'
+                      name={t('Net Income')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Gross Revenue Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='gross'
+                      stroke='#82ca9d'
+                      name={t('Gross Revenue')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+                {t('Profit Overview')}
+              </h2>
+              <div className='flex-1'>
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={groupTransactions(transactions, groupBy)}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='date' />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) =>
+                        formatCurrency(Number(value))
+                      }
+                    />
+                    <Legend />
+                    <Line
+                      type='monotone'
+                      dataKey='margin'
+                      stroke='#ff7300'
+                      name={t('Profit')}
+                      strokeWidth={2}
+                      dot={{r: 3}}
+                      activeDot={{r: 5}}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
         </>
       ) : (
         <>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 py-4'>
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Products Sold Over Time')}
               </h2>
@@ -631,7 +638,7 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Products Sold by Name')}
               </h2>
@@ -671,7 +678,7 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Item Revenue Contribution')}
               </h2>
@@ -714,7 +721,7 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
+            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
               <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
                 {t('Item Profit Margin Comparison')}
               </h2>

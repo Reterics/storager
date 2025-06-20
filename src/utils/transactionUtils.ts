@@ -14,6 +14,7 @@ export interface GroupedTransactionData {
   products?: Record<string, number>;
   productsRevenue?: Record<string, number>;
   productsCost?: Record<string, number>;
+  types?: Record<string, number>;
 }
 
 function getGroupKey(timestamp: number, interval: transactionInterval): string {
@@ -89,6 +90,7 @@ export function groupTransactions(
         products: {},
         productsRevenue: {},
         productsCost: {},
+        types: {},
       });
     }
   });
@@ -101,6 +103,7 @@ export function groupTransactions(
     const quantity = Number(tx.quantity || 1);
     const margin = net - cost;
     const productName = tx.name || 'Unknown';
+    const type = tx.transaction_type || 'Unknown';
 
     // Calculate margin percentages
     // const marginPercent = cost > 0 ? (margin / cost) * 100 : 0;
@@ -118,6 +121,7 @@ export function groupTransactions(
       existing.products ??= {};
       existing.productsRevenue ??= {};
       existing.productsCost ??= {};
+      existing.types ??= {};
 
       existing.products[productName] =
         (existing.products[productName] || 0) + quantity;
@@ -125,7 +129,7 @@ export function groupTransactions(
         (existing.productsRevenue[productName] || 0) + gross;
       existing.productsCost[productName] =
         (existing.productsCost[productName] || 0) + cost;
-
+      existing.types[type] = (existing.types[type] || 0) + 1;
       // Recalculate percentages based on updated totals
       existing.marginPercent =
         existing.cost > 0 ? (existing.margin / existing.cost) * 100 : 0;

@@ -227,5 +227,10 @@
   "Total Products": "Összes termék",
   "items selected": "elem kiválasztva",
   "Delete Selected": "Kiválasztottak törlése",
-  "Are you sure you want to delete all selected items permanently?": "Biztosan törölni szeretnéd véglegesen a kiválasztott elemeket?"
+  "Are you sure you want to delete all selected items permanently?": "Biztosan törölni szeretnéd véglegesen a kiválasztott elemeket?",
+  "Item Revenue Contribution": "Termékek árbevétele",
+  "Item Profit Margin Comparison": "Termék profit összehasonlítás",
+  "Showing data for": "Kiválasztott intervallum: ",
+  "General Reports": "Általános jelentés",
+  "Item Reports": "Termék jelentés"
 }
