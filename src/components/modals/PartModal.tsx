@@ -13,7 +13,6 @@ import {DBContext} from '../../database/DBContext.ts';
 import {getShopIndex} from '../../utils/storage.ts';
 import {changeStoreType} from '../../utils/events.ts';
 import MediaModal, {MediaBrowse} from './MediaModal.tsx';
-import {modules} from '../../database/firebase/config.ts';
 
 export default function PartModal({
   onClose,
@@ -125,7 +124,7 @@ export default function PartModal({
         <MediaBrowse image={part?.image} onClick={() => setGallery(true)} />
       </FormRow>
 
-      {isAdmin && modules.transactions && (
+      {isAdmin && dbContext?.data.settings?.enableTransactions && (
         <FormRow>
           <StyledInput
             type='number'

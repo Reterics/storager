@@ -87,7 +87,14 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
     )) as UserData[];
     let services: ServiceData[] = [];
     let completions: ServiceCompleteData[] = [];
-    let settings: SettingsItems[] = [];
+    let settings: SettingsItems = {
+      id: '',
+      enableLogs: modules.storageLogs,
+      enableTransactions: modules.transactions,
+      enableLeasing: modules.leasing,
+      enableInvoiceNotes: true,
+      enableExtendedInvoices: modules.advancedInvoices,
+    };
     let user;
     let shops: Shop[] = [];
     let items: StoreItem[] = [];
@@ -114,22 +121,34 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
       } else if (user.role !== 'admin') {
         console.log('User is not an admin, hence we do not load settings');
         users = [user];
-        settings = (await getCollection(
-          firebaseCollections.settings
-        )) as SettingsItems[];
-        for (let i = 0; i < settings.length; i++) {
-          settings[i] = {
-            id: settings[i].id,
-            serviceAgreement: settings[i].serviceAgreement,
-            companyName: settings[i].companyName,
-            address: settings[i].address,
-            email: settings[i].email,
-          };
-        }
+        const settingsRaw = (
+          await getCollection<SettingsItems>(firebaseCollections.settings)
+        )[0];
+        settings = {
+          id: settingsRaw.id,
+          serviceAgreement: settingsRaw.serviceAgreement,
+          companyName: settingsRaw.companyName,
+          address: settingsRaw.address,
+          email: settingsRaw.email,
+          enableLogs: modules.storageLogs && settingsRaw.enableLogs,
+          enableTransactions:
+            modules.transactions && settingsRaw.enableTransactions,
+          enableLeasing: modules.leasing && settingsRaw.enableLeasing,
+          enableInvoiceNotes: settingsRaw.enableInvoiceNotes,
+          enableExtendedInvoices:
+            modules.advancedInvoices && settingsRaw.enableExtendedInvoices,
+        };
       } else {
-        settings = (await getCollection(
-          firebaseCollections.settings
-        )) as SettingsItems[];
+        settings =
+          (
+            await getCollection<SettingsItems>(firebaseCollections.settings)
+          )[0] || settings;
+        settings.enableLogs = modules.storageLogs && settings.enableLogs;
+        settings.enableTransactions =
+          modules.transactions && settings.enableTransactions;
+        settings.enableLeasing = modules.leasing && settings.enableLeasing;
+        settings.enableExtendedInvoices =
+          modules.advancedInvoices && settings.enableExtendedInvoices;
         logs = modules.storageLogs
           ? ((await getCollection(
               firebaseCollections.logs
@@ -206,11 +225,11 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
       parts,
       services,
       completions,
-      settings: settings[0],
-      users: users,
+      settings,
+      users,
       currentUser: user,
-      archive: archive,
-      types: types,
+      archive,
+      types,
       deleted: await firebaseModel.getAll('deleted'),
       invoices,
       logs: logs || [],

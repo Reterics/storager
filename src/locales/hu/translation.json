@@ -232,5 +232,18 @@
   "Item Profit Margin Comparison": "Termék profit összehasonlítás",
   "Showing data for": "Kiválasztott intervallum: ",
   "General Reports": "Általános jelentés",
-  "Item Reports": "Termék jelentés"
+  "Item Reports": "Termék jelentés",
+  "Feature Settings": "Funkció beállítások",
+  "Enable Logs": "Naplózás engedélyezése",
+  "Enable Transactions": "Tranzakciók engedélyezése",
+  "Enable Leasing": "Bérlés engedélyezése",
+  "Enable Service": "Szerviz engedélyezése",
+  "Enable Invoice Notes": "Számla jegyzetek engedélyezése",
+  "Enable Extended Invoices": "Részletes számlák engedélyezése",
+  "Logs tracking for system activities": "Rendszeresemények naplózása",
+  "Transaction management for financial operations": "Pénzügyi műveletek kezelése",
+  "Leasing functionality for rental operations": "Bérlési műveletek kezelése",
+  "Simple invoices as form of notes": "Egyszerű számlák jegyzet formátumban",
+  "Enhanced invoice functionality with additional fields": "Bővített számlázási szolgáltatások",
+  "Qty.": "Db."
 }

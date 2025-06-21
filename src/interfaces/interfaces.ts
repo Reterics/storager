@@ -499,6 +499,13 @@ export interface SettingsItems extends GeneralCollectionEntry {
   itemTypes?: string;
   partTypes?: string;
   serviceTypes?: string;
+
+  // Feature toggles
+  enableLogs?: boolean;
+  enableTransactions?: boolean;
+  enableLeasing?: boolean;
+  enableInvoiceNotes?: boolean;
+  enableExtendedInvoices?: boolean;
 }
 
 export interface UserData extends GeneralCollectionEntry {

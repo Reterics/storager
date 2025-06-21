@@ -88,6 +88,12 @@ export const defaultSettings: SettingsItems = {
     itemTypes: 'default',
     partTypes: 'default',
     serviceTypes: 'default',
+
+    enableLogs: true,
+    enableTransactions: true,
+    enableLeasing: true,
+    enableInvoiceNotes: true,
+    enableExtendedInvoices: false,
 }
 
 export const defaultTypes: ShopType[] = [

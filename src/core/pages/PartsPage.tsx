@@ -10,7 +10,6 @@ import {DBContext} from '../../database/DBContext.ts';
 import FirebaseCrudManager, {
   CrudField,
 } from '../components/FirebaseCrudManager.tsx';
-import {modules} from '../../database/firebase/config.ts';
 import {BsClipboard2PlusFill} from 'react-icons/bs';
 import {ShopContext} from '../../store/ShopContext.tsx';
 import InventoryModal from '../../components/modals/InventoryModal.tsx';
@@ -95,7 +94,7 @@ export default function PartsPage() {
     [t, shopOptions, typeOptions]
   );
 
-  const extraButtons = modules.transactions
+  const extraButtons = dbContext?.data.settings?.enableTransactions
     ? [
         {
           value: <BsClipboard2PlusFill />,
@@ -120,7 +119,7 @@ export default function PartsPage() {
         fields={fields}
         extraButtons={extraButtons}
       >
-        {modules.transactions && <LaborFeeInput />}
+        {dbContext?.data.settings?.enableTransactions && <LaborFeeInput />}
       </FirebaseCrudManager>
       {inventoryData && shopContext.shop && (
         <InventoryModal

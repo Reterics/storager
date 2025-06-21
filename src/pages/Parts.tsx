@@ -20,7 +20,6 @@ import {storeTableKeyOrder} from '../interfaces/constants.ts';
 import InventoryModal from '../components/modals/InventoryModal.tsx';
 
 import {confirm} from '../components/modalExporter.ts';
-import {modules} from '../database/firebase/config.ts';
 import LaborFeeInput from '../components/elements/LaborFeeInput.tsx';
 
 function Parts() {
@@ -207,7 +206,7 @@ function Parts() {
     },
   ];
 
-  if (modules.transactions) {
+  if (dbContext?.data.settings?.enableTransactions) {
     headButtons.unshift({
       value: <BsClipboard2PlusFill />,
       onClick: () =>
@@ -232,7 +231,7 @@ function Parts() {
         tableLimits={tableLimits}
         setTableLimits={setTableLimits}
       >
-        {modules.transactions && <LaborFeeInput />}
+        {dbContext?.data.settings?.enableTransactions && <LaborFeeInput />}
       </PageHead>
       <div className='mb-2 mt-1' />
 

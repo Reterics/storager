@@ -1,8 +1,7 @@
-import {FormEvent, useContext, useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {DBContext} from '../database/DBContext.ts';
 import {useTranslation} from 'react-i18next';
 import StyledInput from '../components/elements/StyledInput.tsx';
-import FormRow from '../components/elements/FormRow.tsx';
 import {SettingsItems} from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import BackupDBModel, {BackupData} from '../database/backup/BackupDBModel.ts';
@@ -11,10 +10,17 @@ import TableViewComponent, {
 } from '../components/elements/TableViewComponent.tsx';
 import {downloadAsFile} from '../utils/general.ts';
 import {PageHead} from '../components/elements/PageHead.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
+import {
+  BsFillPlusCircleFill,
+  BsGear,
+  BsBuilding,
+  BsFillFloppy2Fill,
+} from 'react-icons/bs';
 import {CommonCollectionData} from '../interfaces/firebase.ts';
+import StyledToggle from '../components/elements/StyledToggle.tsx';
+import {modules} from '../database/firebase/config.ts';
 
-function Service() {
+function Settings() {
   const dbContext = useContext(DBContext);
   const {t} = useTranslation();
 
@@ -33,6 +39,13 @@ function Service() {
     useSSL: false,
 
     serviceAgreement: '',
+    rentalConditions: '',
+
+    enableLogs: false,
+    enableTransactions: false,
+    enableLeasing: false,
+    enableInvoiceNotes: false,
+    enableExtendedInvoices: false,
   };
 
   const [shouldSave, setShouldSave] = useState(false);
@@ -56,8 +69,8 @@ function Service() {
     setShouldSave(false);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.MouseEvent) => {
+    e?.preventDefault();
 
     void saveFirebaseSettings();
   };
@@ -103,97 +116,161 @@ function Service() {
 
   return (
     <>
-      <div
-        className='mt-4 flex flex-row text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center
-                 bg-white rounded dark:bg-gray-900 p-4'
-      >
-        <form onSubmit={handleSubmit} className='w-full'>
-          <h2 className='text-2xl font-bold mb-4'>{t('Company Details')}</h2>
+      <PageHead
+        title={t('Settings')}
+        buttons={
+          shouldSave
+            ? [
+                {
+                  value: (
+                    <div className='flex items-center gap-1'>
+                      <BsFillFloppy2Fill /> {t('Save Settings')}
+                    </div>
+                  ),
+                  onClick: handleSubmit,
+                },
+              ]
+            : undefined
+        }
+      />
 
-          <FormRow>
-            <StyledInput
-              type='text'
-              name='companyName'
-              value={settingsItems.companyName}
-              onChange={changeType}
-              label={t('Company Name')}
-            />
-            <StyledInput
-              type='text'
-              name='address'
-              value={settingsItems.address}
-              onChange={changeType}
-              label={t('Address')}
-            />
-          </FormRow>
-          <FormRow>
-            <StyledInput
-              type='text'
-              name='taxId'
-              value={settingsItems.taxId}
-              onChange={changeType}
-              label={t('Tax ID')}
-            />
-            <StyledInput
-              type='text'
-              name='bankAccount'
-              value={settingsItems.bankAccount}
-              onChange={changeType}
-              label={t('Bank Account Number')}
-            />
-          </FormRow>
-          <FormRow>
-            <StyledInput
-              type='text'
-              name='phone'
-              value={settingsItems.phone}
-              onChange={changeType}
-              label={t('Phone')}
-            />
-            <StyledInput
-              type='text'
-              name='email'
-              value={settingsItems.email}
-              onChange={changeType}
-              label={t('Email')}
-            />
-          </FormRow>
-
-          <FormRow>
-            <StyledInput
-              type='textarea'
-              name='serviceAgreement'
-              value={settingsItems.serviceAgreement}
-              onChange={(e) => changeType(e)}
-              label={t('Service Agreement')}
-            />
-          </FormRow>
-
-          <FormRow>
-            <StyledInput
-              type='textarea'
-              name='rentalConditions'
-              value={settingsItems.rentalConditions}
-              onChange={(e) => changeType(e)}
-              label={t('Rental Conditions')}
-            />
-          </FormRow>
-
-          <div className='mt-8'>
-            {shouldSave && (
-              <button
-                type='submit'
-                className='px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700'
-              >
-                {t('Save Settings')}
-              </button>
-            )}
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6 max-w-screen-xl w-full self-center justify-center'>
+        <div className='md:col-span-2 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6'>
+          <div className='flex items-center mb-4'>
+            <BsBuilding className='text-gray-700 dark:text-gray-300 mr-2 text-xl' />
+            <h2 className='text-xl font-semibold text-gray-800 dark:text-white'>
+              {t('Company Details')}
+            </h2>
           </div>
-        </form>
+
+          <form className='w-full'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-6'>
+              <StyledInput
+                type='text'
+                name='companyName'
+                value={settingsItems.companyName}
+                onChange={changeType}
+                label={t('Company Name')}
+              />
+              <StyledInput
+                type='text'
+                name='address'
+                value={settingsItems.address}
+                onChange={changeType}
+                label={t('Address')}
+              />
+              <StyledInput
+                type='text'
+                name='taxId'
+                value={settingsItems.taxId}
+                onChange={changeType}
+                label={t('Tax ID')}
+              />
+              <StyledInput
+                type='text'
+                name='bankAccount'
+                value={settingsItems.bankAccount}
+                onChange={changeType}
+                label={t('Bank Account Number')}
+              />
+              <StyledInput
+                type='text'
+                name='phone'
+                value={settingsItems.phone}
+                onChange={changeType}
+                label={t('Phone')}
+              />
+              <StyledInput
+                type='text'
+                name='email'
+                value={settingsItems.email}
+                onChange={changeType}
+                label={t('Email')}
+              />
+            </div>
+
+            <div className='mb-6'>
+              <StyledInput
+                type='textarea'
+                name='serviceAgreement'
+                value={settingsItems.serviceAgreement}
+                onChange={(e) => changeType(e)}
+                label={t('Service Agreement')}
+              />
+            </div>
+
+            <div className='mb-6'>
+              <StyledInput
+                type='textarea'
+                name='rentalConditions'
+                value={settingsItems.rentalConditions}
+                onChange={(e) => changeType(e)}
+                label={t('Rental Conditions')}
+              />
+            </div>
+          </form>
+        </div>
+
+        {dbContext?.data.currentUser.role === 'admin' && (
+          <div className='bg-white dark:bg-gray-900 rounded-lg shadow-md p-6'>
+            <div className='flex items-center mb-4'>
+              <BsGear className='text-gray-700 dark:text-gray-300 mr-2 text-xl' />
+              <h2 className='text-xl font-semibold text-gray-800 dark:text-white'>
+                {t('Feature Settings')}
+              </h2>
+            </div>
+
+            <div className='space-y-4'>
+              <StyledToggle
+                label={t('Enable Logs')}
+                name='enableLogs'
+                checked={!!settingsItems.enableLogs}
+                onChange={(e) => modules.storageLogs && changeType(e)}
+                description={t('Logs tracking for system activities')}
+              />
+
+              <StyledToggle
+                label={t('Enable Transactions')}
+                name='enableTransactions'
+                checked={!!settingsItems.enableTransactions}
+                onChange={(e) => modules.transactions && changeType(e)}
+                description={t(
+                  'Transaction management for financial operations'
+                )}
+              />
+
+              <StyledToggle
+                label={t('Enable Leasing')}
+                name='enableLeasing'
+                checked={!!settingsItems.enableLeasing}
+                onChange={(e) => modules.leasing && changeType(e)}
+                description={t('Leasing functionality for rental operations')}
+              />
+
+              <StyledToggle
+                label={t('Enable Invoice Notes')}
+                name='enableInvoiceNotes'
+                checked={!!settingsItems.enableInvoiceNotes}
+                onChange={changeType}
+                description={t('Simple invoices as form of notes')}
+              />
+
+              <StyledToggle
+                label={t('Enable Extended Invoices')}
+                name='enableExtendedInvoices'
+                checked={!!settingsItems.enableExtendedInvoices}
+                onChange={(e) => modules.advancedInvoices && changeType(e)}
+                description={t(
+                  'Enhanced invoice functionality with additional fields'
+                )}
+              />
+            </div>
+          </div>
+        )}
       </div>
       {dbContext?.data.currentUser.role === 'admin' && (
         <div className='w-full place-content-center flex flex-row'>
-          <div className='max-w-screen-xl w-full place-items-center flex flex-row bg-white dark:bg-gray-900 shadow-md mt-4'>
+          <div className='max-w-screen-xl w-full place-items-center flex flex-row mt-4'>
             <PageHead
               title={t('Local Backup')}
               buttons={[
@@ -229,4 +306,4 @@ function Service() {
   );
 }
 
-export default Service;
+export default Settings;

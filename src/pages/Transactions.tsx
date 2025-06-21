@@ -152,6 +152,7 @@ export default function Transactions() {
 
       <TableViewComponent
         lines={tableLines}
+        tableLimits={tableLimits}
         header={[
           t('User'),
           t('Type'),

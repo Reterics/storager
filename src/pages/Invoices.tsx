@@ -188,6 +188,7 @@ function Invoices() {
 
       <TableViewComponent
         lines={tableLines}
+        tableLimits={tableLimits}
         header={[
           t('Name'),
           t('Address'),

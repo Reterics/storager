@@ -2,6 +2,7 @@ import {getAuth, Auth} from 'firebase/auth';
 import FirebaseDBModel from './FirebaseDBModel.ts';
 import {FirebaseError} from 'firebase/app';
 import STLogger from '../../utils/logger.ts';
+import {ContextDataCollectionType} from '../../interfaces/firebase.ts';
 
 const refreshRate = {
   minutes: 60000,
@@ -18,6 +19,7 @@ export const modules = {
   storageLogs: import.meta.env.VITE_STORAGE_LOGS === 'true',
   transactions: import.meta.env.VITE_TRANSACTIONS === 'true',
   leasing: import.meta.env.VITE_LEASING === 'true',
+  advancedInvoices: import.meta.env.VITE_ADVANCED_INVOICES === 'true',
 };
 
 export const firebaseCollections = {
@@ -73,8 +75,11 @@ try {
 export const firebaseAuth = _firebaseAuth;
 export const firebaseAuthError = _firebaseAuthError;
 
-export const getCollection = (table: string, force?: boolean) => {
-  return firebaseModel.getAll(table, force);
+export const getCollection = async <T extends ContextDataCollectionType>(
+  table: string,
+  force?: boolean
+) => {
+  return (await firebaseModel.getAll(table, force)) as unknown as T[];
 };
 
 export const getById = (id: string, table: string) => {

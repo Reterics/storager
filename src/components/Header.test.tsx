@@ -9,6 +9,7 @@ import {MemoryRouter} from 'react-router-dom';
 import {useTheme} from '../store/ThemeContext';
 import {IAuth, Shop} from '../interfaces/interfaces.ts';
 import {DBContextType} from '../interfaces/firebase.ts';
+import {defaultSettings} from '../../tests/mocks/shopData.ts';
 
 vi.mock('../database/firebase/config', async () => {
   const actual = await vi.importActual('../database/firebase/config');
@@ -53,6 +54,7 @@ describe('Header Component', () => {
       currentUser: {
         role: 'user',
       },
+      settings: defaultSettings,
     },
     refreshData: vi.fn(),
   };

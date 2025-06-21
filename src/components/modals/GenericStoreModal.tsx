@@ -13,7 +13,6 @@ import {
   StoreItem,
   StorePart,
 } from '../../interfaces/interfaces.ts';
-import {modules} from '../../database/firebase/config.ts';
 
 export type StoreEntity = StoreItem | StorePart;
 
@@ -141,7 +140,7 @@ export default function GenericStoreModal<T extends StoreEntity>({
         <MediaBrowse image={item.image} onClick={() => setGallery(true)} />
       </FormRow>
 
-      {isAdmin && modules.transactions && (
+      {isAdmin && dbContext?.data.settings?.enableTransactions && (
         <FormRow>
           <StyledInput
             type='number'

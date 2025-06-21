@@ -41,6 +41,7 @@ export default function Logs() {
     return items;
   };
 
+  const [tableLimits, setTableLimits] = useState<number>(100);
   const [shopFilter, setShopFilter] = useState<string>('');
   const [logs, setLogs] = useState<LogEntry[]>(filterItems(shopFilter));
 
@@ -162,6 +163,8 @@ Viewport:
     <>
       <PageHead
         title={t('Logs')}
+        tableLimits={tableLimits}
+        setTableLimits={setTableLimits}
         shopFilter={shopFilter}
         setShopFilter={selectShopFilter}
       />
@@ -171,6 +174,7 @@ Viewport:
         isHighlighted={(item) => {
           return !!item[-1];
         }}
+        tableLimits={tableLimits}
         header={[
           t('Entity'),
           t('Action'),

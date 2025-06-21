@@ -28,7 +28,7 @@ import {
 } from 'react-icons/bs';
 import LoadingIcon from './elements/LoadingIcon.tsx';
 import {flushSync} from 'react-dom';
-import {firebaseModel, modules} from '../database/firebase/config.ts';
+import {firebaseModel} from '../database/firebase/config.ts';
 
 const Header = () => {
   const {SignOut} = useContext(AuthContext);
@@ -218,7 +218,7 @@ const Header = () => {
                   </NavLink>
                 </li>
               )}
-              {shop && modules.leasing && (
+              {shop && dbContext?.data.settings?.enableLeasing && (
                 <li>
                   <NavLink
                     to='/?page=leases'
@@ -252,7 +252,7 @@ const Header = () => {
                   </NavLink>
                 </li>
               )}
-              {shop && modules.transactions && (
+              {shop && dbContext?.data.settings?.enableTransactions && (
                 <li>
                   <NavLink
                     to='/?page=transactions'
@@ -336,20 +336,21 @@ const Header = () => {
                               {t('Settings')}
                             </NavLink>
                           </li>
-                          {firebaseModel.isLoggingActive() && (
-                            <li>
-                              <NavLink
-                                to='/?page=logs'
-                                onClick={handleLinkClick}
-                                className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
-                              >
-                                <div className='text-lg me-2'>
-                                  <BsCardList />
-                                </div>
-                                {t('Logs')}
-                              </NavLink>
-                            </li>
-                          )}
+                          {firebaseModel.isLoggingActive() &&
+                            dbContext?.data.settings?.enableLogs && (
+                              <li>
+                                <NavLink
+                                  to='/?page=logs'
+                                  onClick={handleLinkClick}
+                                  className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                                >
+                                  <div className='text-lg me-2'>
+                                    <BsCardList />
+                                  </div>
+                                  {t('Logs')}
+                                </NavLink>
+                              </li>
+                            )}
                           <li>
                             <NavLink
                               to='/?page=users'
@@ -397,7 +398,6 @@ const Header = () => {
             </ul>
           </div>
 
-          {/* Mobile Navigation Toggle */}
           <div className='flex items-center md:hidden'>
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
@@ -415,7 +415,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
         {navbarOpen && (
           <div
             ref={navbarRef}
@@ -503,7 +502,7 @@ const Header = () => {
                       </NavLink>
                     )}
 
-                    {shop && modules.leasing && (
+                    {shop && dbContext?.data.settings?.enableLeasing && (
                       <NavLink
                         to='/?page=leases'
                         onClick={handleLinkClick}
@@ -533,7 +532,7 @@ const Header = () => {
                       </NavLink>
                     )}
 
-                    {shop && modules.transactions && (
+                    {shop && dbContext?.data.settings?.enableTransactions && (
                       <NavLink
                         to='/?page=transactions'
                         onClick={handleLinkClick}
@@ -586,18 +585,19 @@ const Header = () => {
                           {t('Settings')}
                         </NavLink>
                       </li>
-                      {firebaseModel.isLoggingActive() && (
-                        <li>
-                          <NavLink
-                            to='/?page=logs'
-                            onClick={handleLinkClick}
-                            className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
-                          >
-                            <BsCardList className='mr-3 text-lg' />
-                            {t('Logs')}
-                          </NavLink>
-                        </li>
-                      )}
+                      {firebaseModel.isLoggingActive() &&
+                        dbContext?.data.settings?.enableLogs && (
+                          <li>
+                            <NavLink
+                              to='/?page=logs'
+                              onClick={handleLinkClick}
+                              className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                            >
+                              <BsCardList className='mr-3 text-lg' />
+                              {t('Logs')}
+                            </NavLink>
+                          </li>
+                        )}
                       <li>
                         <NavLink
                           to='/?page=users'
