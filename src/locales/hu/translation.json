@@ -168,8 +168,8 @@
   "Payment": "Fizetés",
   "Document": "Dokumentum",
   "Cost": "Költség",
-  "Net Amount": "Nettó ár",
-  "Gross Amount": "Bruttó ár",
+  "Net Amount": "Nt. ár",
+  "Gross Amount": "Br. ár",
   "Daily": "Napi",
   "Weekly": "Heti",
   "Monthly": "Havi",
@@ -245,5 +245,7 @@
   "Leasing functionality for rental operations": "Bérlési műveletek kezelése",
   "Simple invoices as form of notes": "Egyszerű számlák jegyzet formátumban",
   "Enhanced invoice functionality with additional fields": "Bővített számlázási szolgáltatások",
-  "Qty.": "Db."
+  "Qty.": "Db.",
+  "All users": "Mindenki",
+  "Back": "Vissza"
 }

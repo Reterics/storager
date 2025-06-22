@@ -66,8 +66,8 @@ export interface LogEntry extends GeneralCollectionEntry {
 export default class FirebaseDBModel extends DBModel {
   protected _app: FirebaseApp;
   protected _db: Firestore;
-  protected _storageLogs: boolean;
-  protected _transactions: boolean;
+  protected _enableLogs = false;
+  protected _enableTransactions = false;
   protected _collectionsToLog: string[];
   protected _user: User | null | undefined;
   protected _logFailCount: number;
@@ -76,7 +76,7 @@ export default class FirebaseDBModel extends DBModel {
   constructor(options?: {
     ttl?: TTLData;
     mtime?: TTLData;
-    storageLogs?: boolean;
+    enableLogs?: boolean;
     transactions?: boolean;
     collectionsToLog?: string[];
   }) {
@@ -91,14 +91,22 @@ export default class FirebaseDBModel extends DBModel {
       measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
     });
     this._db = getFirestore(this._app);
-    this._storageLogs = !!options?.storageLogs;
-    this._transactions = !!options?.transactions;
+    this._enableLogs = !!options?.enableLogs;
+    this._enableTransactions = !!options?.transactions;
     this._collectionsToLog = options?.collectionsToLog || [];
     this._logFailCount = 0;
   }
 
+  set enableTransactions(value: boolean) {
+    this._enableTransactions = value;
+  }
+
+  set enableLogs(value: boolean) {
+    this._enableLogs = value;
+  }
+
   isLoggingActive() {
-    return !!(this._storageLogs && this._collectionsToLog.length);
+    return !!(this._enableLogs && this._collectionsToLog.length);
   }
 
   setUser(user: User | null | undefined) {
@@ -115,7 +123,7 @@ export default class FirebaseDBModel extends DBModel {
 
     if (this._logFailCount > 5) {
       console.warn('Failed to log 5 times **in** a row. Logs are disabled');
-      this._storageLogs = false;
+      this._enableLogs = false;
     }
   }
 
@@ -126,7 +134,7 @@ export default class FirebaseDBModel extends DBModel {
     changes?: FieldChange,
     transactionType?: TransactionType
   ): Promise<void> {
-    if (!this._transactions) {
+    if (!this._enableTransactions) {
       return;
     }
     const diff = changes ? Number(changes.from) - Number(changes.to) : 1;
@@ -190,7 +198,7 @@ export default class FirebaseDBModel extends DBModel {
     item?: CommonCollectionData,
     error?: string
   ) {
-    if (!this._storageLogs || !this._collectionsToLog.includes(table)) {
+    if (!this._enableLogs || !this._collectionsToLog.includes(table)) {
       // Logging is disabled for this type
       return;
     }
@@ -362,7 +370,7 @@ export default class FirebaseDBModel extends DBModel {
   }
 
   async restore(id: string): Promise<boolean> {
-    /*if (this._storageLogs) {
+    /*if (this._enableLogs) {
             return !!(await this.removePermanent(id));
         }*/
     const cached = this.getCachedEntry(id, 'deleted');

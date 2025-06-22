@@ -89,7 +89,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
     let completions: ServiceCompleteData[] = [];
     let settings: SettingsItems = {
       id: '',
-      enableLogs: modules.storageLogs,
+      enableLogs: modules.logs,
       enableTransactions: modules.transactions,
       enableLeasing: modules.leasing,
       enableInvoiceNotes: true,
@@ -130,7 +130,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
           companyName: settingsRaw.companyName,
           address: settingsRaw.address,
           email: settingsRaw.email,
-          enableLogs: modules.storageLogs && settingsRaw.enableLogs,
+          enableLogs: modules.logs && settingsRaw.enableLogs,
           enableTransactions:
             modules.transactions && settingsRaw.enableTransactions,
           enableLeasing: modules.leasing && settingsRaw.enableLeasing,
@@ -143,13 +143,13 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
           (
             await getCollection<SettingsItems>(firebaseCollections.settings)
           )[0] || settings;
-        settings.enableLogs = modules.storageLogs && settings.enableLogs;
+        settings.enableLogs = modules.logs && settings.enableLogs;
         settings.enableTransactions =
           modules.transactions && settings.enableTransactions;
         settings.enableLeasing = modules.leasing && settings.enableLeasing;
         settings.enableExtendedInvoices =
           modules.advancedInvoices && settings.enableExtendedInvoices;
-        logs = modules.storageLogs
+        logs = modules.logs
           ? ((await getCollection(
               firebaseCollections.logs
             )) as unknown as LogEntry[])
@@ -219,6 +219,8 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
       firebaseModel.sync(0);
     }
 
+    firebaseModel.enableTransactions = !!settings.enableTransactions;
+    firebaseModel.enableLogs = !!settings.enableLogs;
     setCtxData({
       shops,
       items,
@@ -332,7 +334,10 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
       const cachedData = firebaseModel.getCached(key);
       if (cachedData) {
         if (key === 'settings') {
-          ctxData[key] = cachedData[0];
+          ctxData.settings = cachedData[0];
+          firebaseModel.enableLogs = !!ctxData.settings.enableLogs;
+          firebaseModel.enableTransactions =
+            !!ctxData.settings.enableTransactions;
         } else {
           ctxData[key] = cachedData;
         }

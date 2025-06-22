@@ -221,7 +221,7 @@ describe('Parts', () => {
     );
   });
   it('opens and closes inventory modal', async () => {
-    const {getByTestId, queryByText} = render(
+    const {getByTestId, queryByTestId} = render(
       <TestingPageProvider>
         <Parts />
       </TestingPageProvider>
@@ -231,14 +231,14 @@ describe('Parts', () => {
     fireEvent.click(inventoryButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Inventory')).toBeInTheDocument();
+      expect(screen.getByTestId('InventoryModal')).toBeInTheDocument();
     });
 
     const closeButton = screen.getByText('Cancel');
     fireEvent.click(closeButton);
 
     await waitFor(() => {
-      expect(queryByText('Inventory')).not.toBeInTheDocument();
+      expect(queryByTestId('InventoryModal')).not.toBeInTheDocument();
     });
   });
   it('edits a part directly from table edit', async () => {
@@ -263,7 +263,7 @@ describe('Parts', () => {
   });
   it('handles inventoryData cancels correctly', async () => {
     const setData = vi.fn();
-    const {getByText, queryByText, container, getByTestId} = render(
+    const {queryByTestId, container, getByTestId} = render(
       <TestingPageProvider setData={setData}>
         <Parts />
       </TestingPageProvider>
@@ -272,7 +272,7 @@ describe('Parts', () => {
     const inventoryButton = getByTestId('inventoryButton');
     fireEvent.click(inventoryButton);
 
-    await waitFor(() => expect(getByText('Inventory')).toBeInTheDocument());
+    await waitFor(() => expect(getByTestId('InventoryModal')).toBeInTheDocument());
 
     const addButtons = container.querySelectorAll('.add-icon');
     fireEvent.click(addButtons[0]);
@@ -280,7 +280,7 @@ describe('Parts', () => {
     const saveButton = getByTestId('saveButton');
     fireEvent.click(saveButton);
 
-    await waitFor(() => expect(queryByText('Inventory')).toBe(null));
+    await waitFor(() => expect(queryByTestId('Inventory')).toBe(null));
     await waitFor(() => expect(setData).toHaveBeenCalled());
   });
 

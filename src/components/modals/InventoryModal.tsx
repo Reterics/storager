@@ -59,7 +59,7 @@ export default function InventoryModal({
   ];
 
   return (
-    <GeneralModal buttons={buttons} inPlace={inPlace} id={'InventoryModal'}>
+    <GeneralModal buttons={buttons} inPlace={inPlace} id='InventoryModal'>
       <PageHead
         title={t('Inventory')}
         buttons={[

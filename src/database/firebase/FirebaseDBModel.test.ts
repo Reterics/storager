@@ -281,12 +281,12 @@ describe('FirebaseDBModel', () => {
         model.logCatch(error);
       }
       expect(model['_logFailCount']).toBeGreaterThan(5);
-      expect(model['_storageLogs']).toBe(false);
+      expect(model['_enableLogs']).toBe(false);
     });
 
     it('should report logging active status correctly', () => {
       expect(model.isLoggingActive()).toBe(false);
-      model['_storageLogs'] = true;
+      model['_enableLogs'] = true;
       model['_collectionsToLog'] = ['items'];
       expect(model.isLoggingActive()).toBe(true);
     });
@@ -296,7 +296,7 @@ describe('FirebaseDBModel', () => {
       vi.mocked(addDoc).mockResolvedValueOnce(
         mockRef as DocumentReference<unknown, DocumentData>
       );
-      model['_transactions'] = true;
+      model['_enableTransactions'] = true;
       model['_user'] = {uid: 'uid', email: 'me@example.com'} as User;
       model['_shopId'] = 'shop1';
 
@@ -324,11 +324,11 @@ describe('FirebaseDBModel', () => {
       model.setUser({uid: 'uid', email: 'test@example.com'} as User);
       model.setShopId('shop123');
       model['_collectionsToLog'] = ['items'];
-      model['_storageLogs'] = true;
+      model['_enableLogs'] = true;
     });
 
     it('should skip logging if disabled', async () => {
-      model['_storageLogs'] = false;
+      model['_enableLogs'] = false;
       const result = await model.log('update', 'items', 'id123', {id: 'id123'});
       expect(result).toBeUndefined();
     });

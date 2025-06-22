@@ -24,6 +24,7 @@ export default function GeneralModal({
   return (
     <div
       id={modalId}
+      data-testid={modalId}
       className={
         inPlace
           ? 'flex justify-center items-center'

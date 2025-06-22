@@ -1,7 +1,12 @@
-import {useContext, useState} from 'react';
+import {useCallback, useContext, useEffect, useState} from 'react';
 import {DBContext} from '../database/DBContext.ts';
 import {useTranslation} from 'react-i18next';
-import {Shop, ShopType, Transaction} from '../interfaces/interfaces.ts';
+import {
+  Shop,
+  ShopType,
+  StyledSelectOption,
+  Transaction,
+} from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import TableViewComponent, {
   TableViewActions,
@@ -22,29 +27,55 @@ import {
 } from '../utils/typedIcons.tsx';
 import {formatCurrency} from '../utils/data.ts';
 import {useNavigate} from 'react-router-dom';
+import StyledSelect from '../components/elements/StyledSelect.tsx';
 
 export default function Transactions() {
   const dbContext = useContext(DBContext);
   const {t} = useTranslation();
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
+  const [searchFilter, setSearchFilter] = useState<string>('');
+  const [userFilter, setUserFilter] = useState<string>('');
   const navigate = useNavigate();
 
-  const filterItems = (shopFilter: string | undefined) => {
-    let items = dbContext?.data.transactions ?? [];
+  const filterItems = useCallback(
+    (
+      shopFilter: string | undefined,
+      searchFilter?: string,
+      userFilter?: string
+    ) => {
+      let items = dbContext?.data.transactions ?? [];
 
-    if (shopFilter) {
-      const filteredShopId = shops.find((shop) => shop.name === shopFilter)?.id;
-      if (filteredShopId) {
-        items = items.filter((item) => {
-          return item.shop_id && item.shop_id.includes(filteredShopId);
-        });
+      if (shopFilter) {
+        const filteredShopId = shops.find(
+          (shop) => shop.name === shopFilter
+        )?.id;
+        if (filteredShopId) {
+          items = items.filter((item) => {
+            return item.shop_id && item.shop_id.includes(filteredShopId);
+          });
+        }
       }
-    }
 
-    items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
+      if (userFilter) {
+        items = items.filter(
+          (item) => item.user && item.user.includes(userFilter)
+        );
+      }
 
-    return items;
-  };
+      if (searchFilter) {
+        const lowerCaseFilter = searchFilter.toLowerCase();
+
+        items = items.filter((item) =>
+          item.name?.toLowerCase().includes(lowerCaseFilter)
+        );
+      }
+
+      items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
+
+      return items;
+    },
+    [dbContext?.data.transactions, shops]
+  );
 
   const [shopFilter, setShopFilter] = useState<string>('');
   const [transactions, setTransactions] = useState<Transaction[]>(
@@ -54,10 +85,16 @@ export default function Transactions() {
   const [modalTemplate, setModalTemplate] = useState<Transaction | null>(null);
   const [tableLimits, setTableLimits] = useState<number>(100);
 
-  const selectShopFilter = (shop: string) => {
-    setShopFilter(shop);
-    setTransactions(filterItems(shop));
-  };
+  const usersOptions = (dbContext?.data.users || []).map((key) => {
+    return {
+      name: key.email,
+      value: key.email,
+    } as StyledSelectOption;
+  });
+
+  useEffect(() => {
+    setTransactions(filterItems(shopFilter, searchFilter, userFilter));
+  }, [shopFilter, searchFilter, userFilter, filterItems]);
 
   const saveTransaction = async (type: Transaction) => {
     const updatedTransactions = await dbContext?.setData(
@@ -87,6 +124,7 @@ export default function Transactions() {
 
   const tableLines = transactions.map((transaction) => {
     return [
+      transaction.name,
       transaction.user,
       getIconForTransactionType(transaction.transaction_type),
       getIconForPaymentMethod(transaction.payment_method),
@@ -114,12 +152,6 @@ export default function Transactions() {
         title={t('Transactions')}
         buttons={[
           {
-            value: <BsBarChartLine />,
-            onClick: () => {
-              navigate('?page=reports', {replace: true});
-            },
-          },
-          {
             value: <BsFillPlusCircleFill />,
             onClick: () =>
               setModalTemplate(
@@ -143,17 +175,48 @@ export default function Transactions() {
               ),
           },
         ]}
+        onSearch={setSearchFilter}
         tableLimits={tableLimits}
         setTableLimits={setTableLimits}
         shopFilter={shopFilter}
-        setShopFilter={selectShopFilter}
-      />
+        setShopFilter={setShopFilter}
+      >
+        <div className='flex flex-1' />
+        <button
+          className='flex items-center gap-1 text-sm font-medium rounded
+          text-gray-900 bg-white border border-gray-300 hover:bg-gray-100
+          dark:bg-gray-700 dark:text-white dark:border-gray-600 px-3 py-1.5'
+          onClick={() => navigate('?page=reports', {replace: true})}
+        >
+          <BsBarChartLine /> {t('Reports')}
+        </button>
+        <div className='w-30 select-no-first'>
+          <StyledSelect
+            options={[
+              {
+                name: t('All users'),
+                value: '',
+              },
+              ...usersOptions,
+            ]}
+            name='type'
+            value={userFilter || undefined}
+            defaultLabel={t('All users')}
+            onSelect={(e) =>
+              setUserFilter((e.target as HTMLSelectElement).value)
+            }
+            label={false}
+            compact={true}
+          />
+        </div>
+      </PageHead>
       <div className='mb-2 mt-1' />
 
       <TableViewComponent
         lines={tableLines}
         tableLimits={tableLimits}
         header={[
+          t('Name'),
           t('User'),
           t('Type'),
           t('Payment'),

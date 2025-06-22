@@ -30,7 +30,7 @@ function Parts() {
   const [tableLimits, setTableLimits] = useState<number>(100);
   const selectedShopId = shopContext.shop?.id as string;
 
-  const [filterText, setFilterText] = useState<string>('');
+  const [searchFilter, setSearchFilter] = useState<string>('');
 
   const filterItems = (items: StorePart[], filterBy: string) => {
     if (!filterBy) {
@@ -50,8 +50,8 @@ function Parts() {
     [allParts, selectedShopId]
   );
   const parts = useMemo(
-    () => filterItems(allParts, filterText),
-    [allParts, filterText]
+    () => filterItems(allParts, searchFilter),
+    [allParts, searchFilter]
   );
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
@@ -208,7 +208,11 @@ function Parts() {
 
   if (dbContext?.data.settings?.enableTransactions) {
     headButtons.unshift({
-      value: <BsClipboard2PlusFill />,
+      value: (
+        <div className='flex items-center gap-1 h-3.5'>
+          <BsClipboard2PlusFill /> {t('Inventory')}
+        </div>
+      ),
       onClick: () =>
         setInventoryData(
           inventoryData
@@ -227,7 +231,7 @@ function Parts() {
         title={t('Parts')}
         buttons={headButtons}
         error={error}
-        onSearch={(e) => setFilterText(e)}
+        onSearch={(e) => setSearchFilter(e)}
         tableLimits={tableLimits}
         setTableLimits={setTableLimits}
       >

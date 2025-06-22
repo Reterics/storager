@@ -288,6 +288,7 @@ function Service() {
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
         >
+          <div className='flex flex-1' />
           <div className='w-30 select-no-first'>
             <StyledSelect
               options={[

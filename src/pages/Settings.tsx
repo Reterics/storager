@@ -225,7 +225,7 @@ function Settings() {
                 label={t('Enable Logs')}
                 name='enableLogs'
                 checked={!!settingsItems.enableLogs}
-                onChange={(e) => modules.storageLogs && changeType(e)}
+                onChange={(e) => modules.logs && changeType(e)}
                 description={t('Logs tracking for system activities')}
               />
 

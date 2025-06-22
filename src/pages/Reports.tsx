@@ -23,6 +23,7 @@ import {
 } from 'recharts';
 import {
   BsBarChartLine,
+  BsBoxArrowInLeft,
   BsBoxSeam,
   BsCartCheck,
   BsCashStack,
@@ -143,6 +144,12 @@ export default function Reports() {
         ]}
       >
         <div className='flex flex-1 gap-2 border-b border-gray-200 dark:border-gray-700'>
+          <button
+            className={`py-2 px-3 text-sm font-medium flex items-center gap-2 rounded-md transition-colors bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700`}
+            onClick={() => navigate('?page=transactions', {replace: true})}
+          >
+            <BsBoxArrowInLeft /> {t('Back')}
+          </button>
           {[
             {
               key: 'general',
@@ -160,7 +167,7 @@ export default function Reports() {
             ${
               isActive
                 ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 shadow-sm'
-                : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'
+                : 'bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700'
             }`}
                 onClick={() => setActiveTab(key as typeof activeTab)}
               >
