@@ -30,6 +30,11 @@ import LoadingIcon from './elements/LoadingIcon.tsx';
 import {flushSync} from 'react-dom';
 import {firebaseModel} from '../database/firebase/config.ts';
 
+const navBase = 'flex items-center py-1 px-2 rounded';
+const navActive = 'text-white bg-gray-700 md:bg-zinc-700 dark:bg-gray-700';
+const navInactive = 'text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700';
+
+
 const Header = () => {
   const {SignOut} = useContext(AuthContext);
   const dbContext = useContext(DBContext);
@@ -156,15 +161,11 @@ const Header = () => {
                 <NavLink
                   to='/?page='
                   onClick={handleLinkClick}
-                  className={
-                    page === 'shops'
-                      ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                      : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                  }
+                  className={`${navBase} ${page === 'shops' ? navActive : navInactive}`}
                   aria-current='page'
                 >
-                  <BsShop className='mr-1 text-lg' />
-                  <span className='hidden lg:inline'>{t('Shops')}</span>
+                  <BsShop className='text-lg' />
+                  <span className='hidden ml-1 lg:inline'>{t('Shops')}</span>
                 </NavLink>
               </li>
               {shop && (
@@ -172,15 +173,11 @@ const Header = () => {
                   <NavLink
                     to='/?page=items'
                     onClick={handleLinkClick}
-                    className={
-                      page === 'items'
-                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                    }
+                    className={`${navBase} ${page === 'items' ? navActive : navInactive}`}
                     title={t('Items')}
                   >
-                    <BsBoxes className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>{t('Items')}</span>
+                    <BsBoxes className='text-lg' />
+                    <span className='hidden ml-1 lg:inline'>{t('Items')}</span>
                   </NavLink>
                 </li>
               )}
@@ -189,15 +186,11 @@ const Header = () => {
                   <NavLink
                     to='/?page=parts'
                     onClick={handleLinkClick}
-                    className={
-                      page === 'parts'
-                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                    }
+                    className={`${navBase} ${page === 'parts' ? navActive : navInactive}`}
                     title={t('Parts')}
                   >
-                    <BsTools className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>{t('Parts')}</span>
+                    <BsTools className='text-lg' />
+                    <span className='hidden ml-1 lg:inline'>{t('Parts')}</span>
                   </NavLink>
                 </li>
               )}
@@ -206,15 +199,11 @@ const Header = () => {
                   <NavLink
                     to='/?page=service'
                     onClick={handleLinkClick}
-                    className={
-                      page === 'service'
-                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                    }
+                    className={`${navBase} ${page === 'service' ? navActive : navInactive}`}
                     title={t('Service')}
                   >
-                    <BsWrench className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>{t('Service')}</span>
+                    <BsWrench className='text-lg' />
+                    <span className='hidden ml-1 lg:inline'>{t('Service')}</span>
                   </NavLink>
                 </li>
               )}
@@ -223,15 +212,11 @@ const Header = () => {
                   <NavLink
                     to='/?page=leases'
                     onClick={handleLinkClick}
-                    className={
-                      page === 'leases'
-                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                    }
+                    className={`${navBase} ${page === 'leases' ? navActive : navInactive}`}
                     title={t('Leases')}
                   >
-                    <BsClipboardCheck className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>{t('Leases')}</span>
+                    <BsClipboardCheck className='text-lg' />
+                    <span className='hidden ml-1 lg:inline'>{t('Leases')}</span>
                   </NavLink>
                 </li>
               )}
@@ -240,15 +225,11 @@ const Header = () => {
                   <NavLink
                     to='/?page=invoices'
                     onClick={handleLinkClick}
-                    className={
-                      page === 'invoices'
-                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                    }
+                    className={`${navBase} ${page === 'invoices' ? navActive : navInactive}`}
                     title={t('Invoices')}
                   >
-                    <BsReceipt className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>{t('Invoices')}</span>
+                    <BsReceipt className='text-lg' />
+                    <span className='hidden ml-1 lg:inline'>{t('Invoices')}</span>
                   </NavLink>
                 </li>
               )}
@@ -257,22 +238,17 @@ const Header = () => {
                   <NavLink
                     to='/?page=transactions'
                     onClick={handleLinkClick}
-                    className={
-                      page === 'transactions'
-                        ? 'flex items-center py-1 px-2 text-white bg-gray-700 rounded md:text-white md:bg-zinc-700 dark:text-white dark:bg-gray-700'
-                        : 'flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
-                    }
+                    className={`${navBase} ${page === 'transactions' ? navActive : navInactive}`}
                     title={t('Transactions')}
                   >
-                    <BsCreditCard className='mr-1 text-lg' />
-                    <span className='hidden lg:inline'>
+                    <BsCreditCard className='text-lg' />
+                    <span className='hidden ml-1 lg:inline'>
                       {t('Transactions')}
                     </span>
                   </NavLink>
                 </li>
               )}
 
-              {/* User Menu Dropdown */}
               <li className='relative ml-1'>
                 <button
                   name='userMenuButton'
