@@ -66,8 +66,8 @@ export default function PrintableVersionFrame({
 
   return (
     <div
-      id={'printable-modal'}
-      className={'flex justify-center items-center flex-col'}
+      id='printable-modal'
+      className='flex justify-center items-center flex-col w-full max-w-[95vw] sm:min-w-[640px] mx-auto'
       style={{zIndex: 999}}
     >
       <div className='flex justify-between mb-2 min-w-60 no-print'>
@@ -85,7 +85,9 @@ export default function PrintableVersionFrame({
         ))}
       </div>
       <div
-        className={'text-gray-900'}
+        className={
+          'text-gray-900 w-full sm:w-[210mm] min-h-[297mm] bg-white box-border'
+        }
         style={{paddingTop: '20mm', background: 'white'}}
       >
         <PrintablePaper data={formData.data} ref={printRef}>

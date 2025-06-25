@@ -122,6 +122,8 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
     // scale: 2, // Increase scale for better quality
     scale: 1,
     useCORS: true, // Enable cross-origin images
+    allowTaint: true,
+    backgroundColor: '#FFFFFF',
   });
 
   const pdf = new jsPDF('p', 'mm', 'a4');
@@ -142,7 +144,7 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
 
   // Create a temporary canvas to store each page's portion
   const pageCanvas = document.createElement('canvas');
-  const pageCtx = pageCanvas.getContext('2d');
+  const pageCtx = pageCanvas.getContext('2d', {willReadFrequently: true});
 
   if (!pageCtx) {
     throw SyntaxError('Canvas rendering context error');
@@ -152,9 +154,10 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
   pageCanvas.width = canvas.width;
   pageCanvas.height = (canvas.width * contentHeight) / imgWidth;
 
+  let sourceY = 0;
   for (let i = 0; i < totalPages; i++) {
-    const sourceY = i * pageCanvas.height;
-    let pageHeight = pageCanvas.height;
+    // const sourceY = i * pageCanvas.height;
+    let pageHeight = Math.min(pageCanvas.height, canvas.height - sourceY);
 
     // Adjust page height if it's the last page
     if (sourceY + pageHeight > canvas.height) {
@@ -164,7 +167,10 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
 
     // **Adjust page height to prevent text from being cut off**
     pageHeight = adjustPageHeight(canvas, sourceY, pageHeight, pageCtx);
-
+    if (pageHeight <= 0) {
+      console.warn(`Skipping empty page at iteration ${i}, sourceY=${sourceY}`);
+      continue;
+    }
     // Update the height of the temporary canvas
     pageCanvas.height = pageHeight;
 
@@ -201,6 +207,7 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
       imgWidth,
       (pageHeight * imgWidth) / pageCanvas.width
     );
+    sourceY += pageHeight;
   }
 
   pdf.save('contract.pdf');

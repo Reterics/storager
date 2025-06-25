@@ -272,7 +272,9 @@ describe('Parts', () => {
     const inventoryButton = getByTestId('inventoryButton');
     fireEvent.click(inventoryButton);
 
-    await waitFor(() => expect(getByTestId('InventoryModal')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(getByTestId('InventoryModal')).toBeInTheDocument()
+    );
 
     const addButtons = container.querySelectorAll('.add-icon');
     fireEvent.click(addButtons[0]);
