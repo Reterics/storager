@@ -8,13 +8,27 @@ import termsEN from './locales/en/terms.json';
 import translationHU from './locales/hu/translation.json';
 import termsHU from './locales/hu/terms.json';
 
+const customer = import.meta.env.VITE_CUSTOMER;
+
+const customerOverrides = import.meta.glob('./locales/**/*.json', {
+  eager: true,
+  import: 'default'
+}) as Record<string, object>;
+
+function getOverride(lang: string): object {
+  const key = `./locales/${customer}/${lang}.json`;
+  return customerOverrides[key] || {};
+}
+
+const merge = (base: object, override: object) => ({ ...base, ...override });
+
 const resources = {
   en: {
-    translation: translationEN,
+    translation: merge(translationEN, getOverride('en')),
     terms: termsEN,
   },
   hu: {
-    translation: translationHU,
+    translation: merge(translationHU, getOverride('hu')),
     terms: termsHU,
   },
 };

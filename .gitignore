@@ -28,3 +28,7 @@ dist-ssr
 .env.production
 coverage
 public/uploads
+
+src/locales/*
+!src/locales/hu/
+!src/locales/en/
