@@ -327,17 +327,19 @@ export const TableViewActions = ({
   const getClass = (
     selected: MouseEventHandler<HTMLButtonElement> | undefined
   ) => {
+    const baseClass = 'px-4 py-3 md:px-4 md:py-3 text-base md:text-lg font-medium text-gray-900 bg-white border border-gray-200 flex items-center gap-2  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
+
     if (selected === first) {
-      return 'px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
+      return `${baseClass} rounded-s-lg border`;
     }
     if (selected === last) {
-      return 'px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-r border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
+      return `${baseClass} rounded-e-lg border-t border-b border-r`;
     }
-    return 'px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-r border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
+    return `${baseClass} border-t border-b border-r`;
   };
 
   return (
-    <div className='inline-flex rounded-md shadow-sm align-middle' role='group'>
+    <div className='inline-flex rounded-md shadow-sm align-middle gap-2 md:gap-1' role='group'>
       {onCreate && (
         <button
           type='button'
@@ -473,7 +475,7 @@ const TableViewComponent = ({
   );
 
   return (
-    <table className='text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full min-w-screen-xl shadow-md mx-auto'>
+    <table className='text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-2xl w-full min-w-screen-2xl shadow-md mx-auto'>
       <TableViewHeader
         header={_header}
         orderType={orderType}

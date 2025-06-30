@@ -218,8 +218,7 @@ function Leases() {
           setActiveFilter={setActiveFilter}
         />
       )}
-      <div className={'relative flex justify-center w-full m-auto'}>
-        <div className={'mb-2 mt-1'}>
+      <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
           {modalTemplate && (
             <LeaseModal
               onClose={() => setModalTemplate(null)}
@@ -314,7 +313,6 @@ function Leases() {
               header={['#', t('Name'), t('Version'), t('Date'), t('Actions')]}
             ></ListModal>
           )}
-        </div>
       </div>
 
       {noModalActive && (
