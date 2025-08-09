@@ -12,7 +12,7 @@ const customer = import.meta.env.VITE_CUSTOMER;
 
 const customerOverrides = import.meta.glob('./locales/**/*.json', {
   eager: true,
-  import: 'default'
+  import: 'default',
 }) as Record<string, object>;
 
 function getOverride(lang: string): object {
@@ -20,7 +20,7 @@ function getOverride(lang: string): object {
   return customerOverrides[key] || {};
 }
 
-const merge = (base: object, override: object) => ({ ...base, ...override });
+const merge = (base: object, override: object) => ({...base, ...override});
 
 const resources = {
   en: {

@@ -327,7 +327,8 @@ export const TableViewActions = ({
   const getClass = (
     selected: MouseEventHandler<HTMLButtonElement> | undefined
   ) => {
-    const baseClass = 'px-4 py-3 md:px-4 md:py-3 text-base md:text-lg font-medium text-gray-900 bg-white border border-gray-200 flex items-center gap-2  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
+    const baseClass =
+      'px-4 py-3 md:px-4 md:py-3 text-base md:text-lg font-medium text-gray-900 bg-white border border-gray-200 flex items-center gap-2  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
 
     if (selected === first) {
       return `${baseClass} rounded-s-lg border`;
@@ -339,7 +340,10 @@ export const TableViewActions = ({
   };
 
   return (
-    <div className='inline-flex rounded-md shadow-sm align-middle gap-2 md:gap-1' role='group'>
+    <div
+      className='inline-flex rounded-md shadow-sm align-middle gap-2 md:gap-1'
+      role='group'
+    >
       {onCreate && (
         <button
           type='button'

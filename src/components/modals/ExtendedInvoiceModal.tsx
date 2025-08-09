@@ -1,17 +1,20 @@
 import {useTranslation} from 'react-i18next';
 import {
   GeneralModalButtons,
-  InvoiceModalInput,
-  InvoiceType, ShopType,
-  StyledSelectOption, TableRowType,
+  InvoiceType,
+  ShopType,
+  StyledSelectOption,
 } from '../../interfaces/interfaces.ts';
 import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledInput from '../elements/StyledInput.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
-import {ChangeEvent, useMemo, useState} from 'react';
+import {ChangeEvent, useEffect, useMemo, useState} from 'react';
 import {invoiceStatusCodes} from '../../interfaces/constants.ts';
-import {TableRowData} from 'jspdf';
+import {
+  lineVatRateSimplified,
+  lineVatRateNormal,
+} from '../../utils/invoiceUtils.ts';
 
 export interface InvoiceItem {
   id?: number;
@@ -54,8 +57,8 @@ export interface InvoiceItem {
   line_gross_amount: number;
 }
 
-export interface ExtendedInvoice {
-  id?: number;
+export interface ExtendedInvoice extends InvoiceType {
+  id: string;
   invoice_user_id?: number;
   client_id?: number;
   number: string;
@@ -71,52 +74,96 @@ export interface ExtendedInvoice {
 }
 
 export default function ExtendedInvoiceModal({
-                                       onClose,
-                                               initialInvoice,
-                                       onSave,
-                                       inPlace,
-                                       shops,
-                                     }: Readonly<{
+  onClose,
+  initialInvoice,
+  onSave,
+  inPlace,
+  shops,
+}: Readonly<{
   onClose: () => void;
   initialInvoice: ExtendedInvoice;
   onSave: (invoice: ExtendedInvoice) => void;
   invoiceUsers: StyledSelectOption[];
   clients: StyledSelectOption[];
-  inPlace?: boolean,
-  shops: ShopType[]
+  inPlace?: boolean;
+  shops: ShopType[];
 }>) {
   const [invoice, setInvoice] = useState<ExtendedInvoice>(initialInvoice);
   const {t} = useTranslation();
 
-  const translationPrefix = 'invoice.';
   const currencyName = 'Ft';
 
-  const [items, setItems] = useState<InvoiceItem[]>(invoice.items || []);
-  const defaultItemsToAdd = {
-    lineNatureIndicator: 'SERVICE',
-    product_code_category: 'OWN',
-    product_code_value: 'Occurence',
-    line_description: '',
-    quantity: 1,
-    unit_of_measure: 'OWN',
-    unit_price: 1,
-    line_net_amount: 1,
-    line_vat_rate: '0',
-    line_vat_amount: 0,
-    line_gross_amount: 1,
+  const normalizeItem = (it: Partial<InvoiceItem>): InvoiceItem => {
+    const category =
+      (it.product_code_category as InvoiceItem['product_code_category']) ??
+      'OWN';
+    const val =
+      category === 'OWN' ? (it.product_code_value ?? 'Occurence') : '';
+    return {
+      id: it.id ?? Date.now(),
+      lineNatureIndicator:
+        (it.lineNatureIndicator as InvoiceItem['lineNatureIndicator']) ??
+        'SERVICE',
+      product_code_category: category,
+      product_code_value: val,
+      line_description: it.line_description ?? '',
+      quantity:
+        typeof it.quantity === 'number'
+          ? it.quantity
+          : it.quantity
+            ? Number(it.quantity)
+            : 1,
+      unit_of_measure:
+        (it.unit_of_measure as InvoiceItem['unit_of_measure']) ?? 'OWN',
+      unit_price:
+        typeof it.unit_price === 'number'
+          ? it.unit_price
+          : it.unit_price
+            ? Number(it.unit_price)
+            : 1,
+      line_net_amount:
+        typeof it.line_net_amount === 'number'
+          ? it.line_net_amount
+          : it.line_net_amount
+            ? Number(it.line_net_amount)
+            : 1,
+      line_vat_rate:
+        typeof it.line_vat_rate === 'number'
+          ? it.line_vat_rate
+          : it.line_vat_rate
+            ? Number(it.line_vat_rate)
+            : 0,
+      line_vat_amount:
+        typeof it.line_vat_amount === 'number'
+          ? it.line_vat_amount
+          : it.line_vat_amount
+            ? Number(it.line_vat_amount)
+            : 0,
+      line_gross_amount:
+        typeof it.line_gross_amount === 'number'
+          ? it.line_gross_amount
+          : it.line_gross_amount
+            ? Number(it.line_gross_amount)
+            : 1,
+    };
   };
-  const [itemToAdd, setItemToAdd] = useState<TableRow>(defaultItemsToAdd);
+
+  const [items, setItems] = useState<InvoiceItem[]>(
+    (invoice.items || []).map((it) => normalizeItem(it))
+  );
 
   const [invoiceCategory, setInvoiceCategory] = useState<
     'SIMPLIFIED' | 'NORMAL'
-  >('SIMPLIFIED');
-  const [lineVatRate, setLineVatRate] = useState<SelectOption[]>(
-    lineVatRateSimplified
+  >(initialInvoice.invoice_category === 'NORMAL' ? 'NORMAL' : 'SIMPLIFIED');
+  const [lineVatRate, setLineVatRate] = useState<StyledSelectOption[]>(
+    initialInvoice.invoice_category === 'NORMAL'
+      ? lineVatRateNormal
+      : lineVatRateSimplified
   );
   const [summary, setSummary] = useState({
     subTotal: 0,
     tax: 0,
-    taxType: lineVatRate[0].label,
+    taxType: lineVatRate[0].name,
     total: 0,
   });
 
@@ -131,7 +178,7 @@ export default function ExtendedInvoiceModal({
             (v) => String(v.value) === String(currentValue.line_vat_rate)
           );
           if (vatRate) {
-            sum.taxType = vatRate.label;
+            sum.taxType = vatRate.name;
           }
 
           return sum;
@@ -139,53 +186,60 @@ export default function ExtendedInvoiceModal({
         {
           subTotal: 0,
           tax: 0,
-          taxType: lineVatRate[0].label,
+          taxType: lineVatRate[0].name,
           total: 0,
         }
       )
     );
   }, [items, lineVatRate]);
 
-  const deleteItem = (index: number) => {
-    const updatedItems = [...invoice.items];
-    updatedItems.splice(index, 1);
-    setInvoice({...invoice, items: updatedItems});
-  };
-
-  const calculateFromUnitPrice = function (form: Record<string,string>) {
-    if (form.quantity && form.quantity.includes(',')) {
+  const calculateFromUnitPrice = function (
+    form: Record<string, string | number>
+  ) {
+    if (typeof form.quantity === 'string' && form.quantity.includes(',')) {
       form.quantity = form.quantity.replace(',', '.');
     }
     if (typeof form.unit_price === 'string' && form.unit_price.includes(',')) {
       form.unit_price = form.unit_price.replace(',', '.');
     }
 
-    const lineNetAmountData = parseInt(form.line_net_amount);
-    const lineVatRate = parseFloat(form.line_vat_rate);
-    // const ratePercentage  = parseFloat((lineVatRate*100).toFixed(2));
+    const lineNetAmountData = parseFloat(form.line_net_amount as string);
+    const lineVatRate = parseFloat(form.line_vat_rate as string);
 
-    const quantity = parseFloat(form.quantity);
-    const unitPrice = parseInt(form.unit_price);
+    const quantity = parseFloat(form.quantity as string);
+    const unitPrice = parseFloat(form.unit_price as string);
 
     if (invoiceCategory === 'SIMPLIFIED') {
       if (!Number.isNaN(quantity) && !Number.isNaN(unitPrice)) {
         form.line_gross_amount = quantity * unitPrice;
+      } else {
+        form.line_gross_amount = Number(form.line_gross_amount);
       }
       if (!Number.isNaN(form.line_gross_amount) && !Number.isNaN(lineVatRate)) {
-        const vatValue = (form.line_gross_amount * lineVatRate).toFixed(2);
+        const vatValue = Number(
+          (Number(form.line_gross_amount) * lineVatRate).toFixed(2)
+        );
         form.line_vat_amount = vatValue;
-        form.line_net_amount = form.line_gross_amount - Number(vatValue);
+        form.line_net_amount =
+          Number(form.line_gross_amount) - Number(vatValue);
       }
     } else {
       if (!Number.isNaN(quantity) && !Number.isNaN(unitPrice)) {
-        form.line_net_amount = quantity * unitPrice;
+        form.line_net_amount = Number((quantity * unitPrice).toFixed(2));
       }
 
       if (!Number.isNaN(lineNetAmountData) && !Number.isNaN(lineVatRate)) {
-        form.line_vat_amount = (lineNetAmountData * lineVatRate).toFixed(2);
+        form.line_vat_amount = Number(
+          (lineNetAmountData * lineVatRate).toFixed(2)
+        );
       }
-      form.line_gross_amount = form.line_net_amount + form.line_vat_amount;
+      form.line_gross_amount =
+        Number(form.line_net_amount) + Number(form.line_vat_amount);
     }
+
+    // ensure numeric types
+    form.quantity = Number(quantity);
+    form.unit_price = Number(unitPrice);
 
     return form;
   };
@@ -210,7 +264,7 @@ export default function ExtendedInvoiceModal({
     const value = e.target.value;
 
     setInvoice({
-      ...(invoice as InvoiceType),
+      ...(invoice as ExtendedInvoice),
       shop_id: [value],
     });
   };
@@ -223,7 +277,7 @@ export default function ExtendedInvoiceModal({
     // @ts-expect-error
     obj[key] = value;
 
-    setInvoice(obj as InvoiceType);
+    setInvoice(obj as ExtendedInvoice);
   };
 
   if (!invoice) {
@@ -234,10 +288,21 @@ export default function ExtendedInvoiceModal({
     {
       primary: true,
       onClick: () => {
-        if (invoice.status) {
-          invoice[invoice.status] = new Date().getTime();
+        const toSave: ExtendedInvoice = {
+          ...invoice,
+          items: items,
+          invoice_category: invoiceCategory,
+          // keep total as string, but if empty, set from summary
+          total:
+            (invoice.total ?? '').toString() ||
+            String(Number(summary.total).toFixed(2)),
+        };
+        if (toSave.status === 'done') {
+          toSave.done = new Date().getTime();
+        } else if (toSave.status === 'created') {
+          toSave.created = new Date().getTime();
         }
-        onSave(invoice);
+        onSave(toSave);
       },
       value: t('Save'),
     },
@@ -366,6 +431,301 @@ export default function ExtendedInvoiceModal({
           label={t('Purchase cost')}
         />
       </FormRow>
+
+      {/* Invoice category and VAT rate mode */}
+      <FormRow>
+        <StyledSelect
+          name='invoice_category'
+          value={invoiceCategory}
+          options={[
+            {name: t('Simplified'), value: 'SIMPLIFIED'},
+            {name: t('Normal'), value: 'NORMAL'},
+          ]}
+          onSelect={(e) => {
+            const value = (e.target as HTMLSelectElement).value as
+              | 'SIMPLIFIED'
+              | 'NORMAL';
+            setInvoiceCategory(value);
+            setLineVatRate(
+              value === 'SIMPLIFIED' ? lineVatRateSimplified : lineVatRateNormal
+            );
+          }}
+          label={t('Invoice category')}
+        />
+        <div />
+      </FormRow>
+
+      {/* Items editor table */}
+      <div className='mt-4'>
+        <div className='flex justify-between items-center mb-2'>
+          <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>
+            {t('Items')}
+          </h3>
+          <button
+            type='button'
+            className='px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600'
+            onClick={() => {
+              const newItem: InvoiceItem = {
+                id: Date.now(),
+                lineNatureIndicator: 'SERVICE',
+                product_code_category: 'OWN',
+                product_code_value: 'Occurence',
+                line_description: '',
+                quantity: 1,
+                unit_of_measure: 'OWN',
+                unit_price: 1,
+                line_net_amount: 1,
+                line_vat_rate: 0,
+                line_vat_amount: 0,
+                line_gross_amount: 1,
+              };
+              const calculated = calculateFromUnitPrice({...newItem});
+              setItems((prev) => [
+                ...prev,
+                calculated as unknown as InvoiceItem,
+              ]);
+            }}
+            data-testid='add-item'
+          >
+            {t('Add item')}
+          </button>
+        </div>
+
+        {/* Header */}
+        <div className='grid grid-cols-12 gap-2 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300'>
+          <div>{t('Nature')}</div>
+          <div>{t('Code Cat')}</div>
+          <div>{t('Code')}</div>
+          <div className='col-span-3'>{t('Description')}</div>
+          <div>{t('Qty')}</div>
+          <div>{t('Unit')}</div>
+          <div>{t('Unit price')}</div>
+          <div>{t('VAT rate')}</div>
+          <div>{t('Net')}</div>
+          <div>{t('VAT')}</div>
+          <div>{t('Gross')}</div>
+          <div></div>
+        </div>
+
+        {/* Rows */}
+        {items.map((it, idx) => (
+          <div
+            key={it.id ?? idx}
+            className='grid grid-cols-12 gap-2 items-center px-2 py-2 border-b border-gray-200 dark:border-gray-700'
+          >
+            <div>
+              <StyledSelect
+                value={it.lineNatureIndicator}
+                onSelect={(e) => {
+                  const next = [...items];
+                  next[idx] = {
+                    ...next[idx],
+                    lineNatureIndicator: (e.target as HTMLSelectElement)
+                      .value as InvoiceItem['lineNatureIndicator'],
+                  };
+                  setItems(next);
+                }}
+                name={`nature_${idx}`}
+                label={false}
+                options={['SERVICE', 'PRODUCT', 'OTHER'].map((u) => ({
+                  name: u,
+                  value: u,
+                }))}
+                compact
+              />
+            </div>
+            <div>
+              <StyledSelect
+                value={it.product_code_category}
+                onSelect={(e) => {
+                  const newCat = (e.target as HTMLSelectElement)
+                    .value as InvoiceItem['product_code_category'];
+                  const next = [...items];
+                  next[idx] = {
+                    ...next[idx],
+                    product_code_category: newCat,
+                    product_code_value:
+                      newCat === 'OWN'
+                        ? next[idx].product_code_value || 'Occurence'
+                        : '',
+                  };
+                  setItems(next);
+                }}
+                name={`pcc_${idx}`}
+                label={false}
+                options={[
+                  'OWN',
+                  'VTSZ',
+                  'SZJ',
+                  'KN',
+                  'AHK',
+                  'CSK',
+                  'KT',
+                  'EJ',
+                  'TESZOR',
+                  'OTHER',
+                ].map((u) => ({name: u, value: u}))}
+                compact
+              />
+            </div>
+            <div>
+              <StyledInput
+                value={it.product_code_value}
+                onChange={(e) => {
+                  const next = [...items];
+                  next[idx] = {
+                    ...next[idx],
+                    product_code_value: e.target.value,
+                  };
+                  setItems(next);
+                }}
+                disabled={it.product_code_category !== 'OWN'}
+                placeholder={
+                  it.product_code_category !== 'OWN'
+                    ? (t('Only for OWN') as string)
+                    : undefined
+                }
+              />
+            </div>
+            <div className='col-span-3'>
+              <StyledInput
+                value={it.line_description}
+                onChange={(e) => {
+                  const next = [...items];
+                  next[idx] = {...next[idx], line_description: e.target.value};
+                  setItems(next);
+                }}
+                placeholder={t('Item description') as string}
+              />
+            </div>
+            <div>
+              <StyledInput
+                type='number'
+                value={it.quantity}
+                onChange={(e) => {
+                  const next = [...items];
+                  const form = calculateFromUnitPrice({
+                    ...next[idx],
+                    quantity: e.target.value,
+                  });
+                  next[idx] = form as unknown as InvoiceItem;
+                  setItems(next);
+                }}
+              />
+            </div>
+            <div>
+              <StyledSelect
+                value={it.unit_of_measure}
+                onSelect={(e) => {
+                  const next = [...items];
+                  next[idx] = {
+                    ...next[idx],
+                    unit_of_measure: (e.target as HTMLSelectElement)
+                      .value as InvoiceItem['unit_of_measure'],
+                  };
+                  setItems(next);
+                }}
+                name={`unit_${idx}`}
+                label={false}
+                options={[
+                  'PIECE',
+                  'KILOGRAM',
+                  'TON',
+                  'KWH',
+                  'DAY',
+                  'HOUR',
+                  'MINUTE',
+                  'MONTH',
+                  'LITER',
+                  'KILOMETER',
+                  'CUBIC_METER',
+                  'METER',
+                  'LINEAR_METER',
+                  'CARTON',
+                  'PACK',
+                  'OWN',
+                ].map((u) => ({name: u, value: u}))}
+                compact
+              />
+            </div>
+            <div>
+              <StyledInput
+                type='number'
+                value={it.unit_price}
+                onChange={(e) => {
+                  const next = [...items];
+                  const form = calculateFromUnitPrice({
+                    ...next[idx],
+                    unit_price: e.target.value,
+                  });
+                  next[idx] = form as unknown as InvoiceItem;
+                  setItems(next);
+                }}
+              />
+            </div>
+            <div>
+              <StyledSelect
+                value={String(it.line_vat_rate)}
+                onSelect={(e) => {
+                  const next = [...items];
+                  const form = calculateFromUnitPrice({
+                    ...next[idx],
+                    line_vat_rate: (e.target as HTMLSelectElement).value,
+                  });
+                  next[idx] = form as unknown as InvoiceItem;
+                  setItems(next);
+                }}
+                name={`vat_${idx}`}
+                label={false}
+                options={lineVatRate.map((opt) => ({
+                  name: opt.name,
+                  value: String(opt.value),
+                }))}
+                compact
+              />
+            </div>
+            <div>
+              <StyledInput value={Number(it.line_net_amount).toFixed(2)} />
+            </div>
+            <div>
+              <StyledInput value={Number(it.line_vat_amount).toFixed(2)} />
+            </div>
+            <div>
+              <StyledInput value={Number(it.line_gross_amount).toFixed(2)} />
+            </div>
+            <div>
+              <button
+                type='button'
+                className='px-2 py-1.5 rounded-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600'
+                onClick={() => {
+                  const next = [...items];
+                  next.splice(idx, 1);
+                  setItems(next);
+                }}
+                data-testid={`delete-item-${idx}`}
+              >
+                {t('Delete')}
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* Summary */}
+        <div className='flex justify-end gap-6 mt-3 text-sm'>
+          <div>
+            {t('Subtotal')}: {Number(summary.subTotal).toFixed(2)}{' '}
+            {currencyName}
+          </div>
+          <div>
+            {t('Tax')} ({summary.taxType}): {Number(summary.tax).toFixed(2)}{' '}
+            {currencyName}
+          </div>
+          <div className='font-semibold'>
+            {t('Total')}: {Number(summary.total).toFixed(2)} {currencyName}
+          </div>
+        </div>
+      </div>
+
       <FormRow>
         <StyledInput
           type='textarea'

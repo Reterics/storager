@@ -151,6 +151,8 @@ export interface StyledInputArgs {
   max?: string;
   step?: string;
   className?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
 export interface StyledSelectOption {

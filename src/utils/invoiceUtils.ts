@@ -1,6 +1,6 @@
 import {StyledSelectOption} from '../interfaces/interfaces.ts';
 
-export const lineVatRateSimplified: StyledSelectOption[]  = [
+export const lineVatRateSimplified: StyledSelectOption[] = [
   {name: 'AAM', value: '0'},
   {name: '27%', value: '0.2126'},
   {name: '18%', value: '0.1525'},

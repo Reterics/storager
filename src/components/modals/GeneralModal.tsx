@@ -33,11 +33,13 @@ export default function GeneralModal({
       style={{zIndex: 999}}
       role={'dialog'}
     >
-      <div className={
-        inPlace ?
-          'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-full' :
-          'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-[95vw] sm:w-auto sm:min-w-[50vw] max-w-[95vw] sm:max-w-[80vw]'
-      }>
+      <div
+        className={
+          inPlace
+            ? 'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-full'
+            : 'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-[95vw] sm:w-auto sm:min-w-[50vw] max-w-[95vw] sm:max-w-[80vw]'
+        }
+      >
         {title && (
           <h1 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mb-3 sm:mb-4 dark:text-gray-200'>
             {title}

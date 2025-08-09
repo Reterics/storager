@@ -32,8 +32,8 @@ import {firebaseModel} from '../database/firebase/config.ts';
 
 const navBase = 'flex items-center py-1 px-2 rounded';
 const navActive = 'text-white bg-gray-700 md:bg-zinc-700 dark:bg-gray-700';
-const navInactive = 'text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700';
-
+const navInactive =
+  'text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700';
 
 const Header = () => {
   const {SignOut} = useContext(AuthContext);
@@ -203,7 +203,9 @@ const Header = () => {
                     title={t('Service')}
                   >
                     <BsWrench className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>{t('Service')}</span>
+                    <span className='hidden ml-1 lg:inline'>
+                      {t('Service')}
+                    </span>
                   </NavLink>
                 </li>
               )}
@@ -229,7 +231,9 @@ const Header = () => {
                     title={t('Invoices')}
                   >
                     <BsReceipt className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>{t('Invoices')}</span>
+                    <span className='hidden ml-1 lg:inline'>
+                      {t('Invoices')}
+                    </span>
                   </NavLink>
                 </li>
               )}

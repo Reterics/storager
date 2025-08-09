@@ -14,6 +14,8 @@ export default function StyledInput({
   min,
   max,
   className,
+  disabled,
+  readOnly,
 }: StyledInputArgs) {
   // TODO: Pattern validation
 
@@ -60,6 +62,8 @@ export default function StyledInput({
           max={max}
           maxLength={maxLength}
           pattern={pattern}
+          disabled={disabled}
+          readOnly={readOnly}
           required
         />
       )}
@@ -79,6 +83,8 @@ export default function StyledInput({
                    dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500 h-48'
           placeholder={placeholder || ''}
           maxLength={maxLength}
+          disabled={disabled}
+          readOnly={readOnly}
           required
         >
           {' '}

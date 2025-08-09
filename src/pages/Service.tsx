@@ -312,98 +312,95 @@ function Service() {
       )}
 
       <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
-          <ServiceModal
-            onClose={() => setModalTemplate(null)}
-            onSave={(item: ServiceData) => saveServiceItem(item)}
-            setService={(item: ServiceData) => setModalTemplate(item)}
-            service={modalTemplate}
-            inPlace={true}
-            settings={dbContext?.data.settings}
+        <ServiceModal
+          onClose={() => setModalTemplate(null)}
+          onSave={(item: ServiceData) => saveServiceItem(item)}
+          setService={(item: ServiceData) => setModalTemplate(item)}
+          service={modalTemplate}
+          inPlace={true}
+          settings={dbContext?.data.settings}
+        />
+        <ServiceCompletionModal
+          onClose={() => setCompletedModalTemplate(null)}
+          onSave={(item: ServiceCompleteData) => saveCompletionForm(item)}
+          setFromData={(item: ServiceCompleteData) =>
+            setCompletedModalTemplate(item)
+          }
+          formData={completedModalTemplate}
+          inPlace={true}
+        />
+
+        {printViewData && (
+          <PrintableVersionFrame
+            formData={printViewData}
+            onClose={() => setPrintViewData(null)}
           />
-          <ServiceCompletionModal
-            onClose={() => setCompletedModalTemplate(null)}
-            onSave={(item: ServiceCompleteData) => saveCompletionForm(item)}
-            setFromData={(item: ServiceCompleteData) =>
-              setCompletedModalTemplate(item)
+        )}
+
+        {selectedServiceLines && printViewData && (
+          <div className={'mb-8'}></div>
+        )}
+        {selectedServiceLines && (
+          <ListModal
+            title={
+              t('List Documents: ') +
+              (selectedServiceLines.name || selectedServiceLines.id)
             }
-            formData={completedModalTemplate}
             inPlace={true}
-          />
+            lines={selectedServiceLines.table}
+            buttons={[
+              {
+                id: selectedServiceLines.completed ? 'completedListButton' : '',
+                onClick: () => {
+                  const item = servicedItems.find(
+                    (item) => item.id === selectedServiceLines.id
+                  );
+                  if (!item) {
+                    return;
+                  }
+                  const completionFormId = item.id + '_cd';
+                  const completionForm = completionForms.find(
+                    (completionForm) => completionForm.id === completionFormId
+                  );
+                  const sourceItem = completionForm || item;
 
-          {printViewData && (
-            <PrintableVersionFrame
-              formData={printViewData}
-              onClose={() => setPrintViewData(null)}
-            />
-          )}
-
-          {selectedServiceLines && printViewData && (
-            <div className={'mb-8'}></div>
-          )}
-          {selectedServiceLines && (
-            <ListModal
-              title={
-                t('List Documents: ') +
-                (selectedServiceLines.name || selectedServiceLines.id)
-              }
-              inPlace={true}
-              lines={selectedServiceLines.table}
-              buttons={[
-                {
-                  id: selectedServiceLines.completed
-                    ? 'completedListButton'
-                    : '',
-                  onClick: () => {
-                    const item = servicedItems.find(
-                      (item) => item.id === selectedServiceLines.id
-                    );
-                    if (!item) {
-                      return;
-                    }
-                    const completionFormId = item.id + '_cd';
-                    const completionForm = completionForms.find(
-                      (completionForm) => completionForm.id === completionFormId
-                    );
-                    const sourceItem = completionForm || item;
-
-                    if (!completionForm) {
-                      setCompletedModalTemplate({
-                        id: item.id + '_cd',
-                        service_id: item.id,
-                        service_date: item.date,
-                        date: new Date().toISOString().split('T')[0],
-                        service_address:
-                          sourceItem.service_address || shop?.address || '',
-                        service_name:
-                          sourceItem.service_name || shop?.name || '',
-                        service_email:
-                          sourceItem.service_email || shop?.email || '',
-                        client_name: sourceItem.client_name || '',
-                        client_email: sourceItem.client_email || '',
-                        client_phone: sourceItem.client_phone || '',
-                        type: sourceItem.type || '',
-                        accessories: sourceItem.accessories || '',
-                        repair_cost: item.expected_cost || '',
-                        guaranteed: sourceItem.guaranteed || 'no',
-                        description: sourceItem.description || '',
-                        repair_description: sourceItem.repair_description || '',
-                        docType: 'completions',
-                      });
-                      setSelectedServiceLines(null);
-                    } else {
-                      alert(t('You already completed the form'));
-                    }
-                  },
-                  value: t('Fill Completion Form'),
+                  if (!completionForm) {
+                    setCompletedModalTemplate({
+                      id: item.id + '_cd',
+                      service_id: item.id,
+                      service_date: item.date,
+                      date: new Date().toISOString().split('T')[0],
+                      service_address:
+                        sourceItem.service_address || shop?.address || '',
+                      service_name: sourceItem.service_name || shop?.name || '',
+                      service_email:
+                        sourceItem.service_email || shop?.email || '',
+                      client_name: sourceItem.client_name || '',
+                      client_email: sourceItem.client_email || '',
+                      client_phone: sourceItem.client_phone || '',
+                      type: sourceItem.type || '',
+                      accessories: sourceItem.accessories || '',
+                      repair_cost: item.expected_cost || '',
+                      guaranteed: sourceItem.guaranteed || 'no',
+                      description: sourceItem.description || '',
+                      repair_description: sourceItem.repair_description || '',
+                      docType: 'completions',
+                    });
+                    setSelectedServiceLines(null);
+                  } else {
+                    alert(t('You already completed the form'));
+                  }
                 },
-                {
-                  onClick: () => setSelectedServiceLines(null),
-                  value: t('Cancel'),
-                },
-              ]}
-              header={['#', t('Name'), t('Version'), t('Date'), t('Actions')]}
-            ></ListModal>
-          )}
+                value: t('Fill Completion Form'),
+              },
+              {
+                onClick: () => setSelectedServiceLines(null),
+                value: t('Cancel'),
+              },
+            ]}
+            header={['#', t('Name'), t('Version'), t('Date'), t('Actions')]}
+          ></ListModal>
+        )}
       </div>
 
       {noModalActive && (

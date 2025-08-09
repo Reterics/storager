@@ -11,6 +11,9 @@ import TableViewComponent, {
 import InvoiceModal from '../components/modals/InvoiceModal.tsx';
 import {formatDateTimeLocal} from '../utils/data.ts';
 import {ShopContext} from '../store/ShopContext.tsx';
+import ExtendedInvoiceModal, {
+  ExtendedInvoice,
+} from '../components/modals/ExtendedInvoiceModal.tsx';
 
 function Invoices() {
   const dbContext = useContext(DBContext);
@@ -202,14 +205,27 @@ function Invoices() {
       />
 
       <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
-        <InvoiceModal
-          onClose={() => setModalTemplate(null)}
-          onSave={(item: InvoiceType) => saveInvoice(item)}
-          setInvoice={(item: InvoiceType) => setModalTemplate(item)}
-          invoice={modalTemplate}
-          inPlace={false}
-          shops={shops}
-        ></InvoiceModal>
+        {dbContext?.data?.settings.enableExtendedInvoices ? (
+          modalTemplate ? (
+            <ExtendedInvoiceModal
+              onClose={() => setModalTemplate(null)}
+              initialInvoice={modalTemplate as ExtendedInvoice}
+              onSave={(item: InvoiceType) => saveInvoice(item)}
+              invoiceUsers={[]}
+              clients={[]}
+              shops={shops}
+            />
+          ) : null
+        ) : (
+          <InvoiceModal
+            onClose={() => setModalTemplate(null)}
+            onSave={(item: InvoiceType) => saveInvoice(item)}
+            setInvoice={(item: InvoiceType) => setModalTemplate(item)}
+            invoice={modalTemplate}
+            inPlace={false}
+            shops={shops}
+          />
+        )}
       </div>
     </>
   );
