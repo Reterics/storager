@@ -20,7 +20,13 @@ import Transactions from './pages/Transactions.tsx';
 import Leases from './pages/Leases.tsx';
 import ItemsPage from './core/pages/ItemsPage.tsx';
 import PartsPage from './core/pages/PartsPage.tsx';
+import ShopsCorePage from './core/pages/ShopsPage.tsx';
+import UsersCorePage from './core/pages/UsersPage.tsx';
+import TypesCorePage from './core/pages/TypesPage.tsx';
+import ServicesCorePage from './core/pages/ServicesPage.tsx';
+import LeasesCorePage from './core/pages/LeasesPage.tsx';
 import Reports from './pages/Reports.tsx';
+import TransactionsCorePage from './core/pages/TransactionsPage.tsx';
 
 function QueryRouter() {
   const [searchParams] = useSearchParams();
@@ -59,6 +65,12 @@ function QueryRouter() {
             <Service />
           </InAppLayout>
         );
+      case 'services-core':
+        return (
+          <InAppLayout>
+            <ServicesCorePage />
+          </InAppLayout>
+        );
       case 'settings':
         return (
           <InAppLayout>
@@ -71,6 +83,12 @@ function QueryRouter() {
             <UsersPage />
           </InAppLayout>
         );
+      case 'users-core':
+        return (
+          <InAppLayout>
+            <UsersCorePage />
+          </InAppLayout>
+        );
       case 'about':
         return (
           <InAppLayout>
@@ -81,6 +99,12 @@ function QueryRouter() {
         return (
           <InAppLayout>
             <Types />
+          </InAppLayout>
+        );
+      case 'types-core':
+        return (
+          <InAppLayout>
+            <TypesCorePage />
           </InAppLayout>
         );
       case 'recycle':
@@ -101,6 +125,12 @@ function QueryRouter() {
             <Transactions />
           </InAppLayout>
         );
+      case 'transactions-core':
+        return (
+          <InAppLayout>
+            <TransactionsCorePage />
+          </InAppLayout>
+        );
       case 'reports':
         return (
           <InAppLayout>
@@ -111,6 +141,12 @@ function QueryRouter() {
         return (
           <InAppLayout>
             <Leases />
+          </InAppLayout>
+        );
+      case 'leases-core':
+        return (
+          <InAppLayout>
+            <LeasesCorePage />
           </InAppLayout>
         );
       case 'print':
@@ -138,6 +174,12 @@ function QueryRouter() {
           <UserBasedLayout>
             <TermsOfUse />
           </UserBasedLayout>
+        );
+      case 'shops-core':
+        return (
+          <InAppLayout>
+            <ShopsCorePage />
+          </InAppLayout>
         );
       default:
         return (
