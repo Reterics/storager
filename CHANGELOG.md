@@ -1,4 +1,9 @@
-## [1.1.6] (Unreleased)
+## [1.1.7] (Unreleased)
+
+### Features
+ - Added HTTPS support for Development mode
+
+[1.1.6] (2025-08-08)
 
 ### Bug fixes
  - Fixed Items, Parts and About test suites
