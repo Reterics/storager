@@ -208,7 +208,8 @@
   "Alert": "Figyelmeztetés",
   "Confirmation": "Megerősítés",
   "By signing in, you agree to our": "A bejelentkezéssel elfogadod az ",
-  "Terms and Conditions": "ÁSZF-et",
+  "Terms and Conditions.": "ÁSZF-et",
+  "Terms and Conditions": "Általános Szerződési Feltételek",
 
   "Reports": "Jelentések",
   "Summary Dashboard": "Összefoglaló",
@@ -247,5 +248,6 @@
   "Enhanced invoice functionality with additional fields": "Bővített számlázási szolgáltatások",
   "Qty.": "Db.",
   "All users": "Mindenki",
-  "Back": "Vissza"
+  "Back": "Vissza",
+  "Registration Number": "Nyilvántartási szám"
 }

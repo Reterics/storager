@@ -105,7 +105,7 @@ const SignInComponent = () => {
               href="?page=terms"
               className="font-medium text-primary-600 hover:underline dark:text-primary-500 ml-1"
             >
-              {t('Terms and Conditions')}
+              {t('Terms and Conditions.')}
             </a>
             .
           </p>

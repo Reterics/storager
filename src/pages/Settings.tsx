@@ -314,10 +314,10 @@ function Settings() {
       <div className="w-full flex justify-center mt-4">
         <a
           href="?page=terms"
-          className="text-blue-600 dark:text-blue-400 underline"
+          className="text-zinc-600 dark:text-zinc-400 underline"
           data-testid="settings-terms-link"
         >
-          Terms of Use
+          {t('Terms and Conditions')}
         </a>
       </div>
     </>
