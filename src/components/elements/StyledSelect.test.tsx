@@ -1,14 +1,14 @@
-import {render, screen, fireEvent} from '@testing-library/react';
-import {vi, describe, it, expect, beforeEach} from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import StyledSelect from './StyledSelect';
-import {StyledSelectOption} from '../../interfaces/interfaces';
-import {textToOptions} from '../../utils/ui.ts';
+import type { StyledSelectOption } from '../../interfaces/interfaces';
+import { textToOptions } from '../../utils/ui.ts';
 
 describe('StyledSelect', () => {
   const options: StyledSelectOption[] = [
-    {value: 'option1', name: 'Option 1'},
-    {value: 'option2', name: 'Option 2'},
-    {value: 'option3', name: 'Option 3'},
+    { value: 'option1', name: 'Option 1' },
+    { value: 'option2', name: 'Option 2' },
+    { value: 'option3', name: 'Option 3' },
   ];
   const onSelectMock = vi.fn();
 
@@ -19,12 +19,12 @@ describe('StyledSelect', () => {
   it('renders the label if provided', () => {
     render(
       <StyledSelect
-        value=''
+        value=""
         onSelect={onSelectMock}
-        name='test-select'
-        label='Test Label'
+        name="test-select"
+        label="Test Label"
         options={options}
-      />
+      />,
     );
 
     expect(screen.getByText('Test Label')).toBeInTheDocument();
@@ -33,11 +33,11 @@ describe('StyledSelect', () => {
   it("renders 'Please Select' as the first option", () => {
     render(
       <StyledSelect
-        value=''
+        value=""
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     expect(screen.getByText('Please Select')).toBeInTheDocument();
@@ -46,11 +46,11 @@ describe('StyledSelect', () => {
   it('renders all options correctly', () => {
     render(
       <StyledSelect
-        value=''
+        value=""
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     options.forEach((option) => {
@@ -61,15 +61,15 @@ describe('StyledSelect', () => {
   it('calls onSelect when a new option is selected', () => {
     render(
       <StyledSelect
-        value=''
+        value=""
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     const selectElement = screen.getByRole('combobox');
-    fireEvent.change(selectElement, {target: {value: 'option1'}});
+    fireEvent.change(selectElement, { target: { value: 'option1' } });
     expect(onSelectMock).toHaveBeenCalled();
   });
 
@@ -77,18 +77,18 @@ describe('StyledSelect', () => {
     render(
       <StyledSelect
         label={false}
-        value='option2'
+        value="option2"
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     const optionElement = screen.getByRole('option', {
       name: 'Option 2',
     }) as HTMLOptionElement;
     expect((optionElement.parentElement as HTMLSelectElement).value).toEqual(
-      'option2'
+      'option2',
     );
   });
 });
@@ -100,8 +100,8 @@ describe('textToOptions function', () => {
     const options = textToOptions(values, names);
 
     expect(options).toEqual([
-      {value: 'value1', name: 'Name 1'},
-      {value: 'value2', name: 'Name 2'},
+      { value: 'value1', name: 'Name 1' },
+      { value: 'value2', name: 'Name 2' },
     ]);
   });
 
@@ -110,8 +110,8 @@ describe('textToOptions function', () => {
     const options = textToOptions(values, undefined);
 
     expect(options).toEqual([
-      {value: 'value1', name: 'value1'},
-      {value: 'value2', name: 'value2'},
+      { value: 'value1', name: 'value1' },
+      { value: 'value2', name: 'value2' },
     ]);
   });
 });

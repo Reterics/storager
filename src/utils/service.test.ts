@@ -1,16 +1,16 @@
-import {describe, it, expect, vi} from 'vitest';
-import {filterServices, getServiceLineData} from './service.ts';
-import {
+import { describe, it, expect, vi } from 'vitest';
+import { filterServices, getServiceLineData } from './service.ts';
+import type {
   ServiceData,
   ServiceCompleteData,
-  serviceStatusList,
 } from '../interfaces/interfaces';
-import {JSX} from 'react';
-import {TFunction} from 'i18next';
+import { serviceStatusList } from '../interfaces/interfaces';
+import type { JSX } from 'react';
+import type { TFunction } from 'i18next';
 
 const mockService = (
   id: string,
-  overrides?: Partial<ServiceData>
+  overrides?: Partial<ServiceData>,
 ): ServiceData => ({
   id,
   client_name: 'John Doe',
@@ -35,11 +35,11 @@ describe('filterServices', () => {
   it('filters by shop name', () => {
     const result = filterServices(
       [
-        mockService('1', {service_name: 'ShopA'}),
-        mockService('2', {service_name: 'ShopB'}),
+        mockService('1', { service_name: 'ShopA' }),
+        mockService('2', { service_name: 'ShopB' }),
       ],
       {},
-      'ShopA'
+      'ShopA',
     );
     expect(result).toHaveLength(1);
     expect(result[0].service_name).toBe('ShopA');
@@ -48,12 +48,12 @@ describe('filterServices', () => {
   it('filters by search keyword', () => {
     const result = filterServices(
       [
-        mockService('1', {client_name: 'Alice'}),
-        mockService('2', {client_name: 'Bob'}),
+        mockService('1', { client_name: 'Alice' }),
+        mockService('2', { client_name: 'Bob' }),
       ],
       {},
       undefined,
-      'ali'
+      'ali',
     );
     expect(result).toHaveLength(1);
     expect(result[0].client_name).toBe('Alice');
@@ -65,7 +65,7 @@ describe('filterServices', () => {
       mockCompletions,
       undefined,
       undefined,
-      true
+      true,
     );
     expect(result).toHaveLength(1); // Only '2' is active
     expect(result[0].id).toBe('2');
@@ -73,12 +73,15 @@ describe('filterServices', () => {
 
   it('filters by type', () => {
     const result = filterServices(
-      [mockService('1', {type: 'laptop'}), mockService('2', {type: 'console'})],
+      [
+        mockService('1', { type: 'laptop' }),
+        mockService('2', { type: 'console' }),
+      ],
       {},
       undefined,
       undefined,
       false,
-      'console'
+      'console',
     );
     expect(result).toHaveLength(1);
     expect(result[0].type).toContain('console');
@@ -113,7 +116,7 @@ describe('getServiceLineData', () => {
   ];
 
   const completionForms: ServiceCompleteData[] = [
-    {id: 'srv1_cd', docParent: 'srv1', docUpdated: 1500},
+    { id: 'srv1_cd', docParent: 'srv1', docUpdated: 1500 },
   ];
 
   it('should return correct table rows with completion form', () => {
@@ -122,9 +125,9 @@ describe('getServiceLineData', () => {
       completionForms,
       archive,
       mockT as TFunction<'translation', undefined>,
-      {id: 's1'},
+      { id: 's1' },
       mockOnPrint,
-      mockOnOpen
+      mockOnOpen,
     );
 
     expect(result.id).toBe('srv1');
@@ -143,9 +146,9 @@ describe('getServiceLineData', () => {
       completionForms,
       archive,
       mockT as TFunction<'translation', undefined>,
-      {id: 's1'},
+      { id: 's1' },
       mockOnPrint,
-      mockOnOpen
+      mockOnOpen,
     );
 
     const lastRow = result.table[result.table.length - 1];
@@ -165,7 +168,7 @@ describe('getServiceLineData', () => {
       docUpdated: 2000,
       serviceStatus: 'status_ready',
     };
-    const archiveDup = [{id: 'arch2', docParent: 'srv2', docUpdated: 2000}];
+    const archiveDup = [{ id: 'arch2', docParent: 'srv2', docUpdated: 2000 }];
     const result = getServiceLineData(
       itemDup,
       [],
@@ -173,7 +176,7 @@ describe('getServiceLineData', () => {
       mockT as TFunction<'translation', undefined>,
       undefined,
       vi.fn(),
-      vi.fn()
+      vi.fn(),
     );
     expect(result.table.length).toBe(1);
   });

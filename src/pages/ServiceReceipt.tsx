@@ -1,8 +1,8 @@
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {useContext, useEffect, useRef, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
 import SignaturePad from 'react-signature-pad-wrapper';
 
 function ServiceReceipt() {
@@ -10,7 +10,7 @@ function ServiceReceipt() {
   // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const firebaseContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
@@ -67,7 +67,7 @@ function ServiceReceipt() {
         <SignaturePad
           ref={signaturePadRef}
           redrawOnResize
-          options={{minWidth: 5, maxWidth: 10, penColor: 'rgb(66, 133, 244)'}}
+          options={{ minWidth: 5, maxWidth: 10, penColor: 'rgb(66, 133, 244)' }}
         />
         Download PDF button
       </div>

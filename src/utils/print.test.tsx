@@ -1,12 +1,12 @@
-import {describe, it, expect} from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   serviceDataToPrintable,
   completionFormToPrintable,
   formatChanges,
   capitalize,
 } from './print';
-import {ServiceData} from '../interfaces/interfaces.ts';
-import {TFunction} from 'i18next';
+import type { ServiceData } from '../interfaces/interfaces.ts';
+import type { TFunction } from 'i18next';
 
 describe('print.tsx', () => {
   const t = ((key) => key) as TFunction<'translation', undefined>;
@@ -34,9 +34,9 @@ describe('print.tsx', () => {
 
     const result = serviceDataToPrintable(
       service,
-      {serviceAgreement: 'terms', id: 'x'},
+      { serviceAgreement: 'terms', id: 'x' },
       t,
-      true
+      true,
     );
     expect(result.data.length).toBeGreaterThan(0);
     expect(result.printNow).toBe(true);
@@ -69,8 +69,8 @@ describe('print.tsx', () => {
 
   it('should format changes to JSX', () => {
     const changes = {
-      status: {from: 'pending', to: 'done'},
-      cost: {from: '100', to: '200'},
+      status: { from: 'pending', to: 'done' },
+      cost: { from: '100', to: '200' },
     };
 
     const jsx = formatChanges(changes);

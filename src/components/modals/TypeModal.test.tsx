@@ -1,6 +1,6 @@
-import {render, screen, fireEvent} from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import TypeModal from './TypeModal';
-import {describe, it, expect, vi} from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('TypeModal', () => {
   const mockType = {
@@ -19,14 +19,14 @@ describe('TypeModal', () => {
   const inPlace = false;
 
   it('renders without crashing when type is null', () => {
-    const {container} = render(
+    const { container } = render(
       <TypeModal
         type={null}
         onClose={onClose}
         onSave={onSave}
         setType={setType}
         inPlace={inPlace}
-      />
+      />,
     );
     expect(container).toBeEmptyDOMElement();
   });
@@ -39,7 +39,7 @@ describe('TypeModal', () => {
         onSave={onSave}
         setType={setType}
         inPlace={inPlace}
-      />
+      />,
     );
     expect(screen.getByLabelText('Name')).toHaveValue(mockType.name);
     expect(screen.getByLabelText('Category')).toHaveValue(mockType.category);
@@ -56,7 +56,7 @@ describe('TypeModal', () => {
         onSave={onSave}
         setType={setType}
         inPlace={inPlace}
-      />
+      />,
     );
     fireEvent.click(screen.getByText('Cancel'));
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -71,7 +71,7 @@ describe('TypeModal', () => {
         onSave={onSave}
         setType={setType}
         inPlace={inPlace}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByText('Save'));
@@ -92,36 +92,36 @@ describe('TypeModal', () => {
         onSave={onSave}
         setType={setType}
         inPlace={inPlace}
-      />
+      />,
     );
 
     const nameInput = screen.getByLabelText('Name');
-    fireEvent.change(nameInput, {target: {value: 'New Type Name'}});
+    fireEvent.change(nameInput, { target: { value: 'New Type Name' } });
     expect(setType).toHaveBeenCalledWith({
       ...untranslatedMock,
       name: 'New Type Name',
-      translations: {en: 'New Type Name'},
+      translations: { en: 'New Type Name' },
     });
 
     const categoryInput = screen.getByLabelText('Category');
-    fireEvent.change(categoryInput, {target: {value: 'item'}});
+    fireEvent.change(categoryInput, { target: { value: 'item' } });
     expect(setType).toHaveBeenCalledWith({
       ...untranslatedMock,
       category: 'item',
     });
 
     const enInput = screen.getByLabelText('EN');
-    fireEvent.change(enInput, {target: {value: 'item'}});
+    fireEvent.change(enInput, { target: { value: 'item' } });
     expect(setType).toHaveBeenCalledWith({
       ...untranslatedMock,
-      translations: {en: 'item'},
+      translations: { en: 'item' },
     });
 
     const huInput = screen.getByLabelText('HU');
-    fireEvent.change(huInput, {target: {value: 'item'}});
+    fireEvent.change(huInput, { target: { value: 'item' } });
     expect(setType).toHaveBeenCalledWith({
       ...untranslatedMock,
-      translations: {hu: 'item'},
+      translations: { hu: 'item' },
     });
   });
 });

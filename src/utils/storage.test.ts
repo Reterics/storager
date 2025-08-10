@@ -1,6 +1,6 @@
-import {describe, expect, it} from 'vitest';
-import {extractStorageInfo, sortItemsByWarn} from './storage.ts';
-import {defaultItems} from '../../tests/mocks/shopData.ts';
+import { describe, expect, it } from 'vitest';
+import { extractStorageInfo, sortItemsByWarn } from './storage.ts';
+import { defaultItems } from '../../tests/mocks/shopData.ts';
 
 describe('Storage Utils', () => {
   it('Should extract Storage info properly', () => {
@@ -11,7 +11,7 @@ describe('Storage Utils', () => {
         storage: [1, 2],
         storage_limit: [1, 2],
       },
-      '1'
+      '1',
     );
 
     expect(extractedData).toStrictEqual({
@@ -29,7 +29,7 @@ describe('Storage Utils', () => {
         storage: [5, 1],
         storage_limit: [1, 13],
       },
-      '1'
+      '1',
     );
 
     expect(extractedData).toStrictEqual({
@@ -47,7 +47,7 @@ describe('Storage Utils', () => {
         storage: [5],
         storage_limit: [1],
       },
-      '1'
+      '1',
     );
 
     expect(extractedData).toStrictEqual({

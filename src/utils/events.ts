@@ -1,6 +1,6 @@
-import {ChangeEvent, SyntheticEvent} from 'react';
-import {StoreItem, StorePart} from '../interfaces/interfaces.ts';
-import {getShopIndex} from './storage.ts';
+import type { ChangeEvent, SyntheticEvent } from 'react';
+import type { StoreItem, StorePart } from '../interfaces/interfaces.ts';
+import { getShopIndex } from './storage.ts';
 
 export const multiShopKeys = [
   'storage_limit',
@@ -13,7 +13,7 @@ export const changeStoreType = (
   e: ChangeEvent<HTMLInputElement> | SyntheticEvent<HTMLSelectElement>,
   key: string,
   item: StoreItem | StorePart | null,
-  shopId?: string
+  shopId?: string,
 ) => {
   if (!item) return null;
 
@@ -29,7 +29,7 @@ export const changeStoreType = (
   const storeKey = key as (typeof multiShopKeys)[number];
   const shopIndex = getShopIndex(item, shopId);
 
-  if (shopIndex < 0) return {...item};
+  if (shopIndex < 0) return { ...item };
 
   const currentArray = Array.isArray(item[storeKey])
     ? [...item[storeKey]]

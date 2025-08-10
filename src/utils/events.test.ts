@@ -1,7 +1,7 @@
-import {describe, it, expect, vi} from 'vitest';
-import {changeStoreType} from './events';
-import {StoreItem, StorePart} from '../interfaces/interfaces';
-import {getShopIndex} from './storage';
+import { describe, it, expect, vi } from 'vitest';
+import { changeStoreType } from './events';
+import type { StoreItem, StorePart } from '../interfaces/interfaces';
+import { getShopIndex } from './storage';
 
 vi.mock('./storage', () => ({
   getShopIndex: vi.fn(),
@@ -11,60 +11,60 @@ describe('changeStoreType', () => {
   it('should return null if item is null', () => {
     const result = changeStoreType(
       {
-        currentTarget: {value: 'newValue'},
+        currentTarget: { value: 'newValue' },
       } as React.ChangeEvent<HTMLInputElement>,
       'key',
-      null
+      null,
     );
     expect(result).toBeNull();
   });
 
   it('should update a non-special key in the item', () => {
-    const item: StoreItem = {id: '1', name: 'itemName'};
+    const item: StoreItem = { id: '1', name: 'itemName' };
     const result = changeStoreType(
       {
-        currentTarget: {value: 'newValue'},
+        currentTarget: { value: 'newValue' },
       } as React.ChangeEvent<HTMLInputElement>,
       'name',
-      item
+      item,
     );
-    expect(result).toEqual({id: '1', name: 'newValue'});
+    expect(result).toEqual({ id: '1', name: 'newValue' });
   });
 
   it('should set storage_limit as an array with the new value at the correct index', () => {
-    const item: StorePart = {id: '2', storage_limit: []};
+    const item: StorePart = { id: '2', storage_limit: [] };
     const key = 'storage_limit';
     vi.mocked(getShopIndex).mockReturnValue(0);
 
     const result = changeStoreType(
       {
-        currentTarget: {value: 'limitValue'},
+        currentTarget: { value: 'limitValue' },
       } as React.ChangeEvent<HTMLInputElement>,
       key,
       item,
-      'shop123'
+      'shop123',
     );
 
     expect(getShopIndex).toHaveBeenCalledWith(item, 'shop123');
-    expect(result).toEqual({id: '2', storage_limit: ['limitValue']});
+    expect(result).toEqual({ id: '2', storage_limit: ['limitValue'] });
   });
 
   it('should set shop_id as an array with the new value at the correct index', () => {
-    const item: StorePart = {id: '3', shop_id: ['existingShopId']};
+    const item: StorePart = { id: '3', shop_id: ['existingShopId'] };
     const key = 'shop_id';
     vi.mocked(getShopIndex).mockReturnValue(0);
 
     const result = changeStoreType(
       {
-        currentTarget: {value: 'newShopId'},
+        currentTarget: { value: 'newShopId' },
       } as React.ChangeEvent<HTMLInputElement>,
       key,
       item,
-      'shop123'
+      'shop123',
     );
 
     expect(getShopIndex).toHaveBeenCalledWith(item, 'shop123');
-    expect(result).toEqual({id: '3', shop_id: ['newShopId']});
+    expect(result).toEqual({ id: '3', shop_id: ['newShopId'] });
   });
 
   it('should add the value to an existing array if shopIndex is valid', () => {
@@ -77,15 +77,15 @@ describe('changeStoreType', () => {
 
     const result = changeStoreType(
       {
-        currentTarget: {value: 'newValue'},
+        currentTarget: { value: 'newValue' },
       } as React.ChangeEvent<HTMLInputElement>,
       key,
       item,
-      'shop456'
+      'shop456',
     );
 
     expect(getShopIndex).toHaveBeenCalledWith(item, 'shop456');
-    expect(result).toEqual({id: '4', storage: ['newValue']});
+    expect(result).toEqual({ id: '4', storage: ['newValue'] });
   });
 
   it('should initialize storage array and set value if storage is not an array', () => {
@@ -98,14 +98,14 @@ describe('changeStoreType', () => {
 
     const result = changeStoreType(
       {
-        currentTarget: {value: 'newArrayValue'},
+        currentTarget: { value: 'newArrayValue' },
       } as React.ChangeEvent<HTMLInputElement>,
       key,
       item,
-      'shop789'
+      'shop789',
     );
 
     expect(getShopIndex).toHaveBeenCalledWith(item, 'shop789');
-    expect(result).toEqual({id: '5', storage: ['newArrayValue']});
+    expect(result).toEqual({ id: '5', storage: ['newArrayValue'] });
   });
 });

@@ -1,4 +1,4 @@
-import {Transaction} from '../interfaces/interfaces.ts';
+import type { Transaction } from '../interfaces/interfaces.ts';
 
 export type transactionInterval = 'daily' | 'weekly' | 'monthly';
 
@@ -39,7 +39,7 @@ function getGroupKey(timestamp: number, interval: transactionInterval): string {
 
 export function groupTransactions(
   transactions: Transaction[],
-  interval: transactionInterval
+  interval: transactionInterval,
 ): GroupedTransactionData[] {
   const map = new Map<string, GroupedTransactionData>();
 

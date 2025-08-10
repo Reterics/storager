@@ -1,5 +1,5 @@
 import i18n from 'i18next';
-import {initReactI18next} from 'react-i18next';
+import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 // Import your translation files
@@ -20,7 +20,7 @@ function getOverride(lang: string): object {
   return customerOverrides[key] || {};
 }
 
-const merge = (base: object, override: object) => ({...base, ...override});
+const merge = (base: object, override: object) => ({ ...base, ...override });
 
 const resources = {
   en: {

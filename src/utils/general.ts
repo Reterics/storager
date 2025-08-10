@@ -1,16 +1,16 @@
-import {TextFile} from '../interfaces/interfaces.ts';
-import {DeviceType} from '../database/firebase/FirebaseDBModel.ts';
+import type { TextFile } from '../interfaces/interfaces.ts';
+import type { DeviceType } from '../database/firebase/FirebaseDBModel.ts';
 
 export const downloadAsFile = (
   name: string,
   body: string,
-  fileType = 'text/plain'
+  fileType = 'text/plain',
 ) => {
   if (!name) {
     name = Math.floor(new Date().getTime() / 360000) + '.json';
   }
   try {
-    const textToSaveAsBlob = new Blob([body], {type: fileType});
+    const textToSaveAsBlob = new Blob([body], { type: fileType });
     const textToSaveAsURL = URL.createObjectURL(textToSaveAsBlob);
     const fileNameToSaveAs = name;
 
@@ -46,7 +46,7 @@ export const fileToDataURL = (file: File) => {
 };
 
 export const uploadFileInputAsText = (
-  file: Blob
+  file: Blob,
 ): Promise<string | ArrayBuffer | null> => {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -64,7 +64,7 @@ export const uploadFileInputAsText = (
 };
 
 export const readTextFile = (
-  accept = 'application/json'
+  accept = 'application/json',
 ): Promise<TextFile> => {
   return new Promise((resolve) => {
     const fileInput = document.createElement('input');

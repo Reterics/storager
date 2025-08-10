@@ -1,13 +1,14 @@
-import {ReactNode, useContext, useMemo, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {
+import type { ReactNode } from 'react';
+import { useContext, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type {
   ContextDataType,
   ContextDataValueType,
   GenericContextEntityType,
 } from '../../interfaces/firebase.ts';
-import {DBContext} from '../../database/DBContext.ts';
-import {ShopContext} from '../../store/ShopContext.tsx';
-import {
+import { DBContext } from '../../database/DBContext.ts';
+import { ShopContext } from '../../store/ShopContext.tsx';
+import type {
   GeneralButtons,
   StorageInfo,
   StorePart,
@@ -19,11 +20,11 @@ import {
 import TableViewComponent, {
   TableViewActions,
 } from '../../components/elements/TableViewComponent.tsx';
-import {PageHead} from '../../components/elements/PageHead.tsx';
+import { PageHead } from '../../components/elements/PageHead.tsx';
 import FormModal from './FormModal.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {extractStorageInfo, sortItemsByWarn} from '../../utils/storage.ts';
-import {multiShopKeys} from '../../utils/events.ts';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { extractStorageInfo, sortItemsByWarn } from '../../utils/storage.ts';
+import { multiShopKeys } from '../../utils/events.ts';
 
 export type FieldType =
   | 'text'
@@ -69,13 +70,13 @@ export default function FirebaseCrudManager<
 }: FirebaseCrudManagerProps) {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const selectedShopId = shopContext.shop?.id;
   const [tableLimits, setTableLimits] = useState<number>(100);
   const [filterText, setFilterText] = useState<string>('');
   const [modalData, setModalData] = useState<GenericContextEntityType | null>(
-    null
+    null,
   );
 
   const filterItems = (items: StorePart[], filterBy: string) => {
@@ -86,7 +87,7 @@ export default function FirebaseCrudManager<
     return items.filter(
       (item) =>
         item.name?.toLowerCase().includes(lowerCaseFilter) ||
-        item.sku?.toLowerCase().includes(lowerCaseFilter)
+        item.sku?.toLowerCase().includes(lowerCaseFilter),
     );
   };
   const data = useMemo(() => {
@@ -96,7 +97,7 @@ export default function FirebaseCrudManager<
       return filterItems(allData, filterText);
     return filterItems(
       allData.filter((entry) => entry.shop_id?.includes?.(selectedShopId)),
-      filterText
+      filterText,
     );
   }, [dbContext?.data, entityType, filterText, selectedShopId]);
 
@@ -107,14 +108,14 @@ export default function FirebaseCrudManager<
 
   const warnings = useMemo(
     () => (isStorageItem ? sortItemsByWarn(data, selectedShopId) : []),
-    [data, selectedShopId, isStorageItem]
+    [data, selectedShopId, isStorageItem],
   );
   const error = warnings.length
     ? warnings.length + t(' low storage alert')
     : undefined;
 
   const visibleFields = fields.filter(
-    (f) => f.visible || f.visible === undefined
+    (f) => f.visible || f.visible === undefined,
   );
 
   const headers = visibleFields.map((f: CrudField) => {
@@ -136,7 +137,7 @@ export default function FirebaseCrudManager<
       if (f.key === 'shop_id' && Array.isArray(f.options) && !f.editable) {
         return (
           f.options?.find((opt) =>
-            (entry[key] as unknown as string[]).includes(opt.value)
+            (entry[key] as unknown as string[]).includes(opt.value),
           )?.name || entry[key]
         );
       } else if (
@@ -163,7 +164,7 @@ export default function FirebaseCrudManager<
             await dbContext?.refreshData(entityType);
           }
         },
-      })
+      }),
     );
 
     line[-1] = storageInfo?.lowStorageAlert ? 1 : 0;
@@ -209,7 +210,7 @@ export default function FirebaseCrudManager<
           const id = line[-2];
           const found = data.find((entry) => entry.id === id);
           if (!found) return;
-          const newItem = {...found, [key]: value};
+          const newItem = { ...found, [key]: value };
           dbContext?.setData(entityType, newItem);
         }}
         isHighlighted={(line) => line[-1] === 1}

@@ -1,7 +1,7 @@
-import {render, fireEvent} from '@testing-library/react';
-import {describe, it, expect, vi} from 'vitest';
-import {PageHead} from './PageHead';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
+import { render, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { PageHead } from './PageHead';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
 
 describe('PageHead', () => {
   it('renders PageHead correctly with error and search', async () => {
@@ -22,11 +22,11 @@ describe('PageHead', () => {
         error={'PageHead Test Error'}
         onSearch={search}
         debounceInterval={1}
-      />
+      />,
     );
 
     expect(
-      container.getByRole('heading', {name: 'PageHead Test Title'})
+      container.getByRole('heading', { name: 'PageHead Test Title' }),
     ).toBeDefined();
     expect(container.queryByRole('alert')).toBeDefined();
     expect(container.queryByRole('textbox')).toBeDefined();
@@ -42,22 +42,22 @@ describe('PageHead', () => {
     search.mockReset();
 
     const input = searchBar as HTMLInputElement;
-    fireEvent.change(input, {target: {value: 'T'}});
-    fireEvent.keyDown(input, {key: 'T', target: input});
+    fireEvent.change(input, { target: { value: 'T' } });
+    fireEvent.keyDown(input, { key: 'T', target: input });
 
     vi.advanceTimersByTime(debounceInterval);
 
     expect(search).toHaveBeenCalledWith('T'); // Debounced call
     search.mockReset();
 
-    fireEvent.change(input, {target: {value: 'Test'}});
-    fireEvent.keyDown(input, {key: 'Enter', target: input});
+    fireEvent.change(input, { target: { value: 'Test' } });
+    fireEvent.keyDown(input, { key: 'Enter', target: input });
 
     expect(search).toHaveBeenCalledWith('Test');
     expect(input.value).toEqual('Test');
 
     search.mockReset();
-    fireEvent.keyDown(input, {key: 'NoCall', target: false});
+    fireEvent.keyDown(input, { key: 'NoCall', target: false });
     expect(search.mock.calls.length).toEqual(0);
 
     container.unmount();
@@ -76,11 +76,11 @@ describe('PageHead', () => {
         error={undefined}
         onSearch={vi.fn()}
         debounceInterval={false}
-      />
+      />,
     );
 
     expect(
-      container.getByRole('heading', {name: 'PageHead Test Title'})
+      container.getByRole('heading', { name: 'PageHead Test Title' }),
     ).toBeDefined();
     expect(container.queryByRole('alert')).toBeNull();
     expect(container.queryByRole('textbox')).toBeDefined();
@@ -100,11 +100,11 @@ describe('PageHead', () => {
             primary: true,
           },
         ]}
-      />
+      />,
     );
 
     expect(
-      container.getByRole('heading', {name: 'PageHead Test Title'})
+      container.getByRole('heading', { name: 'PageHead Test Title' }),
     ).toBeDefined();
     expect(container.queryByRole('alert')).toBeNull();
     expect(container.queryByRole('textbox')).toBeNull();

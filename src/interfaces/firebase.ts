@@ -1,4 +1,4 @@
-import {
+import type {
   InvoiceType,
   Lease,
   LeaseCompletion,
@@ -13,7 +13,7 @@ import {
   Transaction,
   UserData,
 } from './interfaces.ts';
-import {LogEntry} from '../database/firebase/FirebaseDBModel.ts';
+import type { LogEntry } from '../database/firebase/FirebaseDBModel.ts';
 
 export interface ContextData {
   shops: Shop[];
@@ -87,28 +87,28 @@ export interface DBContextType {
   setData: (
     key: ContextDataType,
     value: ContextDataValueType,
-    archive?: boolean
+    archive?: boolean,
   ) => Promise<ContextDataCollectionType | null>;
   removeData: (
     key: ContextDataType,
-    id: string
+    id: string,
   ) => Promise<ContextDataCollectionType | null>;
   restoreData: (id: string) => Promise<ContextDataCollectionType | null>;
   removePermanentData: (id: string) => Promise<ContextDataValueType[] | null>;
   removePermanentDataList: (
-    id: string[]
+    id: string[],
   ) => Promise<ContextDataValueType[] | null>;
   refreshImagePointers: (array: StoreItem[] | StorePart[]) => Promise<void>;
   uploadDataBatch: (
     key: ContextDataType,
-    values: ContextDataValueType[]
+    values: ContextDataValueType[],
   ) => Promise<ContextDataCollectionType | null>;
   getType: (
     type: 'part' | 'item' | 'service',
-    lang: 'hu' | 'en'
+    lang: 'hu' | 'en',
   ) => StyledSelectOption[];
   updateLatest: (
-    key: ContextDataType
+    key: ContextDataType,
   ) => Promise<SettingsItems | ContextDataValueType[] | null>;
 }
 

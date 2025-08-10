@@ -1,30 +1,35 @@
-import {ChangeEvent, useContext, useState} from 'react';
+import type { ChangeEvent } from 'react';
+import { useContext, useState } from 'react';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 
-import {Shop, StoreItem, StyledSelectOption} from '../interfaces/interfaces.ts';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
+import type {
+  Shop,
+  StoreItem,
+  StyledSelectOption,
+} from '../interfaces/interfaces.ts';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
 import ItemModal from '../components/modals/ItemModal.tsx';
-import {DBContext} from '../database/DBContext.ts';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {useTranslation} from 'react-i18next';
-import {ShopContext} from '../store/ShopContext.tsx';
+import { DBContext } from '../database/DBContext.ts';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import { useTranslation } from 'react-i18next';
+import { ShopContext } from '../store/ShopContext.tsx';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
-import {extractStorageInfo, sortItemsByWarn} from '../utils/storage.ts';
-import {changeStoreType} from '../utils/events.ts';
-import {storeTableKeyOrder} from '../interfaces/constants.ts';
+import { extractStorageInfo, sortItemsByWarn } from '../utils/storage.ts';
+import { changeStoreType } from '../utils/events.ts';
+import { storeTableKeyOrder } from '../interfaces/constants.ts';
 
 function Items() {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const selectedShopId = shopContext.shop
     ? shopContext.shop.id
     : (dbContext?.data.shops[0]?.id as string);
   const initialItems = (dbContext?.data.items || []).filter((item) =>
-    item.shop_id?.includes(selectedShopId)
+    item.shop_id?.includes(selectedShopId),
   );
 
   const warnings = sortItemsByWarn(initialItems, selectedShopId);
@@ -55,8 +60,8 @@ function Items() {
         initialItems.filter(
           (item) =>
             item.name?.toLowerCase().includes(lowerCaseFilter) ||
-            item.sku?.toLowerCase().includes(lowerCaseFilter)
-        )
+            item.sku?.toLowerCase().includes(lowerCaseFilter),
+        ),
       );
     }
   };
@@ -78,17 +83,17 @@ function Items() {
         item.price?.splice(indexToRemove, 1);
         updatedItems = (await dbContext?.setData(
           'items',
-          item as StoreItem
+          item as StoreItem,
         )) as StoreItem[];
       } else {
         updatedItems = (await dbContext?.removeData(
           'items',
-          item.id
+          item.id,
         )) as StoreItem[];
       }
       if (shopContext.shop) {
         updatedItems = (updatedItems as StoreItem[]).filter((item) =>
-          item.shop_id?.includes(selectedShopId)
+          item.shop_id?.includes(selectedShopId),
         );
       }
       setItems(updatedItems);
@@ -103,7 +108,7 @@ function Items() {
 
     if (shopContext.shop) {
       updatedItems = (updatedItems as StoreItem[]).filter((item) =>
-        item.shop_id?.includes(selectedShopId)
+        item.shop_id?.includes(selectedShopId),
       );
     }
     setItems(updatedItems as StoreItem[]);
@@ -113,7 +118,7 @@ function Items() {
   const changeTableElement = (
     id: string,
     col: string | number,
-    value: unknown
+    value: unknown,
   ) => {
     const key = storeTableKeyOrder[col as number] as keyof StoreItem;
     const item = items.find((p) => p.id === id);
@@ -127,7 +132,7 @@ function Items() {
         } as ChangeEvent<HTMLInputElement>,
         key,
         item,
-        selectedShopId
+        selectedShopId,
       ) || item) as StoreItem;
       dbContext?.setData('items', {
         id: item.id,
@@ -135,7 +140,7 @@ function Items() {
       });
 
       setItems((items) =>
-        items.map((i) => (i.id === item?.id ? changedItem : i))
+        items.map((i) => (i.id === item?.id ? changedItem : i)),
       );
     }
   };
@@ -145,7 +150,7 @@ function Items() {
 
     const array = [
       item.image ? (
-        <img src={item.image} width='40' alt='image for item' />
+        <img src={item.image} width="40" alt="image for item" />
       ) : (
         ''
       ),
@@ -187,7 +192,7 @@ function Items() {
                       storage: [1],
                       storage_limit: [5],
                       price: [0],
-                    }
+                    },
               ),
             testId: 'addButton',
           },
@@ -195,7 +200,7 @@ function Items() {
         error={error}
         onSearch={filterItems}
       />
-      <div className='mb-2 mt-1' />
+      <div className="mb-2 mt-1" />
 
       <TableViewComponent
         lines={tableLines}
@@ -238,12 +243,12 @@ function Items() {
       />
 
       {!tableLines.length && !initialItems.length && (
-        <div className='text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 p-2 max-w-screen-xl w-full shadow-md self-center'>
+        <div className="text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 p-2 max-w-screen-xl w-full shadow-md self-center">
           {t('There is no items in selected shop: ') + shopContext.shop?.name}
         </div>
       )}
 
-      <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
         <ItemModal
           onClose={() => setModalTemplate(null)}
           onSave={(item: StoreItem) => closeItem(item)}

@@ -1,8 +1,9 @@
-import {getAuth, Auth} from 'firebase/auth';
+import type { Auth } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import FirebaseDBModel from './FirebaseDBModel.ts';
-import {FirebaseError} from 'firebase/app';
+import type { FirebaseError } from 'firebase/app';
 import STLogger from '../../utils/logger.ts';
-import {ContextDataCollectionType} from '../../interfaces/firebase.ts';
+import type { ContextDataCollectionType } from '../../interfaces/firebase.ts';
 
 const refreshRate = {
   minutes: 60000,
@@ -77,7 +78,7 @@ export const firebaseAuthError = _firebaseAuthError;
 
 export const getCollection = async <T extends ContextDataCollectionType>(
   table: string,
-  force?: boolean
+  force?: boolean,
 ) => {
   return (await firebaseModel.getAll(table, force)) as unknown as T[];
 };

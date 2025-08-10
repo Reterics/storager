@@ -1,7 +1,7 @@
-import {useCallback, useContext, useEffect, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type {
   Shop,
   ShopType,
   StyledSelectOption,
@@ -11,8 +11,8 @@ import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {BsBarChartLine, BsFillPlusCircleFill} from 'react-icons/bs';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import { BsBarChartLine, BsFillPlusCircleFill } from 'react-icons/bs';
 import TransactionModal from '../components/modals/TransactionModal.tsx';
 import {
   documentTypes,
@@ -25,13 +25,13 @@ import {
   getIconForPaymentMethod,
   getIconForTransactionType,
 } from '../utils/typedIcons.tsx';
-import {formatCurrency} from '../utils/data.ts';
-import {useNavigate} from 'react-router-dom';
+import { formatCurrency } from '../utils/data.ts';
+import { useNavigate } from 'react-router-dom';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
 
 export default function Transactions() {
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [userFilter, setUserFilter] = useState<string>('');
@@ -41,13 +41,13 @@ export default function Transactions() {
     (
       shopFilter: string | undefined,
       searchFilter?: string,
-      userFilter?: string
+      userFilter?: string,
     ) => {
       let items = dbContext?.data.transactions ?? [];
 
       if (shopFilter) {
         const filteredShopId = shops.find(
-          (shop) => shop.name === shopFilter
+          (shop) => shop.name === shopFilter,
         )?.id;
         if (filteredShopId) {
           items = items.filter((item) => {
@@ -58,7 +58,7 @@ export default function Transactions() {
 
       if (userFilter) {
         items = items.filter(
-          (item) => item.user && item.user.includes(userFilter)
+          (item) => item.user && item.user.includes(userFilter),
         );
       }
 
@@ -66,7 +66,7 @@ export default function Transactions() {
         const lowerCaseFilter = searchFilter.toLowerCase();
 
         items = items.filter((item) =>
-          item.name?.toLowerCase().includes(lowerCaseFilter)
+          item.name?.toLowerCase().includes(lowerCaseFilter),
         );
       }
 
@@ -74,12 +74,12 @@ export default function Transactions() {
 
       return items;
     },
-    [dbContext?.data.transactions, shops]
+    [dbContext?.data.transactions, shops],
   );
 
   const [shopFilter, setShopFilter] = useState<string>('');
   const [transactions, setTransactions] = useState<Transaction[]>(
-    filterItems(shopFilter)
+    filterItems(shopFilter),
   );
 
   const [modalTemplate, setModalTemplate] = useState<Transaction | null>(null);
@@ -99,7 +99,7 @@ export default function Transactions() {
   const saveTransaction = async (type: Transaction) => {
     const updatedTransactions = await dbContext?.setData(
       'transactions',
-      type as Transaction
+      type as Transaction,
     );
     setTransactions(updatedTransactions as Transaction[]);
     setModalTemplate(null);
@@ -112,7 +112,7 @@ export default function Transactions() {
     ) {
       const updatedItems = (await dbContext?.removeData(
         'transactions',
-        item.id
+        item.id,
       )) as ShopType[];
       setTransactions(updatedItems);
     }
@@ -171,7 +171,7 @@ export default function Transactions() {
                       gross_amount: 0,
                       quantity: 0,
                       name: '',
-                    }
+                    },
               ),
           },
         ]}
@@ -181,16 +181,16 @@ export default function Transactions() {
         shopFilter={shopFilter}
         setShopFilter={setShopFilter}
       >
-        <div className='flex flex-1' />
+        <div className="flex flex-1" />
         <button
-          className='flex items-center gap-1 text-sm font-medium rounded
+          className="flex items-center gap-1 text-sm font-medium rounded
           text-gray-900 bg-white border border-gray-300 hover:bg-gray-100
-          dark:bg-gray-700 dark:text-white dark:border-gray-600 px-3 py-1.5'
-          onClick={() => navigate('?page=reports', {replace: true})}
+          dark:bg-gray-700 dark:text-white dark:border-gray-600 px-3 py-1.5"
+          onClick={() => navigate('?page=reports', { replace: true })}
         >
           <BsBarChartLine /> {t('Reports')}
         </button>
-        <div className='w-30 select-no-first'>
+        <div className="w-30 select-no-first">
           <StyledSelect
             options={[
               {
@@ -199,7 +199,7 @@ export default function Transactions() {
               },
               ...usersOptions,
             ]}
-            name='type'
+            name="type"
             value={userFilter || undefined}
             defaultLabel={t('All users')}
             onSelect={(e) =>
@@ -210,7 +210,7 @@ export default function Transactions() {
           />
         </div>
       </PageHead>
-      <div className='mb-2 mt-1' />
+      <div className="mb-2 mt-1" />
 
       <TableViewComponent
         lines={tableLines}
@@ -230,7 +230,7 @@ export default function Transactions() {
         ]}
       />
 
-      <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
         <TransactionModal
           onClose={() => setModalTemplate(null)}
           onSave={(item: ShopType) => saveTransaction(item)}

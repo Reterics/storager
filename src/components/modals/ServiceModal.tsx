@@ -1,20 +1,21 @@
-import {
+import type {
   GeneralModalButtons,
   ServiceData,
   ServiceModalInput,
-  serviceStatusList,
 } from '../../interfaces/interfaces.ts';
+import { serviceStatusList } from '../../interfaces/interfaces.ts';
 import StyledInput from '../elements/StyledInput.tsx';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import SignaturePad from 'react-signature-pad-wrapper';
-import {ChangeEvent, useContext, useRef} from 'react';
+import type { ChangeEvent } from 'react';
+import { useContext, useRef } from 'react';
 import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
 import StyledMultiSelect from '../elements/StyledMultiSelect.tsx';
 import './ServiceModal.css';
-import {DBContext} from '../../database/DBContext.ts';
-import {getTranslatedSelectOptions} from '../../utils/translation.ts';
+import { DBContext } from '../../database/DBContext.ts';
+import { getTranslatedSelectOptions } from '../../utils/translation.ts';
 
 export default function ServiceModal({
   id,
@@ -25,7 +26,7 @@ export default function ServiceModal({
   inPlace,
   settings,
 }: ServiceModalInput) {
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const dbContext = useContext(DBContext);
   const signaturePadRef = useRef<SignaturePad>(null);
 
@@ -35,7 +36,7 @@ export default function ServiceModal({
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...service};
+    const obj = { ...service };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -67,7 +68,7 @@ export default function ServiceModal({
   ];
 
   const selectMultiType = (type: string[]) => {
-    setService({...service, type: type.join(',')} as ServiceData);
+    setService({ ...service, type: type.join(',') } as ServiceData);
   };
 
   return (
@@ -79,13 +80,13 @@ export default function ServiceModal({
       }
       id={id || 'ServiceModal'}
     >
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2 mb-1'>
+      <h3 className="font-semibold text-center text-xl text-gray-700 mt-2 mb-1">
         {t('Client')}
       </h3>
       <FormRow>
         <StyledInput
-          type='text'
-          name='client_name'
+          type="text"
+          name="client_name"
           value={service.client_name}
           onChange={(e) => changeType(e, 'client_name')}
           label={t('Name')}
@@ -94,15 +95,15 @@ export default function ServiceModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='client_phone'
+          type="text"
+          name="client_phone"
           value={service.client_phone}
           onChange={(e) => changeType(e, 'client_phone')}
           label={t('Phone')}
         />
         <StyledInput
-          type='text'
-          name='client_email'
+          type="text"
+          name="client_email"
           value={service.client_email}
           onChange={(e) => changeType(e, 'client_email')}
           label={t('Email')}
@@ -110,7 +111,7 @@ export default function ServiceModal({
       </FormRow>
 
       {!service.onUpdate && (
-        <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
+        <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
           {t('Recipient')}
         </h3>
       )}
@@ -118,8 +119,8 @@ export default function ServiceModal({
       {!service.onUpdate && (
         <FormRow>
           <StyledInput
-            type='text'
-            name='service_name'
+            type="text"
+            name="service_name"
             value={service.service_name}
             onChange={() => false}
             label={t('Name')}
@@ -130,15 +131,15 @@ export default function ServiceModal({
       {!service.onUpdate && (
         <FormRow>
           <StyledInput
-            type='text'
-            name='service_address'
+            type="text"
+            name="service_address"
             value={service.service_address}
             onChange={() => false}
             label={t('Address')}
           />
           <StyledInput
-            type='text'
-            name='service_email'
+            type="text"
+            name="service_email"
             value={service.service_email}
             onChange={() => false}
             label={t('Email')}
@@ -146,13 +147,13 @@ export default function ServiceModal({
         </FormRow>
       )}
 
-      <h3 className='font-semibold text-center text-xl text-gray-700 mt-2'>
+      <h3 className="font-semibold text-center text-xl text-gray-700 mt-2">
         {t('Item and service details')}
       </h3>
 
       <FormRow>
         <StyledMultiSelect
-          name='type'
+          name="type"
           options={serviceTypeOptions}
           value={(service.type || '').split(',')}
           onSelect={selectMultiType}
@@ -160,8 +161,8 @@ export default function ServiceModal({
         />
 
         <StyledInput
-          type='textarea'
-          name='description'
+          type="textarea"
+          name="description"
           value={service.description}
           onChange={(e) => changeType(e, 'description')}
           label={t('Description')}
@@ -171,27 +172,27 @@ export default function ServiceModal({
       <FormRow>
         <StyledSelect
           options={getTranslatedSelectOptions(serviceStatusList, t)}
-          name='serviceStatus'
+          name="serviceStatus"
           value={service.serviceStatus}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'serviceStatus'
+              'serviceStatus',
             )
           }
           label={t('status')}
         />
         <StyledSelect
           options={[
-            {name: t('Yes'), value: 'yes'},
-            {name: t('No'), value: 'no'},
+            { name: t('Yes'), value: 'yes' },
+            { name: t('No'), value: 'no' },
           ]}
-          name='guaranteed'
+          name="guaranteed"
           value={service.guaranteed}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'guaranteed'
+              'guaranteed',
             )
           }
           label={t('Guaranteed')}
@@ -200,16 +201,16 @@ export default function ServiceModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='accessories'
+          type="text"
+          name="accessories"
           value={service.accessories}
           onChange={(e) => changeType(e, 'accessories')}
           label={t('Accessories')}
         />
         {!service.onUpdate && (
           <StyledInput
-            type='text'
-            name='expected_cost'
+            type="text"
+            name="expected_cost"
             value={service.expected_cost}
             onChange={(e) => changeType(e, 'expected_cost')}
             label={t('Expected cost')}
@@ -226,13 +227,13 @@ export default function ServiceModal({
       )}
 
       {!service.onUpdate && (
-        <h3 className='font-semibold text-center text-xl text-gray-700 mb-4'>
+        <h3 className="font-semibold text-center text-xl text-gray-700 mb-4">
           {t('Signature')}
         </h3>
       )}
       {!service.onUpdate && (
         <FormRow>
-          <div className='relative w-[40rem] h-80 border border-gray-600 self-center justify-self-center'>
+          <div className="relative w-[40rem] h-80 border border-gray-600 self-center justify-self-center">
             <SignaturePad
               ref={signaturePadRef}
               debounceInterval={500}

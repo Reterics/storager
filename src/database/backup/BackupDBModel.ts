@@ -1,5 +1,5 @@
-import {loadFromIndexedDB, saveToIndexedDB} from '../../utils/indexedDB.ts';
-import {CommonCollectionData} from '../../interfaces/firebase.ts';
+import { loadFromIndexedDB, saveToIndexedDB } from '../../utils/indexedDB.ts';
+import type { CommonCollectionData } from '../../interfaces/firebase.ts';
 
 export interface BackupData {
   id: string;
@@ -51,7 +51,7 @@ export default class BackupDBModel {
                         services: btoa(JSON.stringify(item.services)),
                         completions: btoa(JSON.stringify(item.completions)),*/
           };
-        }) as CommonCollectionData[]
+        }) as CommonCollectionData[],
       );
     } catch (e) {
       console.error(e);
@@ -71,10 +71,10 @@ export default class BackupDBModel {
         items: (await loadFromIndexedDB('items')) as CommonCollectionData[],
         parts: (await loadFromIndexedDB('parts')) as CommonCollectionData[],
         services: (await loadFromIndexedDB(
-          'services'
+          'services',
         )) as CommonCollectionData[],
         completions: (await loadFromIndexedDB(
-          'completions'
+          'completions',
         )) as CommonCollectionData[],
       };
     } catch (e) {

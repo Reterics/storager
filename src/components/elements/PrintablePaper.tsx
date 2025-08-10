@@ -1,5 +1,5 @@
-import {RefObject} from 'react';
-import {PDFData} from '../../interfaces/pdf.ts';
+import type { RefObject } from 'react';
+import type { PDFData } from '../../interfaces/pdf.ts';
 
 const PrintablePaper = ({
   data,
@@ -26,13 +26,16 @@ const PrintablePaper = ({
       }}
     >
       {data.map((row, rowIndex) => (
-        <div key={rowIndex} style={{marginBottom: '10pt'}}>
+        <div key={rowIndex} style={{ marginBottom: '10pt' }}>
           {Array.isArray(row) ? (
             row.length > 1 ? (
               // Multiple columns in this row
-              <div style={{display: 'flex', justifyContent: 'space-between'}}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {row.map((col, colIndex) => (
-                  <div key={colIndex} style={{width: '48%', textAlign: 'left'}}>
+                  <div
+                    key={colIndex}
+                    style={{ width: '48%', textAlign: 'left' }}
+                  >
                     {typeof col === 'object' ? (
                       <span>
                         <strong>{Object.keys(col)[0]}:</strong>{' '}
@@ -46,7 +49,7 @@ const PrintablePaper = ({
               </div>
             ) : (
               // Single column
-              <div style={{textAlign: 'left'}}>
+              <div style={{ textAlign: 'left' }}>
                 {typeof row[0] === 'object' ? (
                   <span>
                     <strong>{Object.keys(row[0])[0]}:</strong>{' '}

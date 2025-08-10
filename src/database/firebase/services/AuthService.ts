@@ -5,8 +5,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import {firebaseAuth} from '../config.ts';
-import {
+import { firebaseAuth } from '../config.ts';
+import type {
   LoginFormValues,
   UserFormValues,
 } from '../../../interfaces/interfaces.ts';
@@ -18,16 +18,16 @@ if (firebaseAuth) {
   });
 }
 
-export const SignIn = async ({email, password}: LoginFormValues) => {
+export const SignIn = async ({ email, password }: LoginFormValues) => {
   return firebaseAuth
     ? await signInWithEmailAndPassword(firebaseAuth, email, password)
-    : {user: null};
+    : { user: null };
 };
 
-export const SignUp = async ({email, password}: UserFormValues) => {
+export const SignUp = async ({ email, password }: UserFormValues) => {
   return firebaseAuth
     ? await createUserWithEmailAndPassword(firebaseAuth, email, password)
-    : {user: null};
+    : { user: null };
 };
 
 export const SignOut = async () => {

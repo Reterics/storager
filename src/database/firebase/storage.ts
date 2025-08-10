@@ -1,4 +1,4 @@
-import {getDownloadURL, getStorage, ref} from 'firebase/storage';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import app from './config.ts';
 import ImageDBModel from './ImageDBModel.ts';
 

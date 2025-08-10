@@ -1,4 +1,4 @@
-import {StyledSelectOption} from '../interfaces/interfaces.ts';
+import type { StyledSelectOption } from '../interfaces/interfaces.ts';
 
 export const BSIconDimensions = {
   height: '1.25rem',
@@ -7,9 +7,9 @@ export const BSIconDimensions = {
 
 export const textToOptions = (
   strings: string[],
-  names: string[] | undefined
+  names: string[] | undefined,
 ): StyledSelectOption[] => {
   return strings.map((string, index) => {
-    return {value: string, name: names ? names[index] : string};
+    return { value: string, name: names ? names[index] : string };
   });
 };

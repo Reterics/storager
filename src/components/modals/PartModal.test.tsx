@@ -1,8 +1,8 @@
 import '../../../tests/mocks/firebase.ts';
-import {describe, expect, it, vi} from 'vitest';
-import {fireEvent, render} from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
 import PartModal from './PartModal.tsx';
-import {defaultParts, defaultTypes} from '../../../tests/mocks/shopData.ts';
+import { defaultParts, defaultTypes } from '../../../tests/mocks/shopData.ts';
 import DBContextProviderMock from '../../../tests/mocks/DBContextProviderMock.tsx';
 
 describe('PartModal', () => {
@@ -18,7 +18,7 @@ describe('PartModal', () => {
         setPart={setPart}
         part={null}
         inPlace={false}
-      />
+      />,
     );
 
     expect(container.container.innerHTML).toEqual('');
@@ -36,23 +36,23 @@ describe('PartModal', () => {
           part={defaultParts[0]}
           inPlace={false}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const inputs = container.getAllByRole('textbox');
     setPart.mockReset();
 
     inputs.forEach((input) => {
-      fireEvent.change(input, {target: {value: 'Test12'}});
+      fireEvent.change(input, { target: { value: 'Test12' } });
     });
 
     const numbers = container.container.querySelectorAll('input[type=number]');
     numbers.forEach((input) => {
-      fireEvent.change(input, {target: {value: '16789'}});
+      fireEvent.change(input, { target: { value: '16789' } });
     });
 
     fireEvent.change(container.getByRole('combobox'), {
-      target: {value: defaultTypes[1].name},
+      target: { value: defaultTypes[1].name },
     });
 
     const select = container.container.querySelector('select');
@@ -60,7 +60,7 @@ describe('PartModal', () => {
     expect(select).toBeDefined();
 
     if (select)
-      fireEvent.select(select, {target: {value: defaultTypes[1].name}});
+      fireEvent.select(select, { target: { value: defaultTypes[1].name } });
 
     expect(setPart.mock.calls.length).toEqual(7);
 
@@ -86,7 +86,7 @@ describe('PartModal', () => {
           part={defaultParts[0]}
           inPlace={true}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const buttons = container.queryAllByRole('button');

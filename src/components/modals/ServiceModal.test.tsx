@@ -1,9 +1,9 @@
-import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
-import {fireEvent, render} from '@testing-library/react';
-import {defaultSettings} from '../../../tests/mocks/shopData.ts';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
+import { defaultSettings } from '../../../tests/mocks/shopData.ts';
 import DBContextProviderMock from '../../../tests/mocks/DBContextProviderMock.tsx';
 import ServiceModal from './ServiceModal.tsx';
-import {serviceDataList} from '../../../tests/mocks/serviceData.ts';
+import { serviceDataList } from '../../../tests/mocks/serviceData.ts';
 
 describe('ServiceModal', () => {
   const originalGetContext = HTMLCanvasElement.prototype.getContext;
@@ -34,7 +34,7 @@ describe('ServiceModal', () => {
         service={null}
         inPlace={false}
         settings={defaultSettings}
-      />
+      />,
     );
     expect(container.container.innerHTML).toEqual('');
 
@@ -48,29 +48,33 @@ describe('ServiceModal', () => {
           onClose={onClose}
           onSave={onSave}
           setService={setService}
-          service={{...serviceDataList[0], onUpdate: false}}
+          service={{ ...serviceDataList[0], onUpdate: false }}
           inPlace={false}
           settings={defaultSettings}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const inputs = container.getAllByRole('textbox');
     setService.mockReset();
 
     inputs.forEach((input) => {
-      fireEvent.change(input, {target: {value: 'TestService'}});
+      fireEvent.change(input, { target: { value: 'TestService' } });
     });
 
-    const statusBox = container.getByRole('combobox', {name: 'status'});
-    const guaranteedBox = container.getByRole('combobox', {name: 'Guaranteed'});
+    const statusBox = container.getByRole('combobox', { name: 'status' });
+    const guaranteedBox = container.getByRole('combobox', {
+      name: 'Guaranteed',
+    });
 
     expect(statusBox).toBeDefined();
     expect(guaranteedBox).toBeDefined();
-    fireEvent.change(statusBox, {target: {value: 'status_in_progress'}});
-    fireEvent.change(guaranteedBox, {target: {value: 'no'}});
+    fireEvent.change(statusBox, { target: { value: 'status_in_progress' } });
+    fireEvent.change(guaranteedBox, { target: { value: 'no' } });
 
-    const multiSelectCheckBox = container.getByRole('checkbox', {name: 'Back'});
+    const multiSelectCheckBox = container.getByRole('checkbox', {
+      name: 'Back',
+    });
     fireEvent.click(multiSelectCheckBox);
 
     expect(setService.mock.calls.length).equal(9);
@@ -87,7 +91,7 @@ describe('ServiceModal', () => {
           service={serviceDataList[0]}
           inPlace={false}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const buttons = container.queryAllByRole('button');

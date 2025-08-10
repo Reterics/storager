@@ -1,29 +1,28 @@
-import {useContext, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {InvoiceType, Shop} from '../interfaces/interfaces.ts';
+import { useContext, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type { InvoiceType, Shop } from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {PageHead} from '../components/elements/PageHead.tsx';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { PageHead } from '../components/elements/PageHead.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import InvoiceModal from '../components/modals/InvoiceModal.tsx';
-import {formatDateTimeLocal} from '../utils/data.ts';
-import {ShopContext} from '../store/ShopContext.tsx';
-import ExtendedInvoiceModal, {
-  ExtendedInvoice,
-} from '../components/modals/ExtendedInvoiceModal.tsx';
+import { formatDateTimeLocal } from '../utils/data.ts';
+import { ShopContext } from '../store/ShopContext.tsx';
+import type { ExtendedInvoice } from '../components/modals/ExtendedInvoiceModal.tsx';
+import ExtendedInvoiceModal from '../components/modals/ExtendedInvoiceModal.tsx';
 
 function Invoices() {
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [invoices, setInvoices] = useState<InvoiceType[]>(
-    dbContext?.data.invoices || []
+    dbContext?.data.invoices || [],
   );
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
-  const {shop} = useContext(ShopContext);
+  const { shop } = useContext(ShopContext);
 
   const [modalTemplate, setModalTemplate] = useState<InvoiceType | null>(null);
   const [tableLimits, setTableLimits] = useState<number>(100);
@@ -34,7 +33,7 @@ function Invoices() {
   const filterItems = (
     shopFilter?: string,
     searchFilter?: string,
-    onlyActive?: boolean
+    onlyActive?: boolean,
   ) => {
     let items = dbContext?.data.invoices ?? [];
 
@@ -59,7 +58,7 @@ function Invoices() {
       items = items.filter(
         (item) =>
           item.name?.toLowerCase().includes(lowerCaseFilter) ||
-          item.phone?.toLowerCase().includes(lowerCaseFilter)
+          item.phone?.toLowerCase().includes(lowerCaseFilter),
       );
     }
 
@@ -100,7 +99,7 @@ function Invoices() {
     ) {
       const updatedInvoices = (await dbContext?.removeData(
         'invoices',
-        item.id
+        item.id,
       )) as InvoiceType[];
       setInvoices(updatedInvoices);
     }
@@ -120,7 +119,7 @@ function Invoices() {
       assignedShops = invoice.shop_id
         ? [
             shops.find(
-              (shop) => shop.id === (invoice.shop_id as unknown as string)
+              (shop) => shop.id === (invoice.shop_id as unknown as string),
             ) as Shop,
           ]
         : null;
@@ -144,7 +143,8 @@ function Invoices() {
         : t('Minden bolt'),
       invoice.status
         ? t(
-            invoice.status.charAt(0).toUpperCase() + invoice.status.substring(1)
+            invoice.status.charAt(0).toUpperCase() +
+              invoice.status.substring(1),
           )
         : '',
       updatedTime,
@@ -175,7 +175,7 @@ function Invoices() {
                       notes: '',
                       status: 'created',
                       shop_id: [shop?.id || shops[0]?.id],
-                    }
+                    },
               ),
           },
         ]}
@@ -187,7 +187,7 @@ function Invoices() {
         activeFilter={activeFilter}
         setActiveFilter={selectActiveFilter}
       />
-      <div className='mb-2 mt-1' />
+      <div className="mb-2 mt-1" />
 
       <TableViewComponent
         lines={tableLines}
@@ -204,7 +204,7 @@ function Invoices() {
         ]}
       />
 
-      <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
         {dbContext?.data?.settings.enableExtendedInvoices ? (
           modalTemplate ? (
             <ExtendedInvoiceModal

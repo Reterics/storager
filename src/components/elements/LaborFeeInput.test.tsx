@@ -1,10 +1,11 @@
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import LaborFeeInput from './LaborFeeInput';
-import {describe, it, vi, expect, beforeEach, Mock} from 'vitest';
-import {popup, confirm} from '../modalExporter';
+import type { Mock } from 'vitest';
+import { describe, it, vi, expect, beforeEach } from 'vitest';
+import { popup, confirm } from '../modalExporter';
 import TestingPageProvider from '../../../tests/mocks/TestingPageProvider.tsx';
-import {ContextData} from '../../interfaces/firebase.ts';
-import {defaultShop} from '../../../tests/mocks/shopData.ts';
+import type { ContextData } from '../../interfaces/firebase.ts';
+import { defaultShop } from '../../../tests/mocks/shopData.ts';
 
 vi.mock('../modalExporter', () => ({
   popup: vi.fn(),
@@ -19,11 +20,11 @@ describe('LaborFeeInput', () => {
       <TestingPageProvider
         setData={mockSetData}
         ctxDataOverride={
-          {currentUser: {email: 'test@example.com'}} as ContextData
+          { currentUser: { email: 'test@example.com' } } as ContextData
         }
       >
         <LaborFeeInput />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
   };
 
@@ -43,12 +44,12 @@ describe('LaborFeeInput', () => {
     const input = screen.getByTestId('laborFee');
     const button = screen.getByTestId('laborFeeButton');
 
-    fireEvent.change(input, {target: {value: 'abc'}});
+    fireEvent.change(input, { target: { value: 'abc' } });
     fireEvent.click(button);
 
     await waitFor(() => {
       expect(popup).toHaveBeenCalledWith(
-        expect.stringContaining('valid number')
+        expect.stringContaining('valid number'),
       );
     });
   });
@@ -61,7 +62,7 @@ describe('LaborFeeInput', () => {
     const input = screen.getByTestId('laborFee');
     const button = screen.getByTestId('laborFeeButton');
 
-    fireEvent.change(input, {target: {value: '12700'}});
+    fireEvent.change(input, { target: { value: '12700' } });
     fireEvent.click(button);
 
     await waitFor(() => {
@@ -77,7 +78,7 @@ describe('LaborFeeInput', () => {
           payment_method: 'cash',
           user: 'test@example.com',
           shop_id: [defaultShop.id],
-        })
+        }),
       );
     });
   });
@@ -88,7 +89,7 @@ describe('LaborFeeInput', () => {
     renderWithContext();
 
     fireEvent.change(screen.getByTestId('laborFee'), {
-      target: {value: '12700'},
+      target: { value: '12700' },
     });
     fireEvent.click(screen.getByTestId('laborFeeButton'));
 

@@ -1,4 +1,4 @@
-import {
+import type {
   DocumentType,
   PaymentMethod,
   TransactionType,
@@ -18,7 +18,7 @@ import {
   BsReceipt,
   BsTablet,
 } from 'react-icons/bs';
-import {DeviceType} from '../database/firebase/FirebaseDBModel.ts';
+import type { DeviceType } from '../database/firebase/FirebaseDBModel.ts';
 
 export const getIconForPaymentMethod = (method?: PaymentMethod) => {
   switch (method) {
@@ -45,7 +45,7 @@ export const getIconForDocumentType = (documentType?: DocumentType) => {
 };
 
 export const getIconForTransactionType = (
-  transactionType?: TransactionType
+  transactionType?: TransactionType,
 ) => {
   switch (transactionType) {
     case 'sell':

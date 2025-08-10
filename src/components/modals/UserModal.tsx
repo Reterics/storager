@@ -1,18 +1,19 @@
 import StyledInput from '../elements/StyledInput.tsx';
-import {
+import type {
   GeneralModalButtons,
   StyledSelectOption,
   UserData,
   UserModalInput,
 } from '../../interfaces/interfaces.ts';
-import {ChangeEvent, useContext, useState} from 'react';
+import type { ChangeEvent } from 'react';
+import { useContext, useState } from 'react';
 import StyledSelect from '../elements/StyledSelect.tsx';
 import GeneralModal from './GeneralModal.tsx';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import FormRow from '../elements/FormRow.tsx';
-import {userRoleOptions} from '../../interfaces/constants.ts';
+import { userRoleOptions } from '../../interfaces/constants.ts';
 import AlertBox from '../AlertBox.tsx';
-import {AuthContext} from '../../store/AuthContext.tsx';
+import { AuthContext } from '../../store/AuthContext.tsx';
 import StyledMultiSelect from '../elements/StyledMultiSelect.tsx';
 
 export default function UserModal({
@@ -23,8 +24,8 @@ export default function UserModal({
   inPlace,
   shops,
 }: UserModalInput) {
-  const {t} = useTranslation();
-  const {SignUp} = useContext(AuthContext);
+  const { t } = useTranslation();
+  const { SignUp } = useContext(AuthContext);
   const [error, setError] = useState<string | null>(null);
 
   const typeOptions: StyledSelectOption[] = (shops || []).map((key) => {
@@ -37,7 +38,7 @@ export default function UserModal({
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...user};
+    const obj = { ...user };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -101,20 +102,20 @@ export default function UserModal({
       buttons={buttons}
       inPlace={inPlace}
       title={t('Edit User')}
-      id='UserModal'
+      id="UserModal"
     >
       <FormRow>
         <StyledInput
-          type='text'
-          name='username'
+          type="text"
+          name="username"
           value={user.username}
           onChange={(e) => changeType(e, 'username')}
           label={t('Username')}
         />
 
         <StyledInput
-          type='text'
-          name='email'
+          type="text"
+          name="email"
           value={user.email}
           onChange={(e) => changeType(e, 'email')}
           label={t('Email')}
@@ -124,16 +125,16 @@ export default function UserModal({
       {!user.id && (
         <FormRow>
           <StyledInput
-            type='password'
-            name='password'
+            type="password"
+            name="password"
             value={user.password}
             onChange={(e) => changeType(e, 'password')}
             label={t('Password')}
           />
 
           <StyledInput
-            type='password'
-            name='password_confirmation'
+            type="password"
+            name="password_confirmation"
             value={user.password_confirmation}
             onChange={(e) => changeType(e, 'password_confirmation')}
             label={t('Password Confirmation')}
@@ -144,7 +145,7 @@ export default function UserModal({
       <FormRow>
         <StyledMultiSelect
           options={typeOptions}
-          name='shop_id'
+          name="shop_id"
           value={Array.isArray(user.shop_id) ? user.shop_id : []}
           onSelect={(selectedShopId) => selectMultiShopId(selectedShopId)}
           label={t('Assigned Shop')}
@@ -152,7 +153,7 @@ export default function UserModal({
 
         <StyledSelect
           options={userRoleOptions}
-          name='role'
+          name="role"
           value={user.role || userRoleOptions[0].value}
           onSelect={(e) =>
             changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'role')

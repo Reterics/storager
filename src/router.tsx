@@ -1,5 +1,5 @@
-import {useSearchParams} from 'react-router-dom';
-import {InAppLayout} from './layouts/InAppLayout.tsx';
+import { useSearchParams } from 'react-router-dom';
+import { InAppLayout } from './layouts/InAppLayout.tsx';
 import Items from './pages/items.tsx';
 import Parts from './pages/Parts.tsx';
 import Service from './pages/Service.tsx';
@@ -14,7 +14,7 @@ import Invoices from './pages/Invoices.tsx';
 import Print from './pages/Print.tsx';
 import Diagnostic from './pages/Diagnostic.tsx';
 import TermsOfUse from './pages/TermsOfUse.tsx';
-import {UserBasedLayout} from './layouts/UserBasedLayout.tsx';
+import { UserBasedLayout } from './layouts/UserBasedLayout.tsx';
 import Logs from './pages/Logs.tsx';
 import Transactions from './pages/Transactions.tsx';
 import Leases from './pages/Leases.tsx';

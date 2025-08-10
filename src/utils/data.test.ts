@@ -1,4 +1,4 @@
-import {describe, it, expect} from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   toUserDateTime,
   generateServiceId,
@@ -10,7 +10,7 @@ import {
   formatCurrency,
   reduceToRecordById,
 } from './data';
-import {CommonCollectionData} from '../interfaces/firebase.ts';
+import type { CommonCollectionData } from '../interfaces/firebase.ts';
 
 describe('utils/data', () => {
   it('should convert Date to user datetime string', () => {
@@ -21,7 +21,7 @@ describe('utils/data', () => {
 
   it('should normalize string correctly', () => {
     expect(normalizeString('Árvíztűrő tükörfúrógép!')).toBe(
-      'arvizturotukorfurogep'
+      'arvizturotukorfurogep',
     );
   });
 
@@ -30,8 +30,8 @@ describe('utils/data', () => {
   });
 
   it('should detect changes in object fields', () => {
-    const oldObj = {a: 1, b: [2, 3]} as unknown as CommonCollectionData;
-    const newObj = {a: 2, b: [2, 4]} as unknown as CommonCollectionData;
+    const oldObj = { a: 1, b: [2, 3] } as unknown as CommonCollectionData;
+    const newObj = { a: 2, b: [2, 4] } as unknown as CommonCollectionData;
     const result = getChangedFields(oldObj, newObj);
     expect(result).toHaveProperty('a');
     expect(result).toHaveProperty('b');
@@ -58,8 +58,8 @@ describe('utils/data', () => {
 
   it('should reduce array to record by id', () => {
     const items = [
-      {id: 'a', value: 1},
-      {id: 'b', value: 2},
+      { id: 'a', value: 1 },
+      { id: 'b', value: 2 },
     ];
     const record = reduceToRecordById(items);
     expect(record).toHaveProperty('a');
@@ -67,9 +67,9 @@ describe('utils/data', () => {
   });
 
   it('should generate a new service id based on existing items', () => {
-    const result = generateServiceId([{id: '00001'}], 'shop1', [
-      {id: 'shop1'},
-      {id: 'shop2'},
+    const result = generateServiceId([{ id: '00001' }], 'shop1', [
+      { id: 'shop1' },
+      { id: 'shop2' },
     ]);
     expect(result).toMatch(/\d{5}/);
   });

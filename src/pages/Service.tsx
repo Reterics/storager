@@ -1,23 +1,23 @@
-import {useContext, useEffect, useMemo, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import type {
   ServiceCompleteData,
   ServiceData,
   ServiceLineData,
-  serviceStatusList,
 } from '../interfaces/interfaces.ts';
+import { serviceStatusList } from '../interfaces/interfaces.ts';
 import ServiceModal from '../components/modals/ServiceModal.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import ServiceCompletionModal from '../components/modals/ServiceCompletionModal.tsx';
-import {ShopContext} from '../store/ShopContext.tsx';
+import { ShopContext } from '../store/ShopContext.tsx';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import PrintableVersionFrame from '../components/modals/PrintableVersionFrame.tsx';
-import {PrintViewData} from '../interfaces/pdf.ts';
+import type { PrintViewData } from '../interfaces/pdf.ts';
 import ListModal from '../components/modals/ListModal.tsx';
 import {
   compareNormalizedStrings,
@@ -25,13 +25,13 @@ import {
   reduceToRecordById,
 } from '../utils/data.ts';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
-import {filterServices, getServiceLineData} from '../utils/service.ts';
-import {confirm} from '../components/modalExporter.ts';
+import { filterServices, getServiceLineData } from '../utils/service.ts';
+import { confirm } from '../components/modalExporter.ts';
 
 function Service() {
   const dbContext = useContext(DBContext);
-  const {shop} = useContext(ShopContext);
-  const {t} = useTranslation();
+  const { shop } = useContext(ShopContext);
+  const { t } = useTranslation();
 
   const [tableLimits, setTableLimits] = useState<number>(100);
   const [shopFilter, setShopFilter] = useState<string>();
@@ -40,12 +40,12 @@ function Service() {
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
 
   const [completionForms, setCompletionForms] = useState<ServiceCompleteData[]>(
-    dbContext?.data.completions || []
+    dbContext?.data.completions || [],
   );
   const completionFormsById = reduceToRecordById(completionForms);
 
   const [servicedItems, setServicedItems] = useState<ServiceData[]>(
-    filterServices(dbContext?.data.services ?? [], completionFormsById)
+    filterServices(dbContext?.data.services ?? [], completionFormsById),
   );
 
   const availableTypes: string[] = useMemo(() => {
@@ -63,7 +63,7 @@ function Service() {
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<ServiceCompleteData | null>(null);
   const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
-    null
+    null,
   );
 
   const [selectedServiceLines, setSelectedServiceLines] =
@@ -77,8 +77,8 @@ function Service() {
         shopFilter,
         searchFilter,
         activeFilter,
-        typeFilter
-      )
+        typeFilter,
+      ),
     );
   }, [
     shopFilter,
@@ -94,19 +94,19 @@ function Service() {
       item.id &&
       (await confirm(
         t(
-          'Are you sure you wish to delete this Service and all of its history?'
-        )
+          'Are you sure you wish to delete this Service and all of its history?',
+        ),
       ))
     ) {
       const completions = completionForms?.filter(
-        (c) => c.service_id === item.id
+        (c) => c.service_id === item.id,
       );
       if (completions.length) {
         let completionUpdates;
         for (const element of completions) {
           completionUpdates = (await dbContext?.removeData(
             'completions',
-            element.id
+            element.id,
           )) as ServiceCompleteData[];
         }
         if (completionUpdates) {
@@ -115,7 +115,7 @@ function Service() {
       }
 
       const history = (dbContext?.data.archive || []).filter(
-        (a) => a.docParent === item.id
+        (a) => a.docParent === item.id,
       );
       if (history.length) {
         for (let i = 0; i < history.length; i++) {
@@ -127,7 +127,7 @@ function Service() {
 
       const servicedItems = (await dbContext?.removeData(
         'services',
-        item.id
+        item.id,
       )) as ServiceData[];
       setServicedItems(servicedItems);
     }
@@ -135,7 +135,7 @@ function Service() {
 
   const saveServiceItem = async (serviceData: ServiceData, archive = true) => {
     let updatedItems = (await dbContext?.updateLatest(
-      'services'
+      'services',
     )) as ServiceData[];
     // validate id
     const currentItem = updatedItems.find((item) => item.id === serviceData.id);
@@ -144,7 +144,7 @@ function Service() {
       serviceData.client_name &&
       !compareNormalizedStrings(
         currentItem.client_name,
-        serviceData.client_name
+        serviceData.client_name,
       )
     ) {
       if (
@@ -155,7 +155,7 @@ function Service() {
           updatedItems,
           shop?.id,
           dbContext?.data.shops,
-          dbContext?.data.deleted
+          dbContext?.data.deleted,
         );
       }
     }
@@ -163,14 +163,14 @@ function Service() {
     updatedItems = (await dbContext?.setData(
       'services',
       serviceData,
-      archive
+      archive,
     )) as ServiceData[];
     setServicedItems(updatedItems);
     setModalTemplate(null);
   };
 
   const saveCompletionForm = async (
-    serviceCompleteData: ServiceCompleteData
+    serviceCompleteData: ServiceCompleteData,
   ) => {
     if (!serviceCompleteData?.service_id) {
       return false;
@@ -224,14 +224,14 @@ function Service() {
             t,
             dbContext?.data.settings,
             setPrintViewData,
-            setPrintViewData
+            setPrintViewData,
           );
 
           setSelectedServiceLines(newLine);
-          window.scrollTo({top: 0, behavior: 'smooth'});
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         },
         onEdit: () => {
-          setModalTemplate({...item, onUpdate: true});
+          setModalTemplate({ ...item, onUpdate: true });
           if (selectedServiceLines) {
             setSelectedServiceLines(null);
           }
@@ -261,7 +261,7 @@ function Service() {
                   servicedItems,
                   shop?.id,
                   dbContext?.data.shops,
-                  dbContext?.data.deleted
+                  dbContext?.data.deleted,
                 );
 
                 setModalTemplate(
@@ -275,7 +275,7 @@ function Service() {
                         service_name: shop?.name || '',
                         service_email: shop?.email || '',
                         docType: 'services',
-                      }
+                      },
                 );
               },
             },
@@ -288,17 +288,17 @@ function Service() {
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
         >
-          <div className='flex flex-1' />
-          <div className='w-30 select-no-first'>
+          <div className="flex flex-1" />
+          <div className="w-30 select-no-first">
             <StyledSelect
               options={[
                 {
                   name: t('All type'),
                   value: '',
                 },
-                ...availableTypes.map((type) => ({value: type, name: type})),
+                ...availableTypes.map((type) => ({ value: type, name: type })),
               ]}
-              name='type'
+              name="type"
               value={typeFilter || undefined}
               defaultLabel={t('All type')}
               onSelect={(e) =>
@@ -311,7 +311,7 @@ function Service() {
         </PageHead>
       )}
 
-      <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
+      <div className="relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1">
         <ServiceModal
           onClose={() => setModalTemplate(null)}
           onSave={(item: ServiceData) => saveServiceItem(item)}
@@ -353,14 +353,14 @@ function Service() {
                 id: selectedServiceLines.completed ? 'completedListButton' : '',
                 onClick: () => {
                   const item = servicedItems.find(
-                    (item) => item.id === selectedServiceLines.id
+                    (item) => item.id === selectedServiceLines.id,
                   );
                   if (!item) {
                     return;
                   }
                   const completionFormId = item.id + '_cd';
                   const completionForm = completionForms.find(
-                    (completionForm) => completionForm.id === completionFormId
+                    (completionForm) => completionForm.id === completionFormId,
                   );
                   const sourceItem = completionForm || item;
 
@@ -404,7 +404,7 @@ function Service() {
       </div>
 
       {noModalActive && (
-        <div className='service-table'>
+        <div className="service-table">
           <TableViewComponent
             lines={tableLines}
             tableLimits={tableLimits}
@@ -418,7 +418,7 @@ function Service() {
                 editable: false,
               },
               {
-                value: <span className='text-xxs'>{t('Expected cost')}</span>,
+                value: <span className="text-xxs">{t('Expected cost')}</span>,
                 type: 'number',
                 postFix: ' Ft',
                 sortable: true,
@@ -442,7 +442,7 @@ function Service() {
         </div>
       )}
 
-      <div className='relative flex justify-center w-full m-auto flex-1 no-print'></div>
+      <div className="relative flex justify-center w-full m-auto flex-1 no-print"></div>
     </>
   );
 }

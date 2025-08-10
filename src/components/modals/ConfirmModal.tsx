@@ -1,7 +1,7 @@
 import React from 'react';
 import GeneralModal from './GeneralModal';
-import {GeneralModalButtons} from '../../interfaces/interfaces';
-import {useTranslation} from 'react-i18next';
+import type { GeneralModalButtons } from '../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 export interface ConfirmModalProps<R = boolean> {
   title?: string;
@@ -22,7 +22,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onSave,
   inPlace = false,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const buttons: GeneralModalButtons[] = [
     {
@@ -41,9 +41,9 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
       title={title || t('Confirmation')}
       buttons={buttons}
       inPlace={inPlace}
-      id='ConfirmModal'
+      id="ConfirmModal"
     >
-      <div className='text-md p-2 dark:text-white text-gray-800'>
+      <div className="text-md p-2 dark:text-white text-gray-800">
         {children || t('Are you sure?')}
       </div>
     </GeneralModal>

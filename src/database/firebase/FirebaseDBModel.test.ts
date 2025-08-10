@@ -1,6 +1,12 @@
-import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import FirebaseDBModel from './FirebaseDBModel';
-import {initializeApp, FirebaseApp} from 'firebase/app';
+import type { FirebaseApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
+import type {
+  DocumentSnapshot,
+  DocumentReference,
+  DocumentData,
+} from 'firebase/firestore';
 import {
   getFirestore,
   collection,
@@ -11,12 +17,9 @@ import {
   deleteDoc,
   addDoc,
   writeBatch,
-  DocumentSnapshot,
-  DocumentReference,
-  DocumentData,
 } from 'firebase/firestore';
 
-import {User} from 'firebase/auth';
+import type { User } from 'firebase/auth';
 
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(),
@@ -25,8 +28,8 @@ vi.mock('firebase/firestore', () => ({
   getFirestore: vi.fn(),
   collection: vi.fn().mockResolvedValue({}),
   getDocs: vi.fn().mockResolvedValue([
-    {id: '1', data: () => ({id: '1', name: 'item1'})},
-    {id: '2', data: () => ({id: '2', name: 'item2'})},
+    { id: '1', data: () => ({ id: '1', name: 'item1' }) },
+    { id: '2', data: () => ({ id: '2', name: 'item2' }) },
   ]),
   query: vi.fn(),
   doc: vi.fn().mockResolvedValue({}),
@@ -67,16 +70,16 @@ describe('FirebaseDBModel', () => {
     it('should fetch and cache data if the document exists', async () => {
       const mockDocSnap = {
         exists: () => true,
-        data: () => ({id: '123', name: 'Test Item'}),
+        data: () => ({ id: '123', name: 'Test Item' }),
       };
       vi.mocked(getDoc).mockResolvedValue(
-        mockDocSnap as unknown as DocumentSnapshot
+        mockDocSnap as unknown as DocumentSnapshot,
       );
 
       const result = await model.get('123', 'items');
       expect(doc).toHaveBeenCalledWith(model.getDB(), 'items', '123');
       expect(getDoc).toHaveBeenCalled();
-      expect(result).toEqual({id: '123', name: 'Test Item'});
+      expect(result).toEqual({ id: '123', name: 'Test Item' });
       expect(model.getCachedEntry('123', 'items')).toEqual({
         id: '123',
         name: 'Test Item',
@@ -86,7 +89,7 @@ describe('FirebaseDBModel', () => {
     it('should return null if the document does not exist', async () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      vi.mocked(getDoc).mockResolvedValue({exists: () => false});
+      vi.mocked(getDoc).mockResolvedValue({ exists: () => false });
 
       const result = await model.get('123', 'items');
       expect(result).toBeNull();
@@ -97,7 +100,7 @@ describe('FirebaseDBModel', () => {
     it('should mark the document as deleted and move it to the deleted cache', async () => {
       const id = '123';
       const table = 'items';
-      model.updateCache(table, [{id, name: 'Item to Delete'}]);
+      model.updateCache(table, [{ id, name: 'Item to Delete' }]);
       model.getCachedEntry(id, table);
 
       vi.mocked(setDoc).mockResolvedValue(undefined);
@@ -109,10 +112,10 @@ describe('FirebaseDBModel', () => {
         expect.objectContaining({
           deleted: true,
         }),
-        {merge: true}
+        { merge: true },
       );
       expect(model.getCachedEntry(id, 'deleted')).toEqual(
-        expect.objectContaining({deleted: true})
+        expect.objectContaining({ deleted: true }),
       );
       expect(model.getCachedEntry(id, table)).toBeUndefined();
     });
@@ -122,7 +125,7 @@ describe('FirebaseDBModel', () => {
     it('should restore a deleted document to its original table', async () => {
       const id = '123';
       model.updateCache('deleted', [
-        {id, name: 'Deleted Item', docType: 'items', deleted: true},
+        { id, name: 'Deleted Item', docType: 'items', deleted: true },
       ]);
       vi.mocked(setDoc).mockResolvedValue(undefined);
 
@@ -130,13 +133,13 @@ describe('FirebaseDBModel', () => {
       expect(doc).toHaveBeenCalledWith(model.getDB(), 'items', id);
       expect(setDoc).toHaveBeenCalledWith(
         expect.any(Object),
-        expect.objectContaining({deleted: false}),
-        {merge: true}
+        expect.objectContaining({ deleted: false }),
+        { merge: true },
       );
       expect(result).toBe(true);
       expect(model.getCachedEntry(id, 'deleted')).toBeUndefined();
       expect(model.getCachedEntry(id, 'items')).toEqual(
-        expect.objectContaining({deleted: false})
+        expect.objectContaining({ deleted: false }),
       );
     });
   });
@@ -144,7 +147,7 @@ describe('FirebaseDBModel', () => {
   describe('removePermanent', () => {
     it('should permanently delete a document from Firestore and remove it from cache', async () => {
       const id = '123';
-      model.updateCache('deleted', [{id, docType: 'items'}]);
+      model.updateCache('deleted', [{ id, docType: 'items' }]);
 
       vi.mocked(deleteDoc).mockResolvedValue(undefined);
 
@@ -159,8 +162,8 @@ describe('FirebaseDBModel', () => {
     it('should delete multiple documents and update cache', async () => {
       const ids = ['id1', 'id2'];
       model.updateCache('deleted', [
-        {id: 'id1', docType: 'items'},
-        {id: 'id2', docType: 'services'},
+        { id: 'id1', docType: 'items' },
+        { id: 'id2', docType: 'services' },
       ]);
 
       const deleteMock = vi.fn();
@@ -217,27 +220,27 @@ describe('FirebaseDBModel', () => {
       expect(doc).toHaveBeenCalledWith(model.getDB(), table, '123');
       expect(setDoc).toHaveBeenCalledWith(
         expect.any(Object),
-        expect.objectContaining({name: 'Updated Item'}),
-        {merge: true}
+        expect.objectContaining({ name: 'Updated Item' }),
+        { merge: true },
       );
       expect(model.getCachedEntry('123', table)).toEqual(
-        expect.objectContaining({name: 'Updated Item'})
+        expect.objectContaining({ name: 'Updated Item' }),
       );
     });
   });
 
   describe('add', () => {
     it('should add a new document to Firestore and cache', async () => {
-      const item = {name: 'New Item'};
+      const item = { name: 'New Item' };
       const table = 'items';
-      const mockDocRef = {id: 'new123'};
+      const mockDocRef = { id: 'new123' };
       vi.mocked(addDoc).mockResolvedValue(mockDocRef as DocumentReference);
 
       const id = await model.add(item, table);
       expect(collection).toHaveBeenCalledWith(model.getDB(), table);
       expect(addDoc).toHaveBeenCalledWith(expect.any(Object), item);
       expect(model.getCachedEntry('new123', table)).toEqual(
-        expect.objectContaining({id: 'new123', name: 'New Item'})
+        expect.objectContaining({ id: 'new123', name: 'New Item' }),
       );
       expect(id).toBe('new123');
     });
@@ -245,7 +248,7 @@ describe('FirebaseDBModel', () => {
 
   describe('getAll', () => {
     it('should return cached data if within the 5 seconds window', async () => {
-      const cachedData = [{id: '1', name: 'cachedItem'}];
+      const cachedData = [{ id: '1', name: 'cachedItem' }];
       model.updateCache('items', cachedData);
       vi.setSystemTime(Date.now() + 3000); // Within 5 seconds
 
@@ -261,15 +264,15 @@ describe('FirebaseDBModel', () => {
       expect(collectionMock).toHaveBeenCalledWith(mockDb, 'items');
       expect(getDocsMock).toHaveBeenCalled();
       expect(result).toEqual([
-        {id: '1', name: 'item1'},
-        {id: '2', name: 'item2'},
+        { id: '1', name: 'item1' },
+        { id: '2', name: 'item2' },
       ]);
     });
   });
 
   describe('logging features', () => {
     it('should set user and shopId correctly', () => {
-      model.setUser({uid: 'u1', email: 'user@example.com'} as User);
+      model.setUser({ uid: 'u1', email: 'user@example.com' } as User);
       model.setShopId('shop123');
       expect(model['_user']?.email).toBe('user@example.com');
       expect(model['_shopId']).toBe('shop123');
@@ -292,12 +295,12 @@ describe('FirebaseDBModel', () => {
     });
 
     it('should call addTransaction and cache transaction entry', async () => {
-      const mockRef = {id: 'trx123'};
+      const mockRef = { id: 'trx123' };
       vi.mocked(addDoc).mockResolvedValueOnce(
-        mockRef as DocumentReference<unknown, DocumentData>
+        mockRef as DocumentReference<unknown, DocumentData>,
       );
       model['_enableTransactions'] = true;
-      model['_user'] = {uid: 'uid', email: 'me@example.com'} as User;
+      model['_user'] = { uid: 'uid', email: 'me@example.com' } as User;
       model['_shopId'] = 'shop1';
 
       const item = {
@@ -321,7 +324,7 @@ describe('FirebaseDBModel', () => {
 
   describe('log()', () => {
     beforeEach(() => {
-      model.setUser({uid: 'uid', email: 'test@example.com'} as User);
+      model.setUser({ uid: 'uid', email: 'test@example.com' } as User);
       model.setShopId('shop123');
       model['_collectionsToLog'] = ['items'];
       model['_enableLogs'] = true;
@@ -329,17 +332,19 @@ describe('FirebaseDBModel', () => {
 
     it('should skip logging if disabled', async () => {
       model['_enableLogs'] = false;
-      const result = await model.log('update', 'items', 'id123', {id: 'id123'});
+      const result = await model.log('update', 'items', 'id123', {
+        id: 'id123',
+      });
       expect(result).toBeUndefined();
     });
 
     it('should add log entry with changes for update', async () => {
-      model.updateCache('items', [{id: 'id123', name: 'Old'}]);
+      model.updateCache('items', [{ id: 'id123', name: 'Old' }]);
       vi.mocked(addDoc).mockResolvedValueOnce({
         id: 'log1',
       } as DocumentReference);
 
-      await model.log('update', 'items', 'id123', {id: 'id123', name: 'New'});
+      await model.log('update', 'items', 'id123', { id: 'id123', name: 'New' });
 
       const log = model.getCachedEntry('log1', 'logs');
       expect(log).toBeDefined();
@@ -354,8 +359,8 @@ describe('FirebaseDBModel', () => {
         'add',
         'items',
         'id123',
-        {id: 'id123', name: 'New'},
-        'insert failed'
+        { id: 'id123', name: 'New' },
+        'insert failed',
       );
 
       expect(model['_logFailCount']).toBeGreaterThan(0);
@@ -367,7 +372,7 @@ describe('FirebaseDBModel', () => {
         id: 'log-add',
       } as DocumentReference);
 
-      await model.log('add', 'items', 'id123', {id: 'id123', name: 'Fresh'});
+      await model.log('add', 'items', 'id123', { id: 'id123', name: 'Fresh' });
 
       expect(spy).not.toHaveBeenCalled();
     });
@@ -383,7 +388,7 @@ describe('FirebaseDBModel', () => {
       const mockCollectionSpy = vi.mocked(collection);
 
       vi.mocked(writeBatch).mockReturnValue(mockWriteBatch as never);
-      mockDocSpy.mockImplementation(() => ({id: 'auto123'}) as never);
+      mockDocSpy.mockImplementation(() => ({ id: 'auto123' }) as never);
       mockCollectionSpy.mockReturnValue({} as never);
 
       const items = [

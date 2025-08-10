@@ -1,9 +1,9 @@
-import {useSearchParams} from 'react-router-dom';
-import {useContext, useEffect, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {PrintableDataProps} from '../utils/print.tsx';
-import {getPrintableData} from '../utils/printViewHandler.ts';
+import { useSearchParams } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type { PrintableDataProps } from '../utils/print.tsx';
+import { getPrintableData } from '../utils/printViewHandler.ts';
 import PrintableVersionFrame from '../components/modals/PrintableVersionFrame.tsx';
 
 function Print() {
@@ -13,10 +13,10 @@ function Print() {
   const print = searchParams.get('print') === 'true';
 
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [printViewData, setPrintViewData] = useState<PrintableDataProps | null>(
-    null
+    null,
   );
 
   useEffect(() => {

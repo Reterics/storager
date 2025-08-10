@@ -1,5 +1,5 @@
 // Open or create the database
-import {CommonCollectionData, TTLData} from '../interfaces/firebase.ts';
+import type { CommonCollectionData, TTLData } from '../interfaces/firebase.ts';
 
 const storageDBName = import.meta.env.VITE_INDEXED_DB || 'storagerDB';
 
@@ -56,7 +56,7 @@ export function openDatabase(): Promise<IDBDatabase> {
 // Save data to IndexedDB
 export async function saveToIndexedDB(
   key: string,
-  data: CommonCollectionData[] | TTLData
+  data: CommonCollectionData[] | TTLData,
 ) {
   const db = await openDatabase();
   return await new Promise<void>((resolve, reject) => {
@@ -77,18 +77,18 @@ export async function saveToIndexedDB(
             console.error(
               'Error storing item:',
               (event.target as IDBRequest).error,
-              item
+              item,
             );
             // Optionally handle individual item errors
           };
         });
       } else if (data) {
-        const request = store.put({...data, key: key});
+        const request = store.put({ ...data, key: key });
 
         request.onerror = function (event) {
           console.error(
             'Error storing item:',
-            (event.target as IDBRequest).error
+            (event.target as IDBRequest).error,
           );
           // Optionally handle individual item errors
         };

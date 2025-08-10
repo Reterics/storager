@@ -1,19 +1,28 @@
-import {useContext, useEffect, useMemo, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {DBContext} from '../../database/DBContext.ts';
-import {PageHead} from '../../components/elements/PageHead.tsx';
-import TableViewComponent, {TableViewActions} from '../../components/elements/TableViewComponent.tsx';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DBContext } from '../../database/DBContext.ts';
+import { PageHead } from '../../components/elements/PageHead.tsx';
+import TableViewComponent, {
+  TableViewActions,
+} from '../../components/elements/TableViewComponent.tsx';
 import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 import StyledSelect from '../../components/elements/StyledSelect.tsx';
 import StyledInput from '../../components/elements/StyledInput.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {StyledSelectOption, Transaction} from '../../interfaces/interfaces.ts';
-import {documentTypes, paymentMethods, transactionTypes} from '../../interfaces/constants.ts';
-import {formatCurrency} from '../../utils/data.ts';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import type {
+  StyledSelectOption,
+  Transaction,
+} from '../../interfaces/interfaces.ts';
+import {
+  documentTypes,
+  paymentMethods,
+  transactionTypes,
+} from '../../interfaces/constants.ts';
+import { formatCurrency } from '../../utils/data.ts';
 import TransactionModal from '../../components/modals/TransactionModal.tsx';
 
 export default function TransactionsPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dbContext = useContext(DBContext);
 
   const [tableLimits, setTableLimits] = useState<number>(100);
@@ -24,7 +33,7 @@ export default function TransactionsPage() {
   const [dateTo, setDateTo] = useState<string>('');
 
   const [transactions, setTransactions] = useState<Transaction[]>(
-    (dbContext?.data.transactions || []).slice()
+    (dbContext?.data.transactions || []).slice(),
   );
 
   const usersOptions: StyledSelectOption[] = useMemo(
@@ -33,7 +42,7 @@ export default function TransactionsPage() {
         name: u.email || u.username || u.id,
         value: u.email || u.username || u.id || '',
       })),
-    [dbContext?.data.users]
+    [dbContext?.data.users],
   );
   const [userFilter, setUserFilter] = useState<string>('');
 
@@ -43,7 +52,7 @@ export default function TransactionsPage() {
     // shop filter maps shop name to id like legacy
     if (shopFilter) {
       const filteredShopId = (dbContext?.data.shops || []).find(
-        (s) => s.name === shopFilter
+        (s) => s.name === shopFilter,
       )?.id;
       if (filteredShopId) {
         items = items.filter((it) => it.shop_id?.includes?.(filteredShopId));
@@ -74,7 +83,16 @@ export default function TransactionsPage() {
 
     items.sort((a, b) => (b.docUpdated ?? 0) - (a.docUpdated ?? 0));
     setTransactions(items);
-  }, [shopFilter, searchFilter, userFilter, typeFilter, dateFrom, dateTo, dbContext?.data.transactions, dbContext?.data.shops]);
+  }, [
+    shopFilter,
+    searchFilter,
+    userFilter,
+    typeFilter,
+    dateFrom,
+    dateTo,
+    dbContext?.data.transactions,
+    dbContext?.data.shops,
+  ]);
 
   const [modalTemplate, setModalTemplate] = useState<Transaction | null>(null);
 
@@ -98,7 +116,10 @@ export default function TransactionsPage() {
     TableViewActions({
       onEdit: () => setModalTemplate(tr),
       onRemove: async () => {
-        if (tr.id && window.confirm(t('Are you sure you wish to delete this Transaction?'))) {
+        if (
+          tr.id &&
+          window.confirm(t('Are you sure you wish to delete this Transaction?'))
+        ) {
           await dbContext?.removeData('transactions', tr.id);
           await dbContext?.refreshData('transactions');
         }
@@ -120,7 +141,9 @@ export default function TransactionsPage() {
                     ? null
                     : ({
                         id: '',
-                        user: dbContext?.data.currentUser?.email || dbContext?.data.currentUser?.id,
+                        user:
+                          dbContext?.data.currentUser?.email ||
+                          dbContext?.data.currentUser?.id,
                         item_type: 'part',
                         payment_method: paymentMethods[0].value as 'card',
                         document_type: documentTypes[0].value as 'invoice',
@@ -130,7 +153,7 @@ export default function TransactionsPage() {
                         gross_amount: 0,
                         quantity: 0,
                         name: '',
-                      } as Transaction)
+                      } as Transaction),
                 ),
             },
           ]}
@@ -140,43 +163,49 @@ export default function TransactionsPage() {
           shopFilter={shopFilter}
           setShopFilter={(v: string) => setShopFilter(v || undefined)}
         >
-          <div className='flex gap-2 items-center flex-wrap'>
-            <div className='w-30 select-no-first'>
+          <div className="flex gap-2 items-center flex-wrap">
+            <div className="w-30 select-no-first">
               <StyledSelect
-                options={[
-                  {name: t('All users'), value: ''},
-                  ...usersOptions,
-                ]}
-                name='user'
+                options={[{ name: t('All users'), value: '' }, ...usersOptions]}
+                name="user"
                 value={userFilter || ''}
                 defaultLabel={t('All users')}
-                onSelect={(e) => setUserFilter((e.target as HTMLSelectElement).value)}
+                onSelect={(e) =>
+                  setUserFilter((e.target as HTMLSelectElement).value)
+                }
                 label={false}
                 compact={true}
               />
             </div>
-            <div className='w-30 select-no-first'>
+            <div className="w-30 select-no-first">
               <StyledSelect
                 options={[
-                  {name: t('All types'), value: ''},
-                  ...transactionTypes.map((tOpt) => ({name: t(tOpt.name), value: tOpt.value})),
+                  { name: t('All types'), value: '' },
+                  ...transactionTypes.map((tOpt) => ({
+                    name: t(tOpt.name),
+                    value: tOpt.value,
+                  })),
                 ]}
-                name='type'
+                name="type"
                 value={typeFilter || ''}
                 defaultLabel={t('All types')}
-                onSelect={(e) => setTypeFilter((e.target as HTMLSelectElement).value || undefined)}
+                onSelect={(e) =>
+                  setTypeFilter(
+                    (e.target as HTMLSelectElement).value || undefined,
+                  )
+                }
                 label={false}
                 compact={true}
               />
             </div>
             <StyledInput
-              type='date'
+              type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
               label={t('From')}
             />
             <StyledInput
-              type='date'
+              type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
               label={t('To')}
@@ -185,7 +214,7 @@ export default function TransactionsPage() {
         </PageHead>
       )}
 
-      <div className='mb-2 mt-1' />
+      <div className="mb-2 mt-1" />
 
       <TableViewComponent
         lines={tableLines}
@@ -205,7 +234,7 @@ export default function TransactionsPage() {
         ]}
       />
 
-      <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
         <TransactionModal
           onClose={() => setModalTemplate(null)}
           onSave={async (item: Transaction) => {

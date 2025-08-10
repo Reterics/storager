@@ -1,5 +1,5 @@
-import {beforeAll, describe, expect, it, vi} from 'vitest';
-import {fireEvent, render, waitFor, screen} from '@testing-library/react';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, waitFor, screen } from '@testing-library/react';
 import TestingPageProvider from '../../tests/mocks/TestingPageProvider.tsx';
 import * as ModalExporter from '../components/modalExporter.ts';
 vi.mock('../components/modalExporter.ts', () => ({
@@ -21,17 +21,17 @@ import {
   defaultParts,
   defaultShop,
 } from '../../tests/mocks/shopData.ts';
-import {ContextDataCollectionType} from '../interfaces/firebase.ts';
+import type { ContextDataCollectionType } from '../interfaces/firebase.ts';
 
 describe('Parts', () => {
   beforeAll(() => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
   });
   it('opens and closes the modal on add and edit actions', async () => {
-    const {getAllByRole, getByText, getByTestId} = render(
+    const { getAllByRole, getByText, getByTestId } = render(
       <TestingPageProvider>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     // Click the "Add" button to open the modal
@@ -43,7 +43,7 @@ describe('Parts', () => {
 
     // Close the modal
     const closeButton = getAllByRole('button').find(
-      (b) => b.innerHTML === 'Cancel'
+      (b) => b.innerHTML === 'Cancel',
     );
 
     if (closeButton) fireEvent.click(closeButton);
@@ -51,15 +51,15 @@ describe('Parts', () => {
     // Expect the modal to be closed
 
     await waitFor(() =>
-      expect(screen.queryByText('Edit Item')).not.toBeInTheDocument()
+      expect(screen.queryByText('Edit Item')).not.toBeInTheDocument(),
     );
   });
 
   it('filters parts based on search input', async () => {
-    const {container, getByPlaceholderText, unmount} = render(
+    const { container, getByPlaceholderText, unmount } = render(
       <TestingPageProvider>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const searchInput = getByPlaceholderText('Search...') as HTMLInputElement;
@@ -72,8 +72,8 @@ describe('Parts', () => {
 
     await waitFor(() =>
       expect(
-        container.querySelectorAll('table > tbody > tr').length
-      ).toBeLessThan(defaultParts.length)
+        container.querySelectorAll('table > tbody > tr').length,
+      ).toBeLessThan(defaultParts.length),
     );
     let filteredItems = container.querySelectorAll('table > tbody > tr');
 
@@ -87,8 +87,8 @@ describe('Parts', () => {
     fireEvent.keyDown(searchInput);
     await waitFor(() =>
       expect(container.querySelectorAll('table > tbody > tr').length).toEqual(
-        defaultParts.length
-      )
+        defaultParts.length,
+      ),
     );
     filteredItems = container.querySelectorAll('table > tbody > tr');
     expect(filteredItems[0].children[2].innerHTML).toContain('Part');
@@ -96,12 +96,12 @@ describe('Parts', () => {
   });
 
   it('displays a low storage warning alert', () => {
-    const ctxDataOverride = {...defaultContextData};
-    ctxDataOverride.parts[0] = {...defaultParts[0], storage: [0]}; // Low storage part
-    const {getByText, unmount} = render(
+    const ctxDataOverride = { ...defaultContextData };
+    ctxDataOverride.parts[0] = { ...defaultParts[0], storage: [0] }; // Low storage part
+    const { getByText, unmount } = render(
       <TestingPageProvider ctxDataOverride={ctxDataOverride}>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     // Expect the warning to be displayed
@@ -113,10 +113,10 @@ describe('Parts', () => {
 
   it('deletes a parts upon confirmation', async () => {
     const removeData = vi.fn(
-      async (): Promise<ContextDataCollectionType | null> => [defaultParts[0]]
+      async (): Promise<ContextDataCollectionType | null> => [defaultParts[0]],
     );
     const setData = vi.fn(
-      async (): Promise<ContextDataCollectionType | null> => [defaultParts[1]]
+      async (): Promise<ContextDataCollectionType | null> => [defaultParts[1]],
     );
 
     const multiShopPart = {
@@ -130,18 +130,18 @@ describe('Parts', () => {
     const ctxDataOverride = {
       ...defaultContextData,
       parts: [multiShopPart, defaultParts[1]],
-      shops: [defaultShop, {id: 'shop2', name: 'Another Shop'}],
+      shops: [defaultShop, { id: 'shop2', name: 'Another Shop' }],
       currentUser: defaultContextData.currentUser,
     };
 
-    const {container, unmount} = render(
+    const { container, unmount } = render(
       <TestingPageProvider
         removeData={removeData}
         setData={setData}
         ctxDataOverride={ctxDataOverride}
       >
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
     const trList = container.querySelectorAll('table > tbody > tr');
     expect(trList.length).toBe(defaultContextData.parts.length);
@@ -154,7 +154,7 @@ describe('Parts', () => {
     await waitFor(() => expect(removeData).not.toHaveBeenCalled());
 
     deleteButton = container.querySelector(
-      'table > tbody > tr button:last-child'
+      'table > tbody > tr button:last-child',
     );
     if (deleteButton) fireEvent.click(deleteButton);
     await waitFor(() => expect(removeData).toHaveBeenCalled());
@@ -165,7 +165,7 @@ describe('Parts', () => {
     const renderResult = render(
       <TestingPageProvider>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const trList =
@@ -179,13 +179,13 @@ describe('Parts', () => {
     renderResult.unmount();
   });
   it('renders the Parts page with proper ordering', () => {
-    const ctxDataOverride = {...defaultContextData};
-    ctxDataOverride.parts[0] = {...defaultParts[0], storage: [1000]};
-    ctxDataOverride.parts[1] = {...defaultParts[1], storage: [0]};
+    const ctxDataOverride = { ...defaultContextData };
+    ctxDataOverride.parts[0] = { ...defaultParts[0], storage: [1000] };
+    ctxDataOverride.parts[1] = { ...defaultParts[1], storage: [0] };
     const renderResult = render(
       <TestingPageProvider ctxDataOverride={ctxDataOverride}>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const trList =
@@ -194,10 +194,10 @@ describe('Parts', () => {
     expect(trList.length).toEqual(ctxDataOverride.parts.length);
 
     expect(trList[0].children[1].innerHTML).toEqual(
-      ctxDataOverride.parts[1].sku
+      ctxDataOverride.parts[1].sku,
     );
     expect(trList[1].children[1].innerHTML).toEqual(
-      ctxDataOverride.parts[0].sku
+      ctxDataOverride.parts[0].sku,
     );
 
     renderResult.unmount();
@@ -207,24 +207,24 @@ describe('Parts', () => {
     render(
       <TestingPageProvider setData={setData}>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const laborFeeInput = screen.getByTestId('laborFee') as HTMLInputElement;
     const laborFeeButton = screen.getByTestId('laborFeeButton');
 
-    fireEvent.change(laborFeeInput, {target: {value: '1270'}});
+    fireEvent.change(laborFeeInput, { target: { value: '1270' } });
     fireEvent.click(laborFeeButton);
 
     await waitFor(() =>
-      expect(setData).toHaveBeenCalledWith('transactions', expect.any(Object))
+      expect(setData).toHaveBeenCalledWith('transactions', expect.any(Object)),
     );
   });
   it('opens and closes inventory modal', async () => {
-    const {getByTestId, queryByTestId} = render(
+    const { getByTestId, queryByTestId } = render(
       <TestingPageProvider>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const inventoryButton = getByTestId('inventoryButton');
@@ -243,10 +243,10 @@ describe('Parts', () => {
   });
   it('edits a part directly from table edit', async () => {
     const setData = vi.fn();
-    const {container} = render(
+    const { container } = render(
       <TestingPageProvider setData={setData}>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const editableCells = container.querySelectorAll('td > div');
@@ -255,25 +255,25 @@ describe('Parts', () => {
 
       const input = await waitFor(() => container.querySelector('td input'));
 
-      fireEvent.change(input!, {target: {value: 'Changed'}});
-      fireEvent.keyDown(input!, {key: 'Enter', code: 'Enter'});
+      fireEvent.change(input!, { target: { value: 'Changed' } });
+      fireEvent.keyDown(input!, { key: 'Enter', code: 'Enter' });
     }
 
     await waitFor(() => expect(setData).toHaveBeenCalled());
   });
   it('handles inventoryData cancels correctly', async () => {
     const setData = vi.fn();
-    const {queryByTestId, container, getByTestId} = render(
+    const { queryByTestId, container, getByTestId } = render(
       <TestingPageProvider setData={setData}>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const inventoryButton = getByTestId('inventoryButton');
     fireEvent.click(inventoryButton);
 
     await waitFor(() =>
-      expect(getByTestId('InventoryModal')).toBeInTheDocument()
+      expect(getByTestId('InventoryModal')).toBeInTheDocument(),
     );
 
     const addButtons = container.querySelectorAll('.add-icon');
@@ -289,16 +289,16 @@ describe('Parts', () => {
   it('shows validation popup for invalid labor fee', async () => {
     const popupSpy = vi.spyOn(ModalExporter, 'popup').mockResolvedValue(false);
 
-    const {getByTestId} = render(
+    const { getByTestId } = render(
       <TestingPageProvider>
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const laborFeeInput = getByTestId('laborFee');
     const laborFeeButton = getByTestId('laborFeeButton');
 
-    fireEvent.change(laborFeeInput, {target: {value: ''}});
+    fireEvent.change(laborFeeInput, { target: { value: '' } });
     fireEvent.click(laborFeeButton);
 
     await waitFor(() => {
@@ -310,13 +310,13 @@ describe('Parts', () => {
     const setData = vi.fn(async () => []);
     const refreshImagePointers = vi.fn();
 
-    const {getByTestId, getByText, queryByText} = render(
+    const { getByTestId, getByText, queryByText } = render(
       <TestingPageProvider
         setData={setData}
         refreshImagePointers={refreshImagePointers}
       >
         <Parts />
-      </TestingPageProvider>
+      </TestingPageProvider>,
     );
 
     const addButton = getByTestId('addButton');

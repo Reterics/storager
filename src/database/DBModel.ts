@@ -1,9 +1,9 @@
-import {
+import type {
   CommonCollectionData,
   KVCollectionStore,
   TTLData,
 } from '../interfaces/firebase.ts';
-import {loadFromIndexedDB, saveToIndexedDB} from '../utils/indexedDB.ts';
+import { loadFromIndexedDB, saveToIndexedDB } from '../utils/indexedDB.ts';
 
 export default abstract class DBModel {
   protected _cache: KVCollectionStore;
@@ -11,7 +11,7 @@ export default abstract class DBModel {
   protected _mtime: TTLData;
   protected _timeout: NodeJS.Timeout | undefined;
 
-  protected constructor(options?: {ttl?: TTLData; mtime?: TTLData}) {
+  protected constructor(options?: { ttl?: TTLData; mtime?: TTLData }) {
     this._cache = {};
     this._ttl = options && options.ttl ? options.ttl : {};
     this._mtime = options && options.mtime ? options.mtime : {};
@@ -25,13 +25,13 @@ export default abstract class DBModel {
         items: (await loadFromIndexedDB('items')) as CommonCollectionData[],
         parts: (await loadFromIndexedDB('parts')) as CommonCollectionData[],
         services: (await loadFromIndexedDB(
-          'services'
+          'services',
         )) as CommonCollectionData[],
         completions: (await loadFromIndexedDB(
-          'completions'
+          'completions',
         )) as CommonCollectionData[],
         settings: (await loadFromIndexedDB(
-          'settings'
+          'settings',
         )) as CommonCollectionData[],
         users: (await loadFromIndexedDB('users')) as CommonCollectionData[],
         archive: (await loadFromIndexedDB('archive')) as CommonCollectionData[],
@@ -39,7 +39,7 @@ export default abstract class DBModel {
         deleted: (await loadFromIndexedDB('deleted')) as CommonCollectionData[],
         leases: (await loadFromIndexedDB('leases')) as CommonCollectionData[],
         leaseCompletions: (await loadFromIndexedDB(
-          'leaseCompletions'
+          'leaseCompletions',
         )) as CommonCollectionData[],
       };
       ttl = (await loadFromIndexedDB('ttl')) as TTLData;
@@ -74,7 +74,7 @@ export default abstract class DBModel {
       await saveToIndexedDB('leases', this._cache['leases']);
       await saveToIndexedDB(
         'leaseCompletions',
-        this._cache['leaseCompletions']
+        this._cache['leaseCompletions'],
       );
       await saveToIndexedDB('ttl', this._ttl);
       await saveToIndexedDB('mtime', this._mtime);
@@ -141,7 +141,7 @@ export default abstract class DBModel {
     if (cachedEntryIndex !== -1) {
       this._cache[table][cachedEntryIndex] = Object.assign(
         this._cache[table][cachedEntryIndex],
-        data
+        data,
       );
     } else {
       if (!this._cache[table]) {

@@ -1,10 +1,11 @@
-import {ChangeEvent, useContext, useEffect, useMemo, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {BsClipboard2PlusFill, BsFillPlusCircleFill} from 'react-icons/bs';
-import {ShopContext} from '../store/ShopContext.tsx';
-import {
+import type { ChangeEvent } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import { BsClipboard2PlusFill, BsFillPlusCircleFill } from 'react-icons/bs';
+import { ShopContext } from '../store/ShopContext.tsx';
+import type {
   InventoryModalData,
   Shop,
   StorePart,
@@ -14,18 +15,18 @@ import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import PartModal from '../components/modals/PartModal.tsx';
-import {extractStorageInfo, sortItemsByWarn} from '../utils/storage.ts';
-import {changeStoreType} from '../utils/events.ts';
-import {storeTableKeyOrder} from '../interfaces/constants.ts';
+import { extractStorageInfo, sortItemsByWarn } from '../utils/storage.ts';
+import { changeStoreType } from '../utils/events.ts';
+import { storeTableKeyOrder } from '../interfaces/constants.ts';
 import InventoryModal from '../components/modals/InventoryModal.tsx';
 
-import {confirm} from '../components/modalExporter.ts';
+import { confirm } from '../components/modalExporter.ts';
 import LaborFeeInput from '../components/elements/LaborFeeInput.tsx';
 
 function Parts() {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [tableLimits, setTableLimits] = useState<number>(100);
   const selectedShopId = shopContext.shop?.id as string;
@@ -40,18 +41,18 @@ function Parts() {
     return items.filter(
       (item) =>
         item.name?.toLowerCase().includes(lowerCaseFilter) ||
-        item.sku?.toLowerCase().includes(lowerCaseFilter)
+        item.sku?.toLowerCase().includes(lowerCaseFilter),
     );
   };
 
   const [allParts, setAllParts] = useState<StorePart[]>([]);
   const warnings = useMemo(
     () => sortItemsByWarn(allParts, selectedShopId),
-    [allParts, selectedShopId]
+    [allParts, selectedShopId],
   );
   const parts = useMemo(
     () => filterItems(allParts, searchFilter),
-    [allParts, searchFilter]
+    [allParts, searchFilter],
   );
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
@@ -61,7 +62,7 @@ function Parts() {
 
   const [modalTemplate, setModalTemplate] = useState<StorePart | null>(null);
   const [inventoryData, setInventoryData] = useState<InventoryModalData | null>(
-    null
+    null,
   );
 
   const typeOptions: StyledSelectOption[] = useMemo(
@@ -70,7 +71,7 @@ function Parts() {
         name: key.name || '',
         value: key.id,
       })),
-    [shops]
+    [shops],
   );
 
   useEffect(() => {
@@ -78,7 +79,7 @@ function Parts() {
     if (!selectedShopId) return;
 
     const updatedParts = (dbContext?.data.parts || []).filter((item) =>
-      item.shop_id?.includes(selectedShopId)
+      item.shop_id?.includes(selectedShopId),
     );
 
     setAllParts(updatedParts);
@@ -101,17 +102,17 @@ function Parts() {
         item.price?.splice(indexToRemove, 1);
         updatedItems = (await dbContext?.setData(
           'parts',
-          item as StorePart
+          item as StorePart,
         )) as StorePart[];
       } else {
         updatedItems = (await dbContext?.removeData(
           'parts',
-          item.id
+          item.id,
         )) as StorePart[];
       }
       if (shopContext.shop) {
         updatedItems = (updatedItems as StorePart[]).filter((item) =>
-          item.shop_id?.includes(selectedShopId)
+          item.shop_id?.includes(selectedShopId),
         );
       }
       sortItemsByWarn(updatedItems, selectedShopId);
@@ -121,7 +122,7 @@ function Parts() {
   const closePart = async (item?: StorePart) => {
     let updatedParts = (await dbContext?.setData(
       'parts',
-      item as StorePart
+      item as StorePart,
     )) as StorePart[];
     if (item) {
       await dbContext?.refreshImagePointers([item]);
@@ -129,7 +130,7 @@ function Parts() {
 
     if (shopContext.shop) {
       updatedParts = (updatedParts as StorePart[]).filter((item) =>
-        item.shop_id?.includes(selectedShopId)
+        item.shop_id?.includes(selectedShopId),
       );
     }
     sortItemsByWarn(updatedParts, selectedShopId);
@@ -139,7 +140,7 @@ function Parts() {
   const changeTableElement = (
     id: string,
     col: string | number,
-    value: unknown
+    value: unknown,
   ) => {
     const key = storeTableKeyOrder[col as number] as keyof StorePart;
     const item = parts.find((p) => p.id === id);
@@ -152,7 +153,7 @@ function Parts() {
         } as ChangeEvent<HTMLInputElement>,
         key,
         item,
-        selectedShopId
+        selectedShopId,
       ) || item) as StorePart;
       dbContext?.setData('parts', {
         id: item.id,
@@ -166,7 +167,7 @@ function Parts() {
 
     const array = [
       item.image ? (
-        <img src={item.image} width='40' alt='image for item' />
+        <img src={item.image} width="40" alt="image for item" />
       ) : (
         ''
       ),
@@ -200,7 +201,7 @@ function Parts() {
                 storage: [1],
                 storage_limit: [5],
                 price: [0],
-              }
+              },
         ),
       testId: 'addButton',
     },
@@ -209,7 +210,7 @@ function Parts() {
   if (dbContext?.data.settings?.enableTransactions) {
     headButtons.unshift({
       value: (
-        <div className='flex items-center gap-1 h-3.5'>
+        <div className="flex items-center gap-1 h-3.5">
           <BsClipboard2PlusFill /> {t('Inventory')}
         </div>
       ),
@@ -219,7 +220,7 @@ function Parts() {
             ? null
             : {
                 selectedItems: [],
-              }
+              },
         ),
       testId: 'inventoryButton',
     });
@@ -237,7 +238,7 @@ function Parts() {
       >
         {dbContext?.data.settings?.enableTransactions && <LaborFeeInput />}
       </PageHead>
-      <div className='mb-2 mt-1' />
+      <div className="mb-2 mt-1" />
 
       <TableViewComponent
         lines={tableLines}
@@ -281,12 +282,12 @@ function Parts() {
       />
 
       {!tableLines.length && !allParts.length && (
-        <div className='text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 p-2 max-w-screen-xl w-full shadow-md self-center'>
+        <div className="text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 p-2 max-w-screen-xl w-full shadow-md self-center">
           {t('There is no parts in selected shop: ') + shopContext.shop?.name}
         </div>
       )}
 
-      <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
         <PartModal
           onClose={() => setModalTemplate(null)}
           onSave={(item: StorePart) => closePart(item)}
@@ -312,7 +313,7 @@ function Parts() {
                     } as unknown as ChangeEvent<HTMLInputElement>,
                     'storage',
                     item,
-                    selectedShopId
+                    selectedShopId,
                   ) || item) as StorePart;
                   dbContext?.setData('parts', {
                     id: item.id,

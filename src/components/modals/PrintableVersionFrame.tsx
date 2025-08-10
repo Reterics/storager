@@ -1,17 +1,17 @@
-import {
+import type {
   GeneralModalButtons,
   PrintableModalInput,
 } from '../../interfaces/interfaces.ts';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import PrintablePaper from '../elements/PrintablePaper.tsx';
-import {useEffect, useRef} from 'react';
-import {downloadElementAsPDF} from '../../utils/printViewHandler.ts';
+import { useEffect, useRef } from 'react';
+import { downloadElementAsPDF } from '../../utils/printViewHandler.ts';
 
 export default function PrintableVersionFrame({
   onClose,
   formData,
 }: Readonly<PrintableModalInput>) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -66,15 +66,15 @@ export default function PrintableVersionFrame({
 
   return (
     <div
-      id='printable-modal'
-      className='flex justify-center items-center flex-col w-full max-w-[95vw] sm:min-w-[640px] mx-auto'
-      style={{zIndex: 999}}
+      id="printable-modal"
+      className="flex justify-center items-center flex-col w-full max-w-[95vw] sm:min-w-[640px] mx-auto"
+      style={{ zIndex: 999 }}
     >
-      <div className='flex justify-between mb-2 min-w-60 no-print'>
+      <div className="flex justify-between mb-2 min-w-60 no-print">
         {(buttons || []).map((button, index) => (
           <button
             key={'print_top_' + index}
-            type='button'
+            type="button"
             className={
               button.primary ? buttonClasses.primary : buttonClasses.default
             }
@@ -88,7 +88,7 @@ export default function PrintableVersionFrame({
         className={
           'text-gray-900 w-full sm:w-[210mm] min-h-[297mm] bg-white box-border'
         }
-        style={{paddingTop: '20mm', background: 'white'}}
+        style={{ paddingTop: '20mm', background: 'white' }}
       >
         <PrintablePaper data={formData.data} ref={printRef}>
           {formData.signature && (
@@ -96,10 +96,10 @@ export default function PrintableVersionFrame({
           )}
         </PrintablePaper>
       </div>
-      <div className='flex justify-between mt-2 min-w-60 no-print'>
+      <div className="flex justify-between mt-2 min-w-60 no-print">
         {(buttons || []).map((button, index) => (
           <button
-            type='button'
+            type="button"
             key={'print_bottom_' + index}
             className={
               button.primary ? buttonClasses.primary : buttonClasses.default

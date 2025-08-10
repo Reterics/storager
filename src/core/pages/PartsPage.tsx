@@ -1,22 +1,22 @@
-import {useTranslation} from 'react-i18next';
-import {ChangeEvent, useMemo, useState} from 'react';
-import {useContext} from 'react';
-import {
+import { useTranslation } from 'react-i18next';
+import type { ChangeEvent } from 'react';
+import { useMemo, useState } from 'react';
+import { useContext } from 'react';
+import type {
   InventoryModalData,
   StorePart,
   StyledSelectOption,
 } from '../../interfaces/interfaces';
-import {DBContext} from '../../database/DBContext.ts';
-import FirebaseCrudManager, {
-  CrudField,
-} from '../components/FirebaseCrudManager.tsx';
-import {BsClipboard2PlusFill} from 'react-icons/bs';
-import {ShopContext} from '../../store/ShopContext.tsx';
+import { DBContext } from '../../database/DBContext.ts';
+import type { CrudField } from '../components/FirebaseCrudManager.tsx';
+import FirebaseCrudManager from '../components/FirebaseCrudManager.tsx';
+import { BsClipboard2PlusFill } from 'react-icons/bs';
+import { ShopContext } from '../../store/ShopContext.tsx';
 import InventoryModal from '../../components/modals/InventoryModal.tsx';
-import {extractStorageInfo} from '../../utils/storage.ts';
-import {changeStoreType} from '../../utils/events.ts';
+import { extractStorageInfo } from '../../utils/storage.ts';
+import { changeStoreType } from '../../utils/events.ts';
 import LaborFeeInput from '../../components/elements/LaborFeeInput.tsx';
-import {toSelectOptions} from '../../utils/data.ts';
+import { toSelectOptions } from '../../utils/data.ts';
 
 export default function PartsPage() {
   const dbContext = useContext(DBContext);
@@ -24,28 +24,28 @@ export default function PartsPage() {
   const selectedShopId = shopContext.shop?.id as string;
   const entities = dbContext?.data.parts || [];
 
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
   const [inventoryData, setInventoryData] = useState<InventoryModalData | null>(
-    null
+    null,
   );
 
   const shopOptions: StyledSelectOption[] = useMemo(
     () => toSelectOptions(dbContext?.data?.shops || []),
-    [dbContext?.data?.shops]
+    [dbContext?.data?.shops],
   );
 
   const typeOptions = useMemo(
     () => dbContext?.getType('item', i18n.language as 'hu' | 'en') || [],
-    [dbContext, i18n.language]
+    [dbContext, i18n.language],
   );
 
   const fields: CrudField[] = useMemo(
     () => [
-      {key: 'image', label: t('Image'), type: 'image', editable: false},
-      {key: 'sku', label: t('SKU'), type: 'text', editable: true},
-      {key: 'name', label: t('Name'), type: 'text', editable: true},
-      {key: 'storage', label: t('Storage'), type: 'number', editable: true},
-      {key: 'price', label: t('Price'), type: 'number', editable: true},
+      { key: 'image', label: t('Image'), type: 'image', editable: false },
+      { key: 'sku', label: t('SKU'), type: 'text', editable: true },
+      { key: 'name', label: t('Name'), type: 'text', editable: true },
+      { key: 'storage', label: t('Storage'), type: 'number', editable: true },
+      { key: 'price', label: t('Price'), type: 'number', editable: true },
       {
         key: 'shop_id',
         label: t('Shop'),
@@ -91,7 +91,7 @@ export default function PartsPage() {
         visible: false,
       },
     ],
-    [t, shopOptions, typeOptions]
+    [t, shopOptions, typeOptions],
   );
 
   const extraButtons = dbContext?.data.settings?.enableTransactions
@@ -104,7 +104,7 @@ export default function PartsPage() {
                 ? null
                 : {
                     selectedItems: [],
-                  }
+                  },
             ),
           testId: 'inventoryButton',
         },
@@ -114,7 +114,7 @@ export default function PartsPage() {
   return (
     <>
       <FirebaseCrudManager
-        entityType='parts'
+        entityType="parts"
         title={t('Parts')}
         fields={fields}
         extraButtons={extraButtons}
@@ -138,7 +138,7 @@ export default function PartsPage() {
                   } as unknown as ChangeEvent<HTMLInputElement>,
                   'storage',
                   item,
-                  selectedShopId
+                  selectedShopId,
                 ) || item) as StorePart;
                 dbContext?.setData('parts', {
                   id: item.id,

@@ -1,21 +1,25 @@
-import {useContext, useState} from 'react';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {useTranslation} from 'react-i18next';
-import {DBContext} from '../database/DBContext.ts';
-import {ShopContext} from '../store/ShopContext.tsx';
-import {Shop, StyledSelectOption, UserData} from '../interfaces/interfaces.ts';
+import { useContext, useState } from 'react';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import { useTranslation } from 'react-i18next';
+import { DBContext } from '../database/DBContext.ts';
+import { ShopContext } from '../store/ShopContext.tsx';
+import type {
+  Shop,
+  StyledSelectOption,
+  UserData,
+} from '../interfaces/interfaces.ts';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import UserModal from '../components/modals/UserModal.tsx';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
-import {userRoleOptions} from '../interfaces/constants.ts';
+import { userRoleOptions } from '../interfaces/constants.ts';
 
 function UsersPage() {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
   const [users, setUsers] = useState<UserData[]>(dbContext?.data.users || []);
@@ -32,7 +36,7 @@ function UsersPage() {
     if (
       item.id &&
       window.confirm(
-        t('Are you sure you wish to revoke all of the rights from the User?')
+        t('Are you sure you wish to revoke all of the rights from the User?'),
       )
     ) {
       setUsers((await dbContext?.removeData('users', item.id)) as UserData[]);
@@ -56,7 +60,7 @@ function UsersPage() {
       assignedShops = item.shop_id
         ? [
             shops.find(
-              (shop) => shop.id === (item.shop_id as unknown as string)
+              (shop) => shop.id === (item.shop_id as unknown as string),
             ) as Shop,
           ]
         : null;
@@ -94,7 +98,7 @@ function UsersPage() {
                   : {
                       id: '',
                       shop_id: [shopContext.shop?.id as string],
-                    }
+                    },
               ),
             testId: 'addButton',
           },
@@ -128,7 +132,7 @@ function UsersPage() {
         ]}
       />
 
-      <div className='flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto shadow-md sm:rounded-lg w-full m-auto mt-2 flex-1">
         <UserModal
           onClose={() => setModalTemplate(null)}
           onSave={(item: UserData) => saveUser(item)}

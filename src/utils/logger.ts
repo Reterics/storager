@@ -3,9 +3,9 @@ export default class STLogger {
   protected _syncTimeout: NodeJS.Timeout | undefined;
   protected _repeatTimeout: NodeJS.Timeout | undefined;
   _styles: {
-    INFO: {labelStyle: string; messageStyle: string};
-    WARN: {labelStyle: string; messageStyle: string};
-    ERROR: {labelStyle: string; messageStyle: string};
+    INFO: { labelStyle: string; messageStyle: string };
+    WARN: { labelStyle: string; messageStyle: string };
+    ERROR: { labelStyle: string; messageStyle: string };
   };
   private readonly _consoleLog: (...data: string[] | object[]) => void;
   private readonly _consoleError: (...data: string[] | object[]) => void;
@@ -47,7 +47,7 @@ export default class STLogger {
             padding: 10px 20px;
             border-radius: 5px;
             text-align: center;
-        `
+        `,
     );
 
     console.log = this.log.bind(this);
@@ -84,7 +84,7 @@ export default class STLogger {
     timestamp: string,
     type: 'INFO' | 'ERROR' | 'WARN',
     message: string,
-    callerInfo?: string
+    callerInfo?: string,
   ) {
     const style = this._styles[type];
 
@@ -96,7 +96,7 @@ export default class STLogger {
           }`,
           'color: gray; font-weight: bold;',
           style.labelStyle,
-          style.messageStyle
+          style.messageStyle,
         );
         break;
       case 'WARN':
@@ -104,7 +104,7 @@ export default class STLogger {
           `%c${timestamp} %c${type}%c ${message}`,
           'color: gray; font-weight: bold;',
           style.labelStyle,
-          style.messageStyle
+          style.messageStyle,
         );
         break;
       default:
@@ -112,7 +112,7 @@ export default class STLogger {
           `%c${timestamp} %c${callerInfo || ''}%c ${message} ${!callerInfo ? new Error().stack?.split('\n')[3] : ''}`,
           'color: gray; font-weight: bold;',
           style.labelStyle,
-          style.messageStyle
+          style.messageStyle,
         );
     }
   }
@@ -163,7 +163,7 @@ export default class STLogger {
     const timestamp = this.getTimestamp();
     const type = 'INFO';
     const sameWithLast = this.isSameWithLastN(
-      `${timestamp} ${type}: ${message}`
+      `${timestamp} ${type}: ${message}`,
     );
 
     this.appendLog(`${timestamp} ${type}: ${message}`);

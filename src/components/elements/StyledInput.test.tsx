@@ -1,7 +1,7 @@
-import {render, screen, fireEvent} from '@testing-library/react';
-import {vi, describe, beforeEach, it, expect} from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
 import StyledInput from './StyledInput';
-import {ChangeEvent} from 'react';
+import type { ChangeEvent } from 'react';
 
 describe('StyledInput', () => {
   const onChangeMock = vi.fn();
@@ -15,11 +15,11 @@ describe('StyledInput', () => {
   it('renders the label if provided', () => {
     render(
       <StyledInput
-        value=''
+        value=""
         onChange={onChangeMock}
-        name='test-input'
-        label='Test Label'
-      />
+        name="test-input"
+        label="Test Label"
+      />,
     );
 
     expect(screen.getByText('Test Label')).toBeInTheDocument();
@@ -28,22 +28,22 @@ describe('StyledInput', () => {
   it('renders with correct placeholder text', () => {
     render(
       <StyledInput
-        value=''
+        value=""
         onChange={onChangeMock}
-        name='test-input'
-        placeholder='Enter text here'
-      />
+        name="test-input"
+        placeholder="Enter text here"
+      />,
     );
 
     expect(screen.getByPlaceholderText('Enter text here')).toBeInTheDocument();
   });
 
   it('calls onChange when input value changes', () => {
-    render(<StyledInput value='' onChange={onChangeMock} name='test-input' />);
+    render(<StyledInput value="" onChange={onChangeMock} name="test-input" />);
 
     const inputElement = screen.getByRole('textbox');
-    fireEvent.change(inputElement, {target: {value: 'new value'}});
-    fireEvent.keyDown(inputElement, {target: {value: 'new value'}});
+    fireEvent.change(inputElement, { target: { value: 'new value' } });
+    fireEvent.keyDown(inputElement, { target: { value: 'new value' } });
 
     expect(onChangeMock).toHaveBeenCalled();
     expect(onChangeMock.mock.calls[0][0].target.value).toBe('new value');
@@ -52,18 +52,18 @@ describe('StyledInput', () => {
   it('calls onEnter when Enter key is pressed', () => {
     render(
       <StyledInput
-        value=''
+        value=""
         onChange={onChangeMock}
         onEnter={onEnterMock}
-        name='test-input'
-      />
+        name="test-input"
+      />,
     );
 
     const inputElement = screen.getByRole('textbox');
-    fireEvent.keyDown(inputElement, {key: 'A', code: 'KeyA'});
+    fireEvent.keyDown(inputElement, { key: 'A', code: 'KeyA' });
     expect(onEnterMock).not.toHaveBeenCalled();
 
-    fireEvent.keyDown(inputElement, {key: 'Enter', code: 'Enter'});
+    fireEvent.keyDown(inputElement, { key: 'Enter', code: 'Enter' });
     expect(onEnterMock).toHaveBeenCalled();
   });
 
@@ -73,24 +73,24 @@ describe('StyledInput', () => {
       .mockImplementation(() => {});
     const pattern = '^\\d{3}$'; // Accepts exactly 3 digits
 
-    const {rerender} = render(
+    const { rerender } = render(
       <StyledInput
-        value='abc'
+        value="abc"
         onChange={onChangeMock}
-        name='test-input'
+        name="test-input"
         pattern={pattern}
-      />
+      />,
     );
 
     let inputElement = screen.getByRole('textbox');
     fireEvent.blur(inputElement);
 
     expect(consoleWarnMock).toHaveBeenCalledWith(
-      'Value is not matching with ^\\d{3}$'
+      'Value is not matching with ^\\d{3}$',
     );
 
     rerender(
-      <StyledInput value='abc' onChange={onChangeMock} name='test-input' />
+      <StyledInput value="abc" onChange={onChangeMock} name="test-input" />,
     );
 
     consoleWarnMock.mockReset();
@@ -110,11 +110,11 @@ describe('StyledInput', () => {
 
     render(
       <StyledInput
-        value='123'
+        value="123"
         onChange={onChangeMock}
-        name='test-input'
+        name="test-input"
         pattern={pattern}
-      />
+      />,
     );
 
     const inputElement = screen.getByRole('textbox');
@@ -127,13 +127,13 @@ describe('StyledInput', () => {
   it("renders a textarea when type is 'textarea'", () => {
     render(
       <StyledInput
-        value=''
+        value=""
         onChange={
           onChangeMock as unknown as (e: ChangeEvent<HTMLInputElement>) => void
         }
-        name='test-textarea'
-        type='textarea'
-      />
+        name="test-textarea"
+        type="textarea"
+      />,
     );
 
     expect(screen.getByRole('textbox')).toBeInTheDocument();

@@ -1,22 +1,25 @@
-import {firebaseAuth, firebaseAuthError} from '../database/firebase/config.ts';
-import React, {createContext, useEffect, useState} from 'react';
 import {
+  firebaseAuth,
+  firebaseAuthError,
+} from '../database/firebase/config.ts';
+import React, { createContext, useEffect, useState } from 'react';
+import type {
   IAuth,
   LoginFormValues,
   UserFormValues,
 } from '../interfaces/interfaces.ts';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   SignIn,
   SignOut,
   SignUp,
 } from '../database/firebase/services/AuthService.ts';
-import {onAuthStateChanged, User} from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import PageLoading from '../components/PageLoading.tsx';
-import {FIREBASE_ERRORS} from './FirebaseErrors.ts';
+import { FIREBASE_ERRORS } from './FirebaseErrors.ts';
 import ScreenMessage from '../components/ScreenMessage.tsx';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<IAuth>({
   user: firebaseAuth?.currentUser,
   loading: false,
@@ -26,7 +29,7 @@ export const AuthContext = createContext<IAuth>({
   error: null,
 });
 
-const AuthProvider = ({children}: {children: React.ReactNode}) => {
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
@@ -41,11 +44,11 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
     setIsLoading(true);
     SignUp(credentials)
       .then(async (userCredential) => {
-        const {user} = userCredential; //object destructuring
+        const { user } = userCredential; //object destructuring
         if (user) {
           setCurrentUser(user);
           //redirect the user on the targeted route
-          navigate('/', {replace: true});
+          navigate('/', { replace: true });
         } else {
           setTranslatedError('auth/user-not-found');
         }
@@ -62,11 +65,11 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
     setIsLoading(true);
     SignIn(creds)
       .then((userCredential) => {
-        const {user} = userCredential;
+        const { user } = userCredential;
         if (user) {
           setCurrentUser(user);
           //redirect user to targeted route
-          navigate('/', {replace: true});
+          navigate('/', { replace: true });
         } else {
           setTranslatedError('auth/user-not-found');
         }
@@ -84,7 +87,7 @@ const AuthProvider = ({children}: {children: React.ReactNode}) => {
       await SignOut();
       setCurrentUser(null);
       setIsLoading(false);
-      navigate('/signin', {replace: true});
+      navigate('/signin', { replace: true });
     } catch (error) {
       setIsLoading(false);
       console.warn('Error happened during signing out, ', error);

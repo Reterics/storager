@@ -1,8 +1,12 @@
-import {User} from 'firebase/auth';
-import {ChangeEventHandler, MouseEventHandler, ReactEventHandler} from 'react';
-import {GeoPoint} from 'firebase/firestore';
-import {PDFData} from './pdf.ts';
-import {ContextDataType} from './firebase.ts';
+import type { User } from 'firebase/auth';
+import type {
+  ChangeEventHandler,
+  MouseEventHandler,
+  ReactEventHandler,
+} from 'react';
+import type { GeoPoint } from 'firebase/firestore';
+import type { PDFData } from './pdf.ts';
+import type { ContextDataType } from './firebase.ts';
 
 export type onClickReturn = void | false | Promise<void | false>;
 
@@ -90,13 +94,13 @@ export type TableViewHeader = (string | TableHead)[];
 export type TableOnChangeMethod = (
   index: number,
   key: string | number,
-  value: unknown
+  value: unknown,
 ) => void;
 
 export type TableOnEditMethod = (
   tableLine: TableLineType,
   key: string | number,
-  value: unknown
+  value: unknown,
 ) => void;
 
 export interface TableViewArguments extends TSXComponentArgument {
@@ -104,7 +108,7 @@ export interface TableViewArguments extends TSXComponentArgument {
   header?: TableViewHeader;
   onEdit?: TableOnEditMethod;
   onClick?: (index: number) => void;
-  selectedIndexes?: {[key: number]: boolean | undefined};
+  selectedIndexes?: { [key: number]: boolean | undefined };
   isHighlighted?:
     | ((line: TableLineType, index: number) => boolean)
     | boolean
@@ -531,7 +535,7 @@ export interface UserModalInput {
 
 export interface PrintableModalInput {
   onClose?: () => void;
-  formData: {data: PDFData; signature?: string; printNow?: boolean} | null;
+  formData: { data: PDFData; signature?: string; printNow?: boolean } | null;
 }
 
 export interface ListModalArguments {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function FormRow({children}: {children: React.ReactNode}) {
+export default function FormRow({ children }: { children: React.ReactNode }) {
   // Tailwind bug
   const supportedVariants = [
     'grid-cols-1 md:grid-cols-0 ',

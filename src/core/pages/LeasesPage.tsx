@@ -1,44 +1,30 @@
-import {useContext, useEffect, useMemo, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {DBContext} from '../../database/DBContext.ts';
-import {ShopContext} from '../../store/ShopContext.tsx';
-import {PageHead} from '../../components/elements/PageHead.tsx';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DBContext } from '../../database/DBContext.ts';
+import { ShopContext } from '../../store/ShopContext.tsx';
+import { PageHead } from '../../components/elements/PageHead.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../../components/elements/TableViewComponent.tsx';
 import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 import ListModal from '../../components/modals/ListModal.tsx';
 import PrintableVersionFrame from '../../components/modals/PrintableVersionFrame.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
 import LeaseModal from '../../components/modals/LeaseModal.tsx';
 import LeaseCompletionModal from '../../components/modals/LeaseCompletionModal.tsx';
 import type {
   Lease,
   LeaseCompletion,
-  ServiceLineData
-
-
-
-
-
-
+  ServiceLineData,
 } from '../../interfaces/interfaces.ts';
-import {
-  leaseStatusList
-
-
-
-
-
-
-} from '../../interfaces/interfaces.ts';
-import type {PrintViewData} from '../../interfaces/pdf.ts';
-import {LeaseManager} from '../../services/LeaseManager.ts';
+import { leaseStatusList } from '../../interfaces/interfaces.ts';
+import type { PrintViewData } from '../../interfaces/pdf.ts';
+import { LeaseManager } from '../../services/LeaseManager.ts';
 
 export default function LeasesPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dbContext = useContext(DBContext);
-  const {shop} = useContext(ShopContext);
+  const { shop } = useContext(ShopContext);
 
   const [tableLimits, setTableLimits] = useState<number>(100);
   const [shopFilter, setShopFilter] = useState<string | undefined>();
@@ -47,24 +33,24 @@ export default function LeasesPage() {
 
   const manager = useMemo(
     () => new LeaseManager(dbContext!, shop || null, t),
-    [dbContext, shop, t]
+    [dbContext, shop, t],
   );
 
   const [leases, setLeases] = useState<Lease[]>(manager.getLeases());
 
   const completionFormsById = useMemo(
     () => manager.getCompletionFormsById(),
-    [manager]
+    [manager],
   );
 
   const [modalTemplate, setModalTemplate] = useState<Lease | null>(null);
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<LeaseCompletion | null>(null);
   const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
-    null
+    null,
   );
   const [selectedLeaseLines, setSelectedLeaseLines] =
-    useState<ServiceLineData | null>(null)
+    useState<ServiceLineData | null>(null);
 
   useEffect(() => {
     setLeases(manager.getLeases(shopFilter, searchFilter, activeFilter));
@@ -79,7 +65,7 @@ export default function LeasesPage() {
   ]);
 
   if (!dbContext?.data.currentUser) {
-    return <UnauthorizedComponent />
+    return <UnauthorizedComponent />;
   }
 
   const tableLines = leases.map((item) => {
@@ -105,14 +91,14 @@ export default function LeasesPage() {
           const newLine = manager.getLeaseLineData(
             item,
             (data) => setPrintViewData(data),
-            (data) => setPrintViewData(data)
+            (data) => setPrintViewData(data),
           );
           setSelectedLeaseLines((prev) =>
-            prev && prev.id === item.id ? null : newLine
+            prev && prev.id === item.id ? null : newLine,
           );
-          window.scrollTo({top: 0, behavior: 'smooth'});
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         },
-        onEdit: () => setModalTemplate({...item, onUpdate: true}),
+        onEdit: () => setModalTemplate({ ...item, onUpdate: true }),
       }),
     ];
   });
@@ -130,7 +116,7 @@ export default function LeasesPage() {
               value: <BsFillPlusCircleFill />,
               onClick: () =>
                 setModalTemplate(
-                  modalTemplate ? null : manager.generateNewLeaseTemplate()
+                  modalTemplate ? null : manager.generateNewLeaseTemplate(),
                 ),
             },
           ]}
@@ -144,7 +130,7 @@ export default function LeasesPage() {
         />
       )}
 
-      <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
+      <div className="relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1">
         {modalTemplate && (
           <LeaseModal
             onClose={() => setModalTemplate(null)}
@@ -197,7 +183,7 @@ export default function LeasesPage() {
                 id: selectedLeaseLines.completed ? 'completedListButton' : '',
                 onClick: () => {
                   const item = leases.find(
-                    (s) => s.id === selectedLeaseLines.id
+                    (s) => s.id === selectedLeaseLines.id,
                   );
                   if (!item) return;
                   const template = manager.generateCompletionFormTemplate(item);
@@ -221,7 +207,7 @@ export default function LeasesPage() {
       </div>
 
       {noModalActive && (
-        <div className='service-table lease-table'>
+        <div className="service-table lease-table">
           <TableViewComponent
             lines={tableLines}
             tableLimits={tableLimits}
@@ -229,21 +215,31 @@ export default function LeasesPage() {
               t('ID'),
               t('Name'),
               {
-                value: <span className='text-xxs'>{t('Expected cost')}</span>,
+                value: <span className="text-xxs">{t('Expected cost')}</span>,
                 type: 'number',
                 postFix: ' Ft',
                 sortable: true,
                 editable: false,
               },
-              {value: t('Shop'), type: 'text', sortable: true, editable: false},
-              {value: t('Date'), type: 'text', sortable: true, editable: false},
+              {
+                value: t('Shop'),
+                type: 'text',
+                sortable: true,
+                editable: false,
+              },
+              {
+                value: t('Date'),
+                type: 'text',
+                sortable: true,
+                editable: false,
+              },
               t('Actions'),
             ]}
           />
         </div>
       )}
 
-      <div className='relative flex justify-center w-full m-auto flex-1 no-print'></div>
+      <div className="relative flex justify-center w-full m-auto flex-1 no-print"></div>
     </>
   );
 }

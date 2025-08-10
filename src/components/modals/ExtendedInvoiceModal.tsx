@@ -1,5 +1,5 @@
-import {useTranslation} from 'react-i18next';
-import {
+import { useTranslation } from 'react-i18next';
+import type {
   GeneralModalButtons,
   InvoiceType,
   ShopType,
@@ -9,8 +9,9 @@ import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledInput from '../elements/StyledInput.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
-import {ChangeEvent, useEffect, useMemo, useState} from 'react';
-import {invoiceStatusCodes} from '../../interfaces/constants.ts';
+import type { ChangeEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { invoiceStatusCodes } from '../../interfaces/constants.ts';
 import {
   lineVatRateSimplified,
   lineVatRateNormal,
@@ -89,7 +90,7 @@ export default function ExtendedInvoiceModal({
   shops: ShopType[];
 }>) {
   const [invoice, setInvoice] = useState<ExtendedInvoice>(initialInvoice);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const currencyName = 'Ft';
 
@@ -149,7 +150,7 @@ export default function ExtendedInvoiceModal({
   };
 
   const [items, setItems] = useState<InvoiceItem[]>(
-    (invoice.items || []).map((it) => normalizeItem(it))
+    (invoice.items || []).map((it) => normalizeItem(it)),
   );
 
   const [invoiceCategory, setInvoiceCategory] = useState<
@@ -158,7 +159,7 @@ export default function ExtendedInvoiceModal({
   const [lineVatRate, setLineVatRate] = useState<StyledSelectOption[]>(
     initialInvoice.invoice_category === 'NORMAL'
       ? lineVatRateNormal
-      : lineVatRateSimplified
+      : lineVatRateSimplified,
   );
   const [summary, setSummary] = useState({
     subTotal: 0,
@@ -175,7 +176,7 @@ export default function ExtendedInvoiceModal({
           sum.tax += Number(currentValue.line_vat_amount);
           sum.total += Number(currentValue.line_gross_amount);
           const vatRate = lineVatRate.find(
-            (v) => String(v.value) === String(currentValue.line_vat_rate)
+            (v) => String(v.value) === String(currentValue.line_vat_rate),
           );
           if (vatRate) {
             sum.taxType = vatRate.name;
@@ -188,13 +189,13 @@ export default function ExtendedInvoiceModal({
           tax: 0,
           taxType: lineVatRate[0].name,
           total: 0,
-        }
-      )
+        },
+      ),
     );
   }, [items, lineVatRate]);
 
   const calculateFromUnitPrice = function (
-    form: Record<string, string | number>
+    form: Record<string, string | number>,
   ) {
     if (typeof form.quantity === 'string' && form.quantity.includes(',')) {
       form.quantity = form.quantity.replace(',', '.');
@@ -217,7 +218,7 @@ export default function ExtendedInvoiceModal({
       }
       if (!Number.isNaN(form.line_gross_amount) && !Number.isNaN(lineVatRate)) {
         const vatValue = Number(
-          (Number(form.line_gross_amount) * lineVatRate).toFixed(2)
+          (Number(form.line_gross_amount) * lineVatRate).toFixed(2),
         );
         form.line_vat_amount = vatValue;
         form.line_net_amount =
@@ -230,7 +231,7 @@ export default function ExtendedInvoiceModal({
 
       if (!Number.isNaN(lineNetAmountData) && !Number.isNaN(lineVatRate)) {
         form.line_vat_amount = Number(
-          (lineNetAmountData * lineVatRate).toFixed(2)
+          (lineNetAmountData * lineVatRate).toFixed(2),
         );
       }
       form.line_gross_amount =
@@ -250,7 +251,7 @@ export default function ExtendedInvoiceModal({
         name: t(status.charAt(0).toUpperCase() + status.substring(1)),
         value: status,
       })),
-    [t]
+    [t],
   );
 
   const shopOptions: StyledSelectOption[] = (shops || []).map((key) => {
@@ -272,7 +273,7 @@ export default function ExtendedInvoiceModal({
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...invoice};
+    const obj = { ...invoice };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -321,16 +322,16 @@ export default function ExtendedInvoiceModal({
     >
       <FormRow>
         <StyledInput
-          type='text'
-          name='name'
+          type="text"
+          name="name"
           value={invoice.name}
           onChange={(e) => changeType(e, 'name')}
           label={t('Name')}
         />
 
         <StyledInput
-          type='text'
-          name='tax'
+          type="text"
+          name="tax"
           value={invoice.tax}
           onChange={(e) => changeType(e, 'tax')}
           label={t('Tax ID')}
@@ -339,8 +340,8 @@ export default function ExtendedInvoiceModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='address'
+          type="text"
+          name="address"
           value={invoice.address}
           onChange={(e) => changeType(e, 'address')}
           label={t('Address')}
@@ -348,16 +349,16 @@ export default function ExtendedInvoiceModal({
       </FormRow>
       <FormRow>
         <StyledInput
-          type='text'
-          name='email'
+          type="text"
+          name="email"
           value={invoice.email}
           onChange={(e) => changeType(e, 'email')}
           label={t('Email')}
         />
 
         <StyledInput
-          type='text'
-          name='phone'
+          type="text"
+          name="phone"
           value={invoice.phone}
           onChange={(e) => changeType(e, 'phone')}
           label={t('Phone')}
@@ -365,8 +366,8 @@ export default function ExtendedInvoiceModal({
       </FormRow>
       <FormRow>
         <StyledSelect
-          type='text'
-          name='payment_method'
+          type="text"
+          name="payment_method"
           value={invoice.payment_method ?? 'credit_card'}
           options={[
             {
@@ -381,15 +382,15 @@ export default function ExtendedInvoiceModal({
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'payment_method'
+              'payment_method',
             )
           }
           label={t('Payment method')}
         />
 
         <StyledInput
-          type='text'
-          name='total'
+          type="text"
+          name="total"
           value={invoice.total}
           onChange={(e) => changeType(e, 'total')}
           label={t('Total')}
@@ -398,7 +399,7 @@ export default function ExtendedInvoiceModal({
       <FormRow>
         <StyledSelect
           options={shopOptions}
-          name='shop_id'
+          name="shop_id"
           value={invoice.shop_id?.[0] ?? shops[0]?.id}
           onSelect={(e) =>
             selectMultiShopId(e as unknown as ChangeEvent<HTMLInputElement>)
@@ -407,7 +408,7 @@ export default function ExtendedInvoiceModal({
         />
         <StyledSelect
           options={invoiceStatuses}
-          name='status'
+          name="status"
           value={invoice.status}
           onSelect={(e) =>
             changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'status')
@@ -417,15 +418,15 @@ export default function ExtendedInvoiceModal({
       </FormRow>
       <FormRow>
         <StyledInput
-          type='text'
-          name='total'
+          type="text"
+          name="total"
           value={invoice.invoice_subject}
           onChange={(e) => changeType(e, 'invoice_subject')}
           label={t('Invoice subject')}
         />
         <StyledInput
-          type='text'
-          name='total'
+          type="text"
+          name="total"
           value={invoice.purchase_cost}
           onChange={(e) => changeType(e, 'purchase_cost')}
           label={t('Purchase cost')}
@@ -435,11 +436,11 @@ export default function ExtendedInvoiceModal({
       {/* Invoice category and VAT rate mode */}
       <FormRow>
         <StyledSelect
-          name='invoice_category'
+          name="invoice_category"
           value={invoiceCategory}
           options={[
-            {name: t('Simplified'), value: 'SIMPLIFIED'},
-            {name: t('Normal'), value: 'NORMAL'},
+            { name: t('Simplified'), value: 'SIMPLIFIED' },
+            { name: t('Normal'), value: 'NORMAL' },
           ]}
           onSelect={(e) => {
             const value = (e.target as HTMLSelectElement).value as
@@ -447,7 +448,9 @@ export default function ExtendedInvoiceModal({
               | 'NORMAL';
             setInvoiceCategory(value);
             setLineVatRate(
-              value === 'SIMPLIFIED' ? lineVatRateSimplified : lineVatRateNormal
+              value === 'SIMPLIFIED'
+                ? lineVatRateSimplified
+                : lineVatRateNormal,
             );
           }}
           label={t('Invoice category')}
@@ -456,14 +459,14 @@ export default function ExtendedInvoiceModal({
       </FormRow>
 
       {/* Items editor table */}
-      <div className='mt-4'>
-        <div className='flex justify-between items-center mb-2'>
-          <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-100'>
+      <div className="mt-4">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {t('Items')}
           </h3>
           <button
-            type='button'
-            className='px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600'
+            type="button"
+            className="px-3 py-1.5 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
             onClick={() => {
               const newItem: InvoiceItem = {
                 id: Date.now(),
@@ -479,24 +482,24 @@ export default function ExtendedInvoiceModal({
                 line_vat_amount: 0,
                 line_gross_amount: 1,
               };
-              const calculated = calculateFromUnitPrice({...newItem});
+              const calculated = calculateFromUnitPrice({ ...newItem });
               setItems((prev) => [
                 ...prev,
                 calculated as unknown as InvoiceItem,
               ]);
             }}
-            data-testid='add-item'
+            data-testid="add-item"
           >
             {t('Add item')}
           </button>
         </div>
 
         {/* Header */}
-        <div className='grid grid-cols-12 gap-2 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300'>
+        <div className="grid grid-cols-12 gap-2 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
           <div>{t('Nature')}</div>
           <div>{t('Code Cat')}</div>
           <div>{t('Code')}</div>
-          <div className='col-span-3'>{t('Description')}</div>
+          <div className="col-span-3">{t('Description')}</div>
           <div>{t('Qty')}</div>
           <div>{t('Unit')}</div>
           <div>{t('Unit price')}</div>
@@ -511,7 +514,7 @@ export default function ExtendedInvoiceModal({
         {items.map((it, idx) => (
           <div
             key={it.id ?? idx}
-            className='grid grid-cols-12 gap-2 items-center px-2 py-2 border-b border-gray-200 dark:border-gray-700'
+            className="grid grid-cols-12 gap-2 items-center px-2 py-2 border-b border-gray-200 dark:border-gray-700"
           >
             <div>
               <StyledSelect
@@ -564,7 +567,7 @@ export default function ExtendedInvoiceModal({
                   'EJ',
                   'TESZOR',
                   'OTHER',
-                ].map((u) => ({name: u, value: u}))}
+                ].map((u) => ({ name: u, value: u }))}
                 compact
               />
             </div>
@@ -587,12 +590,15 @@ export default function ExtendedInvoiceModal({
                 }
               />
             </div>
-            <div className='col-span-3'>
+            <div className="col-span-3">
               <StyledInput
                 value={it.line_description}
                 onChange={(e) => {
                   const next = [...items];
-                  next[idx] = {...next[idx], line_description: e.target.value};
+                  next[idx] = {
+                    ...next[idx],
+                    line_description: e.target.value,
+                  };
                   setItems(next);
                 }}
                 placeholder={t('Item description') as string}
@@ -600,7 +606,7 @@ export default function ExtendedInvoiceModal({
             </div>
             <div>
               <StyledInput
-                type='number'
+                type="number"
                 value={it.quantity}
                 onChange={(e) => {
                   const next = [...items];
@@ -644,13 +650,13 @@ export default function ExtendedInvoiceModal({
                   'CARTON',
                   'PACK',
                   'OWN',
-                ].map((u) => ({name: u, value: u}))}
+                ].map((u) => ({ name: u, value: u }))}
                 compact
               />
             </div>
             <div>
               <StyledInput
-                type='number'
+                type="number"
                 value={it.unit_price}
                 onChange={(e) => {
                   const next = [...items];
@@ -695,8 +701,8 @@ export default function ExtendedInvoiceModal({
             </div>
             <div>
               <button
-                type='button'
-                className='px-2 py-1.5 rounded-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600'
+                type="button"
+                className="px-2 py-1.5 rounded-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600"
                 onClick={() => {
                   const next = [...items];
                   next.splice(idx, 1);
@@ -711,7 +717,7 @@ export default function ExtendedInvoiceModal({
         ))}
 
         {/* Summary */}
-        <div className='flex justify-end gap-6 mt-3 text-sm'>
+        <div className="flex justify-end gap-6 mt-3 text-sm">
           <div>
             {t('Subtotal')}: {Number(summary.subTotal).toFixed(2)}{' '}
             {currencyName}
@@ -720,7 +726,7 @@ export default function ExtendedInvoiceModal({
             {t('Tax')} ({summary.taxType}): {Number(summary.tax).toFixed(2)}{' '}
             {currencyName}
           </div>
-          <div className='font-semibold'>
+          <div className="font-semibold">
             {t('Total')}: {Number(summary.total).toFixed(2)} {currencyName}
           </div>
         </div>
@@ -728,8 +734,8 @@ export default function ExtendedInvoiceModal({
 
       <FormRow>
         <StyledInput
-          type='textarea'
-          name='notes'
+          type="textarea"
+          name="notes"
           value={invoice.notes}
           onChange={(e) => changeType(e, 'notes')}
           label={t('Note')}

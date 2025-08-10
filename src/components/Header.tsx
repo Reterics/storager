@@ -1,10 +1,10 @@
-import {NavLink, useSearchParams} from 'react-router-dom';
-import {AuthContext} from '../store/AuthContext.tsx';
-import {useContext, useState, useEffect, useRef} from 'react';
-import {useTranslation} from 'react-i18next';
-import {useTheme} from '../store/ThemeContext.tsx';
-import {ShopContext} from '../store/ShopContext.tsx';
-import {DBContext} from '../database/DBContext.ts';
+import { NavLink, useSearchParams } from 'react-router-dom';
+import { AuthContext } from '../store/AuthContext.tsx';
+import { useContext, useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../store/ThemeContext.tsx';
+import { ShopContext } from '../store/ShopContext.tsx';
+import { DBContext } from '../database/DBContext.ts';
 import logo from '../assets/logo.svg';
 import logoWhite from '../assets/logo_white.svg';
 import {
@@ -27,8 +27,8 @@ import {
   BsThreeDots,
 } from 'react-icons/bs';
 import LoadingIcon from './elements/LoadingIcon.tsx';
-import {flushSync} from 'react-dom';
-import {firebaseModel} from '../database/firebase/config.ts';
+import { flushSync } from 'react-dom';
+import { firebaseModel } from '../database/firebase/config.ts';
 
 const navBase = 'flex items-center py-1 px-2 rounded';
 const navActive = 'text-white bg-gray-700 md:bg-zinc-700 dark:bg-gray-700';
@@ -36,12 +36,12 @@ const navInactive =
   'text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700';
 
 const Header = () => {
-  const {SignOut} = useContext(AuthContext);
+  const { SignOut } = useContext(AuthContext);
   const dbContext = useContext(DBContext);
   const isAdmin = dbContext?.data?.currentUser?.role === 'admin';
-  const {shop} = useContext(ShopContext);
+  const { shop } = useContext(ShopContext);
   const isDarkTheme = useTheme()?.theme === 'dark';
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const page = searchParams.get('page') || 'shops';
 
@@ -113,20 +113,20 @@ const Header = () => {
 
   if (isLoading) {
     return (
-      <header className='no-print'>
-        <nav className='w-full bg-white border-gray-200 dark:bg-gray-900'>
-          <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
-            <a href='?page=about' className='flex items-center'>
+      <header className="no-print">
+        <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
+          <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="?page=about" className="flex items-center">
               <img
                 src={isDarkTheme ? logoWhite : logo}
                 width={30}
                 height={32}
-                className='h-8 mr-3'
-                alt='StorageR Logo'
+                className="h-8 mr-3"
+                alt="StorageR Logo"
               />
-              <div className='self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex'>
+              <div className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex">
                 Storage
-                <div className='text-sm pt-1 text'>R</div>
+                <div className="text-sm pt-1 text">R</div>
               </div>
             </a>
 
@@ -138,72 +138,72 @@ const Header = () => {
   }
 
   return (
-    <header className='no-print'>
-      <nav className='w-full bg-white border-gray-200 dark:bg-gray-900 shadow-sm'>
-        <div className='max-w-screen-xl flex items-center justify-between mx-auto p-2 md:p-4'>
-          <a href='?page=about' className='flex items-center'>
+    <header className="no-print">
+      <nav className="w-full bg-white border-gray-200 dark:bg-gray-900 shadow-sm">
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-2 md:p-4">
+          <a href="?page=about" className="flex items-center">
             <img
               src={isDarkTheme ? logoWhite : logo}
               width={28}
               height={30}
-              className='h-7 md:h-8 mr-2 md:mr-3'
-              alt='StorageR Logo'
+              className="h-7 md:h-8 mr-2 md:mr-3"
+              alt="StorageR Logo"
             />
-            <div className='self-center text-xl md:text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex'>
+            <div className="self-center text-xl md:text-2xl font-semibold whitespace-nowrap dark:text-white flex-row flex">
               Storage
-              <div className='text-xs md:text-sm pt-1 text'>R</div>
+              <div className="text-xs md:text-sm pt-1 text">R</div>
             </div>
           </a>
 
-          <div className='hidden md:flex md:items-center'>
-            <ul className='font-medium flex flex-row space-x-1 lg:space-x-4 items-center'>
+          <div className="hidden md:flex md:items-center">
+            <ul className="font-medium flex flex-row space-x-1 lg:space-x-4 items-center">
               <li>
                 <NavLink
-                  to='/?page='
+                  to="/?page="
                   onClick={handleLinkClick}
                   className={`${navBase} ${page === 'shops' ? navActive : navInactive}`}
-                  aria-current='page'
+                  aria-current="page"
                 >
-                  <BsShop className='text-lg' />
-                  <span className='hidden ml-1 lg:inline'>{t('Shops')}</span>
+                  <BsShop className="text-lg" />
+                  <span className="hidden ml-1 lg:inline">{t('Shops')}</span>
                 </NavLink>
               </li>
               {shop && (
                 <li>
                   <NavLink
-                    to='/?page=items'
+                    to="/?page=items"
                     onClick={handleLinkClick}
                     className={`${navBase} ${page === 'items' ? navActive : navInactive}`}
                     title={t('Items')}
                   >
-                    <BsBoxes className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>{t('Items')}</span>
+                    <BsBoxes className="text-lg" />
+                    <span className="hidden ml-1 lg:inline">{t('Items')}</span>
                   </NavLink>
                 </li>
               )}
               {shop && (
                 <li>
                   <NavLink
-                    to='/?page=parts'
+                    to="/?page=parts"
                     onClick={handleLinkClick}
                     className={`${navBase} ${page === 'parts' ? navActive : navInactive}`}
                     title={t('Parts')}
                   >
-                    <BsTools className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>{t('Parts')}</span>
+                    <BsTools className="text-lg" />
+                    <span className="hidden ml-1 lg:inline">{t('Parts')}</span>
                   </NavLink>
                 </li>
               )}
               {shop && (
                 <li>
                   <NavLink
-                    to='/?page=service'
+                    to="/?page=service"
                     onClick={handleLinkClick}
                     className={`${navBase} ${page === 'service' ? navActive : navInactive}`}
                     title={t('Service')}
                   >
-                    <BsWrench className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>
+                    <BsWrench className="text-lg" />
+                    <span className="hidden ml-1 lg:inline">
                       {t('Service')}
                     </span>
                   </NavLink>
@@ -212,26 +212,26 @@ const Header = () => {
               {shop && dbContext?.data.settings?.enableLeasing && (
                 <li>
                   <NavLink
-                    to='/?page=leases'
+                    to="/?page=leases"
                     onClick={handleLinkClick}
                     className={`${navBase} ${page === 'leases' ? navActive : navInactive}`}
                     title={t('Leases')}
                   >
-                    <BsClipboardCheck className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>{t('Leases')}</span>
+                    <BsClipboardCheck className="text-lg" />
+                    <span className="hidden ml-1 lg:inline">{t('Leases')}</span>
                   </NavLink>
                 </li>
               )}
               {shop && (
                 <li>
                   <NavLink
-                    to='/?page=invoices'
+                    to="/?page=invoices"
                     onClick={handleLinkClick}
                     className={`${navBase} ${page === 'invoices' ? navActive : navInactive}`}
                     title={t('Invoices')}
                   >
-                    <BsReceipt className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>
+                    <BsReceipt className="text-lg" />
+                    <span className="hidden ml-1 lg:inline">
                       {t('Invoices')}
                     </span>
                   </NavLink>
@@ -240,53 +240,53 @@ const Header = () => {
               {shop && dbContext?.data.settings?.enableTransactions && (
                 <li>
                   <NavLink
-                    to='/?page=transactions'
+                    to="/?page=transactions"
                     onClick={handleLinkClick}
                     className={`${navBase} ${page === 'transactions' ? navActive : navInactive}`}
                     title={t('Transactions')}
                   >
-                    <BsCreditCard className='text-lg' />
-                    <span className='hidden ml-1 lg:inline'>
+                    <BsCreditCard className="text-lg" />
+                    <span className="hidden ml-1 lg:inline">
                       {t('Transactions')}
                     </span>
                   </NavLink>
                 </li>
               )}
 
-              <li className='relative ml-1'>
+              <li className="relative ml-1">
                 <button
-                  name='userMenuButton'
-                  data-testid='userMenuButton'
+                  name="userMenuButton"
+                  data-testid="userMenuButton"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className='flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'
+                  className="flex items-center py-1 px-2 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   title={shop?.name}
                 >
-                  <span className='hidden md:inline mr-1 max-w-[100px] lg:max-w-[200px] truncate'>
+                  <span className="hidden md:inline mr-1 max-w-[100px] lg:max-w-[200px] truncate">
                     {shop?.name}
                   </span>
-                  <BsChevronDown className='text-sm' />
+                  <BsChevronDown className="text-sm" />
                 </button>
 
                 {dropdownOpen && (
-                  <div className='absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-50'>
-                    <div className='p-2 border-b border-gray-200 dark:border-gray-700'>
-                      <div className='text-sm font-medium text-gray-900 dark:text-white truncate'>
+                  <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg dark:bg-gray-800 z-50">
+                    <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                         {shop?.name}
                       </div>
                     </div>
-                    <ul className='py-1'>
+                    <ul className="py-1">
                       {isAdmin && (
                         <>
-                          <li className='px-3 py-1 text-xs text-gray-500 dark:text-gray-400 uppercase'>
+                          <li className="px-3 py-1 text-xs text-gray-500 dark:text-gray-400 uppercase">
                             {t('Admin')}
                           </li>
                           <li>
                             <NavLink
-                              to='/?page=types'
+                              to="/?page=types"
                               onClick={handleLinkClick}
-                              className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                              className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
-                              <div className='text-lg me-2'>
+                              <div className="text-lg me-2">
                                 <BsListUl />
                               </div>
                               {t('Types')}
@@ -294,11 +294,11 @@ const Header = () => {
                           </li>
                           <li>
                             <NavLink
-                              to='/?page=recycle'
+                              to="/?page=recycle"
                               onClick={handleLinkClick}
-                              className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                              className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
-                              <div className='text-lg me-2'>
+                              <div className="text-lg me-2">
                                 <BsFillTrash3Fill />
                               </div>
                               {t('Recycle Bin')}
@@ -306,11 +306,11 @@ const Header = () => {
                           </li>
                           <li>
                             <NavLink
-                              to='/?page=settings'
+                              to="/?page=settings"
                               onClick={handleLinkClick}
-                              className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                              className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
-                              <div className='text-lg me-2'>
+                              <div className="text-lg me-2">
                                 <BsFillGearFill />
                               </div>
                               {t('Settings')}
@@ -320,11 +320,11 @@ const Header = () => {
                             dbContext?.data.settings?.enableLogs && (
                               <li>
                                 <NavLink
-                                  to='/?page=logs'
+                                  to="/?page=logs"
                                   onClick={handleLinkClick}
-                                  className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                                  className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                                 >
-                                  <div className='text-lg me-2'>
+                                  <div className="text-lg me-2">
                                     <BsCardList />
                                   </div>
                                   {t('Logs')}
@@ -333,25 +333,25 @@ const Header = () => {
                             )}
                           <li>
                             <NavLink
-                              to='/?page=users'
+                              to="/?page=users"
                               onClick={handleLinkClick}
-                              className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                              className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
-                              <div className='text-lg me-2'>
+                              <div className="text-lg me-2">
                                 <BsFillPersonLinesFill />
                               </div>
                               {t('Users')}
                             </NavLink>
                           </li>
-                          <li className='border-t border-gray-200 dark:border-gray-700 mt-1'></li>
+                          <li className="border-t border-gray-200 dark:border-gray-700 mt-1"></li>
                         </>
                       )}
                       <li>
                         <button
                           onClick={() => updatePageData()}
-                          className='w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                          className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                         >
-                          <div className='text-lg me-2'>
+                          <div className="text-lg me-2">
                             <BsArrowClockwise />
                           </div>
                           {t('Update')}
@@ -363,9 +363,9 @@ const Header = () => {
                             handleLinkClick();
                             SignOut();
                           }}
-                          className='flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600'
+                          className="flex w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
                         >
-                          <div className='text-lg me-2'>
+                          <div className="text-lg me-2">
                             <BsDoorOpen />
                           </div>
                           {t('Logout')}
@@ -378,18 +378,18 @@ const Header = () => {
             </ul>
           </div>
 
-          <div className='flex items-center md:hidden'>
+          <div className="flex items-center md:hidden">
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
-              className='inline-flex items-center p-1 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600'
-              aria-controls='navbar-mobile'
+              className="inline-flex items-center p-1 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              aria-controls="navbar-mobile"
               aria-expanded={navbarOpen}
             >
-              <span className='sr-only'>Open main menu</span>
+              <span className="sr-only">Open main menu</span>
               {navbarOpen ? (
-                <BsX className='w-6 h-6' />
+                <BsX className="w-6 h-6" />
               ) : (
-                <BsThreeDots className='w-6 h-6' />
+                <BsThreeDots className="w-6 h-6" />
               )}
             </button>
           </div>
@@ -398,7 +398,7 @@ const Header = () => {
         {navbarOpen && (
           <div
             ref={navbarRef}
-            className='md:hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50'
+            className="md:hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-50"
             onClick={(e) => {
               if (e.target === e.currentTarget) setNavbarOpen(false);
             }}
@@ -407,25 +407,25 @@ const Header = () => {
               style={{
                 zIndex: '1001',
               }}
-              className='fixed inset-y-0 z-50 right-0 max-w-[280px] w-full bg-white dark:bg-gray-800 shadow-xl transform transition-transform ease-in-out duration-300'
+              className="fixed inset-y-0 z-50 right-0 max-w-[280px] w-full bg-white dark:bg-gray-800 shadow-xl transform transition-transform ease-in-out duration-300"
             >
-              <div className='flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700'>
-                <div className='text-lg font-semibold text-gray-900 dark:text-white'>
+              <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">
                   {shop?.name || t('Menu')}
                 </div>
                 <button
                   onClick={() => setNavbarOpen(false)}
-                  className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
                 >
-                  <BsX className='w-6 h-6' />
+                  <BsX className="w-6 h-6" />
                 </button>
               </div>
 
-              <div className='overflow-y-auto h-full pb-20'>
-                <div className='p-2'>
-                  <div className='grid grid-cols-3 gap-2'>
+              <div className="overflow-y-auto h-full pb-20">
+                <div className="p-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <NavLink
-                      to='/?page='
+                      to="/?page="
                       onClick={handleLinkClick}
                       className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                         page === 'shops'
@@ -433,13 +433,13 @@ const Header = () => {
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
-                      <BsShop className='text-xl mb-1' />
-                      <span className='text-xs'>{t('Shops')}</span>
+                      <BsShop className="text-xl mb-1" />
+                      <span className="text-xs">{t('Shops')}</span>
                     </NavLink>
 
                     {shop && (
                       <NavLink
-                        to='/?page=items'
+                        to="/?page=items"
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                           page === 'items'
@@ -447,14 +447,14 @@ const Header = () => {
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <BsBoxes className='text-xl mb-1' />
-                        <span className='text-xs'>{t('Items')}</span>
+                        <BsBoxes className="text-xl mb-1" />
+                        <span className="text-xs">{t('Items')}</span>
                       </NavLink>
                     )}
 
                     {shop && (
                       <NavLink
-                        to='/?page=parts'
+                        to="/?page=parts"
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                           page === 'parts'
@@ -462,14 +462,14 @@ const Header = () => {
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <BsTools className='text-xl mb-1' />
-                        <span className='text-xs'>{t('Parts')}</span>
+                        <BsTools className="text-xl mb-1" />
+                        <span className="text-xs">{t('Parts')}</span>
                       </NavLink>
                     )}
 
                     {shop && (
                       <NavLink
-                        to='/?page=service'
+                        to="/?page=service"
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                           page === 'service'
@@ -477,14 +477,14 @@ const Header = () => {
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <BsWrench className='text-xl mb-1' />
-                        <span className='text-xs'>{t('Service')}</span>
+                        <BsWrench className="text-xl mb-1" />
+                        <span className="text-xs">{t('Service')}</span>
                       </NavLink>
                     )}
 
                     {shop && dbContext?.data.settings?.enableLeasing && (
                       <NavLink
-                        to='/?page=leases'
+                        to="/?page=leases"
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                           page === 'leases'
@@ -492,14 +492,14 @@ const Header = () => {
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <BsClipboardCheck className='text-xl mb-1' />
-                        <span className='text-xs'>{t('Leases')}</span>
+                        <BsClipboardCheck className="text-xl mb-1" />
+                        <span className="text-xs">{t('Leases')}</span>
                       </NavLink>
                     )}
 
                     {shop && (
                       <NavLink
-                        to='/?page=invoices'
+                        to="/?page=invoices"
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                           page === 'invoices'
@@ -507,14 +507,14 @@ const Header = () => {
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <BsReceipt className='text-xl mb-1' />
-                        <span className='text-xs'>{t('Invoices')}</span>
+                        <BsReceipt className="text-xl mb-1" />
+                        <span className="text-xs">{t('Invoices')}</span>
                       </NavLink>
                     )}
 
                     {shop && dbContext?.data.settings?.enableTransactions && (
                       <NavLink
-                        to='/?page=transactions'
+                        to="/?page=transactions"
                         onClick={handleLinkClick}
                         className={`flex flex-col items-center justify-center p-3 rounded-lg ${
                           page === 'transactions'
@@ -522,46 +522,46 @@ const Header = () => {
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                         }`}
                       >
-                        <BsCreditCard className='text-xl mb-1' />
-                        <span className='text-xs'>{t('Transactions')}</span>
+                        <BsCreditCard className="text-xl mb-1" />
+                        <span className="text-xs">{t('Transactions')}</span>
                       </NavLink>
                     )}
                   </div>
                 </div>
 
                 {isAdmin && (
-                  <div className='mt-4 border-t border-gray-200 dark:border-gray-700'>
-                    <div className='px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase'>
+                  <div className="mt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                       {t('Admin')}
                     </div>
                     <ul>
                       <li>
                         <NavLink
-                          to='/?page=types'
+                          to="/?page=types"
                           onClick={handleLinkClick}
-                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                          className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
-                          <BsListUl className='mr-3 text-lg' />
+                          <BsListUl className="mr-3 text-lg" />
                           {t('Types')}
                         </NavLink>
                       </li>
                       <li>
                         <NavLink
-                          to='/?page=recycle'
+                          to="/?page=recycle"
                           onClick={handleLinkClick}
-                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                          className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
-                          <BsFillTrash3Fill className='mr-3 text-lg' />
+                          <BsFillTrash3Fill className="mr-3 text-lg" />
                           {t('Recycle Bin')}
                         </NavLink>
                       </li>
                       <li>
                         <NavLink
-                          to='/?page=settings'
+                          to="/?page=settings"
                           onClick={handleLinkClick}
-                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                          className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
-                          <BsFillGearFill className='mr-3 text-lg' />
+                          <BsFillGearFill className="mr-3 text-lg" />
                           {t('Settings')}
                         </NavLink>
                       </li>
@@ -569,22 +569,22 @@ const Header = () => {
                         dbContext?.data.settings?.enableLogs && (
                           <li>
                             <NavLink
-                              to='/?page=logs'
+                              to="/?page=logs"
                               onClick={handleLinkClick}
-                              className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                              className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                             >
-                              <BsCardList className='mr-3 text-lg' />
+                              <BsCardList className="mr-3 text-lg" />
                               {t('Logs')}
                             </NavLink>
                           </li>
                         )}
                       <li>
                         <NavLink
-                          to='/?page=users'
+                          to="/?page=users"
                           onClick={handleLinkClick}
-                          className='flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                          className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                         >
-                          <BsFillPersonLinesFill className='mr-3 text-lg' />
+                          <BsFillPersonLinesFill className="mr-3 text-lg" />
                           {t('Users')}
                         </NavLink>
                       </li>
@@ -592,14 +592,14 @@ const Header = () => {
                   </div>
                 )}
 
-                <div className='mt-4 border-t border-gray-200 dark:border-gray-700'>
+                <div className="mt-4 border-t border-gray-200 dark:border-gray-700">
                   <ul>
                     <li>
                       <button
                         onClick={() => updatePageData()}
-                        className='flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                        className="flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                       >
-                        <BsArrowClockwise className='mr-3 text-lg' />
+                        <BsArrowClockwise className="mr-3 text-lg" />
                         {t('Update')}
                       </button>
                     </li>
@@ -609,9 +609,9 @@ const Header = () => {
                           handleLinkClick();
                           SignOut();
                         }}
-                        className='flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700'
+                        className="flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                       >
-                        <BsDoorOpen className='mr-3 text-lg' />
+                        <BsDoorOpen className="mr-3 text-lg" />
                         {t('Logout')}
                       </button>
                     </li>

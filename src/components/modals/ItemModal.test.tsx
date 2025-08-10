@@ -1,8 +1,8 @@
 import '../../../tests/mocks/firebase.ts';
-import {describe, expect, it, vi} from 'vitest';
-import {fireEvent, render} from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render } from '@testing-library/react';
 import ItemModal from './ItemModal.tsx';
-import {defaultItems, defaultTypes} from '../../../tests/mocks/shopData.ts';
+import { defaultItems, defaultTypes } from '../../../tests/mocks/shopData.ts';
 import DBContextProviderMock from '../../../tests/mocks/DBContextProviderMock.tsx';
 
 describe('ItemModal', () => {
@@ -18,7 +18,7 @@ describe('ItemModal', () => {
         setItem={setItem}
         item={null}
         inPlace={false}
-      />
+      />,
     );
 
     expect(container.container.innerHTML).toEqual('');
@@ -36,23 +36,23 @@ describe('ItemModal', () => {
           item={defaultItems[0]}
           inPlace={false}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const inputs = container.getAllByRole('textbox');
     setItem.mockReset();
 
     inputs.forEach((input) => {
-      fireEvent.change(input, {target: {value: 'Test12'}});
+      fireEvent.change(input, { target: { value: 'Test12' } });
     });
 
     const numbers = container.container.querySelectorAll('input[type=number]');
     numbers.forEach((input) => {
-      fireEvent.change(input, {target: {value: '16789'}});
+      fireEvent.change(input, { target: { value: '16789' } });
     });
 
     fireEvent.change(container.getByRole('combobox'), {
-      target: {value: defaultTypes[1].name},
+      target: { value: defaultTypes[1].name },
     });
 
     const select = container.container.querySelector('select');
@@ -60,7 +60,7 @@ describe('ItemModal', () => {
     expect(select).toBeDefined();
 
     if (select)
-      fireEvent.select(select, {target: {value: defaultTypes[1].name}});
+      fireEvent.select(select, { target: { value: defaultTypes[1].name } });
 
     expect(setItem.mock.calls.length).toEqual(7);
 
@@ -83,10 +83,10 @@ describe('ItemModal', () => {
           onClose={onClose}
           onSave={onSave}
           setItem={setItem}
-          item={{...defaultItems[0], type: undefined}}
+          item={{ ...defaultItems[0], type: undefined }}
           inPlace={true}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const buttons = container.queryAllByRole('button');

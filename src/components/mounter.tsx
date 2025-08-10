@@ -1,16 +1,16 @@
 import React from 'react';
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 
 const mountComponent = <P, R = boolean>(
   Component: React.ComponentType<
-    P & {onClose?: () => void; onSave?: (result: R) => void | Promise<void>}
+    P & { onClose?: () => void; onSave?: (result: R) => void | Promise<void> }
   >,
   props?: Partial<
     P & {
       onClose?: () => void;
       onSave?: (result: unknown) => void | Promise<void>;
     }
-  >
+  >,
 ): Promise<R> =>
   new Promise((resolve) => {
     const container = document.createElement('div');
@@ -43,9 +43,9 @@ const mountComponent = <P, R = boolean>(
     };
 
     root.render(
-      <div className='fixed top-0 left-0'>
+      <div className="fixed top-0 left-0">
         <Component {...(props as P)} onClose={handleClose} onSave={onSave} />
-      </div>
+      </div>,
     );
   });
 

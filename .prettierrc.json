@@ -1,10 +1,10 @@
 {
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "semi": true,
   "tabWidth": 2,
   "useTabs": false,
   "singleQuote": true,
-  "jsxSingleQuote": true,
-  "bracketSpacing": false,
-  "endOfLine": "auto"
+  "jsxSingleQuote": false,
+  "bracketSpacing": true,
+  "endOfLine": "lf"
 }

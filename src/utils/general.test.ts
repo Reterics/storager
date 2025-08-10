@@ -1,13 +1,6 @@
-import {
-  describe,
-  it,
-  expect,
-  vi,
-  beforeAll,
-  MockInstance,
-  afterAll,
-} from 'vitest';
-import {screen} from '@testing-library/react';
+import type { MockInstance } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
+import { screen } from '@testing-library/react';
 import {
   downloadAsFile,
   fileToDataURL,
@@ -24,7 +17,7 @@ describe('General Utils', () => {
     originalObjectURL = global.URL.createObjectURL;
 
     global.URL.createObjectURL = vi.fn(
-      () => 'blob:http://example.com/mock-url'
+      () => 'blob:http://example.com/mock-url',
     );
     appendChildSpy = vi.spyOn(document.body, 'appendChild');
   });
@@ -59,7 +52,7 @@ describe('General Utils', () => {
       .mockImplementation(function () {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        this.onload({target: {result: dataURL}});
+        this.onload({ target: { result: dataURL } });
       });
 
     const result = await fileToDataURL(mockFile);
@@ -69,13 +62,13 @@ describe('General Utils', () => {
   });
 
   it('uploadFileInputAsText reads a file as text', async () => {
-    const mockFile = new Blob(['file content'], {type: 'text/plain'});
+    const mockFile = new Blob(['file content'], { type: 'text/plain' });
     const readerSpy = vi
       .spyOn(FileReader.prototype, 'readAsText')
       .mockImplementation(function () {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        this.onload({target: {result: 'file content'}});
+        this.onload({ target: { result: 'file content' } });
       });
 
     const result = await uploadFileInputAsText(mockFile);
@@ -94,7 +87,7 @@ describe('General Utils', () => {
       .mockImplementation(function () {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        this.onload({target: {result: 'file content'}});
+        this.onload({ target: { result: 'file content' } });
       });
 
     const promise = readTextFile();
@@ -119,15 +112,17 @@ describe('General Utils', () => {
   });
 
   it('readJSONFile reads a JSON file and parses its content', async () => {
-    const fileContent = JSON.stringify({key: 'value'});
-    const mockFile = new File([fileContent], 'test.txt', {type: 'text/plain'});
+    const fileContent = JSON.stringify({ key: 'value' });
+    const mockFile = new File([fileContent], 'test.txt', {
+      type: 'text/plain',
+    });
 
     const readerSpy = vi
       .spyOn(FileReader.prototype, 'readAsText')
       .mockImplementation(function () {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        this.onload({target: {result: fileContent}});
+        this.onload({ target: { result: fileContent } });
       });
     const appendChildSpy = vi.spyOn(document.body, 'appendChild');
 
@@ -146,7 +141,7 @@ describe('General Utils', () => {
     readerSpy.mockRestore();
     appendChildSpy.mockRestore();
 
-    expect(await result).toEqual({key: 'value'});
+    expect(await result).toEqual({ key: 'value' });
   });
 
   it('readJSONFile returns null if JSON parsing fails', async () => {
@@ -160,7 +155,7 @@ describe('General Utils', () => {
       .mockImplementation(function () {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        this.onload({target: {result: fileContent}});
+        this.onload({ target: { result: fileContent } });
       });
     const appendChildSpy = vi.spyOn(document.body, 'appendChild');
 

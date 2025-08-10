@@ -1,10 +1,11 @@
 import DBModel from '../DBModel.ts';
-import {FirebaseApp, initializeApp} from 'firebase/app';
+import type { FirebaseApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
+import type { Firestore } from 'firebase/firestore';
 import {
   collection,
   getFirestore,
   query,
-  Firestore,
   doc,
   getDoc,
   setDoc,
@@ -14,20 +15,16 @@ import {
   deleteDoc,
   writeBatch,
 } from 'firebase/firestore';
-import {
+import type {
   CommonCollectionData,
   ContextDataValueType,
   TTLData,
 } from '../../interfaces/firebase.ts';
-import {User} from 'firebase/auth';
-import {
-  DeviceDebugInfo,
-  FieldChange,
-  getChangedFields,
-  getDeviceDebugInfo,
-} from '../../utils/data.ts';
-import {getClientInfo} from '../../utils/general.ts';
-import {
+import type { User } from 'firebase/auth';
+import type { DeviceDebugInfo, FieldChange } from '../../utils/data.ts';
+import { getChangedFields, getDeviceDebugInfo } from '../../utils/data.ts';
+import { getClientInfo } from '../../utils/general.ts';
+import type {
   GeneralCollectionEntry,
   ItemType,
   StoreItem,
@@ -132,7 +129,7 @@ export default class FirebaseDBModel extends DBModel {
     table: ItemType,
     item: StorePart | StoreItem,
     changes?: FieldChange,
-    transactionType?: TransactionType
+    transactionType?: TransactionType,
   ): Promise<void> {
     if (!this._enableTransactions) {
       return;
@@ -179,14 +176,14 @@ export default class FirebaseDBModel extends DBModel {
 
     const modelRef = await addDoc(
       collection(this._db, 'transactions'),
-      transaction
+      transaction,
     ).catch((e) => console.error('Failed to add transaction', e));
 
     if (modelRef) {
       transaction.id = modelRef.id;
       this.appendCachedEntry(
         'transactions',
-        transaction as CommonCollectionData
+        transaction as CommonCollectionData,
       );
     }
   }
@@ -196,7 +193,7 @@ export default class FirebaseDBModel extends DBModel {
     table: string,
     id?: string,
     item?: CommonCollectionData,
-    error?: string
+    error?: string,
   ) {
     if (!this._enableLogs || !this._collectionsToLog.includes(table)) {
       // Logging is disabled for this type
@@ -248,13 +245,13 @@ export default class FirebaseDBModel extends DBModel {
       await this.addTransaction(
         id || item.id,
         table as ItemType,
-        (oldItem ? {...oldItem, ...item} : item) as StorePart | StoreItem,
-        changes?.storage as FieldChange
+        (oldItem ? { ...oldItem, ...item } : item) as StorePart | StoreItem,
+        changes?.storage as FieldChange,
       );
     }
 
     const modelRef = await addDoc(collection(this._db, 'logs'), logEntry).catch(
-      (e) => this.logCatch(e)
+      (e) => this.logCatch(e),
     );
 
     if (modelRef) {
@@ -274,7 +271,7 @@ export default class FirebaseDBModel extends DBModel {
 
   async getAll(
     table: string,
-    force?: boolean
+    force?: boolean,
   ): Promise<CommonCollectionData[]> {
     let after = force ? 0 : this.getMTime(table);
     const now = new Date().getTime();
@@ -301,7 +298,7 @@ export default class FirebaseDBModel extends DBModel {
         'Get update for ' +
           table +
           ' after ' +
-          new Date(after).toISOString().split('T')[0]
+          new Date(after).toISOString().split('T')[0],
       );
       const q = after
         ? query(collection(this._db, table), where('docUpdated', '>', after))
@@ -313,15 +310,15 @@ export default class FirebaseDBModel extends DBModel {
         const data = doc.data();
         if (data && !data.deleted) {
           if (indexOf !== -1) {
-            receivedData[indexOf] = {...data, id: doc.id};
+            receivedData[indexOf] = { ...data, id: doc.id };
           } else {
-            receivedData.push({...data, id: doc.id});
+            receivedData.push({ ...data, id: doc.id });
           }
         } else if (data?.deleted && indexOf !== -1) {
-          this.updateCachedEntry(doc.id, 'deleted', {...data, id: doc.id});
+          this.updateCachedEntry(doc.id, 'deleted', { ...data, id: doc.id });
           receivedData.splice(indexOf, 1);
         } else if (data?.deleted) {
-          this.appendCachedEntry('deleted', {...data, id: doc.id});
+          this.appendCachedEntry('deleted', { ...data, id: doc.id });
         }
       });
       this.updateCache(table, receivedData);
@@ -358,10 +355,10 @@ export default class FirebaseDBModel extends DBModel {
           delete cached[key];
         }
       });
-      await setDoc(modelRef, cached, {merge: true}).catch((e) => {
+      await setDoc(modelRef, cached, { merge: true }).catch((e) => {
         console.error(e);
       });
-      this.updateCachedEntry(id, 'deleted', {...cached, id});
+      this.updateCachedEntry(id, 'deleted', { ...cached, id });
       this.removeCachedEntry(id, table);
       this.sync();
     } else {
@@ -383,10 +380,10 @@ export default class FirebaseDBModel extends DBModel {
       const modelRef = doc(this._db, target, id);
       cached.deleted = false;
       cached.docUpdated = new Date().getTime();
-      await setDoc(modelRef, cached, {merge: true}).catch((e) => {
+      await setDoc(modelRef, cached, { merge: true }).catch((e) => {
         console.error(e);
       });
-      this.updateCachedEntry(id, target, {...cached, id});
+      this.updateCachedEntry(id, target, { ...cached, id });
       this.removeCachedEntry(id, 'deleted');
       this.sync();
       return true;
@@ -411,7 +408,7 @@ export default class FirebaseDBModel extends DBModel {
   }
 
   async removeAllPermanent(
-    idList: string[]
+    idList: string[],
   ): Promise<ContextDataValueType[] | null> {
     if (idList.length === 0) return this.getAll('deleted');
 
@@ -467,7 +464,7 @@ export default class FirebaseDBModel extends DBModel {
     }
 
     // Use setDoc with { merge: true } to update or create the document
-    await setDoc(modelRef, item, {merge: true}).catch((e) => {
+    await setDoc(modelRef, item, { merge: true }).catch((e) => {
       console.error(e);
       error = e;
     });
@@ -483,12 +480,12 @@ export default class FirebaseDBModel extends DBModel {
       table,
       item.id as string | undefined,
       item as CommonCollectionData,
-      error
+      error,
     );
     this.updateCachedEntry(
       item.id as string,
       table,
-      item as CommonCollectionData
+      item as CommonCollectionData,
     );
     this.sync();
   }
@@ -526,7 +523,7 @@ export default class FirebaseDBModel extends DBModel {
         item.docUpdated = new Date().getTime();
       }
 
-      batch.set(modelRef, item, {merge: true});
+      batch.set(modelRef, item, { merge: true });
 
       if (item && imageCache) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -536,7 +533,7 @@ export default class FirebaseDBModel extends DBModel {
       this.updateCachedEntry(
         item.id as string,
         table,
-        item as CommonCollectionData
+        item as CommonCollectionData,
       );
     }
 
@@ -546,8 +543,8 @@ export default class FirebaseDBModel extends DBModel {
   }
 
   async add(
-    item: {[key: string]: unknown},
-    table: string
+    item: { [key: string]: unknown },
+    table: string,
   ): Promise<void | string> {
     if (!item) {
       void this.log('add', table, undefined, undefined, 'Empty item');
@@ -558,7 +555,7 @@ export default class FirebaseDBModel extends DBModel {
       (e) => {
         console.error(e);
         error = e.message;
-      }
+      },
     );
     if (modelRef) {
       item.id = modelRef.id;
@@ -571,7 +568,7 @@ export default class FirebaseDBModel extends DBModel {
       table,
       item.id as string | undefined,
       item as CommonCollectionData,
-      error
+      error,
     );
     return item.id as string | undefined;
   }

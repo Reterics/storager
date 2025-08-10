@@ -1,10 +1,10 @@
-import {
+import type {
   GeneralModalButtons,
   LeaseCompletionModalProps,
   ServiceCompleteData,
 } from '../../interfaces/interfaces.ts';
-import {useTranslation} from 'react-i18next';
-import {useRef} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRef } from 'react';
 import SignaturePad from 'react-signature-pad-wrapper';
 import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
@@ -18,13 +18,13 @@ export default function LeaseCompletionModal({
   onSave,
   inPlace,
 }: LeaseCompletionModalProps) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const signaturePadRef = useRef<SignaturePad>(null);
 
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...formData};
+    const obj = { ...formData };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -61,13 +61,13 @@ export default function LeaseCompletionModal({
       title={t('Rental Return Form')}
       id={id || 'LeaseCompletionModal'}
     >
-      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2 mb-1'>
+      <h3 className="font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2 mb-1">
         {t('Client')}
       </h3>
       <FormRow>
         <StyledInput
-          type='text'
-          name='client_name'
+          type="text"
+          name="client_name"
           value={formData.client_name}
           onChange={(e) => changeType(e, 'client_name')}
           label={t('Name')}
@@ -76,29 +76,29 @@ export default function LeaseCompletionModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='client_phone'
+          type="text"
+          name="client_phone"
           value={formData.client_phone}
           onChange={(e) => changeType(e, 'client_phone')}
           label={t('Phone')}
         />
         <StyledInput
-          type='text'
-          name='client_email'
+          type="text"
+          name="client_email"
           value={formData.client_email}
           onChange={(e) => changeType(e, 'client_email')}
           label={t('Email')}
         />
       </FormRow>
 
-      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2'>
+      <h3 className="font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2">
         {t('Recipient')}
       </h3>
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='service_name'
+          type="text"
+          name="service_name"
           value={formData.service_name}
           onChange={() => false}
           label={t('Name')}
@@ -107,29 +107,29 @@ export default function LeaseCompletionModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='service_address'
+          type="text"
+          name="service_address"
           value={formData.service_address}
           onChange={() => false}
           label={t('Address')}
         />
         <StyledInput
-          type='text'
-          name='service_email'
+          type="text"
+          name="service_email"
           value={formData.service_email}
           onChange={() => false}
           label={t('Email')}
         />
       </FormRow>
 
-      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2'>
+      <h3 className="font-semibold text-center text-lg sm:text-xl text-gray-700 mt-2">
         {t('Item and rental details')}
       </h3>
 
       <FormRow>
         <StyledInput
-          type='textarea'
-          name='description'
+          type="textarea"
+          name="description"
           value={formData.description}
           onChange={(e) => changeType(e, 'description')}
           label={t('Description')}
@@ -138,8 +138,8 @@ export default function LeaseCompletionModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='accessories'
+          type="text"
+          name="accessories"
           value={formData.accessories}
           onChange={(e) => changeType(e, 'accessories')}
           label={t('Accessories')}
@@ -148,15 +148,15 @@ export default function LeaseCompletionModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='lease_date'
+          type="text"
+          name="lease_date"
           value={formData.lease_date}
           onChange={() => false}
           label={t('Lease Date')}
         />
         <StyledInput
-          type='text'
-          name='rental_cost'
+          type="text"
+          name="rental_cost"
           value={formData.rental_cost}
           onChange={(e) => changeType(e, 'rental_cost')}
           label={t('Rental cost')}
@@ -165,8 +165,8 @@ export default function LeaseCompletionModal({
 
       <FormRow>
         <StyledInput
-          type='textarea'
-          name='rental_description'
+          type="textarea"
+          name="rental_description"
           value={formData.rental_description}
           onChange={(e) => changeType(e, 'rental_description')}
           label={t('Rental Description')}
@@ -175,8 +175,8 @@ export default function LeaseCompletionModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='date'
+          type="text"
+          name="date"
           value={formData.date}
           onChange={(e) => changeType(e, 'date')}
           label={t('Date')}
@@ -184,11 +184,11 @@ export default function LeaseCompletionModal({
         <div></div>
       </FormRow>
 
-      <h3 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mb-4'>
+      <h3 className="font-semibold text-center text-lg sm:text-xl text-gray-700 mb-4">
         {t('Signature')}
       </h3>
       <FormRow>
-        <div className='relative w-full max-w-[28rem] h-48 sm:h-56 border border-gray-600 self-center mb-2 justify-self-center'>
+        <div className="relative w-full max-w-[28rem] h-48 sm:h-56 border border-gray-600 self-center mb-2 justify-self-center">
           <SignaturePad
             ref={signaturePadRef}
             debounceInterval={500}

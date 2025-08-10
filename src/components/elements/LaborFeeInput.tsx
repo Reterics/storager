@@ -1,26 +1,26 @@
-import {confirm, popup} from '../modalExporter.ts';
-import {Transaction} from '../../interfaces/interfaces.ts';
-import {BsFloppy} from 'react-icons/bs';
-import {useContext, useState} from 'react';
-import {DBContext} from '../../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {ShopContext} from '../../store/ShopContext.tsx';
+import { confirm, popup } from '../modalExporter.ts';
+import type { Transaction } from '../../interfaces/interfaces.ts';
+import { BsFloppy } from 'react-icons/bs';
+import { useContext, useState } from 'react';
+import { DBContext } from '../../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import { ShopContext } from '../../store/ShopContext.tsx';
 
 export default function LaborFeeInput() {
   const dbContext = useContext(DBContext);
   const shopContext = useContext(ShopContext);
   const [laborFee, setLaborFee] = useState<string>('');
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const selectedShopId = shopContext.shop?.id as string;
 
   return (
-    <div className='flex max-w-32'>
+    <div className="flex max-w-32">
       <input
         value={laborFee}
         onChange={(e) => setLaborFee(e.target.value)}
-        type='text'
-        data-testid='laborFee'
-        className='block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600'
+        type="text"
+        data-testid="laborFee"
+        className="block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600"
         placeholder={t('Labor Fee')}
       />
       <button
@@ -34,7 +34,7 @@ export default function LaborFeeInput() {
               {t('Are you sure to save the following labor fee?')}
               <br />
               {laborFeeNumeric} Ft
-            </div>
+            </div>,
           );
 
           if (response) {
@@ -53,9 +53,9 @@ export default function LaborFeeInput() {
             } as Transaction);
           }
         }}
-        type='button'
-        data-testid='laborFeeButton'
-        className='px-2.5 py-2 text-gray-800 bg-white hover:bg-gray-100 border-y border-r border-gray-300 rounded-r-md focus:ring-2 focus:ring-gray-800 focus:outline-none'
+        type="button"
+        data-testid="laborFeeButton"
+        className="px-2.5 py-2 text-gray-800 bg-white hover:bg-gray-100 border-y border-r border-gray-300 rounded-r-md focus:ring-2 focus:ring-gray-800 focus:outline-none"
       >
         <BsFloppy size={18} />
       </button>

@@ -1,7 +1,7 @@
 // RecycleBin.test.tsx
 
 import React from 'react';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 vi.mock('../components/modalExporter.ts', () => ({
   confirm: async () => {
     return Promise.resolve(true);
@@ -11,12 +11,15 @@ vi.mock('../components/modalExporter.ts', () => ({
   },
 }));
 import RecycleBin from './RecycleBin';
-import {DBContext} from '../database/DBContext';
-import {ShopContext} from '../store/ShopContext';
-import {vi, expect, it, describe, beforeEach} from 'vitest';
-import {ContextDataValueType, DBContextType} from '../interfaces/firebase';
-import {MemoryRouter} from 'react-router-dom';
-import {
+import { DBContext } from '../database/DBContext';
+import { ShopContext } from '../store/ShopContext';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
+import type {
+  ContextDataValueType,
+  DBContextType,
+} from '../interfaces/firebase';
+import { MemoryRouter } from 'react-router-dom';
+import type {
   Shop,
   TableLineElementType,
   TableLineType,
@@ -24,12 +27,18 @@ import {
 
 // Mock PageHead and TableViewComponent to simplify the test
 vi.mock('../components/elements/PageHead', () => ({
-  PageHead: ({title}: {title: React.ReactNode}) => <div>{title}</div>,
+  PageHead: ({ title }: { title: React.ReactNode }) => <div>{title}</div>,
 }));
 
 vi.mock('../components/elements/TableViewComponent', () => ({
   __esModule: true,
-  default: ({lines, header}: {lines: TableLineType[]; header: string[]}) => (
+  default: ({
+    lines,
+    header,
+  }: {
+    lines: TableLineType[];
+    header: string[];
+  }) => (
     <table>
       <thead>
         <tr>
@@ -49,7 +58,7 @@ vi.mock('../components/elements/TableViewComponent', () => ({
       </tbody>
     </table>
   ),
-  TableViewActions: ({onRemove}: {onRemove: () => void}) => (
+  TableViewActions: ({ onRemove }: { onRemove: () => void }) => (
     <button onClick={onRemove}>Delete</button>
   ),
 }));
@@ -62,7 +71,7 @@ describe('RecycleBin Component', () => {
       parts: [],
       services: [],
       completions: [],
-      settings: {id: '1'},
+      settings: { id: '1' },
       users: [],
       archive: [],
       types: [],
@@ -110,7 +119,7 @@ describe('RecycleBin Component', () => {
             {ui}
           </ShopContext.Provider>
         </DBContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -144,7 +153,7 @@ describe('RecycleBin Component', () => {
             <RecycleBin />
           </ShopContext.Provider>
         </DBContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Item 1')).toBeInTheDocument();
@@ -170,7 +179,7 @@ describe('RecycleBin Component', () => {
     fireEvent.click(screen.getAllByText('Delete')[0]);
 
     await waitFor(() =>
-      expect(mockDBContext.removePermanentData).toHaveBeenCalledWith('item1')
+      expect(mockDBContext.removePermanentData).toHaveBeenCalledWith('item1'),
     );
   });
 
@@ -220,7 +229,7 @@ describe('RecycleBin Component', () => {
             <RecycleBin />
           </ShopContext.Provider>
         </DBContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     // Item without shop_id should be displayed

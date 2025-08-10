@@ -1,15 +1,14 @@
-import type {DBContextType} from '../interfaces/firebase.ts';
+import type { DBContextType } from '../interfaces/firebase.ts';
 import type {
   ServiceData,
   ServiceCompleteData,
-  ServiceLineData} from '../interfaces/interfaces.ts';
-import {
-  serviceStatusList,
+  ServiceLineData,
 } from '../interfaces/interfaces.ts';
-import {filterServices, getServiceLineData} from '../utils/service.ts';
-import {generateServiceId} from '../utils/data.ts';
-import type {TFunction} from 'i18next';
-import type {PrintViewData} from '../interfaces/pdf.ts';
+import { serviceStatusList } from '../interfaces/interfaces.ts';
+import { filterServices, getServiceLineData } from '../utils/service.ts';
+import { generateServiceId } from '../utils/data.ts';
+import type { TFunction } from 'i18next';
+import type { PrintViewData } from '../interfaces/pdf.ts';
 
 /**
  * ServiceManager class to encapsulate all service-related operations
@@ -32,8 +31,13 @@ export class ServiceManager {
    */
   constructor(
     dbContext: DBContextType,
-    shop: {id?: string; address?: string; name?: string; email?: string} | null,
-    t: TFunction
+    shop: {
+      id?: string;
+      address?: string;
+      name?: string;
+      email?: string;
+    } | null,
+    t: TFunction,
   ) {
     this.dbContext = dbContext;
     this.shop = shop;
@@ -52,7 +56,7 @@ export class ServiceManager {
     shopFilter?: string,
     searchFilter?: string,
     activeFilter?: boolean,
-    typeFilter?: string
+    typeFilter?: string,
   ): ServiceData[] {
     const completionFormsById = this.getCompletionFormsById();
     return filterServices(
@@ -61,7 +65,7 @@ export class ServiceManager {
       shopFilter,
       searchFilter,
       activeFilter,
-      typeFilter
+      typeFilter,
     );
   }
 
@@ -75,7 +79,7 @@ export class ServiceManager {
         acc[form.id] = form;
         return acc;
       },
-      {} as Record<string, ServiceCompleteData>
+      {} as Record<string, ServiceCompleteData>,
     );
   }
 
@@ -89,7 +93,7 @@ export class ServiceManager {
   getServiceLineData(
     item: ServiceData,
     onPrint: (data: PrintViewData) => void,
-    onOpen: (data: PrintViewData) => void
+    onOpen: (data: PrintViewData) => void,
   ): ServiceLineData {
     return getServiceLineData(
       item,
@@ -98,7 +102,7 @@ export class ServiceManager {
       this.t,
       this.dbContext.data.settings,
       onPrint,
-      onOpen
+      onOpen,
     );
   }
 
@@ -110,10 +114,10 @@ export class ServiceManager {
    */
   async saveServiceItem(
     serviceData: ServiceData,
-    archive = true
+    archive = true,
   ): Promise<ServiceData[]> {
     let updatedItems = (await this.dbContext.updateLatest(
-      'services'
+      'services',
     )) as ServiceData[];
 
     // validate id
@@ -129,14 +133,14 @@ export class ServiceManager {
         updatedItems,
         this.shop?.id,
         this.dbContext.data.shops,
-        this.dbContext.data.deleted
+        this.dbContext.data.deleted,
       );
     }
 
     updatedItems = (await this.dbContext.setData(
       'services',
       serviceData,
-      archive
+      archive,
     )) as ServiceData[];
 
     return updatedItems;
@@ -148,7 +152,7 @@ export class ServiceManager {
    * @returns Updated completion forms or false if failed
    */
   async saveCompletionForm(
-    serviceCompleteData: ServiceCompleteData
+    serviceCompleteData: ServiceCompleteData,
   ): Promise<ServiceCompleteData[] | false> {
     if (!serviceCompleteData?.service_id) {
       return false;
@@ -157,7 +161,7 @@ export class ServiceManager {
     try {
       const updatedItems = (await this.dbContext.setData(
         'completions',
-        serviceCompleteData
+        serviceCompleteData,
       )) as ServiceCompleteData[];
 
       return updatedItems;
@@ -173,14 +177,14 @@ export class ServiceManager {
    * @returns Updated services or null if cancelled
    */
   async deleteServiceHistoryFor(
-    item: ServiceData
+    item: ServiceData,
   ): Promise<ServiceData[] | null> {
     if (!item.id) {
       return null;
     }
 
     const completions = (this.dbContext.data.completions || []).filter(
-      (c) => c.service_id === item.id
+      (c) => c.service_id === item.id,
     );
 
     if (completions.length) {
@@ -190,7 +194,7 @@ export class ServiceManager {
     }
 
     const history = (this.dbContext.data.archive || []).filter(
-      (a) => a.docParent === item.id
+      (a) => a.docParent === item.id,
     );
 
     if (history.length) {
@@ -203,7 +207,7 @@ export class ServiceManager {
 
     const servicedItems = (await this.dbContext.removeData(
       'services',
-      item.id
+      item.id,
     )) as ServiceData[];
 
     return servicedItems;
@@ -218,7 +222,7 @@ export class ServiceManager {
       this.dbContext.data.services || [],
       this.shop?.id,
       this.dbContext.data.shops,
-      this.dbContext.data.deleted
+      this.dbContext.data.deleted,
     );
 
     return {
@@ -238,11 +242,11 @@ export class ServiceManager {
    * @returns Completion form template or null if already completed
    */
   generateCompletionFormTemplate(
-    item: ServiceData
+    item: ServiceData,
   ): ServiceCompleteData | null {
     const completionFormId = item.id + '_cd';
     const completionForm = (this.dbContext.data.completions || []).find(
-      (completionForm) => completionForm.id === completionFormId
+      (completionForm) => completionForm.id === completionFormId,
     );
 
     if (completionForm) {

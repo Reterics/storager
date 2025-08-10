@@ -1,11 +1,11 @@
-import {
+import type {
   GeneralModalButtons,
   MediaModalArguments,
 } from '../../interfaces/interfaces.ts';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import GeneralModal from './GeneralModal.tsx';
-import {ImageUploader} from '../elements/ImageUploader.tsx';
-import {useState} from 'react';
+import { ImageUploader } from '../elements/ImageUploader.tsx';
+import { useState } from 'react';
 
 export default function MediaModal({
   onClose,
@@ -13,14 +13,14 @@ export default function MediaModal({
   inPlace,
   title,
 }: MediaModalArguments) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [localFile, setLocalFile] = useState<File | null>(null);
 
   const handleUpload = async () => {
     if (!localFile) return false;
 
     const csrfNode = document.getElementById(
-      'csrf_token'
+      'csrf_token',
     ) as HTMLInputElement | null;
     const csrfToken = csrfNode ? csrfNode.value : '';
 
@@ -96,13 +96,13 @@ export function MediaBrowse({
   onClick: () => void;
   image?: string;
 }) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
-    <div className='relative z-0 w-full group'>
-      <div className='relative'>
+    <div className="relative z-0 w-full group">
+      <div className="relative">
         <label
-          className='block mb-2 text-sm font-medium text-left text-gray-900 dark:text-gray-300'
+          className="block mb-2 text-sm font-medium text-left text-gray-900 dark:text-gray-300"
           htmlFor={'galleryButton'}
         >
           {t('Image')}
@@ -110,12 +110,12 @@ export function MediaBrowse({
         {
           <input
             id={'galleryButton'}
-            type='button'
-            className='block w-full text-sm border border-gray-300 rounded-lg cursor-pointer bg-gray-50
+            type="button"
+            className="block w-full text-sm border border-gray-300 rounded-lg cursor-pointer bg-gray-50
                        text-gray-900 dark:text-gray-300 focus:outline-none dark:bg-gray-700 dark:border-gray-600
                        dark:placeholder-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0
                        file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-500 hover:file:bg-gray-300
-                       dark:file:bg-gray-600 dark:file:text-gray-300 hover:dark:file:bg-gray-500'
+                       dark:file:bg-gray-600 dark:file:text-gray-300 hover:dark:file:bg-gray-500"
             value={t('Browse')}
             onClick={() => onClick()}
           />
@@ -123,11 +123,11 @@ export function MediaBrowse({
       </div>
 
       {image && (
-        <div className='mt-1 flex align-middle justify-center'>
+        <div className="mt-1 flex align-middle justify-center">
           <img
             src={image}
-            alt='Preview'
-            className='max-w-full h-auto rounded-lg shadow-md max-h-32'
+            alt="Preview"
+            className="max-w-full h-auto rounded-lg shadow-md max-h-32"
           />
         </div>
       )}

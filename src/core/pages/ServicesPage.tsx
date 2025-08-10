@@ -1,8 +1,8 @@
-import {useContext, useEffect, useMemo, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {DBContext} from '../../database/DBContext.ts';
-import {ShopContext} from '../../store/ShopContext.tsx';
-import {PageHead} from '../../components/elements/PageHead.tsx';
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DBContext } from '../../database/DBContext.ts';
+import { ShopContext } from '../../store/ShopContext.tsx';
+import { PageHead } from '../../components/elements/PageHead.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../../components/elements/TableViewComponent.tsx';
@@ -15,22 +15,21 @@ import PrintableVersionFrame from '../../components/modals/PrintableVersionFrame
 import type {
   ServiceCompleteData,
   ServiceData,
-  ServiceLineData} from '../../interfaces/interfaces.ts';
-import {
-  serviceStatusList
+  ServiceLineData,
 } from '../../interfaces/interfaces.ts';
-import type {PrintViewData} from '../../interfaces/pdf.ts';
-import {ServiceManager} from '../../services/ServiceManager.ts';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
+import { serviceStatusList } from '../../interfaces/interfaces.ts';
+import type { PrintViewData } from '../../interfaces/pdf.ts';
+import { ServiceManager } from '../../services/ServiceManager.ts';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
 
 export default function ServicesPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dbContext = useContext(DBContext);
-  const {shop} = useContext(ShopContext);
+  const { shop } = useContext(ShopContext);
 
   const manager = useMemo(
     () => new ServiceManager(dbContext!, shop || null, t),
-    [dbContext, shop, t]
+    [dbContext, shop, t],
   );
 
   const [tableLimits, setTableLimits] = useState<number>(100);
@@ -40,30 +39,30 @@ export default function ServicesPage() {
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
 
   const [servicedItems, setServicedItems] = useState<ServiceData[]>(
-    manager.getServices()
+    manager.getServices(),
   );
 
   const completionFormsById = useMemo(
     () => manager.getCompletionFormsById(),
-    [manager]
+    [manager],
   );
 
-  const availableTypes: {name: string; value: string}[] = useMemo(() => {
-    return manager.getAvailableTypes().map((x) => ({name: x, value: x}));
+  const availableTypes: { name: string; value: string }[] = useMemo(() => {
+    return manager.getAvailableTypes().map((x) => ({ name: x, value: x }));
   }, [manager]);
 
   const [modalTemplate, setModalTemplate] = useState<ServiceData | null>(null);
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<ServiceCompleteData | null>(null);
   const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
-    null
+    null,
   );
   const [selectedServiceLines, setSelectedServiceLines] =
     useState<ServiceLineData | null>(null);
 
   useEffect(() => {
     setServicedItems(
-      manager.getServices(shopFilter, searchFilter, activeFilter, typeFilter)
+      manager.getServices(shopFilter, searchFilter, activeFilter, typeFilter),
     );
   }, [
     shopFilter,
@@ -107,14 +106,14 @@ export default function ServicesPage() {
           const newLine = manager.getServiceLineData(
             item,
             (data) => setPrintViewData(data),
-            (data) => setPrintViewData(data)
+            (data) => setPrintViewData(data),
           );
           setSelectedServiceLines((prev) =>
-            prev && prev.id === item.id ? null : newLine
+            prev && prev.id === item.id ? null : newLine,
           );
-          window.scrollTo({top: 0, behavior: 'smooth'});
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         },
-        onEdit: () => setModalTemplate({...item, onUpdate: true}),
+        onEdit: () => setModalTemplate({ ...item, onUpdate: true }),
         onRemove: () => {
           void (async () => {
             await manager.deleteServiceHistoryFor(item);
@@ -148,16 +147,16 @@ export default function ServicesPage() {
           activeFilter={activeFilter}
           setActiveFilter={(v: boolean) => setActiveFilter(v)}
         >
-          <div className='flex flex-1' />
-          <div className='w-30 select-no-first'>
+          <div className="flex flex-1" />
+          <div className="w-30 select-no-first">
             <StyledSelect
-              options={[{name: t('All type'), value: ''}, ...availableTypes]}
-              name='type'
+              options={[{ name: t('All type'), value: '' }, ...availableTypes]}
+              name="type"
               value={typeFilter || ''}
               defaultLabel={t('All type')}
               onSelect={(e) =>
                 setTypeFilter(
-                  (e.target as HTMLSelectElement).value || undefined
+                  (e.target as HTMLSelectElement).value || undefined,
                 )
               }
               label={false}
@@ -167,7 +166,7 @@ export default function ServicesPage() {
         </PageHead>
       )}
 
-      <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
+      <div className="relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1">
         <ServiceModal
           onClose={() => setModalTemplate(null)}
           onSave={async (item: ServiceData) => {
@@ -217,7 +216,7 @@ export default function ServicesPage() {
                 id: selectedServiceLines.completed ? 'completedListButton' : '',
                 onClick: () => {
                   const item = servicedItems.find(
-                    (s) => s.id === selectedServiceLines.id
+                    (s) => s.id === selectedServiceLines.id,
                   );
                   if (!item) return;
                   const template = manager.generateCompletionFormTemplate(item);
@@ -241,30 +240,45 @@ export default function ServicesPage() {
       </div>
 
       {noModalActive && (
-        <div className='service-table'>
+        <div className="service-table">
           <TableViewComponent
             lines={tableLines}
             tableLimits={tableLimits}
             header={[
               t('ID'),
               t('Name'),
-              {value: t('Type'), type: 'text', sortable: true, editable: false},
               {
-                value: <span className='text-xxs'>{t('Expected cost')}</span>,
+                value: t('Type'),
+                type: 'text',
+                sortable: true,
+                editable: false,
+              },
+              {
+                value: <span className="text-xxs">{t('Expected cost')}</span>,
                 type: 'number',
                 postFix: ' Ft',
                 sortable: true,
                 editable: false,
               },
-              {value: t('Shop'), type: 'text', sortable: true, editable: false},
-              {value: t('Date'), type: 'text', sortable: true, editable: false},
+              {
+                value: t('Shop'),
+                type: 'text',
+                sortable: true,
+                editable: false,
+              },
+              {
+                value: t('Date'),
+                type: 'text',
+                sortable: true,
+                editable: false,
+              },
               t('Actions'),
             ]}
           />
         </div>
       )}
 
-      <div className='relative flex justify-center w-full m-auto flex-1 no-print'></div>
+      <div className="relative flex justify-center w-full m-auto flex-1 no-print"></div>
     </>
   );
 }

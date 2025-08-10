@@ -1,7 +1,7 @@
-import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import DBModel from './DBModel';
-import {TTLData} from '../interfaces/firebase.ts';
-import {loadFromIndexedDB} from '../utils/indexedDB.ts';
+import type { TTLData } from '../interfaces/firebase.ts';
+import { loadFromIndexedDB } from '../utils/indexedDB.ts';
 
 vi.mock('../utils/indexedDB.ts', () => ({
   loadFromIndexedDB: vi.fn(),
@@ -9,7 +9,7 @@ vi.mock('../utils/indexedDB.ts', () => ({
 }));
 
 class TestDBModel extends DBModel {
-  constructor(options?: {ttl?: TTLData; mtime?: TTLData}) {
+  constructor(options?: { ttl?: TTLData; mtime?: TTLData }) {
     super(options);
   }
 }
@@ -28,12 +28,12 @@ describe('DBModel', () => {
   describe('loadPersisted', () => {
     it('should load data from IndexedDB and set cache, ttl, and mtime', async () => {
       vi.mocked(loadFromIndexedDB).mockImplementation(async (key) => {
-        return [{id: '1', name: key + '1', key: key}];
+        return [{ id: '1', name: key + '1', key: key }];
       }); // Mock shops
       await model.loadPersisted();
       expect(loadFromIndexedDB).toHaveBeenCalledWith('shops');
       expect(model.getCached('shops')).toEqual([
-        {id: '1', name: 'shops1', key: 'shops'},
+        { id: '1', name: 'shops1', key: 'shops' },
       ]);
     });
   });
@@ -81,7 +81,7 @@ describe('DBModel', () => {
 
   describe('invalidateCache', () => {
     it('should clear cache and mtime for a table', () => {
-      model.updateCache('users', [{id: '1', name: 'user1'}]);
+      model.updateCache('users', [{ id: '1', name: 'user1' }]);
       model.updateMTime('users');
       model.invalidateCache('users');
       expect(model.getCached('users')).toBeNull();
@@ -93,12 +93,12 @@ describe('DBModel', () => {
 
   describe('getCached', () => {
     it('should return cache if it exists and is not expired', () => {
-      model.updateCache('users', [{id: '1', name: 'user1'}]);
-      expect(model.getCached('users')).toEqual([{id: '1', name: 'user1'}]);
+      model.updateCache('users', [{ id: '1', name: 'user1' }]);
+      expect(model.getCached('users')).toEqual([{ id: '1', name: 'user1' }]);
     });
 
     it('should return null if cache is expired', () => {
-      model.updateCache('users', [{id: '1', name: 'user1'}]);
+      model.updateCache('users', [{ id: '1', name: 'user1' }]);
       model.setTTL('users', 1000);
       model.updateMTime('users');
       vi.setSystemTime(new Date(Date.now() + 2000));
@@ -109,18 +109,18 @@ describe('DBModel', () => {
   describe('removeCachedEntry', () => {
     it('should remove entry from cache', () => {
       model.updateCache('users', [
-        {id: '1', name: 'user1'},
-        {id: '2', name: 'user2'},
+        { id: '1', name: 'user1' },
+        { id: '2', name: 'user2' },
       ]);
       model.removeCachedEntry('1', 'users');
-      expect(model.getCached('users')).toEqual([{id: '2', name: 'user2'}]);
+      expect(model.getCached('users')).toEqual([{ id: '2', name: 'user2' }]);
     });
   });
 
   describe('appendCachedEntry', () => {
     it('should add a new entry to cache', () => {
-      model.appendCachedEntry('users', {id: '3', name: 'user3'});
-      expect(model.getCached('users')).toEqual([{id: '3', name: 'user3'}]);
+      model.appendCachedEntry('users', { id: '3', name: 'user3' });
+      expect(model.getCached('users')).toEqual([{ id: '3', name: 'user3' }]);
     });
   });
 });

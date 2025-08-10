@@ -1,5 +1,5 @@
-import {Lease, ServiceData, Shop} from '../interfaces/interfaces.ts';
-import {
+import type { Lease, ServiceData, Shop } from '../interfaces/interfaces.ts';
+import type {
   CommonCollectionData,
   ContextDataValueType,
 } from '../interfaces/firebase.ts';
@@ -25,11 +25,11 @@ export const generateServiceId = (
   servicedItems: ServiceData[] | Lease[],
   currentShopId?: string,
   shops: Shop[] = [],
-  deleted: ContextDataValueType[] = []
+  deleted: ContextDataValueType[] = [],
 ) => {
   const shopIndex = Math.max(
     0,
-    shops.findIndex((s) => s.id === currentShopId)
+    shops.findIndex((s) => s.id === currentShopId),
   );
   const shopLength = Math.max(1, shops.length);
 
@@ -78,7 +78,7 @@ export type FieldChange = {
 
 export const getChangedFields = (
   oldObj: CommonCollectionData,
-  newObj: CommonCollectionData
+  newObj: CommonCollectionData,
 ) => {
   const changes: Record<string, FieldChange> = {};
 
@@ -146,7 +146,7 @@ export const getBrowserInfo = (userAgent: string) => {
 
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
 
-  return {name, version, isMobile};
+  return { name, version, isMobile };
 };
 
 export interface DeviceDebugScreenInfo {
@@ -171,7 +171,7 @@ export interface DeviceDebugInfo {
 }
 
 export const getDeviceDebugInfo = (): DeviceDebugInfo => {
-  const {width, height, availWidth, availHeight, orientation} = screen;
+  const { width, height, availWidth, availHeight, orientation } = screen;
   // Fallback for Safari
   const orientationType =
     orientation?.type ??
@@ -208,20 +208,20 @@ export const formatCurrency = (value: number, currency: string = 'HUF') => {
   }).format(value);
 };
 
-export const reduceToRecordById = <T extends {id: string}>(
-  array: T[]
+export const reduceToRecordById = <T extends { id: string }>(
+  array: T[],
 ): Record<string, T> =>
   array.reduce(
     (acc, item) => {
       acc[item.id] = item;
       return acc;
     },
-    {} as Record<string, T>
+    {} as Record<string, T>,
   );
 
 export const toSelectOptions = <T extends ContextDataValueType>(
   array: T[],
-  key = 'name'
+  key = 'name',
 ) => {
   return array.map((item) => ({
     name: (item[key as keyof ContextDataValueType] ?? '') as string,

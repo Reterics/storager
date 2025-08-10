@@ -1,23 +1,26 @@
-import {useContext, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {Shop} from '../interfaces/interfaces.ts';
+import { useContext, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type { Shop } from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {LogEntry} from '../database/firebase/FirebaseDBModel.ts';
-import {getBrowserInfo} from '../utils/data.ts';
-import {formatChanges} from '../utils/print.tsx';
-import {BsCheck, BsX} from 'react-icons/bs';
-import {firebaseModel} from '../database/firebase/config.ts';
-import {CommonCollectionData, ContextDataType} from '../interfaces/firebase.ts';
-import {getIconForDeviceType} from '../utils/typedIcons.tsx';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import type { LogEntry } from '../database/firebase/FirebaseDBModel.ts';
+import { getBrowserInfo } from '../utils/data.ts';
+import { formatChanges } from '../utils/print.tsx';
+import { BsCheck, BsX } from 'react-icons/bs';
+import { firebaseModel } from '../database/firebase/config.ts';
+import type {
+  CommonCollectionData,
+  ContextDataType,
+} from '../interfaces/firebase.ts';
+import { getIconForDeviceType } from '../utils/typedIcons.tsx';
 
 export default function Logs() {
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
 
   const dataKeys: {
@@ -57,7 +60,7 @@ export default function Logs() {
     ) {
       const updatedItems = (await dbContext?.removeData(
         'logs',
-        item.id
+        item.id,
       )) as LogEntry[];
       setLogs(updatedItems);
     }
@@ -83,7 +86,7 @@ export default function Logs() {
             out[currentValue.id] = (currentValue.name || '') as string;
             return out;
           },
-          {} as Record<string, string>
+          {} as Record<string, string>,
         );
       }
       if (type && id && dataKeys[type][id]) {
@@ -100,12 +103,12 @@ export default function Logs() {
       : undefined;
     const array = [
       <span title={log.entity}>{entityName?.substring(0, 11)}</span>,
-      <div className='flex items-center' title={log.error}>
+      <div className="flex items-center" title={log.error}>
         {log.action}{' '}
         {log.error ? (
-          <BsX className='text-lg text-red-500' />
+          <BsX className="text-lg text-red-500" />
         ) : (
-          <BsCheck className='text-lg text-green-500' />
+          <BsCheck className="text-lg text-green-500" />
         )}
       </div>,
       log.email || log.uid,
@@ -140,7 +143,7 @@ Viewport:
       </span>,
       log.changes
         ? formatChanges(
-            log.changes as {[key: string]: {from: string; to: string}}
+            log.changes as { [key: string]: { from: string; to: string } },
           )
         : 'No changes',
       assignedShops?.length

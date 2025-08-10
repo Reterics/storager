@@ -1,7 +1,7 @@
-import {GeneralModalArguments} from '../../interfaces/interfaces.ts';
+import type { GeneralModalArguments } from '../../interfaces/interfaces.ts';
 import './GeneralModal.css';
 import LoadingIcon from '../elements/LoadingIcon.tsx';
-import {useState} from 'react';
+import { useState } from 'react';
 
 export default function GeneralModal({
   visible,
@@ -30,7 +30,7 @@ export default function GeneralModal({
           ? 'flex justify-center items-center w-full max-w-screen-xl'
           : 'fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center'
       }
-      style={{zIndex: 999}}
+      style={{ zIndex: 999 }}
       role={'dialog'}
     >
       <div
@@ -41,7 +41,7 @@ export default function GeneralModal({
         }
       >
         {title && (
-          <h1 className='font-semibold text-center text-lg sm:text-xl text-gray-700 mb-3 sm:mb-4 dark:text-gray-200'>
+          <h1 className="font-semibold text-center text-lg sm:text-xl text-gray-700 mb-3 sm:mb-4 dark:text-gray-200">
             {title}
           </h1>
         )}
@@ -49,13 +49,13 @@ export default function GeneralModal({
         <form className={inPlace ? formClasses.inPlace : formClasses.default}>
           {children}
         </form>
-        <div className='hidden loading-parent'>
+        <div className="hidden loading-parent">
           <LoadingIcon />
         </div>
-        <div className='flex flex-col sm:flex-row sm:justify-between gap-3 mt-4 sm:mt-2'>
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mt-4 sm:mt-2">
           {(buttons || []).map((button, index) => (
             <button
-              type='button'
+              type="button"
               id={button.id}
               key={modalId + '_button_' + index}
               data-testid={button.testId}
@@ -80,7 +80,7 @@ export default function GeneralModal({
                   return;
                 }
                 const loadingIcon = document.querySelector(
-                  '.loading-parent > svg'
+                  '.loading-parent > svg',
                 );
                 if (loadingIcon) {
                   (e.target as HTMLButtonElement).innerHTML = '';
@@ -91,7 +91,7 @@ export default function GeneralModal({
                   setThrottled(false);
                   if (loadingIcon) {
                     const loadingParent = document.querySelector(
-                      '.loading-parent'
+                      '.loading-parent',
                     ) as HTMLElement;
                     if (loadingParent) {
                       loadingParent.appendChild(loadingIcon);

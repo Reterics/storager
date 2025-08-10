@@ -1,17 +1,17 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import BackupDBModel from './BackupDBModel';
 
 vi.mock('../../utils/indexedDB.ts', () => ({
   loadFromIndexedDB: vi.fn(async (key) => {
     if (key === 'backup') {
-      return [{id: '1', updated: 12345}];
+      return [{ id: '1', updated: 12345 }];
     }
-    return [{id: 'test'}];
+    return [{ id: 'test' }];
   }),
   saveToIndexedDB: vi.fn(async () => {}),
 }));
 
-const {loadFromIndexedDB, saveToIndexedDB} = await import(
+const { loadFromIndexedDB, saveToIndexedDB } = await import(
   '../../utils/indexedDB.ts'
 );
 

@@ -1,5 +1,5 @@
-import {StyledInputArgs} from '../../interfaces/interfaces.ts';
-import {ChangeEvent} from 'react';
+import type { StyledInputArgs } from '../../interfaces/interfaces.ts';
+import type { ChangeEvent } from 'react';
 
 export default function StyledInput({
   value,
@@ -40,7 +40,7 @@ export default function StyledInput({
       {label && (
         <label
           htmlFor={name}
-          className='block mb-1 text-sm text-left font-medium text-gray-700 dark:text-gray-300'
+          className="block mb-1 text-sm text-left font-medium text-gray-700 dark:text-gray-300"
         >
           {label}
         </label>
@@ -54,9 +54,9 @@ export default function StyledInput({
           onChange={onChange}
           onKeyDown={onEnter ? handleKeyDown : undefined}
           onBlur={validateOnFocusLoss}
-          className='block w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm
+          className="block w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm
                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700
-                       dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                       dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder={placeholder || ''}
           min={min}
           max={max}
@@ -78,9 +78,9 @@ export default function StyledInput({
               : undefined
           }
           onBlur={validateOnFocusLoss}
-          className='block w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm
+          className="block w-full px-3 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm
                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700
-                   dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500 h-48'
+                   dark:text-white dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500 h-48"
           placeholder={placeholder || ''}
           maxLength={maxLength}
           disabled={disabled}

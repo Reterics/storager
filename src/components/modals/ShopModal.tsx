@@ -1,12 +1,12 @@
 import StyledInput from '../elements/StyledInput.tsx';
-import {
+import type {
   GeneralModalButtons,
   Shop,
   ShopModalInput,
 } from '../../interfaces/interfaces.ts';
-import {GeoPoint} from 'firebase/firestore';
+import { GeoPoint } from 'firebase/firestore';
 import GeneralModal from './GeneralModal.tsx';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import FormRow from '../elements/FormRow.tsx';
 
 export default function ShopModal({
@@ -16,14 +16,14 @@ export default function ShopModal({
   onSave,
   inPlace,
 }: ShopModalInput) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   // eslint-disable-next-line
   const coordinateRegexp = /^-?[0-9\.]{3,12} -?[0-9\.]{3,12}$/;
 
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...shop};
+    const obj = { ...shop };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -41,7 +41,7 @@ export default function ShopModal({
         coordinates: new GeoPoint(Number(lat), Number(lon)),
       } as Shop);
     } else if (!value) {
-      setShop({...shop, coordinates: undefined} as Shop);
+      setShop({ ...shop, coordinates: undefined } as Shop);
     }
   };
 
@@ -68,18 +68,18 @@ export default function ShopModal({
     >
       <FormRow>
         <StyledInput
-          type='text'
-          name='name'
+          type="text"
+          name="name"
           value={shop.name}
           onChange={(e) => changeType(e, 'name')}
-          label='Name'
+          label="Name"
         />
       </FormRow>
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='coordinates'
+          type="text"
+          name="coordinates"
           value={
             shop && shop.coordinates instanceof GeoPoint
               ? shop.coordinates?.latitude + ' ' + shop.coordinates?.longitude
@@ -91,33 +91,33 @@ export default function ShopModal({
               changeCoordinates(e);
             }
           }}
-          label='Coordinates'
-          pattern='[0-9\.]{3,12}[ ]{1}[0-9\.]{3,12}'
+          label="Coordinates"
+          pattern="[0-9\.]{3,12}[ ]{1}[0-9\.]{3,12}"
           maxLength={25}
         />
         <StyledInput
-          type='text'
-          name='phone'
+          type="text"
+          name="phone"
           value={shop.phone}
           onChange={(e) => changeType(e, 'phone')}
-          label='Phone'
+          label="Phone"
         />
       </FormRow>
       <FormRow>
         <StyledInput
-          type='text'
-          name='address'
+          type="text"
+          name="address"
           value={shop.address}
           onChange={(e) => changeType(e, 'address')}
-          label='Address'
+          label="Address"
         />
 
         <StyledInput
-          type='text'
-          name='email'
+          type="text"
+          name="email"
           value={shop.email}
           onChange={(e) => changeType(e, 'email')}
-          label='Email'
+          label="Email"
         />
       </FormRow>
     </GeneralModal>

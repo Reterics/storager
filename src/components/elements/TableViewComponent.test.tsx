@@ -1,12 +1,12 @@
-import {render, screen, fireEvent} from '@testing-library/react';
-import TableViewComponent, {TableViewActions} from './TableViewComponent';
-import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {TableHead, TableLineType} from '../../interfaces/interfaces.ts';
+import { render, screen, fireEvent } from '@testing-library/react';
+import TableViewComponent, { TableViewActions } from './TableViewComponent';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { TableHead, TableLineType } from '../../interfaces/interfaces.ts';
 
 const mockHeader = [
-  {value: 'ID', sortable: true, editable: false},
-  {value: 'Name', sortable: true, editable: true, type: 'text'},
-  {value: 'Quantity', sortable: true, editable: true, type: 'number'},
+  { value: 'ID', sortable: true, editable: false },
+  { value: 'Name', sortable: true, editable: true, type: 'text' },
+  { value: 'Quantity', sortable: true, editable: true, type: 'number' },
 ] as (string | TableHead)[];
 
 const mockLines = [
@@ -25,7 +25,7 @@ describe('TableViewComponent', () => {
       <TableViewComponent
         header={mockHeader as (string | TableHead)[]}
         lines={mockLines}
-      />
+      />,
     );
 
     // Check header rendering
@@ -54,15 +54,15 @@ describe('TableViewComponent', () => {
         header={mockHeader as (string | TableHead)[]}
         lines={mockLines}
         onEdit={mockOnChange}
-      />
+      />,
     );
 
     const cell = screen.getByText('Item 1');
     fireEvent.click(cell); // Enter edit mode
     const input = screen.getByDisplayValue('Item 1');
 
-    fireEvent.change(input, {target: {value: 'New Item'}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
+    fireEvent.change(input, { target: { value: 'New Item' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
     expect(mockOnChange).toHaveBeenCalledWith([1, 'Item 1', 10], 1, 'New Item'); // Check onChange callback with row and column index
   });
@@ -72,8 +72,8 @@ describe('TableViewComponent', () => {
       <TableViewComponent
         header={mockHeader}
         lines={mockLines}
-        selectedIndexes={{1: true}}
-      />
+        selectedIndexes={{ 1: true }}
+      />,
     );
 
     const selectedRow = screen.getAllByRole('row')[2];
@@ -88,7 +88,7 @@ describe('TableViewComponent', () => {
         header={mockHeader}
         lines={mockLines}
         isHighlighted={isHighlighted}
-      />
+      />,
     );
 
     const highlightedRows = screen
@@ -117,7 +117,7 @@ describe('TableViewComponent', () => {
         onEdit={onEdit}
         onRemove={onRemove}
         onPrint={onPrint}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId('button-table-create'));
@@ -143,13 +143,13 @@ describe('TableViewComponent', () => {
     render(
       <TableViewComponent
         header={[
-          {value: 'ID', editable: false, type: 'text'},
-          {value: 'Name', editable: false, type: 'text'},
-          {value: 'Quantity', editable: true, type: 'steps'},
+          { value: 'ID', editable: false, type: 'text' },
+          { value: 'Name', editable: false, type: 'text' },
+          { value: 'Quantity', editable: true, type: 'steps' },
         ]}
         lines={[[1, 'Item 1', 5]]}
         onEdit={mockOnChange}
-      />
+      />,
     );
 
     const cell = screen.getByText('5');
@@ -157,8 +157,8 @@ describe('TableViewComponent', () => {
 
     const input = await screen.findByDisplayValue(5);
 
-    fireEvent.change(input, {target: {value: '4'}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
+    fireEvent.change(input, { target: { value: '4' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
     expect(mockOnChange).toHaveBeenCalledWith([1, 'Item 1', 5], 2, '4');
   });
@@ -167,18 +167,18 @@ describe('TableViewComponent', () => {
     const mockOnChange = vi.fn();
     render(
       <TableViewComponent
-        header={[{value: 'Quantity', editable: true, type: 'number'}]}
+        header={[{ value: 'Quantity', editable: true, type: 'number' }]}
         lines={[[5]]}
         onEdit={mockOnChange}
-      />
+      />,
     );
 
     const cell = screen.getByText('5');
     fireEvent.click(cell);
 
     const input = await screen.findByDisplayValue('5');
-    fireEvent.change(input, {target: {value: '10'}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
+    fireEvent.change(input, { target: { value: '10' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
     expect(mockOnChange).toHaveBeenCalled();
   });
@@ -187,10 +187,10 @@ describe('TableViewComponent', () => {
     const mockOnChange = vi.fn();
     render(
       <TableViewComponent
-        header={[{value: 'Name', editable: true, type: 'text'}]}
+        header={[{ value: 'Name', editable: true, type: 'text' }]}
         lines={[['Item 1']]}
         onEdit={mockOnChange}
-      />
+      />,
     );
 
     const cell = screen.getByText('Item 1');
@@ -199,8 +199,8 @@ describe('TableViewComponent', () => {
     // 2. wait until input appears
     const input = await screen.findByDisplayValue('Item 1');
 
-    fireEvent.change(input, {target: {value: 'Updated Name'}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
+    fireEvent.change(input, { target: { value: 'Updated Name' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
     expect(mockOnChange).toHaveBeenCalled();
   });
@@ -210,28 +210,28 @@ describe('TableViewComponent', () => {
     render(
       <TableViewComponent
         header={[
-          {value: 'ID', editable: false, type: 'text'},
-          {value: 'Name', editable: false, type: 'text'},
+          { value: 'ID', editable: false, type: 'text' },
+          { value: 'Name', editable: false, type: 'text' },
           {
             value: 'Type',
             editable: true,
             type: 'select',
             options: [
-              {name: 'Option1', value: 'option1'},
-              {name: 'Option2', value: 'option2'},
+              { name: 'Option1', value: 'option1' },
+              { name: 'Option2', value: 'option2' },
             ],
           },
         ]}
         lines={[[1, 'Item 1', 'option1']]}
         onEdit={mockOnChange}
-      />
+      />,
     );
 
     const cell = screen.getByText('Option1');
     fireEvent.click(cell);
 
     const select = await screen.findByRole('combobox');
-    fireEvent.change(select, {target: {value: 'option2'}});
+    fireEvent.change(select, { target: { value: 'option2' } });
 
     const closeButton = screen.getByTestId('inline-close-button');
     fireEvent.click(closeButton);
@@ -239,11 +239,11 @@ describe('TableViewComponent', () => {
     expect(mockOnChange).toHaveBeenCalledWith(
       [1, 'Item 1', 'option1'],
       2,
-      'option2'
+      'option2',
     );
   });
   it('sorts rows correctly when clicking headers', async () => {
-    const {container} = render(
+    const { container } = render(
       <TableViewComponent
         header={mockHeader}
         lines={[
@@ -251,7 +251,7 @@ describe('TableViewComponent', () => {
           [1, 'A', 10],
           [2, 'B', 8],
         ]}
-      />
+      />,
     );
 
     const nameHeader = screen.getByText('Name');
@@ -272,7 +272,7 @@ describe('TableViewComponent', () => {
           [1, 'B', 20],
           [2, 'A', 10],
         ]}
-      />
+      />,
     );
 
     // Should render in original order
@@ -288,7 +288,7 @@ describe('TableViewComponent', () => {
           [1, 'B'],
           [2, undefined],
         ]}
-      />
+      />,
     );
 
     const nameHeader = screen.getByText('Name');
@@ -305,7 +305,7 @@ describe('TableViewComponent', () => {
           [1, null],
           [2, 'A'],
         ]}
-      />
+      />,
     );
 
     const nameHeader = screen.getByText('Name');
@@ -323,7 +323,7 @@ describe('TableViewComponent', () => {
           [1, true],
           [2, 'A'],
         ]}
-      />
+      />,
     );
 
     const nameHeader = screen.getByText('Name');
@@ -340,7 +340,7 @@ describe('TableViewComponent', () => {
           [1, 'B', 5],
           [2, 'A', 10],
         ]}
-      />
+      />,
     );
 
     const nameHeader = screen

@@ -1,11 +1,11 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InventoryModal from './InventoryModal';
-import {StoreItem, StorePart} from '../../interfaces/interfaces.ts';
-import {ReactNode} from 'react';
+import type { StoreItem, StorePart } from '../../interfaces/interfaces.ts';
+import type { ReactNode } from 'react';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({t: (key: string) => key}),
+  useTranslation: () => ({ t: (key: string) => key }),
 }));
 
 vi.mock('../../utils/storage.ts', () => ({
@@ -27,18 +27,18 @@ vi.mock('../elements/TableSelectComponent.tsx', () => ({
     selectedItems: Record<string, number>;
     onChange: (
       selected: Record<string, number>,
-      item: StoreItem | StorePart
+      item: StoreItem | StorePart,
     ) => void;
     itemRenderer: (item: StoreItem | StorePart) => ReactNode[];
   }) => (
-    <div data-testid='table-select'>
+    <div data-testid="table-select">
       {items.map((item) => (
         <div key={item.id} data-testid={`item-${item.id}`}>
           {itemRenderer(item).map((el, i) => (
             <div key={i}>{el}</div>
           ))}
           <button
-            onClick={() => onChange({...selectedItems, [item.id]: 1}, item)}
+            onClick={() => onChange({ ...selectedItems, [item.id]: 1 }, item)}
           >
             Select
           </button>
@@ -79,10 +79,10 @@ describe('InventoryModal', () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     expect(screen.getByText('Inventory')).toBeInTheDocument();
@@ -94,10 +94,10 @@ describe('InventoryModal', () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     const trashButton = screen.getByTestId('trashButton');
@@ -110,10 +110,10 @@ describe('InventoryModal', () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     const selectButtons = screen.getAllByText('Select');
@@ -122,17 +122,17 @@ describe('InventoryModal', () => {
     const saveButton = screen.getByTestId('saveButton');
     fireEvent.click(saveButton);
 
-    expect(mockOnSave).toHaveBeenCalledWith({'1': 1});
+    expect(mockOnSave).toHaveBeenCalledWith({ '1': 1 });
   });
 
   it('calls onClose when cancel button is clicked', () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     const cancelButton = screen.getByTestId('cancelButton');
@@ -145,20 +145,20 @@ describe('InventoryModal', () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     const input = screen.getByTestId('searchInput');
     const searchButton = screen.queryByTestId('searchButton');
-    fireEvent.change(input, {target: {value: 'bolt'}});
+    fireEvent.change(input, { target: { value: 'bolt' } });
     expect(searchButton).toBeInTheDocument();
     fireEvent.click(searchButton!);
 
     await waitFor(() =>
-      expect(screen.queryByText('Screw')).not.toBeInTheDocument()
+      expect(screen.queryByText('Screw')).not.toBeInTheDocument(),
     );
     await waitFor(() => expect(screen.getByText(/Bolt/)).toBeInTheDocument());
   });
@@ -167,10 +167,10 @@ describe('InventoryModal', () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     const selectButtons = screen.getAllByText('Select');
@@ -179,17 +179,17 @@ describe('InventoryModal', () => {
     const saveButton = screen.getByTestId('saveButton');
     fireEvent.click(saveButton);
 
-    expect(mockOnSave).toHaveBeenCalledWith({'1': 1});
+    expect(mockOnSave).toHaveBeenCalledWith({ '1': 1 });
   });
 
   it('renders itemRenderer values', async () => {
     render(
       <InventoryModal
         items={mockItems}
-        selectedShopId='shop1'
+        selectedShopId="shop1"
         onClose={mockOnClose}
         onSave={mockOnSave}
-      />
+      />,
     );
 
     expect(screen.getByText('SC123')).toBeInTheDocument();

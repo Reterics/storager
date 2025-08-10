@@ -1,14 +1,16 @@
-import {CrudField} from './FirebaseCrudManager';
-import {useContext, useState} from 'react';
+import type { CrudField } from './FirebaseCrudManager';
+import { useContext, useState } from 'react';
 import GeneralModal from '../../components/modals/GeneralModal.tsx';
 import StyledInput from '../../components/elements/StyledInput.tsx';
 import StyledSelect from '../../components/elements/StyledSelect.tsx';
-import {ContextDataValueType} from '../../interfaces/firebase.ts';
+import type { ContextDataValueType } from '../../interfaces/firebase.ts';
 import StyledMultiSelect from '../../components/elements/StyledMultiSelect.tsx';
-import MediaModal, {MediaBrowse} from '../../components/modals/MediaModal.tsx';
-import {getShopIndex} from '../../utils/storage.ts';
-import {ShopContext} from '../../store/ShopContext.tsx';
-import {DBContext} from '../../database/DBContext.ts';
+import MediaModal, {
+  MediaBrowse,
+} from '../../components/modals/MediaModal.tsx';
+import { getShopIndex } from '../../utils/storage.ts';
+import { ShopContext } from '../../store/ShopContext.tsx';
+import { DBContext } from '../../database/DBContext.ts';
 
 interface FormModalProps {
   title: string;
@@ -36,7 +38,7 @@ export default function FormModal({
   const shopIndex = getShopIndex(data, selectedShopId);
 
   const update = (key: string, value: unknown) => {
-    setForm((prev) => ({...prev, [key]: value}));
+    setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const renderField = (field: CrudField) => {
@@ -129,7 +131,7 @@ export default function FormModal({
         },
       ]}
     >
-      <div className='grid grid-cols-2 gap-3'>
+      <div className="grid grid-cols-2 gap-3">
         {fields
           .filter((f) => f.creatable !== false)
           .map((field) => (

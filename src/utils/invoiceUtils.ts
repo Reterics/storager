@@ -1,25 +1,25 @@
-import {StyledSelectOption} from '../interfaces/interfaces.ts';
+import type { StyledSelectOption } from '../interfaces/interfaces.ts';
 
 export const lineVatRateSimplified: StyledSelectOption[] = [
-  {name: 'AAM', value: '0'},
-  {name: '27%', value: '0.2126'},
-  {name: '18%', value: '0.1525'},
-  {name: '5%', value: '0.0476'},
-  {name: '0', value: '0'},
-  {name: 'TAM', value: '0'},
+  { name: 'AAM', value: '0' },
+  { name: '27%', value: '0.2126' },
+  { name: '18%', value: '0.1525' },
+  { name: '5%', value: '0.0476' },
+  { name: '0', value: '0' },
+  { name: 'TAM', value: '0' },
 ];
 
 export const lineVatRateNormal: StyledSelectOption[] = [
-  {name: 'AAM', value: '0'},
-  {name: '27%', value: '0.27'},
+  { name: 'AAM', value: '0' },
+  { name: '27%', value: '0.27' },
   //{name:"25%", value: "0.25"},
   //{name:"20%", value: "0.20"},
-  {name: '18%', value: '0.18'},
+  { name: '18%', value: '0.18' },
   //{name:"12%", value: "0.12"},
   //{name:"7%", value: "0.07"},
-  {name: '5%', value: '0.05'},
-  {name: '0%', value: '0'},
-  {name: 'TAM', value: '0'},
+  { name: '5%', value: '0.05' },
+  { name: '0%', value: '0' },
+  { name: 'TAM', value: '0' },
 ];
 
 export const streetTypes: string[] = [

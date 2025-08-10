@@ -1,15 +1,16 @@
 import React from 'react';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Header from './Header';
-import {AuthContext} from '../store/AuthContext';
-import {ShopContext} from '../store/ShopContext';
-import {DBContext} from '../database/DBContext';
-import {vi, expect, it, describe, Mock, beforeEach} from 'vitest';
-import {MemoryRouter} from 'react-router-dom';
-import {useTheme} from '../store/ThemeContext';
-import {IAuth, Shop} from '../interfaces/interfaces.ts';
-import {DBContextType} from '../interfaces/firebase.ts';
-import {defaultSettings} from '../../tests/mocks/shopData.ts';
+import { AuthContext } from '../store/AuthContext';
+import { ShopContext } from '../store/ShopContext';
+import { DBContext } from '../database/DBContext';
+import type { Mock } from 'vitest';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
+import { useTheme } from '../store/ThemeContext';
+import type { IAuth, Shop } from '../interfaces/interfaces.ts';
+import type { DBContextType } from '../interfaces/firebase.ts';
+import { defaultSettings } from '../../tests/mocks/shopData.ts';
 
 vi.mock('../database/firebase/config', async () => {
   const actual = await vi.importActual('../database/firebase/config');
@@ -62,7 +63,7 @@ describe('Header Component', () => {
   // Helper function to render with providers
   const renderWithProviders = (
     ui: React.ReactElement,
-    {route = '/', searchParams = ''} = {}
+    { route = '/', searchParams = '' } = {},
   ) => {
     window.history.pushState({}, 'Test page', route + searchParams);
 
@@ -77,7 +78,7 @@ describe('Header Component', () => {
             </DBContext.Provider>
           </ShopContext.Provider>
         </AuthContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -91,9 +92,12 @@ describe('Header Component', () => {
   });
 
   it('renders correctly with default props', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
 
-    renderWithProviders(<Header />, {route: '/', searchParams: '?page=shops'});
+    renderWithProviders(<Header />, {
+      route: '/',
+      searchParams: '?page=shops',
+    });
 
     // Check if essential elements are rendered
     expect(screen.getByText('Storage')).toBeInTheDocument();
@@ -107,13 +111,16 @@ describe('Header Component', () => {
   });
 
   it('renders shop-specific links when shop is defined', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     mockShopContext.shop = {
       id: 'shop1',
       name: 'Shop 1',
     };
 
-    renderWithProviders(<Header />, {route: '/', searchParams: '?page=items'});
+    renderWithProviders(<Header />, {
+      route: '/',
+      searchParams: '?page=items',
+    });
 
     // Check if shop-specific links are rendered
     expect(screen.getByText('Items')).toBeInTheDocument();
@@ -122,7 +129,7 @@ describe('Header Component', () => {
   });
 
   it('toggles dropdown menu when username is clicked', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
 
     renderWithProviders(<Header />);
 
@@ -137,7 +144,7 @@ describe('Header Component', () => {
   });
 
   it('calls SignOut when Logout is clicked', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
 
     renderWithProviders(<Header />);
 
@@ -150,7 +157,7 @@ describe('Header Component', () => {
   });
 
   it('calls refreshData when Update is clicked', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     mockDBContext.data.currentUser.role = 'admin';
 
     const testArray = [
@@ -172,7 +179,7 @@ describe('Header Component', () => {
 
     for (let i = 0; i < testArray.length; i++) {
       const page = testArray[i];
-      const {unmount} = renderWithProviders(<Header />, {
+      const { unmount } = renderWithProviders(<Header />, {
         route: '/',
         searchParams: '?page=' + page,
       });
@@ -184,7 +191,7 @@ describe('Header Component', () => {
       fireEvent.click(screen.getByText('Update'));
 
       waitFor(() =>
-        expect(mockDBContext.refreshData).toHaveBeenCalledWith(callArray[i])
+        expect(mockDBContext.refreshData).toHaveBeenCalledWith(callArray[i]),
       );
       unmount();
     }
@@ -192,25 +199,25 @@ describe('Header Component', () => {
 
   it('displays correct logo based on theme', () => {
     // Test for dark theme
-    (useTheme as Mock).mockReturnValue({theme: 'dark'});
-    const {unmount} = renderWithProviders(<Header />);
+    (useTheme as Mock).mockReturnValue({ theme: 'dark' });
+    const { unmount } = renderWithProviders(<Header />);
     expect(screen.getByAltText('StorageR Logo')).toHaveAttribute(
       'src',
-      '/src/assets/logo_white.svg'
+      '/src/assets/logo_white.svg',
     );
 
     unmount();
     // Test for light theme
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     renderWithProviders(<Header />);
     expect(screen.getByAltText('StorageR Logo')).toHaveAttribute(
       'src',
-      '/src/assets/logo.svg'
+      '/src/assets/logo.svg',
     );
   });
 
   it('shows admin menu items when user is admin', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     mockDBContext.data.currentUser.role = 'admin';
 
     renderWithProviders(<Header />);
@@ -226,7 +233,7 @@ describe('Header Component', () => {
   });
 
   it('does not show admin menu items when user is not admin', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     mockDBContext.data.currentUser.role = 'user';
 
     renderWithProviders(<Header />);
@@ -242,7 +249,7 @@ describe('Header Component', () => {
   });
 
   it('shows Logs menu item when logging is active and user is admin', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     mockDBContext.data.currentUser.role = 'admin';
 
     (configModule.firebaseModel.isLoggingActive as Mock).mockReturnValue(true);
@@ -254,7 +261,7 @@ describe('Header Component', () => {
   });
 
   it('renders Invoices, Transactions, and Leases when shop exists and modules are enabled', () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
 
     mockShopContext.shop = {
       id: 'shop1',
@@ -275,10 +282,10 @@ describe('Header Component', () => {
   });
 
   it('shows loading icon when update is triggered', async () => {
-    (useTheme as Mock).mockReturnValue({theme: 'light'});
+    (useTheme as Mock).mockReturnValue({ theme: 'light' });
     mockDBContext.data.currentUser.role = 'admin';
 
-    const {container} = renderWithProviders(<Header />, {
+    const { container } = renderWithProviders(<Header />, {
       route: '/',
       searchParams: '?page=settings',
     });

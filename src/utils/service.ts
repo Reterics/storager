@@ -1,14 +1,14 @@
-import {TableViewActions} from '../components/elements/TableViewComponent.tsx';
-import {toUserDateTime} from './data.ts';
-import {completionFormToPrintable, serviceDataToPrintable} from './print.tsx';
-import {
+import { TableViewActions } from '../components/elements/TableViewComponent.tsx';
+import { toUserDateTime } from './data.ts';
+import { completionFormToPrintable, serviceDataToPrintable } from './print.tsx';
+import type {
   ServiceCompleteData,
   ServiceData,
-  serviceStatusList,
   SettingsItems,
 } from '../interfaces/interfaces.ts';
-import {PrintViewData} from '../interfaces/pdf.ts';
-import {TFunction} from 'i18next';
+import { serviceStatusList } from '../interfaces/interfaces.ts';
+import type { PrintViewData } from '../interfaces/pdf.ts';
+import type { TFunction } from 'i18next';
 
 export function getServiceLineData(
   item: ServiceData,
@@ -17,7 +17,7 @@ export function getServiceLineData(
   t: TFunction,
   settings: SettingsItems | undefined,
   onPrint: (data: PrintViewData) => void,
-  onOpen: (data: PrintViewData) => void
+  onOpen: (data: PrintViewData) => void,
 ) {
   const completionFormId = item.id + '_cd';
   const completionForm = completionForms.find((c) => c.id === completionFormId);
@@ -53,14 +53,19 @@ export function getServiceLineData(
             onPrint(
               isCompletionForm
                 ? completionFormToPrintable(data, t, true)
-                : serviceDataToPrintable(data, settings || {id: ''}, t, true)
+                : serviceDataToPrintable(data, settings || { id: '' }, t, true),
             );
           },
           onOpen: () => {
             onOpen(
               isCompletionForm
                 ? completionFormToPrintable(data, t, true)
-                : serviceDataToPrintable(data, settings || {id: ''}, t, false)
+                : serviceDataToPrintable(
+                    data,
+                    settings || { id: '' },
+                    t,
+                    false,
+                  ),
             );
           },
         }),
@@ -75,7 +80,7 @@ export function filterServices(
   shopFilter?: string,
   searchFilter?: string,
   activeFilter?: boolean,
-  typeFilter?: string
+  typeFilter?: string,
 ) {
   if (shopFilter) {
     items = items.filter((item) => item.service_name === shopFilter);
@@ -87,7 +92,7 @@ export function filterServices(
     items = items.filter(
       (item) =>
         item.client_name?.toLowerCase().includes(lowerCaseFilter) ||
-        item.client_phone?.toLowerCase().includes(lowerCaseFilter)
+        item.client_phone?.toLowerCase().includes(lowerCaseFilter),
     );
   }
 
@@ -95,7 +100,7 @@ export function filterServices(
     items = items.filter(
       (item) =>
         !completionFormsById[item.id + '_cd'] &&
-        item.serviceStatus !== serviceStatusList[serviceStatusList.length - 1]
+        item.serviceStatus !== serviceStatusList[serviceStatusList.length - 1],
     );
   }
 

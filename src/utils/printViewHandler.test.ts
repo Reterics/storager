@@ -1,11 +1,11 @@
-import {describe, it, expect, vi, beforeAll, afterAll} from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import {
   getPrintableData,
   adjustPageHeight,
   downloadElementAsPDF,
 } from './printViewHandler';
-import {TFunction} from 'i18next';
-import {DBContextType} from '../interfaces/firebase.ts';
+import type { TFunction } from 'i18next';
+import type { DBContextType } from '../interfaces/firebase.ts';
 
 vi.mock('html2canvas', () => ({
   __esModule: true,
@@ -20,7 +20,7 @@ vi.mock('jspdf', () => {
   return {
     __esModule: true,
     default: class jsPDF {
-      internal = {pageSize: {getWidth: () => 210, getHeight: () => 297}};
+      internal = { pageSize: { getWidth: () => 210, getHeight: () => 297 } };
       addImage = vi.fn();
       addPage = vi.fn();
       save = vi.fn();
@@ -29,7 +29,7 @@ vi.mock('jspdf', () => {
 });
 
 vi.mock('./print.tsx', () => ({
-  serviceDataToPrintable: vi.fn((data) => ({type: 'service', id: data.id})),
+  serviceDataToPrintable: vi.fn((data) => ({ type: 'service', id: data.id })),
   completionFormToPrintable: vi.fn((data) => ({
     type: 'completion',
     id: data.id,
@@ -63,27 +63,27 @@ describe('printViewHandler', () => {
   it('returns serviceData printable object', () => {
     const data = {
       data: {
-        services: [{id: '123'}],
+        services: [{ id: '123' }],
         completions: [],
         archive: [],
-        settings: {id: 's1'},
+        settings: { id: 's1' },
       },
     } as unknown as DBContextType;
     const result = getPrintableData(data, '123', mockT, 'services');
-    expect(result).toEqual({type: 'service', id: '123'});
+    expect(result).toEqual({ type: 'service', id: '123' });
   });
 
   it('returns completionForm printable object', () => {
     const data = {
       data: {
         services: [],
-        completions: [{id: '456'}],
+        completions: [{ id: '456' }],
         archive: [],
-        settings: {id: 's1'},
+        settings: { id: 's1' },
       },
     } as unknown as DBContextType;
     const result = getPrintableData(data, '456', mockT, 'completions');
-    expect(result).toEqual({type: 'completion', id: '456'});
+    expect(result).toEqual({ type: 'completion', id: '456' });
   });
 
   it('returns null if not found', () => {
@@ -114,7 +114,7 @@ describe('printViewHandler', () => {
       dummyCanvas as never,
       0,
       50,
-      ctx as never
+      ctx as never,
     );
     expect(pageHeight).toBe(50);
   });

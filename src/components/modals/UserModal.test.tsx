@@ -1,10 +1,10 @@
 // UserModal.test.tsx
 
-import {render, fireEvent, waitFor} from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
 import UserModal from './UserModal';
-import {vi, describe, it, expect, beforeEach} from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import React from 'react';
-import {
+import type {
   GeneralModalArguments,
   GeneralModalButtons,
   IAuth,
@@ -14,14 +14,14 @@ import {
   StyledSelectOption,
   UserModalInput,
 } from '../../interfaces/interfaces.ts';
-import {AuthContext} from '../../store/AuthContext.tsx';
+import { AuthContext } from '../../store/AuthContext.tsx';
 
 // Mock AuthContext and SignUp function
 const SignUpMock = vi.fn();
 
 // Mock GeneralModal component
 vi.mock('./GeneralModal.tsx', () => ({
-  default: ({children, buttons}: GeneralModalArguments) => (
+  default: ({ children, buttons }: GeneralModalArguments) => (
     <div>
       {buttons &&
         buttons.map((button: GeneralModalButtons, index: number) => (
@@ -65,11 +65,13 @@ vi.mock('../elements/StyledSelect.tsx', () => ({
 }));
 
 vi.mock('../elements/FormRow.tsx', () => ({
-  default: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock('../AlertBox.tsx', () => ({
-  default: ({message}: {message: React.ReactNode | string | undefined}) => (
+  default: ({ message }: { message: React.ReactNode | string | undefined }) => (
     <div>{message}</div>
   ),
 }));
@@ -92,7 +94,7 @@ describe('UserModal', () => {
     shops,
   }: UserModalInput) => {
     return (
-      <AuthContext.Provider value={{SignUp: SignUpMock} as unknown as IAuth}>
+      <AuthContext.Provider value={{ SignUp: SignUpMock } as unknown as IAuth}>
         <UserModal
           onClose={onClose}
           user={user}
@@ -115,11 +117,11 @@ describe('UserModal', () => {
     };
 
     const shops = [
-      {id: '1', name: 'Shop 1'},
-      {id: '2', name: 'Shop 2'},
+      { id: '1', name: 'Shop 1' },
+      { id: '2', name: 'Shop 2' },
     ];
 
-    const {getByLabelText, queryByLabelText, queryByText} = render(
+    const { getByLabelText, queryByLabelText, queryByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -127,7 +129,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     expect(getByLabelText('Username')).toBeInTheDocument();
@@ -152,11 +154,11 @@ describe('UserModal', () => {
     };
 
     const shops = [
-      {id: '1', name: 'Shop 1'},
-      {id: '2', name: 'Shop 2'},
+      { id: '1', name: 'Shop 1' },
+      { id: '2', name: 'Shop 2' },
     ];
 
-    const {getByLabelText, queryByText} = render(
+    const { getByLabelText, queryByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -164,7 +166,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     expect(getByLabelText('Username')).toBeInTheDocument();
@@ -186,7 +188,7 @@ describe('UserModal', () => {
 
     const shops = [] as Shop[];
 
-    const {getByText} = render(
+    const { getByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -194,7 +196,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     const cancelButton = getByText('Cancel');
@@ -214,7 +216,7 @@ describe('UserModal', () => {
 
     const shops = [] as Shop[];
 
-    const {getByLabelText} = render(
+    const { getByLabelText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -222,11 +224,11 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     const usernameInput = getByLabelText('Username');
-    fireEvent.change(usernameInput, {target: {value: 'newusername'}});
+    fireEvent.change(usernameInput, { target: { value: 'newusername' } });
 
     expect(setUserMock).toHaveBeenCalledWith({
       ...user,
@@ -245,7 +247,7 @@ describe('UserModal', () => {
 
     const shops = [] as Shop[];
 
-    const {getByText, findByText} = render(
+    const { getByText, findByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -253,7 +255,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     const saveButton = getByText('Save');
@@ -278,7 +280,7 @@ describe('UserModal', () => {
 
     const shops = [] as Shop[];
 
-    const {getByText, findByText} = render(
+    const { getByText, findByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -286,7 +288,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     const saveButton = getByText('Save');
@@ -313,7 +315,7 @@ describe('UserModal', () => {
 
     SignUpMock.mockResolvedValue({});
 
-    const {getByText} = render(
+    const { getByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -321,7 +323,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     const saveButton = getByText('Save');
@@ -351,7 +353,7 @@ describe('UserModal', () => {
 
     const shops = [] as Shop[];
 
-    const {getByText} = render(
+    const { getByText } = render(
       <RenderModal
         onClose={onCloseMock}
         user={user}
@@ -359,7 +361,7 @@ describe('UserModal', () => {
         onSave={onSaveMock}
         inPlace={false}
         shops={shops}
-      />
+      />,
     );
 
     const saveButton = getByText('Save');

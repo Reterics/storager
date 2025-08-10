@@ -1,12 +1,12 @@
-import React, {createContext, useState, useEffect, ReactNode} from 'react';
+import type { ReactNode } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const ThemeContext = createContext<{
   theme: string;
   toggleTheme: () => void;
 } | null>(null);
 
-export const ThemeProvider = ({children}: {children: ReactNode}) => {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Step 1: Get the saved theme from localStorage or fallback to system preference
   const savedTheme = localStorage.getItem('theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -42,11 +42,10 @@ export const ThemeProvider = ({children}: {children: ReactNode}) => {
   }, [initialTheme]);
 
   return (
-    <ThemeContext.Provider value={{theme, toggleTheme}}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => React.useContext(ThemeContext);

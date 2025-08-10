@@ -1,12 +1,12 @@
 import DBModel from '../DBModel.ts';
-import {
+import type {
   CommonCollectionData,
   FirebaseImageData,
   ImageStore,
 } from '../../interfaces/firebase.ts';
-import {loadFromIndexedDB, saveToIndexedDB} from '../../utils/indexedDB.ts';
-import {getFileURL} from './storage.ts';
-import {StoreItem, StorePart} from '../../interfaces/interfaces.ts';
+import { loadFromIndexedDB, saveToIndexedDB } from '../../utils/indexedDB.ts';
+import { getFileURL } from './storage.ts';
+import type { StoreItem, StorePart } from '../../interfaces/interfaces.ts';
 
 /**
  * @name ImageDBModel
@@ -65,7 +65,7 @@ export default class ImageDBModel extends DBModel {
     try {
       await saveToIndexedDB(
         'images',
-        Object.values(this._imageStore) as unknown as CommonCollectionData[]
+        Object.values(this._imageStore) as unknown as CommonCollectionData[],
       );
     } catch (e) {
       console.error(e);

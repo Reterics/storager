@@ -3,3 +3,5 @@ public
 dist
 coverage
 src/assets/*
+.next
+.turbo

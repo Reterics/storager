@@ -1,9 +1,9 @@
-import {useContext, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {Shop, Transaction} from '../interfaces/interfaces.ts';
+import { useContext, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type { Shop, Transaction } from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
-import {PageHead} from '../components/elements/PageHead.tsx';
+import { PageHead } from '../components/elements/PageHead.tsx';
 import {
   Area,
   Bar,
@@ -32,17 +32,15 @@ import {
   BsGrid1X2,
   BsListUl,
 } from 'react-icons/bs';
-import {
-  groupTransactions,
-  transactionInterval,
-} from '../utils/transactionUtils.ts';
+import type { transactionInterval } from '../utils/transactionUtils.ts';
+import { groupTransactions } from '../utils/transactionUtils.ts';
 import StyledSelect from '../components/elements/StyledSelect.tsx';
-import {formatCurrency} from '../utils/data.ts';
-import {useNavigate} from 'react-router-dom';
+import { formatCurrency } from '../utils/data.ts';
+import { useNavigate } from 'react-router-dom';
 
 export default function Reports() {
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [shops] = useState<Shop[]>(dbContext?.data.shops || []);
   const [shopFilter, setShopFilter] = useState<string>('');
   const [groupBy, setGroupBy] = useState<transactionInterval>('daily');
@@ -75,7 +73,7 @@ export default function Reports() {
   };
 
   const [transactions, setTransactions] = useState<Transaction[]>(
-    filterItems(shopFilter)
+    filterItems(shopFilter),
   );
 
   const selectShopFilter = (shop: string) => {
@@ -106,7 +104,7 @@ export default function Reports() {
     ([name, value]) => ({
       name: t(name),
       value,
-    })
+    }),
   );
 
   // For items page show actual day
@@ -138,15 +136,15 @@ export default function Reports() {
           {
             value: <BsListUl />,
             onClick: () => {
-              navigate('?page=transactions', {replace: true});
+              navigate('?page=transactions', { replace: true });
             },
           },
         ]}
       >
-        <div className='flex flex-1 gap-2 border-b border-gray-200 dark:border-gray-700'>
+        <div className="flex flex-1 gap-2 border-b border-gray-200 dark:border-gray-700">
           <button
             className={`py-2 px-3 text-sm font-medium flex items-center gap-2 rounded-md transition-colors bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700`}
-            onClick={() => navigate('?page=transactions', {replace: true})}
+            onClick={() => navigate('?page=transactions', { replace: true })}
           >
             <BsBoxArrowInLeft /> {t('Back')}
           </button>
@@ -156,8 +154,8 @@ export default function Reports() {
               label: t('General Reports'),
               icon: <BsBarChartLine />,
             },
-            {key: 'items', label: t('Item Reports'), icon: <BsGrid1X2 />},
-          ].map(({key, label, icon}) => {
+            { key: 'items', label: t('Item Reports'), icon: <BsGrid1X2 /> },
+          ].map(({ key, label, icon }) => {
             const isActive = activeTab === key;
 
             return (
@@ -175,18 +173,18 @@ export default function Reports() {
               </button>
             );
           })}
-          <div className='text-sm text-gray-500 dark:text-gray-400 align-middle flex-1 content-center'>
+          <div className="text-sm text-gray-500 dark:text-gray-400 align-middle flex-1 content-center">
             {lastNonEmpty && activeTab === 'items'
               ? t('Showing data for')
               : activeTab === 'items'
                 ? t('No product sales data available')
                 : null}
             {lastNonEmpty && activeTab === 'items' && (
-              <strong className='ms-1'>{lastNonEmpty.date}</strong>
+              <strong className="ms-1">{lastNonEmpty.date}</strong>
             )}
           </div>
         </div>
-        <div className='w-30 select-no-first'>
+        <div className="w-30 select-no-first">
           <StyledSelect
             options={[
               {
@@ -206,11 +204,11 @@ export default function Reports() {
                 value: 'yearly',
               },
             ]}
-            name='type'
+            name="type"
             value={groupBy || undefined}
             onSelect={(e) =>
               setGroupBy(
-                (e.target as HTMLSelectElement).value as transactionInterval
+                (e.target as HTMLSelectElement).value as transactionInterval,
               )
             }
             label={false}
@@ -219,46 +217,46 @@ export default function Reports() {
         </div>
       </PageHead>
 
-      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-2'>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-2">
         {[
           {
             label: t('Total Revenue'),
-            icon: <BsCashStack className='text-green-500 text-xl' />,
+            icon: <BsCashStack className="text-green-500 text-xl" />,
             value: formatCurrency(gross),
           },
           {
             label: t('Net Income'),
-            icon: <BsGraphUpArrow className='text-blue-500 text-xl' />,
+            icon: <BsGraphUpArrow className="text-blue-500 text-xl" />,
             value: formatCurrency(net),
           },
           {
             label: t('Total Cost'),
-            icon: <BsBoxSeam className='text-orange-500 text-xl' />,
+            icon: <BsBoxSeam className="text-orange-500 text-xl" />,
             value: formatCurrency(cost),
           },
           {
             label: t('Total Profit'),
-            icon: <BsCoin className='text-yellow-500 text-xl' />,
+            icon: <BsCoin className="text-yellow-500 text-xl" />,
             value: formatCurrency(profit),
           },
           {
             label: t('Products Sold'),
-            icon: <BsCartCheck className='text-purple-500 text-xl' />,
+            icon: <BsCartCheck className="text-purple-500 text-xl" />,
             value: count.toLocaleString(),
           },
         ].map((card, idx) => (
           <div
             key={idx}
-            className='flex items-center gap-3 p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+            className="flex items-center gap-3 p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
           >
-            <div className='p-2 rounded-full bg-gray-100 dark:bg-gray-700'>
+            <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-700">
               {card.icon}
             </div>
-            <div className='flex flex-col'>
-              <span className='text-sm text-gray-500 dark:text-gray-400'>
+            <div className="flex flex-col">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 {card.label}
               </span>
-              <span className='text-lg font-semibold text-gray-900 dark:text-white'>
+              <span className="text-lg font-semibold text-gray-900 dark:text-white">
                 {card.value}
               </span>
             </div>
@@ -268,20 +266,20 @@ export default function Reports() {
 
       {activeTab === 'general' ? (
         <>
-          <div className='grid grid-cols-1 gap-4 py-4'>
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4'>
+          <div className="grid grid-cols-1 gap-4 py-4">
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
                 {t('Summary Dashboard')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart
                     data={groupTransactions(transactions, groupBy)}
                   >
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
-                    <YAxis yAxisId='left' />
-                    <YAxis yAxisId='right' orientation='right' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis yAxisId="left" />
+                    <YAxis yAxisId="right" orientation="right" />
                     <Tooltip
                       formatter={(value: number) =>
                         formatCurrency(Number(value))
@@ -289,42 +287,42 @@ export default function Reports() {
                     />
                     <Legend />
                     <Bar
-                      yAxisId='left'
-                      dataKey='count'
-                      fill='#8884d8'
+                      yAxisId="left"
+                      dataKey="count"
+                      fill="#8884d8"
                       name={t('Products Sold')}
                       barSize={20}
                     />
                     <Line
-                      yAxisId='right'
-                      type='monotone'
-                      dataKey='cost'
-                      stroke='#ff7300'
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="cost"
+                      stroke="#ff7300"
                       name={t('Cost')}
                       strokeWidth={2}
                     />
                     <Line
-                      yAxisId='right'
-                      type='monotone'
-                      dataKey='net'
-                      stroke='#00bcd4'
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="net"
+                      stroke="#00bcd4"
                       name={t('Net')}
                       strokeWidth={2}
                     />
                     <Line
-                      yAxisId='right'
-                      type='monotone'
-                      dataKey='gross'
-                      stroke='#82ca9d'
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="gross"
+                      stroke="#82ca9d"
                       name={t('Gross')}
                       strokeWidth={2}
                     />
                     <Area
-                      yAxisId='right'
-                      type='monotone'
-                      dataKey='margin'
-                      fill='rgba(136, 132, 216, 0.3)'
-                      stroke='#8884d8'
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="margin"
+                      fill="rgba(136, 132, 216, 0.3)"
+                      stroke="#8884d8"
                       name={t('Profit')}
                     />
                   </ComposedChart>
@@ -333,77 +331,77 @@ export default function Reports() {
             </div>
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 pb-4'>
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Profit Margin Analysis')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart
                     data={groupTransactions(transactions, groupBy)}
                   >
                     <defs>
-                      <linearGradient id='colorNet' x1='0' y1='0' x2='0' y2='1'>
+                      <linearGradient id="colorNet" x1="0" y1="0" x2="0" y2="1">
                         <stop
-                          offset='5%'
-                          stopColor='#8884d8'
+                          offset="5%"
+                          stopColor="#8884d8"
                           stopOpacity={0.8}
                         />
                         <stop
-                          offset='95%'
-                          stopColor='#8884d8'
+                          offset="95%"
+                          stopColor="#8884d8"
                           stopOpacity={0}
                         />
                       </linearGradient>
                       <linearGradient
-                        id='colorMarginPercent'
-                        x1='0'
-                        y1='0'
-                        x2='0'
-                        y2='1'
+                        id="colorMarginPercent"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
                       >
                         <stop
-                          offset='5%'
-                          stopColor='#82ca9d'
+                          offset="5%"
+                          stopColor="#82ca9d"
                           stopOpacity={0.8}
                         />
                         <stop
-                          offset='95%'
-                          stopColor='#82ca9d'
+                          offset="95%"
+                          stopColor="#82ca9d"
                           stopOpacity={0}
                         />
                       </linearGradient>
                       <linearGradient
-                        id='colorGrossMarginPercent'
-                        x1='0'
-                        y1='0'
-                        x2='0'
-                        y2='1'
+                        id="colorGrossMarginPercent"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
                       >
                         <stop
-                          offset='5%'
-                          stopColor='#ff7300'
+                          offset="5%"
+                          stopColor="#ff7300"
                           stopOpacity={0.8}
                         />
                         <stop
-                          offset='95%'
-                          stopColor='#ff7300'
+                          offset="95%"
+                          stopColor="#ff7300"
                           stopOpacity={0}
                         />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey='date' />
+                    <XAxis dataKey="date" />
                     <YAxis
-                      yAxisId='left'
+                      yAxisId="left"
                       tickFormatter={(value) => formatCurrency(value)}
                     />
                     <YAxis
-                      yAxisId='right'
-                      orientation='right'
+                      yAxisId="right"
+                      orientation="right"
                       tickFormatter={(value) => `${value.toFixed(1)}%`}
                     />
-                    <CartesianGrid strokeDasharray='3 3' />
+                    <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip
                       formatter={(value: number, name) => {
                         if (
@@ -417,32 +415,32 @@ export default function Reports() {
                     />
                     <Legend />
                     <Area
-                      yAxisId='left'
-                      type='monotone'
-                      dataKey='margin'
-                      stroke='#8884d8'
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey="margin"
+                      stroke="#8884d8"
                       fillOpacity={0.6}
-                      fill='url(#colorNet)'
+                      fill="url(#colorNet)"
                       name={t('Profit Margin')}
                     />
                     <Line
-                      yAxisId='right'
-                      type='monotone'
-                      dataKey='marginPercent'
-                      stroke='#82ca9d'
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="marginPercent"
+                      stroke="#82ca9d"
                       strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
                       name={t('Margin % (ROI)')}
                     />
                     <Line
-                      yAxisId='right'
-                      type='monotone'
-                      dataKey='grossMarginPercent'
-                      stroke='#ff7300'
+                      yAxisId="right"
+                      type="monotone"
+                      dataKey="grossMarginPercent"
+                      stroke="#ff7300"
                       strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
                       name={t('Gross Margin %')}
                     />
                   </ComposedChart>
@@ -450,21 +448,21 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Transaction Types')}
               </h2>
-              <div className='flex-1 flex items-center justify-center'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Tooltip />
                     <Legend />
                     <Pie
                       data={transactionPieData}
-                      dataKey='value'
-                      nameKey='name'
-                      cx='50%'
-                      cy='50%'
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
                       outerRadius={80}
                       label
                     >
@@ -480,15 +478,15 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Cost Overview')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip
                       formatter={(value: number) =>
@@ -497,28 +495,28 @@ export default function Reports() {
                     />
                     <Legend />
                     <Line
-                      type='monotone'
-                      dataKey='cost'
-                      stroke='#8884d8'
+                      type="monotone"
+                      dataKey="cost"
+                      stroke="#8884d8"
                       name={t('Cost')}
                       strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Net Income Overview')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip
                       formatter={(value: number) =>
@@ -527,28 +525,28 @@ export default function Reports() {
                     />
                     <Legend />
                     <Line
-                      type='monotone'
-                      dataKey='net'
-                      stroke='#00bcd4'
+                      type="monotone"
+                      dataKey="net"
+                      stroke="#00bcd4"
                       name={t('Net Income')}
                       strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Gross Revenue Overview')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip
                       formatter={(value: number) =>
@@ -557,28 +555,28 @@ export default function Reports() {
                     />
                     <Legend />
                     <Line
-                      type='monotone'
-                      dataKey='gross'
-                      stroke='#82ca9d'
+                      type="monotone"
+                      dataKey="gross"
+                      stroke="#82ca9d"
                       name={t('Gross Revenue')}
                       strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Profit Overview')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip
                       formatter={(value: number) =>
@@ -587,13 +585,13 @@ export default function Reports() {
                     />
                     <Legend />
                     <Line
-                      type='monotone'
-                      dataKey='margin'
-                      stroke='#ff7300'
+                      type="monotone"
+                      dataKey="margin"
+                      stroke="#ff7300"
                       name={t('Profit')}
                       strokeWidth={2}
-                      dot={{r: 3}}
-                      activeDot={{r: 5}}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -603,30 +601,30 @@ export default function Reports() {
         </>
       ) : (
         <>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 py-4'>
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Products Sold Over Time')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={groupTransactions(transactions, groupBy)}>
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='date' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip
-                      content={({active, payload, label}) => {
+                      content={({ active, payload, label }) => {
                         if (active && payload && payload.length) {
                           const data = payload[0].payload;
                           return (
-                            <div className='bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded shadow-md'>
-                              <p className='font-semibold'>{label}</p>
+                            <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded shadow-md">
+                              <p className="font-semibold">{label}</p>
                               <p>{`${t('Total Products')}: ${data.count}`}</p>
                               {data.products &&
                                 Object.entries(data.products).map(
                                   ([name, count], idx) => (
                                     <p key={idx}>{`${name}: ${count}`}</p>
-                                  )
+                                  ),
                                 )}
                             </div>
                           );
@@ -636,8 +634,8 @@ export default function Reports() {
                     />
                     <Legend />
                     <Bar
-                      dataKey='count'
-                      fill='#8884d8'
+                      dataKey="count"
+                      fill="#8884d8"
                       name={t('Products Sold')}
                     />
                   </BarChart>
@@ -645,13 +643,13 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Products Sold by Name')}
               </h2>
 
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={(() => {
                       const productCounts: Record<string, number> = {};
@@ -660,24 +658,24 @@ export default function Reports() {
                         Object.entries(lastNonEmpty.products).forEach(
                           ([name, count]) => {
                             productCounts[name] = count;
-                          }
+                          },
                         );
                       }
 
                       return Object.entries(productCounts)
-                        .map(([name, count]) => ({name, count}))
+                        .map(([name, count]) => ({ name, count }))
                         .sort((a, b) => b.count - a.count)
                         .slice(0, 10);
                     })()}
                   >
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='name' />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
                     <Bar
-                      dataKey='count'
-                      fill='#82ca9d'
+                      dataKey="count"
+                      fill="#82ca9d"
                       name={t('Quantity Sold')}
                     />
                   </BarChart>
@@ -685,12 +683,12 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Item Revenue Contribution')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Tooltip
                       formatter={(value: number) =>
@@ -701,16 +699,16 @@ export default function Reports() {
                     <Pie
                       data={(() => {
                         return Object.entries(
-                          lastNonEmpty?.productsRevenue || {}
+                          lastNonEmpty?.productsRevenue || {},
                         )
-                          .map(([name, value]) => ({name, value}))
+                          .map(([name, value]) => ({ name, value }))
                           .sort((a, b) => b.value - a.value)
                           .slice(0, 8);
                       })()}
-                      dataKey='value'
-                      nameKey='name'
-                      cx='50%'
-                      cy='50%'
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
                       outerRadius={80}
                       label
                     >
@@ -728,17 +726,17 @@ export default function Reports() {
               </div>
             </div>
 
-            <div className='flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'>
-              <h2 className='text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2'>
+            <div className="flex flex-col h-[35vh] p-2 pt-3 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 {t('Item Profit Margin Comparison')}
               </h2>
-              <div className='flex-1'>
-                <ResponsiveContainer width='100%' height='100%'>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={(() => {
                       const productMargins: Record<
                         string,
-                        {revenue: number; cost: number}
+                        { revenue: number; cost: number }
                       > = {};
 
                       if (
@@ -752,12 +750,12 @@ export default function Reports() {
                             const cost = lastNonEmpty.productsCost?.[name] || 0;
 
                             if (!productMargins[name]) {
-                              productMargins[name] = {revenue: 0, cost: 0};
+                              productMargins[name] = { revenue: 0, cost: 0 };
                             }
 
                             productMargins[name].revenue += revenue;
                             productMargins[name].cost += cost;
-                          }
+                          },
                         );
                       }
 
@@ -774,11 +772,11 @@ export default function Reports() {
                         .sort((a, b) => b.margin - a.margin)
                         .slice(0, 10);
                     })()}
-                    layout='vertical'
+                    layout="vertical"
                   >
-                    <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis type='number' />
-                    <YAxis dataKey='name' type='category' width={100} />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={100} />
                     <Tooltip
                       formatter={(value: number, name) => {
                         if (name === t('Margin %')) {
@@ -789,13 +787,13 @@ export default function Reports() {
                     />
                     <Legend />
                     <Bar
-                      dataKey='margin'
-                      fill='#8884d8'
+                      dataKey="margin"
+                      fill="#8884d8"
                       name={t('Profit Margin')}
                     />
                     <Bar
-                      dataKey='marginPercent'
-                      fill='#82ca9d'
+                      dataKey="marginPercent"
+                      fill="#82ca9d"
                       name={t('Margin %')}
                     />
                   </BarChart>

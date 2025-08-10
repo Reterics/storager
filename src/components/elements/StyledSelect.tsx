@@ -1,5 +1,5 @@
-import {StyledSelectArgs} from '../../interfaces/interfaces.ts';
-import {useTranslation} from 'react-i18next';
+import type { StyledSelectArgs } from '../../interfaces/interfaces.ts';
+import { useTranslation } from 'react-i18next';
 
 export default function StyledSelect({
   value,
@@ -10,7 +10,7 @@ export default function StyledSelect({
   compact,
   defaultLabel,
 }: Readonly<StyledSelectArgs>) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div

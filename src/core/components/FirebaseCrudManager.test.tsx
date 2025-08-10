@@ -1,11 +1,10 @@
-import {describe, it, vi, beforeEach, expect} from 'vitest';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
-import FirebaseCrudManager, {
-  CrudField,
-} from '../components/FirebaseCrudManager';
-import {DBContext} from '../../database/DBContext';
-import {ShopContext} from '../../store/ShopContext';
-import {DBContextType} from '../../interfaces/firebase.ts';
+import { describe, it, vi, beforeEach, expect } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import type { CrudField } from '../components/FirebaseCrudManager';
+import FirebaseCrudManager from '../components/FirebaseCrudManager';
+import { DBContext } from '../../database/DBContext';
+import { ShopContext } from '../../store/ShopContext';
+import type { DBContextType } from '../../interfaces/firebase.ts';
 
 describe('FirebaseCrudManager', () => {
   const mockSetData = vi.fn();
@@ -24,10 +23,10 @@ describe('FirebaseCrudManager', () => {
   ];
 
   const fields: CrudField[] = [
-    {key: 'sku', label: 'SKU', type: 'text', editable: true},
-    {key: 'name', label: 'Name', type: 'text', editable: true},
-    {key: 'storage', label: 'Storage', type: 'number', editable: true},
-    {key: 'price', label: 'Price', type: 'number', editable: true},
+    { key: 'sku', label: 'SKU', type: 'text', editable: true },
+    { key: 'name', label: 'Name', type: 'text', editable: true },
+    { key: 'storage', label: 'Storage', type: 'number', editable: true },
+    { key: 'price', label: 'Price', type: 'number', editable: true },
   ];
 
   const renderComponent = () => {
@@ -35,20 +34,22 @@ describe('FirebaseCrudManager', () => {
       <DBContext.Provider
         value={
           {
-            data: {parts: mockData, currentUser: {email: 'test@user.com'}},
+            data: { parts: mockData, currentUser: { email: 'test@user.com' } },
             setData: mockSetData,
             refreshData: mockRefreshData,
           } as unknown as DBContextType
         }
       >
-        <ShopContext.Provider value={{shop: {id: 'shop123'}, setShop: vi.fn()}}>
+        <ShopContext.Provider
+          value={{ shop: { id: 'shop123' }, setShop: vi.fn() }}
+        >
           <FirebaseCrudManager
             entityType={testEntity}
-            title='Parts'
+            title="Parts"
             fields={fields}
           />
         </ShopContext.Provider>
-      </DBContext.Provider>
+      </DBContext.Provider>,
     );
   };
 
@@ -76,16 +77,16 @@ describe('FirebaseCrudManager', () => {
     fireEvent.click(nameCell); // activates edit mode
 
     const input = screen.getByDisplayValue('Screw');
-    fireEvent.change(input, {target: {value: 'Updated Screw'}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 'Enter'});
+    fireEvent.change(input, { target: { value: 'Updated Screw' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
     await waitFor(() =>
       expect(mockSetData).toHaveBeenCalledWith(
         testEntity,
         expect.objectContaining({
           name: 'Updated Screw',
-        })
-      )
+        }),
+      ),
     );
   });
 });

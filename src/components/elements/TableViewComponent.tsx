@@ -1,11 +1,6 @@
-import {
-  ChangeEvent,
-  MouseEvent,
-  MouseEventHandler,
-  useCallback,
-  useState,
-} from 'react';
-import {
+import type { ChangeEvent, MouseEvent, MouseEventHandler } from 'react';
+import { useCallback, useState } from 'react';
+import type {
   OrderType,
   StyledSelectOption,
   TableHead,
@@ -34,7 +29,7 @@ import {
 } from 'react-icons/bs';
 import StyledInput from './StyledInput.tsx';
 import StyledSelect from './StyledSelect.tsx';
-import {BSIconDimensions} from '../../utils/ui.ts';
+import { BSIconDimensions } from '../../utils/ui.ts';
 
 const TableViewHeader = ({
   header,
@@ -62,11 +57,11 @@ const TableViewHeader = ({
   };
 
   return (
-    <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
       <tr>
         {header.map((head, index) => (
           <th
-            scope='col'
+            scope="col"
             key={'table_header_' + index}
             className={
               (index === header.length - 1
@@ -88,7 +83,7 @@ const TableViewHeader = ({
                 head.sortable &&
                 orderType === 'DSC' && (
                   <div
-                    className='text-xl ms-1 sort'
+                    className="text-xl ms-1 sort"
                     onClick={() => updateOrderBy(index)}
                   >
                     <BsSortUp />
@@ -99,7 +94,7 @@ const TableViewHeader = ({
                 head.sortable &&
                 orderType === 'ASC' && (
                   <div
-                    className='text-xl ms-1 sort'
+                    className="text-xl ms-1 sort"
                     onClick={() => updateOrderBy(index)}
                   >
                     <BsSortDown />
@@ -118,7 +113,7 @@ const TableViewEditableElement = (
   options: TableHead,
   onChange: TableOnChangeMethod,
   index: number,
-  col: number
+  col: number,
 ) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const [value, setValue] = useState<TableLineElementType>(element);
@@ -129,7 +124,7 @@ const TableViewEditableElement = (
         ? options.options.find((opt) => opt.value === value)?.name || element
         : Array.isArray(options.options) && Array.isArray(element)
           ? options.options.find((opt) =>
-              (element as string[]).includes(opt.value)
+              (element as string[]).includes(opt.value),
             )?.name || element
           : element;
 
@@ -155,7 +150,7 @@ const TableViewEditableElement = (
 
   const closeButton = (
     <div
-      className='text-sm ms-1'
+      className="text-sm ms-1"
       onClick={() => closeEditMode()}
       data-testid={'inline-close-button'}
     >
@@ -166,16 +161,16 @@ const TableViewEditableElement = (
   switch (options.type) {
     case 'steps':
       return (
-        <div className='flex flex-row items-center cursor-pointer'>
+        <div className="flex flex-row items-center cursor-pointer">
           <BsArrowLeftSquare
             style={BSIconDimensions}
             onClick={() => setValue(Number(value) - 1)}
           />
-          <span className='m-0 w-1/2 ms-1 me-1 text-xl'>
+          <span className="m-0 w-1/2 ms-1 me-1 text-xl">
             <StyledInput
-              type='number'
+              type="number"
               value={(value as number) || 0}
-              className='mt-0 w-[50px] me-1 hide-arrows'
+              className="mt-0 w-[50px] me-1 hide-arrows"
               onChange={(e) => setValue(e.target.value)}
               onEnter={() => closeEditMode()}
             />
@@ -190,11 +185,11 @@ const TableViewEditableElement = (
       );
     case 'number':
       return (
-        <div className='flex flex-row text-xl items-center cursor-pointer'>
+        <div className="flex flex-row text-xl items-center cursor-pointer">
           <StyledInput
-            type='number'
+            type="number"
             value={(value as number) || 0}
-            className='mt-0 w-auto me-1 max-w-28 min-w-12'
+            className="mt-0 w-auto me-1 max-w-28 min-w-12"
             onEnter={() => closeEditMode()}
             onChange={(e) => setValue(e.target.value)}
           />
@@ -204,11 +199,11 @@ const TableViewEditableElement = (
       );
     case 'text':
       return (
-        <div className='flex flex-row text-xl items-center cursor-pointer'>
+        <div className="flex flex-row text-xl items-center cursor-pointer">
           <StyledInput
-            type='text'
+            type="text"
             value={(value as string) || ''}
-            className='mt-0 w-auto me-1 min-w-4'
+            className="mt-0 w-auto me-1 min-w-4"
             onEnter={() => closeEditMode()}
             onChange={(e) => setValue(e.target.value)}
           />
@@ -219,15 +214,15 @@ const TableViewEditableElement = (
       break;
     case 'select':
       return (
-        <div className='flex flex-row text-xl items-center cursor-pointer'>
+        <div className="flex flex-row text-xl items-center cursor-pointer">
           <StyledSelect
-            type='text'
+            type="text"
             name={options.value + '_' + index}
             options={options.options as StyledSelectOption[]}
             value={(value as string) || ''}
             onSelect={(e) =>
               setValue(
-                (e as unknown as ChangeEvent<HTMLInputElement>).target?.value
+                (e as unknown as ChangeEvent<HTMLInputElement>).target?.value,
               )
             }
             label={false}
@@ -262,7 +257,7 @@ const TableViewLine = ({
 
   return _line.map((column, columnIndex) => (
     <td
-      scope='col'
+      scope="col"
       key={'column_' + columnIndex + '_' + index}
       className={
         'font-medium text-gray-900 whitespace-nowrap dark:text-white' +
@@ -282,7 +277,7 @@ const TableViewLine = ({
             header[columnIndex],
             onChange || (() => false),
             index,
-            columnIndex
+            columnIndex,
           )
         : column}
 
@@ -325,7 +320,7 @@ export const TableViewActions = ({
     onCreate;
 
   const getClass = (
-    selected: MouseEventHandler<HTMLButtonElement> | undefined
+    selected: MouseEventHandler<HTMLButtonElement> | undefined,
   ) => {
     const baseClass =
       'px-4 py-3 md:px-4 md:py-3 text-base md:text-lg font-medium text-gray-900 bg-white border border-gray-200 flex items-center gap-2  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white';
@@ -341,85 +336,85 @@ export const TableViewActions = ({
 
   return (
     <div
-      className='inline-flex rounded-md shadow-sm align-middle gap-2 md:gap-1'
-      role='group'
+      className="inline-flex rounded-md shadow-sm align-middle gap-2 md:gap-1"
+      role="group"
     >
       {onCreate && (
         <button
-          type='button'
+          type="button"
           className={getClass(onCreate)}
           onClick={onCreate}
-          data-testid='button-table-create'
+          data-testid="button-table-create"
         >
           <BsFillFileEarmarkFill />
         </button>
       )}
       {onOpen && (
         <button
-          type='button'
+          type="button"
           className={getClass(onOpen)}
           onClick={onOpen}
-          data-testid='button-table-open'
+          data-testid="button-table-open"
         >
           <BsFillFolderFill />
         </button>
       )}
       {onSave && (
         <button
-          type='button'
+          type="button"
           className={getClass(onSave)}
           onClick={onSave}
-          data-testid='button-table-save'
+          data-testid="button-table-save"
         >
           <BsFloppyFill />
         </button>
       )}
       {onCode && (
         <button
-          type='button'
+          type="button"
           className={getClass(onCode)}
           onClick={onCode}
-          data-testid='button-table-code'
+          data-testid="button-table-code"
         >
           <BsFileCodeFill />
         </button>
       )}
       {onPaste && (
         <button
-          type='button'
+          type="button"
           className={getClass(onPaste)}
           onClick={onPaste}
-          data-testid='button-table-paste'
+          data-testid="button-table-paste"
         >
           <BsFileText />
         </button>
       )}
       {onEdit && (
         <button
-          type='button'
+          type="button"
           className={getClass(onEdit)}
           onClick={onEdit}
-          data-testid='button-table-edit'
+          data-testid="button-table-edit"
         >
           <BsPencilSquare />
         </button>
       )}
       {onRemove && (
         <button
-          type='button'
+          type="button"
           className={getClass(onRemove)}
           onClick={onRemove}
-          data-testid='button-table-remove'
+          data-testid="button-table-remove"
         >
           <BsFillTrashFill />
         </button>
       )}
       {onPrint && (
         <button
-          type='button'
+          type="button"
           className={getClass(onPrint)}
           onClick={onPrint}
-          data-testid='button-table-print'
+          data-testid="button-table-print"
         >
           <BsFillPrinterFill />
         </button>
@@ -475,11 +470,11 @@ const TableViewComponent = ({
       }
       return;
     },
-    [onEdit, orderedLines]
+    [onEdit, orderedLines],
   );
 
   return (
-    <table className='text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-2xl w-full min-w-screen-2xl shadow-md mx-auto'>
+    <table className="text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-2xl w-full min-w-screen-2xl shadow-md mx-auto">
       <TableViewHeader
         header={_header}
         orderType={orderType}

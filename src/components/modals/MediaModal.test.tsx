@@ -1,15 +1,15 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
-import {render, screen, fireEvent} from '@testing-library/react';
-import MediaModal, {MediaBrowse} from './MediaModal';
-import {TFunction} from 'i18next';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import MediaModal, { MediaBrowse } from './MediaModal';
+import type { TFunction } from 'i18next';
 
 vi.mock('../elements/ImageUploader.tsx', () => ({
-  ImageUploader: ({setLocalFile}: {setLocalFile: (file: File) => void}) => (
+  ImageUploader: ({ setLocalFile }: { setLocalFile: (file: File) => void }) => (
     <input
-      type='file'
-      data-testid='mock-uploader'
+      type="file"
+      data-testid="mock-uploader"
       onChange={() =>
-        setLocalFile(new File(['test'], 'test.png', {type: 'image/png'}))
+        setLocalFile(new File(['test'], 'test.png', { type: 'image/png' }))
       }
     />
   ),
@@ -38,14 +38,14 @@ describe('MediaModal', () => {
       'fetch',
       vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({fileName: 'image.png', token: 'new_csrf'}),
-      })
+        json: async () => ({ fileName: 'image.png', token: 'new_csrf' }),
+      }),
     );
 
     render(<MediaModal onClose={vi.fn()} setFile={mockSetFile} />);
     fireEvent.change(screen.getByTestId('mock-uploader'), {
       target: {
-        files: [new File(['dummy'], 'image.png', {type: 'image/png'})],
+        files: [new File(['dummy'], 'image.png', { type: 'image/png' })],
       },
     });
 
@@ -54,7 +54,7 @@ describe('MediaModal', () => {
 
     expect(mockSetFile).toHaveBeenCalledWith('./uploads/image.png');
     expect(
-      (document.getElementById('csrf_token') as HTMLInputElement)?.value
+      (document.getElementById('csrf_token') as HTMLInputElement)?.value,
     ).toBe('new_csrf');
   });
 
@@ -73,10 +73,10 @@ describe('MediaModal', () => {
 
 describe('MediaBrowse', () => {
   it('renders image preview when image is passed', () => {
-    render(<MediaBrowse onClick={vi.fn()} image='./preview.png' />);
+    render(<MediaBrowse onClick={vi.fn()} image="./preview.png" />);
     expect(screen.getByAltText('Preview')).toHaveAttribute(
       'src',
-      './preview.png'
+      './preview.png',
     );
   });
 

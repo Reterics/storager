@@ -1,15 +1,14 @@
-import type {DBContextType} from '../interfaces/firebase.ts';
+import type { DBContextType } from '../interfaces/firebase.ts';
 import type {
   Lease,
   LeaseCompletion,
-  ServiceLineData} from '../interfaces/interfaces.ts';
-import {
-  leaseStatusList,
+  ServiceLineData,
 } from '../interfaces/interfaces.ts';
-import {filterLeases, getLeaseLineData} from '../utils/lease.ts';
-import {generateServiceId} from '../utils/data.ts';
-import type {TFunction} from 'i18next';
-import type {PrintViewData} from '../interfaces/pdf.ts';
+import { leaseStatusList } from '../interfaces/interfaces.ts';
+import { filterLeases, getLeaseLineData } from '../utils/lease.ts';
+import { generateServiceId } from '../utils/data.ts';
+import type { TFunction } from 'i18next';
+import type { PrintViewData } from '../interfaces/pdf.ts';
 
 /**
  * LeaseManager class to encapsulate all lease-related operations
@@ -32,8 +31,13 @@ export class LeaseManager {
    */
   constructor(
     dbContext: DBContextType,
-    shop: {id?: string; address?: string; name?: string; email?: string} | null,
-    t: TFunction
+    shop: {
+      id?: string;
+      address?: string;
+      name?: string;
+      email?: string;
+    } | null,
+    t: TFunction,
   ) {
     this.dbContext = dbContext;
     this.shop = shop;
@@ -50,7 +54,7 @@ export class LeaseManager {
   getLeases(
     shopFilter?: string,
     searchFilter?: string,
-    activeFilter?: boolean
+    activeFilter?: boolean,
   ): Lease[] {
     const completionFormsById = this.getCompletionFormsById();
     return filterLeases(
@@ -58,7 +62,7 @@ export class LeaseManager {
       completionFormsById,
       shopFilter,
       searchFilter,
-      activeFilter
+      activeFilter,
     );
   }
 
@@ -72,7 +76,7 @@ export class LeaseManager {
         acc[form.id] = form;
         return acc;
       },
-      {} as Record<string, LeaseCompletion>
+      {} as Record<string, LeaseCompletion>,
     );
   }
 
@@ -86,7 +90,7 @@ export class LeaseManager {
   getLeaseLineData(
     item: Lease,
     onPrint: (data: PrintViewData) => void,
-    onOpen: (data: PrintViewData) => void
+    onOpen: (data: PrintViewData) => void,
   ): ServiceLineData {
     return getLeaseLineData(
       item,
@@ -95,7 +99,7 @@ export class LeaseManager {
       this.t,
       this.dbContext.data.settings,
       onPrint,
-      onOpen
+      onOpen,
     );
   }
 
@@ -121,14 +125,14 @@ export class LeaseManager {
         updatedItems,
         this.shop?.id,
         this.dbContext.data.shops,
-        this.dbContext.data.deleted
+        this.dbContext.data.deleted,
       );
     }
 
     updatedItems = (await this.dbContext.setData(
       'leases',
       leaseData,
-      archive
+      archive,
     )) as Lease[];
 
     return updatedItems;
@@ -140,7 +144,7 @@ export class LeaseManager {
    * @returns Updated completion forms or false if failed
    */
   async saveCompletionForm(
-    leaseCompleteData: LeaseCompletion
+    leaseCompleteData: LeaseCompletion,
   ): Promise<LeaseCompletion[] | false> {
     if (!leaseCompleteData?.lease_id) {
       return false;
@@ -149,7 +153,7 @@ export class LeaseManager {
     try {
       const updatedItems = (await this.dbContext.setData(
         'leaseCompletions',
-        leaseCompleteData
+        leaseCompleteData,
       )) as LeaseCompletion[];
 
       return updatedItems;
@@ -171,7 +175,7 @@ export class LeaseManager {
     }
 
     const completions = (this.dbContext.data.leaseCompletions || []).filter(
-      (c) => c.lease_id === item.id
+      (c) => c.lease_id === item.id,
     );
 
     if (completions.length) {
@@ -181,7 +185,7 @@ export class LeaseManager {
     }
 
     const history = (this.dbContext.data.archive || []).filter(
-      (a) => a.docParent === item.id
+      (a) => a.docParent === item.id,
     );
 
     if (history.length) {
@@ -194,7 +198,7 @@ export class LeaseManager {
 
     const leases = (await this.dbContext.removeData(
       'leases',
-      item.id
+      item.id,
     )) as Lease[];
 
     return leases;
@@ -209,7 +213,7 @@ export class LeaseManager {
       this.dbContext.data.leases || [],
       this.shop?.id,
       this.dbContext.data.shops,
-      this.dbContext.data.deleted
+      this.dbContext.data.deleted,
     );
 
     return {
@@ -231,7 +235,7 @@ export class LeaseManager {
   generateCompletionFormTemplate(item: Lease): LeaseCompletion | null {
     const completionFormId = item.id + '_lcd';
     const completionForm = (this.dbContext.data.leaseCompletions || []).find(
-      (c) => c.id === completionFormId
+      (c) => c.id === completionFormId,
     );
 
     if (completionForm) {

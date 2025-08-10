@@ -1,6 +1,6 @@
-import {render, screen} from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import ListModal from './ListModal';
-import {describe, it, expect} from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 describe('ListModal Component', () => {
   it('renders correctly with given props', () => {

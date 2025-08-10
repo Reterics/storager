@@ -1,5 +1,5 @@
-import {useTranslation} from 'react-i18next';
-import {
+import { useTranslation } from 'react-i18next';
+import type {
   GeneralModalButtons,
   ShopType,
   StorePart,
@@ -8,8 +8,9 @@ import {
 import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledInput from '../elements/StyledInput.tsx';
-import {typeModalOptions} from '../../interfaces/constants.ts';
-import {ChangeEvent, useMemo} from 'react';
+import { typeModalOptions } from '../../interfaces/constants.ts';
+import type { ChangeEvent } from 'react';
+import { useMemo } from 'react';
 import StyledSelect from '../elements/StyledSelect.tsx';
 
 export default function TypeModal({
@@ -19,7 +20,7 @@ export default function TypeModal({
   onSave,
   inPlace,
 }: TypeModalInput) {
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const types = useMemo(() => {
     return typeModalOptions.map((type) => {
@@ -30,10 +31,10 @@ export default function TypeModal({
 
   const changeTranslation = (
     e: React.ChangeEvent<HTMLInputElement>,
-    key: string
+    key: string,
   ) => {
     const value = e.target.value;
-    const obj = {...type} as ShopType;
+    const obj = { ...type } as ShopType;
     if (!obj.translations) {
       obj.translations = {};
     }
@@ -45,7 +46,7 @@ export default function TypeModal({
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...type};
+    const obj = { ...type };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -85,22 +86,22 @@ export default function TypeModal({
     >
       <FormRow>
         <StyledInput
-          type='text'
-          name='name'
+          type="text"
+          name="name"
           value={type.name}
           onChange={(e) => changeType(e, 'name')}
           label={t('Name')}
         />
 
         <StyledSelect
-          type='text'
-          name='category'
+          type="text"
+          name="category"
           options={types}
           value={type.category || types[0].value}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'category'
+              'category',
             )
           }
           label={t('Category')}
@@ -109,15 +110,15 @@ export default function TypeModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='hu'
+          type="text"
+          name="hu"
           value={type.translations?.hu || ''}
           onChange={(e) => changeTranslation(e, 'hu')}
           label={t('HU')}
         />
         <StyledInput
-          type='text'
-          name='en'
+          type="text"
+          name="en"
           value={type.translations?.en || ''}
           onChange={(e) => changeTranslation(e, 'en')}
           label={t('EN')}

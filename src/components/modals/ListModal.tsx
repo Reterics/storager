@@ -1,7 +1,7 @@
 import GeneralModal from './GeneralModal.tsx';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import TableViewComponent from '../elements/TableViewComponent.tsx';
-import {ListModalArguments} from '../../interfaces/interfaces.ts';
+import type { ListModalArguments } from '../../interfaces/interfaces.ts';
 
 export default function ListModal({
   lines,
@@ -10,7 +10,7 @@ export default function ListModal({
   title,
   buttons,
 }: ListModalArguments) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <GeneralModal
       buttons={buttons}

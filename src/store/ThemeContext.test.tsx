@@ -1,16 +1,16 @@
-import {fireEvent, render, screen, waitFor} from '@testing-library/react';
-import {ThemeProvider, useTheme} from './ThemeContext';
-import {beforeEach, describe, expect, it, vi} from 'vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { ThemeProvider, useTheme } from './ThemeContext';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const TestComponent = () => {
-  const {theme, toggleTheme} = useTheme() as {
+  const { theme, toggleTheme } = useTheme() as {
     theme: string;
     toggleTheme: () => void;
   };
   return (
     <div>
-      <p data-testid='theme'>{theme}</p>
-      <button data-testid='toggle-button' onClick={toggleTheme}>
+      <p data-testid="theme">{theme}</p>
+      <button data-testid="toggle-button" onClick={toggleTheme}>
         Toggle Theme
       </button>
     </div>
@@ -33,7 +33,7 @@ describe('ThemeProvider', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     expect(screen.getByTestId('theme').textContent).toBe('light');
@@ -50,7 +50,7 @@ describe('ThemeProvider', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     expect(screen.getByTestId('theme').textContent).toBe('dark');
@@ -63,7 +63,7 @@ describe('ThemeProvider', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     expect(screen.getByTestId('theme').textContent).toBe('dark');
@@ -80,7 +80,7 @@ describe('ThemeProvider', () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const button = screen.getByTestId('toggle-button');
@@ -88,21 +88,21 @@ describe('ThemeProvider', () => {
     fireEvent.click(button);
 
     await waitFor(() =>
-      expect(screen.getByTestId('theme').textContent).toBe('dark')
+      expect(screen.getByTestId('theme').textContent).toBe('dark'),
     );
     await waitFor(() => expect(localStorage.getItem('theme')).toBe('dark'));
     await waitFor(() =>
-      expect(document.documentElement.classList.contains('dark')).toBe(true)
+      expect(document.documentElement.classList.contains('dark')).toBe(true),
     );
 
     fireEvent.click(button);
 
     await waitFor(() =>
-      expect(screen.getByTestId('theme').textContent).toBe('light')
+      expect(screen.getByTestId('theme').textContent).toBe('light'),
     );
     await waitFor(() => expect(localStorage.getItem('theme')).toBe('light'));
     await waitFor(() =>
-      expect(document.documentElement.classList.contains('light')).toBe(true)
+      expect(document.documentElement.classList.contains('light')).toBe(true),
     );
   });
 });

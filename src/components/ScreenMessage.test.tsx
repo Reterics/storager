@@ -1,6 +1,6 @@
-import {render, screen, fireEvent} from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ScreenMessage from './ScreenMessage';
-import {describe, expect, it, vi} from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mocking logo import
 vi.mock('../assets/logo.svg', () => ({
@@ -17,13 +17,15 @@ describe('ScreenMessage Component', () => {
     render(<ScreenMessage>Test Message</ScreenMessage>);
     expect(screen.getByAltText('Reterics logo')).toHaveAttribute(
       'src',
-      'mockedLogo.svg'
+      'mockedLogo.svg',
     );
   });
 
   it('renders the button when button prop is provided', () => {
-    render(<ScreenMessage button='Click Me'>Test Message</ScreenMessage>);
-    expect(screen.getByRole('button', {name: /Click Me/i})).toBeInTheDocument();
+    render(<ScreenMessage button="Click Me">Test Message</ScreenMessage>);
+    expect(
+      screen.getByRole('button', { name: /Click Me/i }),
+    ).toBeInTheDocument();
   });
 
   it('does not render the button when button prop is not provided', () => {
@@ -34,11 +36,11 @@ describe('ScreenMessage Component', () => {
   it('calls onClick when button is clicked', () => {
     const onClickMock = vi.fn();
     render(
-      <ScreenMessage button='Click Me' onClick={onClickMock}>
+      <ScreenMessage button="Click Me" onClick={onClickMock}>
         Test Message
-      </ScreenMessage>
+      </ScreenMessage>,
     );
-    fireEvent.click(screen.getByRole('button', {name: /Click Me/i}));
+    fireEvent.click(screen.getByRole('button', { name: /Click Me/i }));
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 

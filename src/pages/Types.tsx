@@ -1,23 +1,23 @@
-import {useContext, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {ShopType} from '../interfaces/interfaces.ts';
+import { useContext, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type { ShopType } from '../interfaces/interfaces.ts';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
 import {
   BsFillCloudArrowDownFill,
   BsFillFolderFill,
   BsFillPlusCircleFill,
 } from 'react-icons/bs';
-import {PageHead} from '../components/elements/PageHead.tsx';
+import { PageHead } from '../components/elements/PageHead.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import TypeModal from '../components/modals/TypeModal.tsx';
-import {downloadAsFile, readJSONFile} from '../utils/general.ts';
+import { downloadAsFile, readJSONFile } from '../utils/general.ts';
 
 function Types() {
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [types, setTypes] = useState<ShopType[]>(dbContext?.data.types || []);
 
@@ -36,7 +36,7 @@ function Types() {
     ) {
       const updatedItems = (await dbContext?.removeData(
         'types',
-        item.id
+        item.id,
       )) as ShopType[];
       setTypes(updatedItems);
     }
@@ -78,12 +78,12 @@ function Types() {
                 if (
                   confirm(
                     array.length +
-                      ' new entry detected. Do you want to add them?'
+                      ' new entry detected. Do you want to add them?',
                   )
                 ) {
                   const updatedTypes = await dbContext?.uploadDataBatch(
                     'types',
-                    array
+                    array,
                   );
                   if (updatedTypes) {
                     setTypes(updatedTypes as ShopType[]);
@@ -102,7 +102,7 @@ function Types() {
                       id: '',
                       name: '',
                       category: 'item',
-                    }
+                    },
               ),
           },
         ]}
@@ -124,7 +124,7 @@ function Types() {
         ]}
       />
 
-      <div className='flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1'>
+      <div className="flex justify-center h-80 overflow-x-auto sm:rounded-lg w-full m-auto mt-2 flex-1">
         <TypeModal
           onClose={() => setModalTemplate(null)}
           onSave={(item: ShopType) => saveType(item)}

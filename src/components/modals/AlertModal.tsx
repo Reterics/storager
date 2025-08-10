@@ -1,7 +1,7 @@
 import React from 'react';
 import GeneralModal from './GeneralModal';
-import {GeneralModalButtons} from '../../interfaces/interfaces';
-import {useTranslation} from 'react-i18next';
+import type { GeneralModalButtons } from '../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 export interface AlertModalProps {
   title?: string;
@@ -18,7 +18,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   onClose,
   inPlace = false,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const buttons: GeneralModalButtons[] = [
     {
@@ -33,9 +33,9 @@ const AlertModal: React.FC<AlertModalProps> = ({
       title={title || t('Alert')}
       buttons={buttons}
       inPlace={inPlace}
-      id='AlertModal'
+      id="AlertModal"
     >
-      <div className='text-md p-2 dark:text-white text-gray-800'>
+      <div className="text-md p-2 dark:text-white text-gray-800">
         {children || t('Something happened.')}
       </div>
     </GeneralModal>

@@ -1,11 +1,11 @@
-import {describe, expect, it} from 'vitest';
-import {render} from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { render } from '@testing-library/react';
 import AlertBox from './AlertBox.tsx';
 
 describe('AlertBox', () => {
   it('should render AlertBox in all color combination', () => {
-    const {container, getByText, rerender} = render(
-      <AlertBox message={'Test'} />
+    const { container, getByText, rerender } = render(
+      <AlertBox message={'Test'} />,
     );
 
     expect(getByText('Test')).toBeDefined();

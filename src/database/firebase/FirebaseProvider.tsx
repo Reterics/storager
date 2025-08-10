@@ -1,5 +1,6 @@
-import {ReactNode, useContext, useEffect, useRef, useState} from 'react';
-import {
+import type { ReactNode } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import type {
   ContextDataType,
   ContextData,
   ContextDataValueType,
@@ -11,7 +12,7 @@ import {
   getCollection,
   modules,
 } from './config.ts';
-import {
+import type {
   InvoiceType,
   Lease,
   LeaseCompletion,
@@ -27,15 +28,15 @@ import {
   UserData,
 } from '../../interfaces/interfaces.ts';
 import PageLoading from '../../components/PageLoading.tsx';
-import {DBContext} from '../DBContext.ts';
-import {AuthContext} from '../../store/AuthContext.tsx';
-import {addDoc, collection} from 'firebase/firestore';
-import {ShopContext} from '../../store/ShopContext.tsx';
-import {imageModel} from './storage.ts';
-import {LogEntry} from './FirebaseDBModel.ts';
+import { DBContext } from '../DBContext.ts';
+import { AuthContext } from '../../store/AuthContext.tsx';
+import { addDoc, collection } from 'firebase/firestore';
+import { ShopContext } from '../../store/ShopContext.tsx';
+import { imageModel } from './storage.ts';
+import type { LogEntry } from './FirebaseDBModel.ts';
 import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 
-export const FirebaseProvider = ({children}: {children: ReactNode}) => {
+export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
   const shopContext = useContext(ShopContext);
   const [ctxData, setCtxData] = useState<ContextData | null>(null);
@@ -73,7 +74,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
           typeof element.price === 'string'
         ) {
           element.price = new Array(element.shop_id?.length || 1).fill(
-            Number(element.price)
+            Number(element.price),
           );
         }
       }
@@ -83,7 +84,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
   const getContextData = async (cache: boolean = false) => {
     let users = (await getCollection(
       firebaseCollections.users,
-      true
+      true,
     )) as UserData[];
     let services: ServiceData[] = [];
     let completions: ServiceCompleteData[] = [];
@@ -151,7 +152,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
           modules.advancedInvoices && settings.enableExtendedInvoices;
         logs = modules.logs
           ? ((await getCollection(
-              firebaseCollections.logs
+              firebaseCollections.logs,
             )) as unknown as LogEntry[])
           : [];
       }
@@ -159,26 +160,26 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
 
     if (user) {
       services = (await getCollection(
-        firebaseCollections.services
+        firebaseCollections.services,
       )) as ServiceData[];
       completions = (await getCollection(
-        firebaseCollections.completions
+        firebaseCollections.completions,
       )) as ServiceCompleteData[];
       shops = (await getCollection(firebaseCollections.shops)) as Shop[];
       items = (await getCollection(firebaseCollections.items)) as StoreItem[];
       parts = (await getCollection(firebaseCollections.parts)) as StorePart[];
       archive = (await getCollection(
-        firebaseCollections.archive
+        firebaseCollections.archive,
       )) as ContextDataValueType[];
       types = (await getCollection(
-        firebaseCollections.types
+        firebaseCollections.types,
       )) as ContextDataValueType[];
       invoices = (await getCollection(
-        firebaseCollections.invoices
+        firebaseCollections.invoices,
       )) as InvoiceType[];
       transactions = modules.transactions
         ? ((await getCollection(
-            firebaseCollections.transactions
+            firebaseCollections.transactions,
           )) as Transaction[])
         : [];
       leases = modules.leasing
@@ -186,7 +187,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         : [];
       leaseCompletions = modules.leasing
         ? ((await getCollection(
-            firebaseCollections.leaseCompletions
+            firebaseCollections.leaseCompletions,
           )) as Transaction[])
         : [];
     }
@@ -196,13 +197,13 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         user.shop_id = [user.shop_id as string];
       }
       shops = shops.filter((shop) =>
-        user.shop_id.find((shop_id: string) => shop.id.includes(shop_id))
+        user.shop_id.find((shop_id: string) => shop.id.includes(shop_id)),
       );
       items = items.filter((item) =>
-        user.shop_id.find((shop_id: string) => item.shop_id?.includes(shop_id))
+        user.shop_id.find((shop_id: string) => item.shop_id?.includes(shop_id)),
       );
       parts = parts.filter((part) =>
-        user.shop_id.find((shop_id: string) => part.shop_id?.includes(shop_id))
+        user.shop_id.find((shop_id: string) => part.shop_id?.includes(shop_id)),
       );
       if (
         !shopContext.shop?.id ||
@@ -300,7 +301,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
   const updateContextData = async (
     key: ContextDataType,
     item: ContextDataValueType,
-    archive?: boolean
+    archive?: boolean,
   ) => {
     if (!item) {
       console.error('There is no data provided for saving');
@@ -317,12 +318,12 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
 
       const document = await addDoc(
         collection(db, firebaseCollections.archive),
-        item
+        item,
       ).catch((e) => {
         console.error(e);
       });
       if (document && ctxData && ctxData.archive) {
-        ctxData.archive.unshift({...item, id: document.id});
+        ctxData.archive.unshift({ ...item, id: document.id });
       }
       item.id = item.docParent;
     }
@@ -351,7 +352,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         ? {
             ...ctxData,
           }
-        : null
+        : null,
     );
 
     return ctxData ? ctxData[key] : null;
@@ -359,7 +360,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
 
   const updateContextBatched = async (
     key: ContextDataType,
-    items: ContextDataValueType[]
+    items: ContextDataValueType[],
   ) => {
     await firebaseModel.updateAll(items, key);
 
@@ -382,7 +383,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         ? {
             ...ctxData,
           }
-        : null
+        : null,
     );
 
     return ctxData ? ctxData[key] : null;
@@ -390,7 +391,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
 
   const getType = (
     type: 'part' | 'item' | 'service',
-    lang: 'hu' | 'en' = 'hu'
+    lang: 'hu' | 'en' = 'hu',
   ): StyledSelectOption[] => {
     if (ctxData && ctxData.types) {
       return ctxData.types
@@ -421,7 +422,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
       ctxData[key] = await getCollection(firebaseCollections[key]);
     } else if (ctxData && key === 'settings') {
       const settings = (await getCollection(
-        firebaseCollections.settings
+        firebaseCollections.settings,
       )) as SettingsItems[];
       if (settings) {
         ctxData.settings = settings[0];
@@ -432,7 +433,7 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         ? {
             ...ctxData,
           }
-        : null
+        : null,
     );
 
     return ctxData ? ctxData[key] : null;
@@ -445,10 +446,10 @@ export const FirebaseProvider = ({children}: {children: ReactNode}) => {
         .loadPersisted()
         .finally(() => firebaseModel.loadPersisted())
         .finally(() =>
-          imageModel.integrityCheck(firebaseModel.getCached('parts'))
+          imageModel.integrityCheck(firebaseModel.getCached('parts')),
         )
         .finally(() =>
-          imageModel.integrityCheck(firebaseModel.getCached('items'))
+          imageModel.integrityCheck(firebaseModel.getCached('items')),
         )
         .finally(() => getContextData(true))
         .finally(() => firebaseModel.setUser(authContext.user))

@@ -1,28 +1,25 @@
-import {
-  completionFormToPrintable,
-  PrintableDataProps,
-  serviceDataToPrintable,
-} from './print.tsx';
-import {DBContextType} from '../interfaces/firebase.ts';
-import {
+import type { PrintableDataProps } from './print.tsx';
+import { completionFormToPrintable, serviceDataToPrintable } from './print.tsx';
+import type { DBContextType } from '../interfaces/firebase.ts';
+import type {
   ServiceCompleteData,
   ServiceData,
   SettingsItems,
 } from '../interfaces/interfaces.ts';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import {TFunction} from 'i18next';
+import type { TFunction } from 'i18next';
 
 export const getPrintableData = (
   dbContext: DBContextType | null,
   id: string,
   t: TFunction,
   docType?: string,
-  printNow?: boolean
+  printNow?: boolean,
 ): PrintableDataProps | null => {
   if (!dbContext?.data) return null;
 
-  const {services, completions, settings, archive} = dbContext.data;
+  const { services, completions, settings, archive } = dbContext.data;
 
   let serviceData: ServiceData | undefined;
   let completionData: ServiceCompleteData | undefined;
@@ -49,7 +46,7 @@ export const getPrintableData = (
       serviceData,
       settings || ({} as SettingsItems),
       t,
-      printNow
+      printNow,
     );
   } else if (completionData) {
     return completionFormToPrintable(completionData, t, printNow);
@@ -77,7 +74,7 @@ export const adjustPageHeight = (
   canvas: HTMLCanvasElement,
   sourceY: number,
   initialPageHeight: number,
-  ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D,
 ) => {
   let pageHeight = initialPageHeight;
   const canvasHeight = canvas.height;
@@ -89,7 +86,7 @@ export const adjustPageHeight = (
       0,
       sourceY + pageHeight - 1,
       canvas.width,
-      1
+      1,
     );
     if (lineContainsNonWhitePixels(imageData.data)) {
       pageHeight += 1; // Increase pageHeight by one pixel
@@ -144,7 +141,7 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
 
   // Create a temporary canvas to store each page's portion
   const pageCanvas = document.createElement('canvas');
-  const pageCtx = pageCanvas.getContext('2d', {willReadFrequently: true});
+  const pageCtx = pageCanvas.getContext('2d', { willReadFrequently: true });
 
   if (!pageCtx) {
     throw SyntaxError('Canvas rendering context error');
@@ -187,7 +184,7 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
       0,
       0,
       canvas.width,
-      pageHeight
+      pageHeight,
     );
 
     // Convert the page canvas to an image
@@ -205,7 +202,7 @@ export const downloadElementAsPDF = async (element: HTMLDivElement) => {
       padding.left,
       padding.top,
       imgWidth,
-      (pageHeight * imgWidth) / pageCanvas.width
+      (pageHeight * imgWidth) / pageCanvas.width,
     );
     sourceY += pageHeight;
   }

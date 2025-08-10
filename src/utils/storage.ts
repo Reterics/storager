@@ -1,4 +1,8 @@
-import {StorageInfo, StoreItem, StorePart} from '../interfaces/interfaces.ts';
+import type {
+  StorageInfo,
+  StoreItem,
+  StorePart,
+} from '../interfaces/interfaces.ts';
 
 export const getShopIndex = (item: StoreItem | StorePart, shopId?: string) => {
   if (item.shop_id && shopId) {
@@ -9,7 +13,7 @@ export const getShopIndex = (item: StoreItem | StorePart, shopId?: string) => {
 
 export const extractStorageInfo = (
   item: StoreItem | StorePart,
-  shopId?: string
+  shopId?: string,
 ): StorageInfo => {
   const shopIndex = getShopIndex(item, shopId);
   const storage = item.storage && item.storage[shopIndex];
@@ -31,7 +35,7 @@ export const extractStorageInfo = (
 
 export const sortItemsByWarn = (
   items: StoreItem[] | StorePart[],
-  shopId?: string
+  shopId?: string,
 ) => {
   const warnings: string[] = [];
   items.sort((a: StoreItem | StorePart, b: StoreItem | StorePart) => {

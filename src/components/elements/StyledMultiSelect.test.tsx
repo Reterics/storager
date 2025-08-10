@@ -1,13 +1,13 @@
-import {render, screen, fireEvent} from '@testing-library/react';
-import {vi, describe, beforeEach, it, expect} from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
 import StyledMultiSelect from './StyledMultiSelect';
-import {StyledSelectOption} from '../../interfaces/interfaces.ts';
+import type { StyledSelectOption } from '../../interfaces/interfaces.ts';
 
 describe('StyledMultiSelect', () => {
   const options: StyledSelectOption[] = [
-    {value: 'option1', name: 'Option 1'},
-    {value: 'option2', name: 'Option 2'},
-    {value: 'option3', name: 'Option 3'},
+    { value: 'option1', name: 'Option 1' },
+    { value: 'option2', name: 'Option 2' },
+    { value: 'option3', name: 'Option 3' },
   ];
   const onSelectMock = vi.fn();
 
@@ -20,10 +20,10 @@ describe('StyledMultiSelect', () => {
       <StyledMultiSelect
         value={[]}
         onSelect={onSelectMock}
-        name='test-select'
-        label='Test Label'
+        name="test-select"
+        label="Test Label"
         options={options}
-      />
+      />,
     );
 
     expect(screen.getByText('Test Label')).toBeInTheDocument();
@@ -34,16 +34,16 @@ describe('StyledMultiSelect', () => {
       <StyledMultiSelect
         value={[]}
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     options.forEach((option) => {
       expect(screen.getByLabelText(option.name)).toBeInTheDocument();
       expect(screen.getByLabelText(option.name)).toHaveAttribute(
         'type',
-        'checkbox'
+        'checkbox',
       );
     });
   });
@@ -53,9 +53,9 @@ describe('StyledMultiSelect', () => {
       <StyledMultiSelect
         value={['option1']}
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     const option1Checkbox = screen.getByLabelText('Option 1');
@@ -67,9 +67,9 @@ describe('StyledMultiSelect', () => {
       <StyledMultiSelect
         value={[]}
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     const option1Checkbox = screen.getByLabelText('Option 1');
@@ -83,9 +83,9 @@ describe('StyledMultiSelect', () => {
       <StyledMultiSelect
         value={['option1']}
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     const option1Checkbox = screen.getByLabelText('Option 1');
@@ -99,9 +99,9 @@ describe('StyledMultiSelect', () => {
       <StyledMultiSelect
         value={['option1']}
         onSelect={onSelectMock}
-        name='test-select'
+        name="test-select"
         options={options}
-      />
+      />,
     );
 
     const option2Checkbox = screen.getByLabelText('Option 2');

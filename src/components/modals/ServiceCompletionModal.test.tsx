@@ -1,8 +1,8 @@
-import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import ServiceCompletionModal from './ServiceCompletionModal.tsx';
 import DBContextProviderMock from '../../../tests/mocks/DBContextProviderMock.tsx';
-import {serviceCompletionDataList} from '../../../tests/mocks/serviceData.ts';
+import { serviceCompletionDataList } from '../../../tests/mocks/serviceData.ts';
 
 describe('ServiceCompletionModal', () => {
   const originalGetContext = HTMLCanvasElement.prototype.getContext;
@@ -26,14 +26,14 @@ describe('ServiceCompletionModal', () => {
   const onSave = vi.fn();
 
   it('Should not render the modal', () => {
-    const {container} = render(
+    const { container } = render(
       <ServiceCompletionModal
         onClose={onClose}
         onSave={onSave}
         setFromData={setFromData}
         formData={null}
         inPlace={true}
-      />
+      />,
     );
     expect(container.innerHTML).toEqual('');
   });
@@ -48,22 +48,26 @@ describe('ServiceCompletionModal', () => {
           formData={serviceCompletionDataList[0]}
           inPlace={false}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const inputs = container.getAllByRole('textbox');
     setFromData.mockReset();
 
     inputs.forEach((input) => {
-      fireEvent.change(input, {target: {value: 'TestServiceCompletion'}});
+      fireEvent.change(input, { target: { value: 'TestServiceCompletion' } });
     });
 
-    const guaranteedBox = container.getByRole('combobox', {name: 'Guaranteed'});
+    const guaranteedBox = container.getByRole('combobox', {
+      name: 'Guaranteed',
+    });
 
     expect(guaranteedBox).toBeDefined();
-    fireEvent.change(guaranteedBox, {target: {value: 'no'}});
+    fireEvent.change(guaranteedBox, { target: { value: 'no' } });
 
-    const multiSelectCheckBox = container.getByRole('checkbox', {name: 'Back'});
+    const multiSelectCheckBox = container.getByRole('checkbox', {
+      name: 'Back',
+    });
     fireEvent.click(multiSelectCheckBox);
 
     expect(setFromData.mock.calls.length).equal(10);
@@ -78,16 +82,16 @@ describe('ServiceCompletionModal', () => {
   });
 
   it('Should render in place and close', async () => {
-    const {getAllByRole} = render(
+    const { getAllByRole } = render(
       <DBContextProviderMock>
         <ServiceCompletionModal
           onClose={onClose}
           onSave={onSave}
           setFromData={setFromData}
-          formData={{...serviceCompletionDataList[0], type: undefined}}
+          formData={{ ...serviceCompletionDataList[0], type: undefined }}
           inPlace={false}
         />
-      </DBContextProviderMock>
+      </DBContextProviderMock>,
     );
 
     const buttons = getAllByRole('button');

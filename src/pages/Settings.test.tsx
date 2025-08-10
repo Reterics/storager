@@ -1,16 +1,17 @@
 // Settings.test.tsx
 
-import React, {ChangeEventHandler} from 'react';
-import {render, screen, fireEvent, waitFor} from '@testing-library/react';
+import type { ChangeEventHandler } from 'react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Settings from './Settings';
-import {DBContext} from '../database/DBContext';
-import {vi, expect, it, beforeEach, describe} from 'vitest';
-import {StyledInputArgs} from '../interfaces/interfaces.ts';
-import {DBContextType} from '../interfaces/firebase.ts';
+import { DBContext } from '../database/DBContext';
+import { vi, expect, it, beforeEach, describe } from 'vitest';
+import type { StyledInputArgs } from '../interfaces/interfaces.ts';
+import type { DBContextType } from '../interfaces/firebase.ts';
 
 vi.mock('../components/elements/StyledInput', () => ({
   __esModule: true,
-  default: ({label, name, value, onChange, type}: StyledInputArgs) => (
+  default: ({ label, name, value, onChange, type }: StyledInputArgs) => (
     <div>
       <label id={name + '_label'} htmlFor={name}>
         {label}
@@ -19,7 +20,7 @@ vi.mock('../components/elements/StyledInput', () => ({
         <input
           id={name}
           aria-labelledby={label ? name + '_label' : undefined}
-          type='checkbox'
+          type="checkbox"
           name={name}
           checked={!!value}
           onChange={onChange}
@@ -50,7 +51,9 @@ vi.mock('../components/elements/StyledInput', () => ({
 
 vi.mock('../components/elements/FormRow', () => ({
   __esModule: true,
-  default: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 describe('Settings Component', () => {
@@ -83,7 +86,7 @@ describe('Settings Component', () => {
     return render(
       <DBContext.Provider value={mockDBContext as unknown as DBContextType}>
         {ui}
-      </DBContext.Provider>
+      </DBContext.Provider>,
     );
   };
 
@@ -105,11 +108,11 @@ describe('Settings Component', () => {
         value={dbContextWithoutUser as unknown as DBContextType}
       >
         <Settings />
-      </DBContext.Provider>
+      </DBContext.Provider>,
     );
 
     expect(
-      screen.getByText('401 Unauthorized - Your privileges has been revoked')
+      screen.getByText('401 Unauthorized - Your privileges has been revoked'),
     ).toBeInTheDocument();
   });
 
@@ -121,12 +124,12 @@ describe('Settings Component', () => {
     expect(screen.getByLabelText('Address')).toHaveValue('123 Test St');
     expect(screen.getByLabelText('Tax ID')).toHaveValue('TAX123');
     expect(screen.getByLabelText('Bank Account Number')).toHaveValue(
-      '123456789'
+      '123456789',
     );
     expect(screen.getByLabelText('Phone')).toHaveValue('555-1234');
     expect(screen.getByLabelText('Email')).toHaveValue('test@example.com');
     expect(screen.getByLabelText('Service Agreement')).toHaveValue(
-      'Test Agreement'
+      'Test Agreement',
     );
 
     // "Save Settings" button should not be visible initially
@@ -137,7 +140,9 @@ describe('Settings Component', () => {
     renderWithProviders(<Settings />);
 
     const companyNameInput = screen.getByLabelText('Company Name');
-    fireEvent.change(companyNameInput, {target: {value: 'New Company Name'}});
+    fireEvent.change(companyNameInput, {
+      target: { value: 'New Company Name' },
+    });
 
     expect(companyNameInput).toHaveValue('New Company Name');
     expect(screen.getByText('Save Settings')).toBeInTheDocument();
@@ -154,7 +159,9 @@ describe('Settings Component', () => {
     renderWithProviders(<Settings />);
 
     const companyNameInput = screen.getByLabelText('Company Name');
-    fireEvent.change(companyNameInput, {target: {value: 'New Company Name'}});
+    fireEvent.change(companyNameInput, {
+      target: { value: 'New Company Name' },
+    });
 
     const saveButton = screen.getByText('Save Settings');
     fireEvent.click(saveButton);
@@ -175,7 +182,7 @@ describe('Settings Component', () => {
 
     const serviceAgreementTextarea = screen.getByLabelText('Service Agreement');
     fireEvent.change(serviceAgreementTextarea, {
-      target: {value: 'Updated Agreement'},
+      target: { value: 'Updated Agreement' },
     });
 
     expect(serviceAgreementTextarea).toHaveValue('Updated Agreement');
@@ -196,7 +203,7 @@ describe('Settings Component', () => {
         value={dbContextWithoutSettings as unknown as DBContextType}
       >
         <Settings />
-      </DBContext.Provider>
+      </DBContext.Provider>,
     );
 
     expect(screen.getByLabelText('Company Name')).toHaveValue('');
@@ -208,7 +215,7 @@ describe('Settings Component', () => {
     renderWithProviders(<Settings />);
 
     const addressInput = screen.getByLabelText('Address');
-    fireEvent.change(addressInput, {target: {value: '456 New Address'}});
+    fireEvent.change(addressInput, { target: { value: '456 New Address' } });
 
     expect(addressInput).toHaveValue('456 New Address');
     expect(screen.getByText('Save Settings')).toBeInTheDocument();

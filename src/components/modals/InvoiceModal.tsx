@@ -1,5 +1,5 @@
-import {useTranslation} from 'react-i18next';
-import {
+import { useTranslation } from 'react-i18next';
+import type {
   GeneralModalButtons,
   InvoiceModalInput,
   InvoiceType,
@@ -9,8 +9,9 @@ import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledInput from '../elements/StyledInput.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
-import {ChangeEvent, useMemo} from 'react';
-import {invoiceStatusCodes} from '../../interfaces/constants.ts';
+import type { ChangeEvent } from 'react';
+import { useMemo } from 'react';
+import { invoiceStatusCodes } from '../../interfaces/constants.ts';
 
 export default function InvoiceModal({
   onClose,
@@ -20,7 +21,7 @@ export default function InvoiceModal({
   inPlace,
   shops,
 }: Readonly<InvoiceModalInput>) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const invoiceStatuses = useMemo<StyledSelectOption[]>(
     () =>
@@ -28,7 +29,7 @@ export default function InvoiceModal({
         name: t(status.charAt(0).toUpperCase() + status.substring(1)),
         value: status,
       })),
-    [t]
+    [t],
   );
 
   const shopOptions: StyledSelectOption[] = (shops || []).map((key) => {
@@ -50,7 +51,7 @@ export default function InvoiceModal({
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...invoice};
+    const obj = { ...invoice };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -88,16 +89,16 @@ export default function InvoiceModal({
     >
       <FormRow>
         <StyledInput
-          type='text'
-          name='name'
+          type="text"
+          name="name"
           value={invoice.name}
           onChange={(e) => changeType(e, 'name')}
           label={t('Name')}
         />
 
         <StyledInput
-          type='text'
-          name='tax'
+          type="text"
+          name="tax"
           value={invoice.tax}
           onChange={(e) => changeType(e, 'tax')}
           label={t('Tax ID')}
@@ -106,8 +107,8 @@ export default function InvoiceModal({
 
       <FormRow>
         <StyledInput
-          type='text'
-          name='address'
+          type="text"
+          name="address"
           value={invoice.address}
           onChange={(e) => changeType(e, 'address')}
           label={t('Address')}
@@ -115,16 +116,16 @@ export default function InvoiceModal({
       </FormRow>
       <FormRow>
         <StyledInput
-          type='text'
-          name='email'
+          type="text"
+          name="email"
           value={invoice.email}
           onChange={(e) => changeType(e, 'email')}
           label={t('Email')}
         />
 
         <StyledInput
-          type='text'
-          name='phone'
+          type="text"
+          name="phone"
           value={invoice.phone}
           onChange={(e) => changeType(e, 'phone')}
           label={t('Phone')}
@@ -132,8 +133,8 @@ export default function InvoiceModal({
       </FormRow>
       <FormRow>
         <StyledSelect
-          type='text'
-          name='payment_method'
+          type="text"
+          name="payment_method"
           value={invoice.payment_method ?? 'credit_card'}
           options={[
             {
@@ -148,15 +149,15 @@ export default function InvoiceModal({
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'payment_method'
+              'payment_method',
             )
           }
           label={t('Payment method')}
         />
 
         <StyledInput
-          type='text'
-          name='total'
+          type="text"
+          name="total"
           value={invoice.total}
           onChange={(e) => changeType(e, 'total')}
           label={t('Total')}
@@ -165,7 +166,7 @@ export default function InvoiceModal({
       <FormRow>
         <StyledSelect
           options={shopOptions}
-          name='shop_id'
+          name="shop_id"
           value={invoice.shop_id?.[0] ?? shops[0]?.id}
           onSelect={(e) =>
             selectMultiShopId(e as unknown as ChangeEvent<HTMLInputElement>)
@@ -174,7 +175,7 @@ export default function InvoiceModal({
         />
         <StyledSelect
           options={invoiceStatuses}
-          name='status'
+          name="status"
           value={invoice.status}
           onSelect={(e) =>
             changeType(e as unknown as ChangeEvent<HTMLInputElement>, 'status')
@@ -184,15 +185,15 @@ export default function InvoiceModal({
       </FormRow>
       <FormRow>
         <StyledInput
-          type='text'
-          name='total'
+          type="text"
+          name="total"
           value={invoice.invoice_subject}
           onChange={(e) => changeType(e, 'invoice_subject')}
           label={t('Invoice subject')}
         />
         <StyledInput
-          type='text'
-          name='total'
+          type="text"
+          name="total"
           value={invoice.purchase_cost}
           onChange={(e) => changeType(e, 'purchase_cost')}
           label={t('Purchase cost')}
@@ -200,8 +201,8 @@ export default function InvoiceModal({
       </FormRow>
       <FormRow>
         <StyledInput
-          type='textarea'
-          name='notes'
+          type="textarea"
+          name="notes"
           value={invoice.notes}
           onChange={(e) => changeType(e, 'notes')}
           label={t('Note')}

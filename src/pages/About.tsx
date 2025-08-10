@@ -1,20 +1,20 @@
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import logo from '../assets/logo.svg';
 import logoWhite from '../assets/logo_white.svg';
-import {useTheme} from '../store/ThemeContext.tsx';
+import { useTheme } from '../store/ThemeContext.tsx';
 
 function About() {
   const isDarkTheme = useTheme()?.theme === 'dark';
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <>
       <div className={'bg-white rounded-lg shadow m-4 dark:bg-gray-800 p-4'}>
-        <div className='flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col'>
+        <div className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white flex-col">
           <img
             src={isDarkTheme ? logoWhite : logo}
-            className='h-40 mr-2'
-            alt='StorageR logo'
+            className="h-40 mr-2"
+            alt="StorageR logo"
           />{' '}
           StorageR
         </div>

@@ -1,16 +1,16 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
-import {render, screen, waitFor, fireEvent} from '@testing-library/react';
-import {ImageUploader} from './ImageUploader';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { ImageUploader } from './ImageUploader';
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({t: (key: string) => key}),
+  useTranslation: () => ({ t: (key: string) => key }),
 }));
 
 vi.mock('./StyledFile.tsx', () => ({
-  default: ({onChange}: {onChange: (file: File) => void}) => (
+  default: ({ onChange }: { onChange: (file: File) => void }) => (
     <input
-      type='file'
-      data-testid='mock-file-input'
+      type="file"
+      data-testid="mock-file-input"
       onChange={(e) => {
         if (e.target.files) onChange(e.target.files[0]);
       }}
@@ -33,7 +33,7 @@ describe('ImageUploader Component', () => {
     }) as unknown as typeof fetch;
 
     render(
-      <ImageUploader setFile={mockSetFile} setLocalFile={mockSetLocalFile} />
+      <ImageUploader setFile={mockSetFile} setLocalFile={mockSetLocalFile} />,
     );
 
     expect(screen.getByTestId('mock-file-input')).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe('ImageUploader Component', () => {
     }) as unknown as typeof fetch;
 
     render(
-      <ImageUploader setFile={mockSetFile} setLocalFile={mockSetLocalFile} />
+      <ImageUploader setFile={mockSetFile} setLocalFile={mockSetLocalFile} />,
     );
 
     await waitFor(() => {
@@ -64,7 +64,7 @@ describe('ImageUploader Component', () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('fetch error'));
 
     render(
-      <ImageUploader setFile={mockSetFile} setLocalFile={mockSetLocalFile} />
+      <ImageUploader setFile={mockSetFile} setLocalFile={mockSetLocalFile} />,
     );
 
     await waitFor(() => {

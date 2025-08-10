@@ -1,11 +1,12 @@
-import {useContext, useMemo} from 'react';
-import {useTranslation} from 'react-i18next';
-import {DBContext} from '../../database/DBContext.ts';
-import FirebaseCrudManager, {CrudField} from '../components/FirebaseCrudManager.tsx';
-import {StyledSelectOption} from '../../interfaces/interfaces';
+import { useContext, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DBContext } from '../../database/DBContext.ts';
+import type { CrudField } from '../components/FirebaseCrudManager.tsx';
+import FirebaseCrudManager from '../components/FirebaseCrudManager.tsx';
+import type { StyledSelectOption } from '../../interfaces/interfaces';
 
 export default function UsersPage() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dbContext = useContext(DBContext);
 
   const shopOptions: StyledSelectOption[] = useMemo(
@@ -14,23 +15,29 @@ export default function UsersPage() {
         name: shop.name || '',
         value: shop.id,
       })),
-    [dbContext?.data?.shops]
+    [dbContext?.data?.shops],
   );
 
   const roleOptions: StyledSelectOption[] = useMemo(
     () => [
-      {name: t('Admin') as string, value: 'admin'},
-      {name: t('Manager') as string, value: 'manager'},
-      {name: t('User') as string, value: 'user'},
+      { name: t('Admin') as string, value: 'admin' },
+      { name: t('Manager') as string, value: 'manager' },
+      { name: t('User') as string, value: 'user' },
     ],
-    [t]
+    [t],
   );
 
   const fields: CrudField[] = useMemo(
     () => [
-      {key: 'username', label: t('Name'), type: 'text', editable: true},
-      {key: 'email', label: t('Email'), type: 'text', editable: true},
-      {key: 'role', label: t('Role'), type: 'select', editable: true, options: roleOptions},
+      { key: 'username', label: t('Name'), type: 'text', editable: true },
+      { key: 'email', label: t('Email'), type: 'text', editable: true },
+      {
+        key: 'role',
+        label: t('Role'),
+        type: 'select',
+        editable: true,
+        options: roleOptions,
+      },
       // Modal-only fields
       {
         key: 'shop_id',
@@ -41,10 +48,14 @@ export default function UsersPage() {
         options: shopOptions,
       },
     ],
-    [t, roleOptions, shopOptions]
+    [t, roleOptions, shopOptions],
   );
 
   return (
-    <FirebaseCrudManager entityType="users" title={t('Users')} fields={fields} />
+    <FirebaseCrudManager
+      entityType="users"
+      title={t('Users')}
+      fields={fields}
+    />
   );
 }

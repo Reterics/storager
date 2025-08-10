@@ -1,37 +1,37 @@
-import {useContext, useEffect, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {ShopContext} from '../store/ShopContext.tsx';
-import {useTranslation} from 'react-i18next';
-import {
+import { useContext, useEffect, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { ShopContext } from '../store/ShopContext.tsx';
+import { useTranslation } from 'react-i18next';
+import type {
   Lease,
   LeaseCompletion,
-  leaseStatusList,
   ServiceCompleteData,
   ServiceData,
   ServiceLineData,
 } from '../interfaces/interfaces.ts';
+import { leaseStatusList } from '../interfaces/interfaces.ts';
 import {
   compareNormalizedStrings,
   generateServiceId,
   reduceToRecordById,
 } from '../utils/data.ts';
-import {PrintViewData} from '../interfaces/pdf.ts';
+import type { PrintViewData } from '../interfaces/pdf.ts';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import PrintableVersionFrame from '../components/modals/PrintableVersionFrame.tsx';
-import {PageHead} from '../components/elements/PageHead.tsx';
-import {BsFillPlusCircleFill} from 'react-icons/bs';
-import {filterLeases, getLeaseLineData} from '../utils/lease.ts';
+import { PageHead } from '../components/elements/PageHead.tsx';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { filterLeases, getLeaseLineData } from '../utils/lease.ts';
 import ListModal from '../components/modals/ListModal.tsx';
 import LeaseModal from '../components/modals/LeaseModal.tsx';
 import LeaseCompletionModal from '../components/modals/LeaseCompletionModal.tsx';
-import {confirm} from '../components/modalExporter.ts';
+import { confirm } from '../components/modalExporter.ts';
 
 function Leases() {
   const dbContext = useContext(DBContext);
-  const {shop} = useContext(ShopContext);
-  const {t} = useTranslation();
+  const { shop } = useContext(ShopContext);
+  const { t } = useTranslation();
 
   const [tableLimits, setTableLimits] = useState<number>(100);
   const [shopFilter, setShopFilter] = useState<string>();
@@ -39,20 +39,20 @@ function Leases() {
   const [activeFilter, setActiveFilter] = useState<boolean>(false);
 
   const [completionForms, setCompletionForms] = useState<LeaseCompletion[]>(
-    dbContext?.data.leaseCompletions || []
+    dbContext?.data.leaseCompletions || [],
   );
 
   const completionFormsById = reduceToRecordById(completionForms);
 
   const [leases, setLeases] = useState<Lease[]>(
-    filterLeases(dbContext?.data.leases ?? [], completionFormsById)
+    filterLeases(dbContext?.data.leases ?? [], completionFormsById),
   );
 
   const [modalTemplate, setModalTemplate] = useState<Lease | null>(null);
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<LeaseCompletion | null>(null);
   const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
-    null
+    null,
   );
 
   const [selectedLeaseLines, setSelectedLeaseLines] =
@@ -65,8 +65,8 @@ function Leases() {
         completionFormsById,
         shopFilter,
         searchFilter,
-        activeFilter
-      )
+        activeFilter,
+      ),
     );
   }, [
     shopFilter,
@@ -93,7 +93,7 @@ function Leases() {
           updatedItems,
           shop?.id,
           dbContext?.data.shops,
-          dbContext?.data.deleted
+          dbContext?.data.deleted,
         );
       }
     }
@@ -101,7 +101,7 @@ function Leases() {
     updatedItems = (await dbContext?.setData(
       'leases',
       leaseData,
-      archive
+      archive,
     )) as ServiceData[];
     setLeases(updatedItems);
     setModalTemplate(null);
@@ -157,15 +157,15 @@ function Leases() {
             t,
             dbContext?.data.settings,
             setPrintViewData,
-            setPrintViewData
+            setPrintViewData,
           );
 
           setSelectedLeaseLines(newLine);
 
-          window.scrollTo({top: 0, behavior: 'smooth'});
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         },
         onEdit: () => {
-          setModalTemplate({...item, onUpdate: true});
+          setModalTemplate({ ...item, onUpdate: true });
           if (selectedLeaseLines) {
             setSelectedLeaseLines(null);
           }
@@ -190,7 +190,7 @@ function Leases() {
                   leases,
                   shop?.id,
                   dbContext?.data.shops,
-                  dbContext?.data.deleted
+                  dbContext?.data.deleted,
                 );
 
                 setModalTemplate(
@@ -204,7 +204,7 @@ function Leases() {
                         service_name: shop?.name || '',
                         service_email: shop?.email || '',
                         docType: 'leases',
-                      }
+                      },
                 );
               },
             },
@@ -218,7 +218,7 @@ function Leases() {
           setActiveFilter={setActiveFilter}
         />
       )}
-      <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
+      <div className="relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1">
         {modalTemplate && (
           <LeaseModal
             onClose={() => setModalTemplate(null)}
@@ -264,14 +264,14 @@ function Leases() {
                 id: selectedLeaseLines.completed ? 'completedListButton' : '',
                 onClick: () => {
                   const item = leases.find(
-                    (item) => item.id === selectedLeaseLines.id
+                    (item) => item.id === selectedLeaseLines.id,
                   );
                   if (!item) {
                     return;
                   }
                   const completionFormId = item.id + '_lcd';
                   const completionForm = completionForms.find(
-                    (completionForm) => completionForm.id === completionFormId
+                    (completionForm) => completionForm.id === completionFormId,
                   );
                   const sourceItem = completionForm || item;
 
@@ -313,7 +313,7 @@ function Leases() {
       </div>
 
       {noModalActive && (
-        <div className='service-table lease-table'>
+        <div className="service-table lease-table">
           <TableViewComponent
             lines={tableLines}
             tableLimits={tableLimits}
@@ -321,7 +321,7 @@ function Leases() {
               t('ID'),
               t('Name'),
               {
-                value: <span className='text-xxs'>{t('Expected cost')}</span>,
+                value: <span className="text-xxs">{t('Expected cost')}</span>,
                 type: 'number',
                 postFix: ' Ft',
                 sortable: true,
@@ -345,7 +345,7 @@ function Leases() {
         </div>
       )}
 
-      <div className='relative flex justify-center w-full m-auto flex-1 no-print'></div>
+      <div className="relative flex justify-center w-full m-auto flex-1 no-print"></div>
     </>
   );
 }

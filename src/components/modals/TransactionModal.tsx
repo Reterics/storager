@@ -1,15 +1,15 @@
-import {
+import type {
   GeneralModalButtons,
   ShopType,
   Transaction,
   StyledSelectOption,
 } from '../../interfaces/interfaces.ts';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledInput from '../elements/StyledInput.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
-import {ChangeEvent} from 'react';
+import type { ChangeEvent } from 'react';
 import {
   documentTypes,
   paymentMethods,
@@ -34,7 +34,7 @@ export default function TransactionModal({
   inPlace,
   shops,
 }: TransactionModalProps) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const shopOptions: StyledSelectOption[] = (shops || []).map((key) => {
     return {
@@ -55,7 +55,7 @@ export default function TransactionModal({
   const changeType = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
     const value = e.target.value;
 
-    const obj = {...transaction};
+    const obj = { ...transaction };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     obj[key] = value;
@@ -90,22 +90,22 @@ export default function TransactionModal({
     >
       <FormRow>
         <StyledInput
-          type='text'
-          name='name'
+          type="text"
+          name="name"
           value={transaction.name}
           onChange={(e) => changeType(e, 'name')}
           label={t('Name/Tag')}
         />
 
         <StyledSelect
-          type='text'
-          name='item_type'
+          type="text"
+          name="item_type"
           value={transaction.item_type}
           options={transactionItemTypes}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'item_type'
+              'item_type',
             )
           }
           label={t('Item type')}
@@ -113,7 +113,7 @@ export default function TransactionModal({
 
         <StyledSelect
           options={shopOptions}
-          name='shop_id'
+          name="shop_id"
           value={transaction.shop_id?.[0] ?? shops[0]?.id}
           onSelect={(e) =>
             selectMultiShopId(e as unknown as ChangeEvent<HTMLInputElement>)
@@ -124,40 +124,40 @@ export default function TransactionModal({
 
       <FormRow>
         <StyledSelect
-          type='text'
-          name='payment_method'
+          type="text"
+          name="payment_method"
           value={transaction.payment_method}
           options={paymentMethods}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'payment_method'
+              'payment_method',
             )
           }
           label={t('Payment Method')}
         />
         <StyledSelect
-          type='text'
-          name='document_type'
+          type="text"
+          name="document_type"
           value={transaction.document_type}
           options={documentTypes}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'document_type'
+              'document_type',
             )
           }
           label={t('Document Type')}
         />
         <StyledSelect
-          type='text'
-          name='type'
+          type="text"
+          name="type"
           value={transaction.transaction_type}
           options={transactionTypes}
           onSelect={(e) =>
             changeType(
               e as unknown as ChangeEvent<HTMLInputElement>,
-              'transaction_type'
+              'transaction_type',
             )
           }
           label={t('Type')}
@@ -165,29 +165,29 @@ export default function TransactionModal({
       </FormRow>
       <FormRow>
         <StyledInput
-          type='text'
-          name='quantity'
+          type="text"
+          name="quantity"
           value={transaction.quantity}
           onChange={(e) => changeType(e, 'quantity')}
           label={t('Quantity')}
         />
         <StyledInput
-          type='text'
-          name='cost'
+          type="text"
+          name="cost"
           value={transaction.cost}
           onChange={(e) => changeType(e, 'cost')}
           label={t('Cost')}
         />
         <StyledInput
-          type='text'
-          name='net_amount'
+          type="text"
+          name="net_amount"
           value={transaction.net_amount}
           onChange={(e) => changeType(e, 'net_amount')}
           label={t('Net amount')}
         />
         <StyledInput
-          type='text'
-          name='gross_amount'
+          type="text"
+          name="gross_amount"
           value={transaction.gross_amount}
           onChange={(e) => changeType(e, 'gross_amount')}
           label={t('Gross amount')}

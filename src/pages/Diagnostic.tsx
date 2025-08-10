@@ -1,17 +1,18 @@
-import {JSX, useContext, useState} from 'react';
-import {DBContext} from '../database/DBContext.ts';
-import {useTranslation} from 'react-i18next';
-import {
+import type { JSX } from 'react';
+import { useContext, useState } from 'react';
+import { DBContext } from '../database/DBContext.ts';
+import { useTranslation } from 'react-i18next';
+import type {
   ServiceCompleteData,
   ServiceData,
-  serviceStatusList,
 } from '../interfaces/interfaces.ts';
+import { serviceStatusList } from '../interfaces/interfaces.ts';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
 import UnauthorizedComponent from '../components/Unauthorized.tsx';
-import {ContextDataType} from '../interfaces/firebase.ts';
-import {PageHead} from '../components/elements/PageHead.tsx';
+import type { ContextDataType } from '../interfaces/firebase.ts';
+import { PageHead } from '../components/elements/PageHead.tsx';
 
 interface Occurrence {
   source: ContextDataType;
@@ -29,7 +30,7 @@ interface InconsistencyResult {
 }
 
 function sortInconsistencyResultsByLastOccurrenceDate(
-  results: InconsistencyResult[]
+  results: InconsistencyResult[],
 ): InconsistencyResult[] {
   return results.sort((a, b) => {
     // Find the latest date for 'a'
@@ -37,7 +38,7 @@ function sortInconsistencyResultsByLastOccurrenceDate(
       .map((o) => new Date(o.date ?? 0))
       .reduce(
         (latest, current) => (current > latest ? current : latest),
-        new Date(0)
+        new Date(0),
       );
 
     // Find the latest date for 'b'
@@ -45,7 +46,7 @@ function sortInconsistencyResultsByLastOccurrenceDate(
       .map((o) => new Date(o.date ?? 0))
       .reduce(
         (latest, current) => (current > latest ? current : latest),
-        new Date(0)
+        new Date(0),
       );
 
     // Sort descending by the latest occurrence date
@@ -54,7 +55,7 @@ function sortInconsistencyResultsByLastOccurrenceDate(
 }
 
 function markInconsistentOccurrences(
-  results: InconsistencyResult[]
+  results: InconsistencyResult[],
 ): InconsistencyResult[] {
   return results.map((result) => {
     if (!result.inconsistent) {
@@ -72,7 +73,7 @@ function markInconsistentOccurrences(
     const maxCount = Math.max(...Object.values(nameCount));
     // Identify which name(s) have the maxCount
     const majorityNames = Object.entries(nameCount)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       .filter(([_, count]) => count === maxCount)
       .map(([name]) => name);
 
@@ -95,7 +96,7 @@ function markInconsistentOccurrences(
 function findClientNameInconsistencies(
   services: ServiceData[],
   completionForms: ServiceCompleteData[],
-  archive: (ServiceData | ServiceCompleteData)[]
+  archive: (ServiceData | ServiceCompleteData)[],
 ): InconsistencyResult[] {
   // Aggregate all client_names by service_id
   const occurrencesMap: Record<string, Occurrence[]> = {};
@@ -155,7 +156,7 @@ function findClientNameInconsistencies(
         distinctClientNames: distinctNames,
         inconsistent: distinctNames.length > 1,
       };
-    }
+    },
   );
 
   return results.filter((r) => r.inconsistent);
@@ -163,15 +164,15 @@ function findClientNameInconsistencies(
 
 function Diagnostic() {
   const dbContext = useContext(DBContext);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const buildTime = Number(import.meta.env.BUILD_TIME || new Date().getTime());
 
   const [servicedItems] = useState<ServiceData[]>(
-    dbContext?.data.services || []
+    dbContext?.data.services || [],
   );
   const [completionForms] = useState<ServiceCompleteData[]>(
-    dbContext?.data.completions || []
+    dbContext?.data.completions || [],
   );
 
   const [modalTemplate] = useState<ServiceData | null>(null);
@@ -180,14 +181,14 @@ function Diagnostic() {
     findClientNameInconsistencies(
       servicedItems,
       completionForms,
-      dbContext?.data.archive || []
-    )
+      dbContext?.data.archive || [],
+    ),
   );
   sortInconsistencyResultsByLastOccurrenceDate(inconsistencies);
 
   const sinceLastBuild = inconsistencies.reduce((total, inconsistency) => {
     total += inconsistency.occurrences.filter(
-      (o) => new Date(o.date ?? 0).getTime() > buildTime
+      (o) => new Date(o.date ?? 0).getTime() > buildTime,
     ).length
       ? 1
       : 0;
@@ -197,10 +198,10 @@ function Diagnostic() {
   const tableLines = inconsistencies.reduce(
     (tableLines, inconsistency) => {
       const serviceItem = servicedItems.find(
-        (service) => service.id === inconsistency.service_id
+        (service) => service.id === inconsistency.service_id,
       );
       const issueAfterRelease = inconsistency.occurrences.filter(
-        (o) => new Date(o.date ?? 0).getTime() > buildTime
+        (o) => new Date(o.date ?? 0).getTime() > buildTime,
       ).length;
 
       inconsistency.occurrences.forEach((occurence, index) => {
@@ -235,7 +236,7 @@ function Diagnostic() {
       });
       return tableLines;
     },
-    [] as (string | number | JSX.Element | undefined)[][]
+    [] as (string | number | JSX.Element | undefined)[][],
   );
 
   if (!dbContext?.data.currentUser) {
@@ -289,7 +290,7 @@ function Diagnostic() {
         />
       )}
 
-      <div className='relative flex justify-center w-full m-auto flex-1 no-print'></div>
+      <div className="relative flex justify-center w-full m-auto flex-1 no-print"></div>
     </>
   );
 }

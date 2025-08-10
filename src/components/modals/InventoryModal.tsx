@@ -1,16 +1,16 @@
-import {useTranslation} from 'react-i18next';
-import {useState} from 'react';
-import {
+import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import type {
   GeneralModalButtons,
   onClickReturn,
   StoreItem,
   StorePart,
 } from '../../interfaces/interfaces.ts';
 import GeneralModal from './GeneralModal.tsx';
-import {PageHead} from '../elements/PageHead.tsx';
+import { PageHead } from '../elements/PageHead.tsx';
 import TableSelectComponent from '../elements/TableSelectComponent.tsx';
-import {BsTrashFill} from 'react-icons/bs';
-import {extractStorageInfo} from '../../utils/storage.ts';
+import { BsTrashFill } from 'react-icons/bs';
+import { extractStorageInfo } from '../../utils/storage.ts';
 
 export interface InventoryModalProps {
   inPlace?: boolean;
@@ -27,7 +27,7 @@ export default function InventoryModal({
   inPlace,
   selectedShopId,
 }: InventoryModalProps) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedMap, setSelectedMap] = useState<Record<string, number>>({});
 
@@ -59,7 +59,7 @@ export default function InventoryModal({
   ];
 
   return (
-    <GeneralModal buttons={buttons} inPlace={inPlace} id='InventoryModal'>
+    <GeneralModal buttons={buttons} inPlace={inPlace} id="InventoryModal">
       <PageHead
         title={t('Inventory')}
         buttons={[

@@ -1,15 +1,15 @@
-import {
+import type {
   GeneralButtons,
   StyledSelectOption,
 } from '../../interfaces/interfaces.ts';
 import AlertBox from '../AlertBox.tsx';
-import {BsSearch} from 'react-icons/bs';
-import {useTranslation} from 'react-i18next';
-import {debounce} from 'throttle-debounce';
-import {useCallback, useContext, useRef} from 'react';
+import { BsSearch } from 'react-icons/bs';
+import { useTranslation } from 'react-i18next';
+import { debounce } from 'throttle-debounce';
+import { useCallback, useContext, useRef } from 'react';
 import StyledSelect from './StyledSelect.tsx';
-import {tableViewOptions} from '../../interfaces/constants.ts';
-import {DBContext} from '../../database/DBContext.ts';
+import { tableViewOptions } from '../../interfaces/constants.ts';
+import { DBContext } from '../../database/DBContext.ts';
 
 export const PageHead = ({
   buttons,
@@ -38,7 +38,7 @@ export const PageHead = ({
   debounceInterval?: false | number;
   children?: React.ReactNode;
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const ref = useRef<HTMLInputElement>(null);
   const dbContext = useContext(DBContext);
   const shopOptions: StyledSelectOption[] =
@@ -47,14 +47,14 @@ export const PageHead = ({
         value: shop.name ?? '',
         name: shop.name ?? '',
       };
-    }) || [{value: shopFilter ?? '', name: shopFilter ?? ''}] ||
+    }) || [{ value: shopFilter ?? '', name: shopFilter ?? '' }] ||
     [];
 
-  shopOptions.unshift({value: '', name: t('All shop')});
+  shopOptions.unshift({ value: '', name: t('All shop') });
 
   const activeOptions = [
-    {value: '', name: t('No filter')},
-    {value: 'true', name: t('Only active')},
+    { value: '', name: t('No filter') },
+    { value: 'true', name: t('Only active') },
   ];
 
   const onClickSearch = () => {
@@ -70,7 +70,7 @@ export const PageHead = ({
         onSearch(ref.current ? ref.current.value : value);
       }
     },
-    {atBegin: false}
+    { atBegin: false },
   );
 
   const handleKeyPress = useCallback(
@@ -82,15 +82,15 @@ export const PageHead = ({
         debounceFunc((e.target as HTMLInputElement).value);
       }
     },
-    [debounceFunc, debounceInterval, onSearch]
+    [debounceFunc, debounceInterval, onSearch],
   );
 
   return (
-    <div className='flex self-center max-w-screen-xl w-full no-print min-h-fit'>
-      <div className='flex justify-between items-center w-full px-0 py-1 gap-1 flex-wrap'>
-        <div className='flex flex-1 items-center gap-2 flex-wrap'>
+    <div className="flex self-center max-w-screen-xl w-full no-print min-h-fit">
+      <div className="flex justify-between items-center w-full px-0 py-1 gap-1 flex-wrap">
+        <div className="flex flex-1 items-center gap-2 flex-wrap">
           {title && (
-            <h1 className='ps-1 text-lg font-semibold text-gray-900 dark:text-white'>
+            <h1 className="ps-1 text-lg font-semibold text-gray-900 dark:text-white">
               {title}
             </h1>
           )}
@@ -98,11 +98,11 @@ export const PageHead = ({
           {error && <AlertBox message={error} role={'warning'} />}
         </div>
 
-        <div className='flex items-center gap-1 flex-wrap'>
+        <div className="flex items-center gap-1 flex-wrap">
           {setActiveFilter && (
             <StyledSelect
               options={activeOptions}
-              name='active'
+              name="active"
               value={activeFilter ? 'true' : undefined}
               defaultLabel={activeOptions[0].name}
               onSelect={(e) =>
@@ -115,7 +115,7 @@ export const PageHead = ({
           {setShopFilter && (
             <StyledSelect
               options={shopOptions}
-              name='shop'
+              name="shop"
               value={shopFilter || undefined}
               defaultLabel={shopOptions[0].name}
               onSelect={(e) =>
@@ -128,7 +128,7 @@ export const PageHead = ({
           {setTableLimits && tableLimits && (
             <StyledSelect
               options={tableViewOptions}
-              name='tableLimit'
+              name="tableLimit"
               value={tableLimits || tableViewOptions[0].value}
               defaultLabel={tableViewOptions[0].name}
               onSelect={(e) =>
@@ -140,20 +140,20 @@ export const PageHead = ({
           )}
 
           {onSearch && (
-            <div className='flex'>
+            <div className="flex">
               <input
                 ref={ref}
                 onKeyDown={handleKeyPress}
-                type='text'
-                data-testid='searchInput'
-                className='block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600'
+                type="text"
+                data-testid="searchInput"
+                className="block w-full px-2.5 py-1.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-l-md focus:ring-2 focus:ring-gray-400 focus:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600"
                 placeholder={t('Search...')}
               />
               <button
                 onClick={onClickSearch}
-                type='button'
-                data-testid='searchButton'
-                className='px-2.5 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-r-md focus:ring-2 focus:ring-gray-400 focus:outline-none'
+                type="button"
+                data-testid="searchButton"
+                className="px-2.5 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-r-md focus:ring-2 focus:ring-gray-400 focus:outline-none"
               >
                 <BsSearch size={18} />
               </button>
@@ -163,7 +163,7 @@ export const PageHead = ({
           {(buttons || []).map((button, index) => (
             <button
               key={'heading-' + index}
-              type='button'
+              type="button"
               className={
                 'text-sm font-medium rounded ' +
                 (button.primary

@@ -1,4 +1,4 @@
-import {DBManagerOptions, DBType} from '../interfaces/db.ts';
+import type { DBManagerOptions, DBType } from '../interfaces/db.ts';
 
 export default class DBManager {
   protected _type: DBType;

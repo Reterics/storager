@@ -19,14 +19,16 @@
     "build": "tsc -b && vite build --mode dev",
     "build:test": "tsc -b && vite build --mode test",
     "build:prod": "tsc -b && vite build --mode production",
-    "lint": "eslint .",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src",
     "format": "prettier --check ./src",
     "format:fix": "prettier --write ./src",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
     "coverage": "vitest run --coverage --no-cache",
     "e2e:codegen": "npx playwright codegen",
-    "e2e:test": "npx playwright test"
+    "e2e:test": "npx playwright test",
+    "prepare": "husky"
   },
   "dependencies": {
     "@react-pdf/render": "4.3.0",
@@ -66,11 +68,18 @@
     "@vitest/coverage-v8": "3.2.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.33.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import-x": "^4.4.2",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "eslint-plugin-unicorn": "^56.0.0",
     "fake-indexeddb": "^6.1.0",
     "globals": "^15.15.0",
+    "husky": "^9.1.6",
     "jsdom": "^26.1.0",
+    "lint-staged": "^15.2.10",
     "postcss": "^8.5.6",
     "rollup": "^4.46.2",
     "tailwindcss": "^3.4.17",
@@ -79,5 +88,13 @@
     "vite": "6.3.5",
     "vitest": "^3.2.4",
     "vitest-monocart-coverage": "3.0.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix --max-warnings=0"
+    ],
+    "*.{json,md,css,scss}": [
+      "prettier --write"
+    ]
   }
 }

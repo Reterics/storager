@@ -1,16 +1,16 @@
 import GeneralModal from './GeneralModal.tsx';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import TableViewComponent from '../elements/TableViewComponent.tsx';
-import {
+import type {
   GeneralModalButtons,
   ImportShopDataArguments,
   Shop,
   StoreItem,
   StorePart,
 } from '../../interfaces/interfaces.ts';
-import {useContext, useState} from 'react';
-import {DBContext} from '../../database/DBContext.ts';
-import {PageHead} from '../elements/PageHead.tsx';
+import { useContext, useState } from 'react';
+import { DBContext } from '../../database/DBContext.ts';
+import { PageHead } from '../elements/PageHead.tsx';
 
 export default function ImportShopData({
   onClose,
@@ -18,7 +18,7 @@ export default function ImportShopData({
   inPlace,
   title,
 }: ImportShopDataArguments) {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const dbContext = useContext(DBContext);
 
   const [isItemSelected, setIsItemSelected] = useState(false);
@@ -106,7 +106,7 @@ export default function ImportShopData({
           {
             items: [],
             parts: [],
-          } as {items: StoreItem[]; parts: StorePart[]}
+          } as { items: StoreItem[]; parts: StorePart[] },
         );
 
         const length = dataToImport.items.length + dataToImport.parts.length;
@@ -116,7 +116,7 @@ export default function ImportShopData({
           length &&
           window.confirm(
             t('Are you sure to import the following amount into your shop? ') +
-              length
+              length,
           )
         ) {
           if (dataToImport.items.length) {
@@ -180,8 +180,8 @@ export default function ImportShopData({
                         out[index] = true;
                         return out;
                       },
-                      {} as {[key: number]: boolean | undefined}
-                    )
+                      {} as { [key: number]: boolean | undefined },
+                    ),
               );
             },
           },
@@ -217,7 +217,7 @@ export default function ImportShopData({
           onClick={(index) => {
             selectedData[index] = !selectedData[index];
 
-            setSelectedData({...selectedData});
+            setSelectedData({ ...selectedData });
           }}
         ></TableViewComponent>
       </div>
