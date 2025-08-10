@@ -2,12 +2,12 @@
   "title": "Terms of Use",
   "general.title": "1. General Information",
   "general.appName": "Application Name: StorageR",
-  "general.provider": "Service Provider: Reterics Attila EV.",
-  "general.address": "Address: 8985 Becsvölgye, Arany János út 5/A",
-  "general.tax": "Tax number: 57823357-1-40",
-  "general.reg": "Registration number: 56484076",
-  "general.email": "Email: attila@reterics.com",
-  "general.phone": "Phone: +36 30 7225104",
+  "general.provider": "Service Provider: {{provider}}",
+  "general.address": "Address: {{address}}",
+  "general.tax": "Tax number: {{tax}}",
+  "general.reg": "Registration number: {{reg}}",
+  "general.email": "Email: {{email}}",
+  "general.phone": "Phone: {{phone}}",
   "hosting.title": "2. Hosting Provider",
   "hosting.provider": "Nethely Kft.",
   "hosting.hq": "Headquarters: 1115 Budapest, Halmi utca 29.",
@@ -50,6 +50,24 @@
   "data.text2": "We do not sell or share personal data with third parties.",
   "data.text3": "StorageR adheres to GDPR requirements.",
   "data.text4": "User-related data is stored locally in the browser using localStorage and IndexedDB for caching purposes only, to improve performance and user experience.",
+
+  "system.title": "System Requirements",
+  "system.browser.title": "Supported Browsers",
+  "system.browser.items": [
+    "Google Chrome 107 or later",
+    "Microsoft Edge 107 or later",
+    "Mozilla Firefox 104 or later",
+    "Apple Safari 16.0 or later"
+  ],
+  "system.tablet.title": "Suggested minimum Android Tablet",
+  "system.tablet.items": [
+    "3 GB RAM",
+    "1920x1200 resolution (HD)",
+    "Android 12 or newer"
+  ],
+  "system.device.title": "Tested Device",
+  "system.device.text": "Implementation and test cases were executed on Lenovo Tab M10 (3rd Gen) - TB328FU",
+
   "rights.title": "8. User Rights under GDPR",
   "rights.items": [
     "Right of Access: You can request information on whether we process your personal data and obtain a copy of it.",

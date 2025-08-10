@@ -1,7 +1,5 @@
 import {
-  browserLocalPersistence,
   createUserWithEmailAndPassword,
-  setPersistence,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
@@ -11,12 +9,7 @@ import type {
   UserFormValues,
 } from '../../../interfaces/interfaces.ts';
 
-//required if you want to keep logged in after user exits the browser or closes tab
-if (firebaseAuth) {
-  setPersistence(firebaseAuth, browserLocalPersistence).catch((error) => {
-    console.error('SetPersistence error', error);
-  });
-}
+// Persistence is configured centrally in firebase/config.ts using initializeAuth
 
 export const SignIn = async ({ email, password }: LoginFormValues) => {
   return firebaseAuth

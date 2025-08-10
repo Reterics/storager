@@ -31,7 +31,7 @@ import PWAInstallButton from './elements/PWAInstallButton.tsx';
 import { flushSync } from 'react-dom';
 import { firebaseModel } from '../database/firebase/config.ts';
 
-const navBase = 'flex items-center py-2 px-2 rounded mg:py-2 md:px-2.5';
+const navBase = 'flex items-center py-2 px-2 rounded md:px-2.5';
 const navActive = 'text-white bg-gray-700 md:bg-zinc-700 dark:bg-gray-700';
 const navInactive =
   'text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700';
@@ -141,7 +141,7 @@ const Header = () => {
   return (
     <header className="no-print">
       <nav className="w-full bg-white border-gray-200 dark:bg-gray-900 shadow-sm">
-        <div className="max-w-screen-xl flex items-center justify-between mx-auto p-2 md:p-4">
+        <div className="max-w-screen-xl flex items-center justify-between mx-auto px-2 py-1 md:p-3">
           <a href="?page=about" className="flex items-center">
             <img
               src={isDarkTheme ? logoWhite : logo}

@@ -2,12 +2,12 @@
   "title": "Felhasználási feltételek",
   "general.title": "1. Általános információk",
   "general.appName": "Alkalmazás neve: StorageR",
-  "general.provider": "Szolgáltató: Reterics Attila EV.",
-  "general.address": "Székhely: 8985 Becsvölgye, Arany János út 5/A",
-  "general.tax": "Adószám: 57823357-1-40",
-  "general.reg": "Nyilvántartási szám: 56484076",
-  "general.email": "Email: attila@reterics.com",
-  "general.phone": "Telefonszám: +36 30 7225104",
+  "general.provider": "Szolgáltató: {{provider}}",
+  "general.address": "Székhely: {{address}}",
+  "general.tax": "Adószám: {{tax}}",
+  "general.reg": "Nyilvántartási szám: {{reg}}",
+  "general.email": "Email: {{email}}",
+  "general.phone": "Telefon: {{phone}}",
   "hosting.title": "2. Tárhelyszolgáltató",
   "hosting.provider": "Nethely Kft.",
   "hosting.hq": "Székhely: 1115 Budapest, Halmi utca 29.",
@@ -50,6 +50,24 @@
   "data.text2": "Az adatok nem kerülnek értékesítésre vagy megosztásra.",
   "data.text3": "A StorageR megfelel a GDPR követelményeinek.",
   "data.text4": "A felhasználói adatok a böngésző localStorage és IndexedDB tárhelyeiben kerülnek tárolásra gyorsítótárazási céllal, a teljesítmény és a felhasználói élmény javítása érdekében.",
+
+  "system.title": "Rendszerkövetelmények",
+  "system.browser.title": "Támogatott böngészők",
+  "system.browser.items": [
+    "Google Chrome 107 vagy újabb",
+    "Microsoft Edge 107 vagy újabb",
+    "Mozilla Firefox 104 vagy újabb",
+    "Apple Safari 16.0 vagy újabb"
+  ],
+  "system.tablet.title": "Ajánlott minimum Android táblagép",
+  "system.tablet.items": [
+    "3 GB RAM",
+    "1920x1200 felbontás (HD)",
+    "Android 12 vagy újabb"
+  ],
+  "system.device.title": "Tesztelt eszköz",
+  "system.device.text": "A megvalósítás és a tesztelés Lenovo Tab M10 (3. generáció) - TB328FU eszközön történt.",
+
   "rights.title": "8. A felhasználó jogai a GDPR alapján",
   "rights.items": [
     "Hozzáféréshez való jog: A felhasználó jogosult tájékoztatást kérni arról, hogy kezeljük-e a személyes adatait, és jogosult a kezelt adatokhoz hozzáférést kapni.",

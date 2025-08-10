@@ -491,6 +491,7 @@ export interface SettingsItems extends GeneralCollectionEntry {
   companyName?: string;
   address?: string;
   taxId?: string;
+  registrationNumber?: string;
   bankAccount?: string;
   phone?: string;
   email?: string;

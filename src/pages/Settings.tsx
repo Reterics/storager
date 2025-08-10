@@ -30,6 +30,7 @@ function Settings() {
     companyName: '',
     address: '',
     taxId: '',
+    registrationNumber: '',
     bankAccount: '',
     phone: '',
     email: '',
@@ -169,6 +170,13 @@ function Settings() {
               />
               <StyledInput
                 type="text"
+                name="registrationNumber"
+                value={settingsItems.registrationNumber}
+                onChange={changeType}
+                label={t('Registration Number')}
+              />
+              <StyledInput
+                type="text"
                 name="bankAccount"
                 value={settingsItems.bankAccount}
                 onChange={changeType}
@@ -303,6 +311,15 @@ function Settings() {
           />
         </div>
       )}
+      <div className="w-full flex justify-center mt-4">
+        <a
+          href="?page=terms"
+          className="text-blue-600 dark:text-blue-400 underline"
+          data-testid="settings-terms-link"
+        >
+          Terms of Use
+        </a>
+      </div>
     </>
   );
 }

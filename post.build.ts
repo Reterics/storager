@@ -2,7 +2,10 @@ import type { PluginOption } from 'vite';
 import path from 'path';
 import fs from 'fs';
 
-function storageRPostBuild(opt: { outDir?: string }): PluginOption {
+function storageRPostBuild(opt: {
+  outDir?: string;
+  disablePWA?: boolean;
+}): PluginOption {
   return {
     name: 'storager-post-build',
     apply: 'build',
@@ -34,7 +37,9 @@ function storageRPostBuild(opt: { outDir?: string }): PluginOption {
         .replace('<!doctype html>', csrfProtection + '<!doctype html>');
 
       fs.writeFileSync(indexPHP, indexContent);
-      // fs.unlinkSync(indexHTML);
+      if (opt.disablePWA) {
+        fs.unlinkSync(indexHTML);
+      }
 
       fs.copyFileSync('./php/media.php', path.join(dir, './media.php'));
       const uploadsFolder = path.join(dir, './uploads');

@@ -220,4 +220,12 @@ describe('Settings Component', () => {
     expect(addressInput).toHaveValue('456 New Address');
     expect(screen.getByText('Save Settings')).toBeInTheDocument();
   });
+
+  it('shows a Terms of Use link in Settings that navigates to terms page', () => {
+    renderWithProviders(<Settings />);
+    const link = screen.getByTestId('settings-terms-link') as HTMLAnchorElement;
+    expect(link).toBeInTheDocument();
+    expect(link.textContent).toContain('Terms of Use');
+    expect(link.getAttribute('href')).toBe('?page=terms');
+  });
 });

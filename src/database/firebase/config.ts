@@ -1,5 +1,5 @@
 import type { Auth } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
+import { getAuth, initializeAuth, indexedDBLocalPersistence, browserLocalPersistence } from 'firebase/auth';
 import FirebaseDBModel from './FirebaseDBModel.ts';
 import type { FirebaseError } from 'firebase/app';
 import STLogger from '../../utils/logger.ts';
@@ -68,9 +68,19 @@ export const db = firebaseModel.getDB();
 let _firebaseAuth: Auth | null = null;
 let _firebaseAuthError: FirebaseError | null = null;
 try {
-  _firebaseAuth = getAuth(app);
+  // Prefer IndexedDB persistence for cross-tab and Capacitor Android support,
+  // with a fallback to browser local storage when IndexedDB is unavailable.
+  _firebaseAuth = initializeAuth(app, {
+    persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+  });
 } catch (err: unknown) {
-  _firebaseAuthError = err as FirebaseError;
+  // If initializeAuth fails because Auth was already initialized or environment constraints,
+  // fall back to getAuth(app) and keep the error for diagnostics.
+  try {
+    _firebaseAuth = getAuth(app);
+  } catch (err2: unknown) {
+    _firebaseAuthError = (err2 || err) as FirebaseError;
+  }
 }
 
 export const firebaseAuth = _firebaseAuth;
