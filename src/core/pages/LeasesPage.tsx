@@ -3,17 +3,37 @@ import {useTranslation} from 'react-i18next';
 import {DBContext} from '../../database/DBContext.ts';
 import {ShopContext} from '../../store/ShopContext.tsx';
 import {PageHead} from '../../components/elements/PageHead.tsx';
-import TableViewComponent, {TableViewActions} from '../../components/elements/TableViewComponent.tsx';
+import TableViewComponent, {
+  TableViewActions,
+} from '../../components/elements/TableViewComponent.tsx';
 import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 import ListModal from '../../components/modals/ListModal.tsx';
 import PrintableVersionFrame from '../../components/modals/PrintableVersionFrame.tsx';
 import {BsFillPlusCircleFill} from 'react-icons/bs';
 import LeaseModal from '../../components/modals/LeaseModal.tsx';
 import LeaseCompletionModal from '../../components/modals/LeaseCompletionModal.tsx';
-import {Lease, LeaseCompletion, leaseStatusList, ServiceLineData} from '../../interfaces/interfaces.ts';
-import {PrintViewData} from '../../interfaces/pdf.ts';
-import {filterLeases, getLeaseLineData} from '../../utils/lease.ts';
-import {generateServiceId} from '../../utils/data.ts';
+import type {
+  Lease,
+  LeaseCompletion,
+  ServiceLineData
+
+
+
+
+
+
+} from '../../interfaces/interfaces.ts';
+import {
+  leaseStatusList
+
+
+
+
+
+
+} from '../../interfaces/interfaces.ts';
+import type {PrintViewData} from '../../interfaces/pdf.ts';
+import {LeaseManager} from '../../services/LeaseManager.ts';
 
 export default function LeasesPage() {
   const {t} = useTranslation();
@@ -25,48 +45,55 @@ export default function LeasesPage() {
   const [searchFilter, setSearchFilter] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<boolean>(false);
 
-  const [leases, setLeases] = useState<Lease[]>(
-    filterLeases(dbContext?.data.leases || [], {})
+  const manager = useMemo(
+    () => new LeaseManager(dbContext!, shop || null, t),
+    [dbContext, shop, t]
   );
 
-  const completionFormsById = useMemo(() => {
-    return (dbContext?.data.leaseCompletions || []).reduce(
-      (acc, form) => {
-        acc[form.id] = form;
-        return acc;
-      },
-      {} as Record<string, LeaseCompletion>
-    );
-  }, [dbContext?.data.leaseCompletions]);
+  const [leases, setLeases] = useState<Lease[]>(manager.getLeases());
+
+  const completionFormsById = useMemo(
+    () => manager.getCompletionFormsById(),
+    [manager]
+  );
 
   const [modalTemplate, setModalTemplate] = useState<Lease | null>(null);
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<LeaseCompletion | null>(null);
-  const [printViewData, setPrintViewData] = useState<PrintViewData | null>(null);
+  const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
+    null
+  );
   const [selectedLeaseLines, setSelectedLeaseLines] =
-    useState<ServiceLineData | null>(null);
+    useState<ServiceLineData | null>(null)
 
   useEffect(() => {
-    setLeases(
-      filterLeases(
-        dbContext?.data.leases || [],
-        completionFormsById,
-        shopFilter,
-        searchFilter,
-        activeFilter
-      )
-    );
-  }, [shopFilter, searchFilter, activeFilter, dbContext?.data.leases, dbContext?.data.archive, dbContext?.data.leaseCompletions, completionFormsById]);
+    setLeases(manager.getLeases(shopFilter, searchFilter, activeFilter));
+  }, [
+    shopFilter,
+    searchFilter,
+    activeFilter,
+    dbContext?.data.leases,
+    dbContext?.data.archive,
+    dbContext?.data.leaseCompletions,
+    manager,
+  ]);
 
   if (!dbContext?.data.currentUser) {
-    return <UnauthorizedComponent />;
+    return <UnauthorizedComponent />
   }
 
   const tableLines = leases.map((item) => {
     const serviceCompletion = completionFormsById[item.id + '_lcd'];
 
     return [
-      <span key={'status_' + item.id} className={serviceCompletion ? leaseStatusList[leaseStatusList.length - 1] : item.lease_status}>
+      <span
+        key={'status_' + item.id}
+        className={
+          serviceCompletion
+            ? leaseStatusList[leaseStatusList.length - 1]
+            : item.lease_status
+        }
+      >
         {item.id}
       </span>,
       item.client_name,
@@ -75,16 +102,14 @@ export default function LeasesPage() {
       item.date || '',
       TableViewActions({
         onOpen: () => {
-          const newLine = getLeaseLineData(
+          const newLine = manager.getLeaseLineData(
             item,
-            dbContext?.data.leaseCompletions || [],
-            dbContext?.data.archive || [],
-            t,
-            dbContext?.data.settings,
             (data) => setPrintViewData(data),
             (data) => setPrintViewData(data)
           );
-          setSelectedLeaseLines((prev) => (prev && prev.id === item.id ? null : newLine));
+          setSelectedLeaseLines((prev) =>
+            prev && prev.id === item.id ? null : newLine
+          );
           window.scrollTo({top: 0, behavior: 'smooth'});
         },
         onEdit: () => setModalTemplate({...item, onUpdate: true}),
@@ -92,7 +117,8 @@ export default function LeasesPage() {
     ];
   });
 
-  const noModalActive = !modalTemplate && !completedModalTemplate && !printViewData;
+  const noModalActive =
+    !modalTemplate && !completedModalTemplate && !printViewData;
 
   return (
     <>
@@ -104,22 +130,7 @@ export default function LeasesPage() {
               value: <BsFillPlusCircleFill />,
               onClick: () =>
                 setModalTemplate(
-                  modalTemplate
-                    ? null
-                    : {
-                        id: generateServiceId(
-                          dbContext?.data.leases || [],
-                          shop?.id,
-                          dbContext?.data.shops,
-                          dbContext?.data.deleted
-                        ),
-                        lease_status: leaseStatusList[0],
-                        date: new Date().toISOString().split('T')[0],
-                        service_address: shop?.address || '',
-                        service_name: shop?.name || '',
-                        service_email: shop?.email || '',
-                        docType: 'leases',
-                      }
+                  modalTemplate ? null : manager.generateNewLeaseTemplate()
                 ),
             },
           ]}
@@ -134,30 +145,36 @@ export default function LeasesPage() {
       )}
 
       <div className='relative flex justify-center items-center flex-col w-full m-auto mb-2 mt-1'>
-        <LeaseModal
-          onClose={() => setModalTemplate(null)}
-          onSave={async (item: Lease) => {
-            await dbContext?.setData('leases', item);
-            await dbContext?.refreshData('leases');
-            setModalTemplate(null);
-          }}
-          setLease={(item: Lease) => setModalTemplate(item)}
-          lease={modalTemplate as Lease}
-          inPlace={true}
-          settings={dbContext?.data.settings}
-        />
+        {modalTemplate && (
+          <LeaseModal
+            onClose={() => setModalTemplate(null)}
+            onSave={async (item: Lease) => {
+              await manager.saveLeaseItem(item);
+              await dbContext?.refreshData('leases');
+              setModalTemplate(null);
+            }}
+            setLease={(item: Lease) => setModalTemplate(item)}
+            lease={modalTemplate}
+            inPlace={true}
+            settings={dbContext?.data.settings}
+          />
+        )}
 
-        <LeaseCompletionModal
-          onClose={() => setCompletedModalTemplate(null)}
-          onSave={async (item: LeaseCompletion) => {
-            await dbContext?.setData('leaseCompletions', item);
-            await dbContext?.refreshData('leaseCompletions');
-            setCompletedModalTemplate(null);
-          }}
-          setFromData={(item: LeaseCompletion) => setCompletedModalTemplate(item)}
-          formData={completedModalTemplate as LeaseCompletion}
-          inPlace={true}
-        />
+        {completedModalTemplate && (
+          <LeaseCompletionModal
+            onClose={() => setCompletedModalTemplate(null)}
+            onSave={async (item: LeaseCompletion) => {
+              await manager.saveCompletionForm(item);
+              await dbContext?.refreshData('leaseCompletions');
+              setCompletedModalTemplate(null);
+            }}
+            setFromData={(item: LeaseCompletion) =>
+              setCompletedModalTemplate(item)
+            }
+            formData={completedModalTemplate}
+            inPlace={true}
+          />
+        )}
 
         {printViewData && (
           <PrintableVersionFrame
@@ -170,7 +187,8 @@ export default function LeasesPage() {
         {selectedLeaseLines && (
           <ListModal
             title={
-              t('List Documents: ') + (selectedLeaseLines.name || selectedLeaseLines.id)
+              t('List Documents: ') +
+              (selectedLeaseLines.name || selectedLeaseLines.id)
             }
             inPlace={true}
             lines={selectedLeaseLines.table}
@@ -178,36 +196,17 @@ export default function LeasesPage() {
               {
                 id: selectedLeaseLines.completed ? 'completedListButton' : '',
                 onClick: () => {
-                  const item = leases.find((s) => s.id === selectedLeaseLines.id);
-                  if (!item) return;
-                  const completionFormId = item.id + '_lcd';
-                  const completionForm = (dbContext?.data.leaseCompletions || []).find(
-                    (completionForm) => completionForm.id === completionFormId
+                  const item = leases.find(
+                    (s) => s.id === selectedLeaseLines.id
                   );
-                  const sourceItem = (completionForm as unknown as Lease) || (item as unknown as Lease);
-
-                  if (!completionForm) {
-                    setCompletedModalTemplate({
-                      id: item.id + '_lcd',
-                      lease_id: item.id,
-                      lease_date: item.date,
-                      date: new Date().toISOString().split('T')[0],
-                      service_address: (sourceItem as Lease).service_address || shop?.address || '',
-                      service_name: (sourceItem as Lease).service_name || shop?.name || '',
-                      service_email: (sourceItem as Lease).service_email || shop?.email || '',
-                      client_name: (sourceItem as Lease).client_name || '',
-                      client_email: (sourceItem as Lease).client_email || '',
-                      client_phone: (sourceItem as Lease).client_phone || '',
-                      accessories: (sourceItem as Lease).accessories || '',
-                      rental_cost: item.expected_cost || '',
-                      description: (sourceItem as Lease).description || '',
-                      rental_description: '',
-                      docType: 'leaseCompletions',
-                    });
-                    setSelectedLeaseLines(null);
-                  } else {
+                  if (!item) return;
+                  const template = manager.generateCompletionFormTemplate(item);
+                  if (!template) {
                     alert(t('You already completed the form'));
+                    return;
                   }
+                  setCompletedModalTemplate(template);
+                  setSelectedLeaseLines(null);
                 },
                 value: t('Rental Return Form'),
               },
@@ -229,7 +228,13 @@ export default function LeasesPage() {
             header={[
               t('ID'),
               t('Name'),
-              {value: <span className='text-xxs'>{t('Expected cost')}</span>, type: 'number', postFix: ' Ft', sortable: true, editable: false},
+              {
+                value: <span className='text-xxs'>{t('Expected cost')}</span>,
+                type: 'number',
+                postFix: ' Ft',
+                sortable: true,
+                editable: false,
+              },
               {value: t('Shop'), type: 'text', sortable: true, editable: false},
               {value: t('Date'), type: 'text', sortable: true, editable: false},
               t('Actions'),

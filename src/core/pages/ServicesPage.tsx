@@ -3,15 +3,23 @@ import {useTranslation} from 'react-i18next';
 import {DBContext} from '../../database/DBContext.ts';
 import {ShopContext} from '../../store/ShopContext.tsx';
 import {PageHead} from '../../components/elements/PageHead.tsx';
-import TableViewComponent, {TableViewActions} from '../../components/elements/TableViewComponent.tsx';
+import TableViewComponent, {
+  TableViewActions,
+} from '../../components/elements/TableViewComponent.tsx';
 import StyledSelect from '../../components/elements/StyledSelect.tsx';
 import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 import ServiceModal from '../../components/modals/ServiceModal.tsx';
 import ServiceCompletionModal from '../../components/modals/ServiceCompletionModal.tsx';
 import ListModal from '../../components/modals/ListModal.tsx';
 import PrintableVersionFrame from '../../components/modals/PrintableVersionFrame.tsx';
-import {ServiceCompleteData, ServiceData, serviceStatusList, ServiceLineData} from '../../interfaces/interfaces.ts';
-import {PrintViewData} from '../../interfaces/pdf.ts';
+import type {
+  ServiceCompleteData,
+  ServiceData,
+  ServiceLineData} from '../../interfaces/interfaces.ts';
+import {
+  serviceStatusList
+} from '../../interfaces/interfaces.ts';
+import type {PrintViewData} from '../../interfaces/pdf.ts';
 import {ServiceManager} from '../../services/ServiceManager.ts';
 import {BsFillPlusCircleFill} from 'react-icons/bs';
 
@@ -37,17 +45,19 @@ export default function ServicesPage() {
 
   const completionFormsById = useMemo(
     () => manager.getCompletionFormsById(),
-    [dbContext?.data.completions, manager]
+    [manager]
   );
 
   const availableTypes: {name: string; value: string}[] = useMemo(() => {
     return manager.getAvailableTypes().map((x) => ({name: x, value: x}));
-  }, [dbContext?.data.services, manager]);
+  }, [manager]);
 
   const [modalTemplate, setModalTemplate] = useState<ServiceData | null>(null);
   const [completedModalTemplate, setCompletedModalTemplate] =
     useState<ServiceCompleteData | null>(null);
-  const [printViewData, setPrintViewData] = useState<PrintViewData | null>(null);
+  const [printViewData, setPrintViewData] = useState<PrintViewData | null>(
+    null
+  );
   const [selectedServiceLines, setSelectedServiceLines] =
     useState<ServiceLineData | null>(null);
 
@@ -55,18 +65,36 @@ export default function ServicesPage() {
     setServicedItems(
       manager.getServices(shopFilter, searchFilter, activeFilter, typeFilter)
     );
-  }, [shopFilter, searchFilter, activeFilter, typeFilter, dbContext?.data.services, dbContext?.data.archive, dbContext?.data.completions, manager]);
+  }, [
+    shopFilter,
+    searchFilter,
+    activeFilter,
+    typeFilter,
+    dbContext?.data.services,
+    dbContext?.data.archive,
+    dbContext?.data.completions,
+    manager,
+  ]);
 
   if (!dbContext?.data.currentUser) {
     return <UnauthorizedComponent />;
   }
 
   const tableLines = servicedItems.map((item) => {
-    const type = item.type?.startsWith(',') ? item.type.substring(1) : item.type || '';
+    const type = item.type?.startsWith(',')
+      ? item.type.substring(1)
+      : item.type || '';
     const serviceCompletion = completionFormsById[item.id + '_cd'];
 
     return [
-      <span key={'status_' + item.id} className={serviceCompletion ? serviceStatusList[serviceStatusList.length - 1] : item.serviceStatus}>
+      <span
+        key={'status_' + item.id}
+        className={
+          serviceCompletion
+            ? serviceStatusList[serviceStatusList.length - 1]
+            : item.serviceStatus
+        }
+      >
         {item.id}
       </span>,
       item.client_name,
@@ -87,15 +115,18 @@ export default function ServicesPage() {
           window.scrollTo({top: 0, behavior: 'smooth'});
         },
         onEdit: () => setModalTemplate({...item, onUpdate: true}),
-        onRemove: async () => {
-          await manager.deleteServiceHistoryFor(item);
-          await dbContext?.refreshData('services');
+        onRemove: () => {
+          void (async () => {
+            await manager.deleteServiceHistoryFor(item);
+            await dbContext?.refreshData('services');
+          })();
         },
       }),
     ];
   });
 
-  const noModalActive = !modalTemplate && !completedModalTemplate && !printViewData;
+  const noModalActive =
+    !modalTemplate && !completedModalTemplate && !printViewData;
 
   return (
     <>
@@ -105,7 +136,8 @@ export default function ServicesPage() {
           buttons={[
             {
               value: <BsFillPlusCircleFill />,
-              onClick: () => setModalTemplate(manager.generateNewServiceTemplate()),
+              onClick: () =>
+                setModalTemplate(manager.generateNewServiceTemplate()),
             },
           ]}
           onSearch={setSearchFilter}
@@ -119,14 +151,15 @@ export default function ServicesPage() {
           <div className='flex flex-1' />
           <div className='w-30 select-no-first'>
             <StyledSelect
-              options={[
-                {name: t('All type'), value: ''},
-                ...availableTypes,
-              ]}
+              options={[{name: t('All type'), value: ''}, ...availableTypes]}
               name='type'
               value={typeFilter || ''}
               defaultLabel={t('All type')}
-              onSelect={(e) => setTypeFilter((e.target as HTMLSelectElement).value || undefined)}
+              onSelect={(e) =>
+                setTypeFilter(
+                  (e.target as HTMLSelectElement).value || undefined
+                )
+              }
               label={false}
               compact={true}
             />
@@ -154,7 +187,9 @@ export default function ServicesPage() {
             await dbContext?.refreshData('completions');
             setCompletedModalTemplate(null);
           }}
-          setFromData={(item: ServiceCompleteData) => setCompletedModalTemplate(item)}
+          setFromData={(item: ServiceCompleteData) =>
+            setCompletedModalTemplate(item)
+          }
           formData={completedModalTemplate}
           inPlace={true}
         />
@@ -166,11 +201,14 @@ export default function ServicesPage() {
           />
         )}
 
-        {selectedServiceLines && printViewData && <div className={'mb-8'}></div>}
+        {selectedServiceLines && printViewData && (
+          <div className={'mb-8'}></div>
+        )}
         {selectedServiceLines && (
           <ListModal
             title={
-              t('List Documents: ') + (selectedServiceLines.name || selectedServiceLines.id)
+              t('List Documents: ') +
+              (selectedServiceLines.name || selectedServiceLines.id)
             }
             inPlace={true}
             lines={selectedServiceLines.table}
@@ -178,7 +216,9 @@ export default function ServicesPage() {
               {
                 id: selectedServiceLines.completed ? 'completedListButton' : '',
                 onClick: () => {
-                  const item = servicedItems.find((s) => s.id === selectedServiceLines.id);
+                  const item = servicedItems.find(
+                    (s) => s.id === selectedServiceLines.id
+                  );
                   if (!item) return;
                   const template = manager.generateCompletionFormTemplate(item);
                   if (!template) {
@@ -209,7 +249,13 @@ export default function ServicesPage() {
               t('ID'),
               t('Name'),
               {value: t('Type'), type: 'text', sortable: true, editable: false},
-              {value: <span className='text-xxs'>{t('Expected cost')}</span>, type: 'number', postFix: ' Ft', sortable: true, editable: false},
+              {
+                value: <span className='text-xxs'>{t('Expected cost')}</span>,
+                type: 'number',
+                postFix: ' Ft',
+                sortable: true,
+                editable: false,
+              },
               {value: t('Shop'), type: 'text', sortable: true, editable: false},
               {value: t('Date'), type: 'text', sortable: true, editable: false},
               t('Actions'),
