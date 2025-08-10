@@ -15,8 +15,8 @@ export default function GeneralModal({
   const [throttled, setThrottled] = useState(false);
 
   const formClasses = {
-    inPlace: 'flex flex-col max-h-[58vh] overflow-y-auto modalForm',
-    default: 'flex flex-col max-h-[60vh] overflow-y-auto modalForm',
+    inPlace: 'flex flex-col max-h-[58vh] md:max-h-[70vh] overflow-y-auto modalForm',
+    default: 'flex flex-col max-h-[60vh] md:max-h-[72vh] overflow-y-auto modalForm',
   };
 
   if (visible === false) return null;
@@ -37,7 +37,7 @@ export default function GeneralModal({
         className={
           inPlace
             ? 'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-full'
-            : 'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-[95vw] sm:w-auto sm:min-w-[50vw] max-w-[95vw] sm:max-w-[80vw]'
+            : 'bg-white p-3 sm:p-4 rounded dark:bg-gray-900 w-[95vw] sm:w-auto sm:min-w-[50vw] max-w-[95vw] sm:max-w-[80vw] md:max-w-screen-md md:w-[80vw]'
         }
       >
         {title && (
@@ -62,12 +62,12 @@ export default function GeneralModal({
               className={
                 button.primary
                   ? 'text-white bg-gray-800 hover:bg-gray-900 focus:outline-none ' +
-                    'focus:ring-4 focus:ring-gray-300 font-medium rounded-md text-sm px-3 py-1.5 ' +
+                    'focus:ring-4 focus:ring-gray-300 font-medium rounded-md text-sm md:text-base px-3 py-1.5 md:px-4 md:py-2 ' +
                     'dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 ' +
                     'dark:border-gray-700'
                   : 'text-gray-900 bg-white border border-gray-300 focus:outline-none ' +
                     'hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-md ' +
-                    'text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 ' +
+                    'text-sm md:text-base px-3 py-1.5 md:px-4 md:py-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 ' +
                     'dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700'
               }
               onClick={async (e) => {

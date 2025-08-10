@@ -1,0 +1,85 @@
+name: Android (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildType:
+        description: Build type
+        type: choice
+        options: [debug, release]
+        default: debug
+      runTests:
+        description: Run unit tests?
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: gradle/wrapper-validation-action@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build web
+        run: npm run build
+
+      - name: Capacitor sync (Android)
+        run: npx cap sync android
+
+      - name: Lint & unit tests
+        if: ${{ inputs.runTests }}
+        working-directory: android
+        run: |
+          ./gradlew --no-daemon lint
+          ./gradlew --no-daemon test
+
+      - name: Build APK/AAB
+        working-directory: android
+        run: |
+          if [ "${{ inputs.buildType }}" = "release" ]; then
+            ./gradlew --no-daemon assembleRelease # or bundleRelease
+          else
+            ./gradlew --no-daemon assembleDebug
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ inputs.buildType }}
+          path: |
+            android/app/build/outputs/apk/${{ inputs.buildType }}/*.apk
+            android/app/build/outputs/bundle/${{ inputs.buildType }}/*.aab
+          if-no-files-found: warn

@@ -27,10 +27,11 @@ import {
   BsThreeDots,
 } from 'react-icons/bs';
 import LoadingIcon from './elements/LoadingIcon.tsx';
+import PWAInstallButton from './elements/PWAInstallButton.tsx';
 import { flushSync } from 'react-dom';
 import { firebaseModel } from '../database/firebase/config.ts';
 
-const navBase = 'flex items-center py-1 px-2 rounded';
+const navBase = 'flex items-center py-2 px-2 rounded mg:py-2 md:px-2.5';
 const navActive = 'text-white bg-gray-700 md:bg-zinc-700 dark:bg-gray-700';
 const navInactive =
   'text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700';
@@ -358,6 +359,13 @@ const Header = () => {
                         </button>
                       </li>
                       <li>
+                        <PWAInstallButton
+                          className="w-full flex text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                          label={t('Install App')}
+                          onInstalled={() => setDropdownOpen(false)}
+                        />
+                      </li>
+                      <li>
                         <button
                           onClick={() => {
                             handleLinkClick();
@@ -602,6 +610,13 @@ const Header = () => {
                         <BsArrowClockwise className="mr-3 text-lg" />
                         {t('Update')}
                       </button>
+                    </li>
+                    <li>
+                      <PWAInstallButton
+                        className="flex w-full items-center px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        label={t('Install App')}
+                        onInstalled={() => setNavbarOpen(false)}
+                      />
                     </li>
                     <li>
                       <button

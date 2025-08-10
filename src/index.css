@@ -50,6 +50,10 @@ table > tbody > tr > td:first-child > img {
   object-fit: contain;
 }
 
+.service-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .service-table tbody > tr:has(span.status_delivered) {
   background-color: rgba(0, 255, 0, 0.07);
 }

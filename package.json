@@ -28,9 +28,19 @@
     "coverage": "vitest run --coverage --no-cache",
     "e2e:codegen": "npx playwright codegen",
     "e2e:test": "npx playwright test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "assets:android": "npx @capacitor/assets generate android",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npm run build:prod && npx cap sync",
+    "cap:copy": "npm run build:prod && npx cap copy",
+    "cap:open:android": "npx cap open android",
+    "android:run": "npm run build:prod && npx cap run android",
+    "android:build": "npm run build:prod && npx cap copy android"
   },
   "dependencies": {
+    "@capacitor/core": "7.4.2",
+    "@capacitor/camera": "7.0.2",
+    "@capacitor/share": "7.0.2",
     "@react-pdf/render": "4.3.0",
     "@react-pdf/renderer": "4.3.0",
     "@testing-library/jest-dom": "^6.6.4",
@@ -54,6 +64,9 @@
     "throttle-debounce": "^5.0.2"
   },
   "devDependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/cli": "^7.4.2",
+    "@capacitor/assets": "^3.0.5",
     "@playwright/test": "^1.54.2",
     "@eslint/js": "^9.33.0",
     "@react-pdf/types": "2.9.0",
@@ -86,6 +99,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
     "vite": "6.3.5",
+    "vite-plugin-pwa": "^1.0.2",
     "vitest": "^3.2.4",
     "vitest-monocart-coverage": "3.0.1"
   },
