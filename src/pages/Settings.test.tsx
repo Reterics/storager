@@ -1,5 +1,3 @@
-// Settings.test.tsx
-
 import type { ChangeEventHandler } from 'react';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -225,7 +223,7 @@ describe('Settings Component', () => {
     renderWithProviders(<Settings />);
     const link = screen.getByTestId('settings-terms-link') as HTMLAnchorElement;
     expect(link).toBeInTheDocument();
-    expect(link.textContent).toContain('Terms of Use');
+    expect(link.textContent).toContain('Terms and Conditions');
     expect(link.getAttribute('href')).toBe('?page=terms');
   });
 });
