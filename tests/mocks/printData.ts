@@ -1,8 +1,8 @@
 import {completionFormToPrintable, serviceDataToPrintable} from "../../src/utils/print";
 import {serviceCompletionDataList, serviceDataList} from "./serviceData";
 import {defaultSettings} from "./shopData";
-import {SettingsItems} from "../../src/interfaces/interfaces.ts";
-import {TFunction} from 'i18next';
+import type {SettingsItems} from "../../src/interfaces/interfaces.ts";
+import type {TFunction} from 'i18next';
 
 
 export const mockPDFData =

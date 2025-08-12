@@ -1,9 +1,9 @@
-import {
+import type {
     SettingsItems,
     Shop, ShopType, StoreItem,
     StorePart
 } from "../../src/interfaces/interfaces";
-import {ContextData} from "../../src/interfaces/firebase";
+import type {ContextData} from "../../src/interfaces/firebase";
 import {currentUserMock} from "./userData";
 
 

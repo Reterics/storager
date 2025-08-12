@@ -1,301 +1,374 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import Header from './Header';
 import { AuthContext } from '../store/AuthContext';
 import { ShopContext } from '../store/ShopContext';
 import { DBContext } from '../database/DBContext';
-import type { Mock } from 'vitest';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { useTheme } from '../store/ThemeContext';
-import type { IAuth, Shop } from '../interfaces/interfaces.ts';
-import type { DBContextType } from '../interfaces/firebase.ts';
+import type {
+  IAuth,
+  Shop,
+  ShopType,
+  UserData,
+} from '../interfaces/interfaces.ts';
+import type { ContextData, DBContextType } from '../interfaces/firebase.ts';
 import { defaultSettings } from '../../tests/mocks/shopData.ts';
 
+// firebaseModel bits used by Header
 vi.mock('../database/firebase/config', async () => {
   const actual = await vi.importActual('../database/firebase/config');
   return {
     ...actual,
     firebaseModel: {
       invalidateCache: vi.fn(),
-      isLoggingActive: vi.fn().mockReturnValue(false), // default false unless overridden
-    },
-    modules: {
-      leasing: false,
-      transactions: false,
+      isLoggingActive: vi.fn().mockReturnValue(false),
     },
   };
 });
-
 import * as configModule from '../database/firebase/config';
 
-vi.mock('../store/ThemeContext', () => ({
-  useTheme: vi.fn(),
+// Theme
+vi.mock('../store/ThemeContext', () => ({ useTheme: vi.fn() }));
+
+// Spinner and PWA button
+vi.mock('./elements/LoadingIcon.tsx', () => ({
+  default: () => <div data-testid="loading-spinner" />,
+}));
+vi.mock('./elements/PWAInstallButton.tsx', () => ({
+  default: (p: {
+    label: string;
+    className?: string;
+    onInstalled?: () => void;
+  }) => (
+    <button
+      data-testid="pwa-install"
+      className={p.className}
+      onClick={() => p.onInstalled?.()}
+    >
+      {p.label}
+    </button>
+  ),
 }));
 
-describe('Header Component', () => {
-  const mockAuthContext = {
+describe('Header', () => {
+  const auth: IAuth = {
     SignOut: vi.fn(),
-    user: {
-      displayName: 'Test User',
-      email: 'test@example.com',
-    },
-  };
+    user: { displayName: 'Test User', email: 't@example.com' },
+  } as unknown as IAuth;
 
-  const mockShopContext = {
+  const shopCtx: { shop: Shop | null; setShop: (s: Shop | null) => void } = {
     shop: null,
     setShop: () => {},
-  } as {
-    shop: Shop | null;
-    setShop: () => void;
   };
 
-  const mockDBContext = {
+  const dbCtx: DBContextType = {
     data: {
-      currentUser: {
-        role: 'user',
-      },
-      settings: defaultSettings,
-    },
-    refreshData: vi.fn(),
-  };
+      currentUser: { role: 'user' } as UserData,
+      settings: { ...defaultSettings },
+    } as unknown as ContextData,
+    refreshData: vi.fn().mockResolvedValue(undefined),
+  } as unknown as DBContextType;
 
-  // Helper function to render with providers
-  const renderWithProviders = (
-    ui: React.ReactElement,
-    { route = '/', searchParams = '' } = {},
-  ) => {
-    window.history.pushState({}, 'Test page', route + searchParams);
-
-    return render(
-      <MemoryRouter initialEntries={[route + searchParams]}>
-        <AuthContext.Provider value={mockAuthContext as unknown as IAuth}>
-          <ShopContext.Provider value={mockShopContext}>
-            <DBContext.Provider
-              value={mockDBContext as unknown as DBContextType}
-            >
-              {ui}
+  const renderUI = (route = '/', search = '') =>
+    render(
+      <MemoryRouter initialEntries={[route + search]}>
+        <AuthContext.Provider value={auth}>
+          <ShopContext.Provider
+            value={
+              shopCtx as {
+                shop: Shop | null;
+                setShop: (shop: Shop | null) => void;
+              }
+            }
+          >
+            <DBContext.Provider value={dbCtx as unknown as DBContextType}>
+              <Header />
             </DBContext.Provider>
           </ShopContext.Provider>
         </AuthContext.Provider>
       </MemoryRouter>,
     );
-  };
 
   beforeEach(() => {
-    // Reset mocks before each test
     vi.clearAllMocks();
-    mockDBContext.refreshData.mockClear();
-    mockAuthContext.SignOut.mockClear();
-    mockShopContext.shop = null;
-    mockDBContext.data.currentUser.role = 'user';
-  });
-
-  it('renders correctly with default props', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-
-    renderWithProviders(<Header />, {
-      route: '/',
-      searchParams: '?page=shops',
-    });
-
-    // Check if essential elements are rendered
-    expect(screen.getByText('Storage')).toBeInTheDocument();
-    expect(screen.getByTestId('userMenuButton')).toBeInTheDocument();
-    expect(screen.getByText('Shops')).toBeInTheDocument();
-
-    // Ensure shop-specific links are not rendered when shop is null
-    expect(screen.queryByText('Items')).not.toBeInTheDocument();
-    expect(screen.queryByText('Parts')).not.toBeInTheDocument();
-    expect(screen.queryByText('Service')).not.toBeInTheDocument();
-  });
-
-  it('renders shop-specific links when shop is defined', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    mockShopContext.shop = {
-      id: 'shop1',
-      name: 'Shop 1',
+    (useTheme as unknown as Mock).mockReturnValue({ theme: 'light' });
+    auth.SignOut = vi.fn();
+    shopCtx.shop = null;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    dbCtx.data.currentUser.role = 'user';
+    dbCtx.data.settings = {
+      ...defaultSettings,
+      enableLeasing: false,
+      enableTransactions: false,
+      enableLogs: true,
     };
-
-    renderWithProviders(<Header />, {
-      route: '/',
-      searchParams: '?page=items',
-    });
-
-    // Check if shop-specific links are rendered
-    expect(screen.getByText('Items')).toBeInTheDocument();
-    expect(screen.getByText('Parts')).toBeInTheDocument();
-    expect(screen.getByText('Service')).toBeInTheDocument();
   });
 
-  it('toggles dropdown menu when username is clicked', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-
-    renderWithProviders(<Header />);
-
-    // Dropdown menu should not be visible initially
-    expect(screen.queryByText('Logout')).not.toBeInTheDocument();
-
-    // Click on username to open dropdown
-    fireEvent.click(screen.getByTestId('userMenuButton'));
-
-    // Dropdown menu should now be visible
-    expect(screen.getByText('Logout')).toBeInTheDocument();
-  });
-
-  it('calls SignOut when Logout is clicked', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-
-    renderWithProviders(<Header />);
-
-    // Open dropdown menu
-    fireEvent.click(screen.getByTestId('userMenuButton'));
-
-    fireEvent.click(screen.getByText('Logout'));
-
-    expect(mockAuthContext.SignOut).toHaveBeenCalled();
-  });
-
-  it('calls refreshData when Update is clicked', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    mockDBContext.data.currentUser.role = 'admin';
-
-    const testArray = [
-      'items',
-      'parts',
-      'service',
-      'settings',
-      'users',
-      'types',
-    ];
-    const callArray = [
-      'items',
-      'parts',
-      'services',
-      'settings',
-      'users',
-      'types',
-    ];
-
-    for (let i = 0; i < testArray.length; i++) {
-      const page = testArray[i];
-      const { unmount } = renderWithProviders(<Header />, {
-        route: '/',
-        searchParams: '?page=' + page,
-      });
-
-      // Open dropdown menu
-      fireEvent.click(screen.getByTestId('userMenuButton'));
-
-      // Click on Update
-      fireEvent.click(screen.getByText('Update'));
-
-      waitFor(() =>
-        expect(mockDBContext.refreshData).toHaveBeenCalledWith(callArray[i]),
-      );
-      unmount();
-    }
-  });
-
-  it('displays correct logo based on theme', () => {
-    // Test for dark theme
-    (useTheme as Mock).mockReturnValue({ theme: 'dark' });
-    const { unmount } = renderWithProviders(<Header />);
-    expect(screen.getByAltText('StorageR Logo')).toHaveAttribute(
-      'src',
-      '/src/assets/logo_white.svg',
-    );
-
-    unmount();
-    // Test for light theme
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    renderWithProviders(<Header />);
+  it('renders base header and switches logo by theme', () => {
+    renderUI('/', '?page=shops');
     expect(screen.getByAltText('StorageR Logo')).toHaveAttribute(
       'src',
       '/src/assets/logo.svg',
     );
+
+    (useTheme as unknown as Mock).mockReturnValue({ theme: 'dark' });
+    renderUI('/', '?page=shops'); // re-render separate tree
+    expect(screen.getAllByAltText('StorageR Logo').at(-1)).toHaveAttribute(
+      'src',
+      '/src/assets/logo_white.svg',
+    );
   });
 
-  it('shows admin menu items when user is admin', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    mockDBContext.data.currentUser.role = 'admin';
-
-    renderWithProviders(<Header />);
-
-    // Open dropdown menu
+  it('dropdown toggles and logout triggers SignOut', () => {
+    renderUI();
+    expect(screen.queryByText('Logout')).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId('userMenuButton'));
-
-    // Check for admin-specific menu items
-    expect(screen.getByText('Types')).toBeInTheDocument();
-    expect(screen.getByText('Recycle Bin')).toBeInTheDocument();
-    expect(screen.getByText('Settings')).toBeInTheDocument();
-    expect(screen.getByText('Users')).toBeInTheDocument();
+    expect(screen.getByText('Logout')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Logout'));
+    expect(auth.SignOut).toHaveBeenCalledTimes(1);
   });
 
-  it('does not show admin menu items when user is not admin', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    mockDBContext.data.currentUser.role = 'user';
-
-    renderWithProviders(<Header />);
-
-    // Open dropdown menu
+  it('PWA install button fires onInstalled and closes dropdown', () => {
+    renderUI();
     fireEvent.click(screen.getByTestId('userMenuButton'));
+    fireEvent.click(screen.getByTestId('pwa-install'));
+    expect(screen.queryByText('Logout')).not.toBeInTheDocument();
+  });
 
-    // Admin-specific menu items should not be present
+  it('mobile navbar opens, closes via overlay click & document click-outside', async () => {
+    renderUI();
+
+    const toggle = screen.getByRole('button', { name: /open main menu/i });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    // open
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    // overlay click (overlay is sibling fixed div with semi bg)
+    const overlay = document.querySelector('.bg-opacity-50') as Element | null;
+    expect(overlay).toBeTruthy();
+    fireEvent.click(overlay!);
+
+    await waitFor(() =>
+      expect(toggle).toHaveAttribute('aria-expanded', 'false'),
+    );
+
+    // open again and close via document mousedown (click-outside)
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.mouseDown(document);
+    await waitFor(() =>
+      expect(toggle).toHaveAttribute('aria-expanded', 'false'),
+    );
+  });
+
+  it('desktop shows Shops; clicking mobile Shops uses handleLinkClick to close menus', () => {
+    renderUI();
+    // open both
+    fireEvent.click(screen.getByTestId('userMenuButton'));
+    const toggle = screen.getByRole('button', { name: /open main menu/i });
+    fireEvent.click(toggle);
+    // choose the mobile copy of Shops (last occurrence)
+    const shopsLinks = screen.getAllByText('Shops');
+    fireEvent.click(shopsLinks.at(-1)!);
+    expect(screen.queryByText('Logout')).not.toBeInTheDocument();
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it.each([
+    ['items', 'Items'],
+    ['parts', 'Parts'],
+    ['service', 'Service'],
+    ['invoices', 'Invoices'],
+    ['leases', 'Leases', { enableLeasing: true }],
+    ['transactions', 'Transactions', { enableTransactions: true }],
+  ] as const)(
+    'mobile link renders and is marked active for page "%s"',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    (page, label, flags) => {
+      // enable flags if required
+      if (flags) dbCtx.data.settings = { ...dbCtx.data.settings, ...flags };
+      // need a selected shop for these to appear
+      shopCtx.shop = { id: 's1', name: 'Shop 1' } as ShopType;
+
+      renderUI('/', `?page=${page}`);
+
+      // open mobile
+      const toggle = screen.getByRole('button', { name: /open main menu/i });
+      fireEvent.click(toggle);
+
+      // the mobile grid contains the label
+      const link = screen.getAllByText(label).at(-1)!;
+      expect(link).toBeInTheDocument();
+
+      // active class for the selected page (checks a distinctive token to avoid brittle full-class asserts)
+      const parent = link.closest('a')!;
+      if (
+        page === 'items' ||
+        page === 'parts' ||
+        page === 'service' ||
+        page === 'invoices' ||
+        page === 'leases' ||
+        page === 'transactions'
+      ) {
+        expect(parent.className).toMatch(/rounded-lg/);
+        if (page) {
+          // active path uses bg-gray-200 OR dark:bg-gray-700
+          expect(parent.className).toMatch(/bg-gray-200|dark:bg-gray-700/);
+        }
+      }
+
+      // clicking a mobile link closes the navbar (handleLinkClick)
+      fireEvent.click(parent);
+      expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    },
+  );
+
+  it('admin section visibility toggles with role and logs flag', () => {
+    // not admin
+    const { unmount } = renderUI('/', '?page=shops');
+    fireEvent.click(screen.getByTestId('userMenuButton'));
     expect(screen.queryByText('Types')).not.toBeInTheDocument();
-    expect(screen.queryByText('Recycle Bin')).not.toBeInTheDocument();
-    expect(screen.queryByText('Settings')).not.toBeInTheDocument();
-    expect(screen.queryByText('Users')).not.toBeInTheDocument();
-  });
+    unmount();
 
-  it('shows Logs menu item when logging is active and user is admin', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    mockDBContext.data.currentUser.role = 'admin';
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    dbCtx.data.currentUser.role = 'admin';
     (configModule.firebaseModel.isLoggingActive as Mock).mockReturnValue(true);
+    dbCtx.data.settings.enableLogs = true;
 
-    renderWithProviders(<Header />);
-    fireEvent.click(screen.getByTestId('userMenuButton'));
+    const r2 = renderUI('/', '?page=shops');
+    fireEvent.click(r2.getByTestId('userMenuButton'));
+    expect(r2.getByText('Types')).toBeInTheDocument();
+    expect(r2.getByText('Recycle Bin')).toBeInTheDocument();
+    expect(r2.getByText('Settings')).toBeInTheDocument();
+    expect(r2.getByText('Users')).toBeInTheDocument();
+    expect(r2.getByText('Logs')).toBeInTheDocument();
+    r2.unmount();
 
-    expect(screen.getByText('Logs')).toBeInTheDocument();
+    // logs off
+    dbCtx.data.settings.enableLogs = false;
+    const r3 = renderUI('/', '?page=shops');
+    fireEvent.click(r3.getByTestId('userMenuButton'));
+    expect(r3.queryByText('Logs')).not.toBeInTheDocument();
+    r3.unmount();
   });
 
-  it('renders Invoices, Transactions, and Leases when shop exists and modules are enabled', () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
+  it('Update triggers correct refresh per page and shows loading', async () => {
+    const cases: Array<{ page: string; calls: string[] }> = [
+      { page: 'items', calls: ['items', 'users'] },
+      { page: 'parts', calls: ['parts', 'users'] },
+      { page: 'settings', calls: ['settings'] },
+      { page: 'users', calls: ['users'] },
+      { page: 'types', calls: ['types'] },
+    ];
 
-    mockShopContext.shop = {
-      id: 'shop1',
-      name: 'Shop 1',
+    for (const c of cases) {
+      const { unmount } = renderUI('/', `?page=${c.page}`);
+      fireEvent.click(screen.getByTestId('userMenuButton'));
+      fireEvent.click(screen.getByText('Update'));
+
+      await waitFor(() =>
+        expect(screen.getByTestId('loading-spinner')).toBeInTheDocument(),
+      );
+      await waitFor(() =>
+        c.calls.forEach((arg) =>
+          expect(dbCtx.refreshData).toHaveBeenCalledWith(arg),
+        ),
+      );
+
+      unmount();
+      (dbCtx.refreshData as Mock).mockClear();
+    }
+  });
+
+  it('service & recycle: invalidates caches and refreshes users', async () => {
+    const keys = [
+      'deleted',
+      'archive',
+      'services',
+      'leaseCompletions',
+      'completions',
+    ];
+
+    for (const page of ['service', 'recycle']) {
+      const { unmount } = renderUI('/', `?page=${page}`);
+      fireEvent.click(screen.getByTestId('userMenuButton'));
+      fireEvent.click(screen.getByText('Update'));
+
+      await waitFor(() => {
+        keys.forEach((k) =>
+          expect(
+            configModule.firebaseModel.invalidateCache,
+          ).toHaveBeenCalledWith(k),
+        );
+        expect(dbCtx.refreshData).toHaveBeenCalledWith('users');
+      });
+
+      unmount();
+      (dbCtx.refreshData as Mock).mockClear();
+      (configModule.firebaseModel.invalidateCache as Mock).mockClear();
+    }
+  });
+
+  it('renders Admin block (mobile) and each link closes the drawer (Types, Recycle Bin, Settings, Logs, Users)', async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    dbCtx.data.currentUser.role = 'admin';
+    (configModule.firebaseModel.isLoggingActive as Mock).mockReturnValue(true);
+    dbCtx.data.settings.enableLogs = true;
+
+    const { unmount } = renderUI('/', '?page=shops');
+
+    const toggle = screen.getByRole('button', { name: /open main menu/i });
+    const openDrawer = () => {
+      if (toggle.getAttribute('aria-expanded') === 'false')
+        fireEvent.click(toggle);
     };
 
-    configModule.modules.leasing = true;
-    configModule.modules.transactions = true;
+    // open once and assert Admin section is present
+    openDrawer();
+    expect(screen.getByText('Admin')).toBeInTheDocument();
 
-    renderWithProviders(<Header />, {
-      route: '/',
-      searchParams: '?page=invoices',
-    });
+    // The admin panel lives in the right-side drawer
+    const getDrawer = () =>
+      document.querySelector('.fixed.inset-y-0.right-0') as Element;
 
-    expect(screen.getByText('Invoices')).toBeInTheDocument();
-    expect(screen.getByText('Transactions')).toBeInTheDocument();
-    expect(screen.getByText('Leases')).toBeInTheDocument();
-  });
+    // Cover each admin link; after each click, the drawer should close
+    const adminLabels = [
+      'Types',
+      'Recycle Bin',
+      'Settings',
+      'Logs',
+      'Users',
+    ] as const;
 
-  it('shows loading icon when update is triggered', async () => {
-    (useTheme as Mock).mockReturnValue({ theme: 'light' });
-    mockDBContext.data.currentUser.role = 'admin';
+    for (const label of adminLabels) {
+      openDrawer(); // reopen if previous click closed it
+      const drawer = getDrawer();
+      expect(drawer).toBeTruthy();
 
-    const { container } = renderWithProviders(<Header />, {
-      route: '/',
-      searchParams: '?page=settings',
-    });
+      const link = within(drawer as HTMLElement).getByRole('link', {
+        name: label,
+      });
+      fireEvent.click(link);
 
-    fireEvent.click(screen.getByTestId('userMenuButton'));
-    fireEvent.click(screen.getByText('Update'));
+      await waitFor(() =>
+        expect(toggle).toHaveAttribute('aria-expanded', 'false'),
+      );
+    }
 
-    await waitFor(() => {
-      const spinner = container.querySelector('svg');
-      expect(spinner).toBeInTheDocument();
-    });
+    unmount();
   });
 });

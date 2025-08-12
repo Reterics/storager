@@ -2,11 +2,12 @@ import AuthContextProviderMock from "./AuthContextProviderMock";
 import ThemeContextProviderMock from "./ThemeContextProviderMock";
 import ShopContextProviderMock from "./ShopContextProviderMock";
 
-import {ReactNode} from "react";
-import { Params } from 'react-router-dom';
-import {Mock, vi} from 'vitest'
+import type {ReactNode} from "react";
+import type { Params } from 'react-router-dom';
+import type {Mock} from 'vitest';
+import { vi} from 'vitest'
 import DBContextProviderMock from "./DBContextProviderMock.tsx";
-import {ContextData, ContextDataValueType} from "../../src/interfaces/firebase.ts";
+import type {ContextData, ContextDataValueType} from "../../src/interfaces/firebase.ts";
 
 const TestingPageProvider = ({
     children,

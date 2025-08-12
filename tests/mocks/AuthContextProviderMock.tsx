@@ -1,6 +1,6 @@
 import './firebase.ts';
 import {AuthContext} from "../../src/store/AuthContext";
-import {IAuth} from "../../src/interfaces/interfaces";
+import type {IAuth} from "../../src/interfaces/interfaces";
 import { vi } from 'vitest'
 import {currentUserMock} from "./userData";
 

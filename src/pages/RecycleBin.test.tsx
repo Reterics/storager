@@ -1,245 +1,372 @@
-// RecycleBin.test.tsx
-
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-vi.mock('../components/modalExporter.ts', () => ({
-  confirm: async () => {
-    return Promise.resolve(true);
-  },
-  popup: async () => {
-    return Promise.resolve();
-  },
-}));
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import RecycleBin from './RecycleBin';
 import { DBContext } from '../database/DBContext';
-import { ShopContext } from '../store/ShopContext';
-import { vi, expect, it, describe, beforeEach } from 'vitest';
 import type {
   ContextDataValueType,
   DBContextType,
-} from '../interfaces/firebase';
-import { MemoryRouter } from 'react-router-dom';
-import type {
-  Shop,
-  TableLineElementType,
-  TableLineType,
-} from '../interfaces/interfaces.ts';
+} from '../interfaces/firebase.ts';
+import type { TableRowType } from '../interfaces/interfaces.ts';
 
-// Mock PageHead and TableViewComponent to simplify the test
-vi.mock('../components/elements/PageHead', () => ({
-  PageHead: ({ title }: { title: React.ReactNode }) => <div>{title}</div>,
+// ---------- Mocks ----------
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (k: string) => k }),
 }));
 
-vi.mock('../components/elements/TableViewComponent', () => ({
-  __esModule: true,
-  default: ({
+vi.mock('../components/elements/PageHead.tsx', () => ({
+  PageHead: ({ title }: { title: React.ReactNode }) => (
+    <div data-testid="pagehead">{title}</div>
+  ),
+}));
+
+vi.mock('../components/elements/TableViewComponent.tsx', () => {
+  const TableViewComponent = ({
     lines,
-    header,
+    onClick,
+    selectedIndexes,
   }: {
-    lines: TableLineType[];
-    header: string[];
+    lines: TableRowType[][];
+    onClick: (index: number) => void;
+    selectedIndexes: Record<number, boolean>;
   }) => (
-    <table>
-      <thead>
-        <tr>
-          {header.map((h, index) => (
-            <th key={index}>{h}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {lines.map((line, index) => (
-          <tr key={index}>
-            {line.map((cell: TableLineElementType, cellIndex: number) => (
-              <td key={cellIndex}>{cell}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ),
-  TableViewActions: ({ onRemove }: { onRemove: () => void }) => (
-    <button onClick={onRemove}>Delete</button>
-  ),
+    <div>
+      {lines.map((cells, idx) => (
+        <div key={idx}>
+          <button
+            data-testid={`row-${idx}`}
+            aria-pressed={!!selectedIndexes[idx]}
+            onClick={() => onClick(idx)}
+          >
+            row {idx} - {String(cells[1])}
+          </button>
+          <span data-testid={`actions-${idx}`}>{cells[cells.length - 1]}</span>
+        </div>
+      ))}
+    </div>
+  );
+
+  const TableViewActions = ({ onRemove }: { onRemove: () => void }) => (
+    <button data-testid="remove-action" onClick={onRemove}>
+      remove
+    </button>
+  );
+
+  return { default: TableViewComponent, TableViewActions };
+});
+
+const confirmMock = vi.fn();
+vi.mock('../components/modalExporter.ts', () => ({
+  confirm: () => confirmMock(),
 }));
 
-describe('RecycleBin Component', () => {
-  const mockDBContext = {
-    data: {
-      shops: [],
-      items: [],
-      parts: [],
-      services: [],
-      completions: [],
-      settings: { id: '1' },
-      users: [],
-      archive: [],
-      types: [],
-      invoices: [],
-      currentUser: {
-        id: 'user1',
-        role: 'admin',
-      },
-      deleted: [
-        {
-          id: 'item1',
-          name: 'Item 1',
-          docType: 'types',
-          docUpdated: new Date().getTime(),
-          shop_id: ['shop1'],
-        },
-        {
-          id: 'item2',
-          client_name: 'Client 2',
-          docType: 'parts',
-          docUpdated: new Date().getTime(),
-          shop_id: ['shop1'],
-        },
-      ],
-    },
-    removePermanentData: vi.fn(),
-  };
+vi.mock('../utils/general.ts', async () => {
+  const actual = await vi.importActual('../utils/general.ts');
+  return { ...actual, sleep: () => Promise.resolve() };
+});
 
-  const mockShopContext = {
-    shop: {
-      id: 'shop1',
-      name: 'shop1',
-    },
-    setShop: () => {},
-  } as {
-    shop: Shop | null;
-    setShop: () => void;
-  };
+// ---------- Helpers ----------
+const makeItem = (
+  id: string,
+  over: Partial<ContextDataValueType> = {},
+): ContextDataValueType =>
+  ({
+    id,
+    docType: 'items',
+    docUpdated: new Date().toISOString(),
+    name: `Item ${id}`,
+    ...over,
+  }) as unknown as ContextDataValueType;
 
-  const renderWithProviders = (ui: React.ReactElement) => {
+describe('RecycleBin', () => {
+  const removePermanentData = vi.fn().mockResolvedValue(undefined);
+  const removePermanentDataList = vi.fn().mockResolvedValue(undefined);
+  const setData = vi.fn().mockResolvedValue(undefined);
+
+  const renderWithCtx = (deletedItems: ContextDataValueType[]) => {
+    const ctx = {
+      data: { deleted: deletedItems },
+      removePermanentData,
+      removePermanentDataList,
+      setData,
+    } as unknown as DBContextType;
+
     return render(
-      <MemoryRouter>
-        <DBContext.Provider value={mockDBContext as unknown as DBContextType}>
-          <ShopContext.Provider value={mockShopContext}>
-            {ui}
-          </ShopContext.Provider>
-        </DBContext.Provider>
-      </MemoryRouter>,
+      <DBContext.Provider value={ctx}>
+        <RecycleBin />
+      </DBContext.Provider>,
     );
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
-  it('renders PageHead and TableViewComponent when user is authorized', () => {
-    renderWithProviders(<RecycleBin />);
-
-    expect(screen.getByText('Recycle Bin')).toBeInTheDocument();
-    expect(screen.getByText('ID')).toBeInTheDocument();
-    expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByText('Type')).toBeInTheDocument();
-    expect(screen.getByText('Date')).toBeInTheDocument();
-    expect(screen.getByText('Actions')).toBeInTheDocument();
+  it('no items -> no "Select All" button (items.length branch)', () => {
+    renderWithCtx([]);
+    expect(
+      screen.queryByRole('button', { name: 'Select All' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('displays all items when no shop is selected', () => {
-    const shopContextWithoutShop = {
-      shop: null,
-    } as {
-      shop: Shop | null;
-      setShop: () => void;
-    };
-
-    render(
-      <MemoryRouter>
-        <DBContext.Provider value={mockDBContext as unknown as DBContextType}>
-          <ShopContext.Provider value={shopContextWithoutShop}>
-            <RecycleBin />
-          </ShopContext.Provider>
-        </DBContext.Provider>
-      </MemoryRouter>,
+  it('syncs items on context change (useEffect dependency)', () => {
+    const itemsA = [makeItem('1')];
+    const { rerender } = render(
+      <DBContext.Provider
+        value={
+          {
+            data: { deleted: itemsA },
+            removePermanentData,
+            removePermanentDataList,
+            setData,
+          } as unknown as DBContextType
+        }
+      >
+        <RecycleBin />
+      </DBContext.Provider>,
     );
 
-    expect(screen.getByText('Item 1')).toBeInTheDocument();
-    expect(screen.getByText('Client 2')).toBeInTheDocument();
-  });
+    expect(screen.getByTestId('row-0')).toBeInTheDocument();
 
-  it('calls removePermanentData and updates items when delete is confirmed', async () => {
-    // Mock removePermanentData to return updated items
-    const updatedDeletedItems: ContextDataValueType[] = [
-      {
-        id: 'item2',
-        client_name: 'Client 2',
-        docType: 'parts',
-        docUpdated: new Date().getTime(),
-        shop_id: ['shop1'],
-      },
-    ];
-    mockDBContext.removePermanentData.mockResolvedValue(updatedDeletedItems);
-
-    renderWithProviders(<RecycleBin />);
-
-    // Click on Delete button
-    fireEvent.click(screen.getAllByText('Delete')[0]);
-
-    await waitFor(() =>
-      expect(mockDBContext.removePermanentData).toHaveBeenCalledWith('item1'),
+    const itemsB = [makeItem('1'), makeItem('2')];
+    rerender(
+      <DBContext.Provider
+        value={
+          {
+            data: { deleted: itemsB },
+            removePermanentData,
+            removePermanentDataList,
+            setData,
+          } as unknown as DBContextType
+        }
+      >
+        <RecycleBin />
+      </DBContext.Provider>,
     );
+
+    expect(screen.getByTestId('row-1')).toBeInTheDocument();
   });
 
-  it('does not call removePermanentData when delete is canceled', async () => {
-    // Mock window.confirm to return false
-    vi.spyOn(window, 'confirm').mockReturnValue(false);
+  it('row select, select-all then deselect-all (both branches), single delete confirm=true creates backup', async () => {
+    renderWithCtx([makeItem('1'), makeItem('2')]);
 
-    renderWithProviders(<RecycleBin />);
+    // enter selecting
+    fireEvent.click(screen.getByTestId('row-0'));
+    // select all
+    fireEvent.click(screen.getByRole('button', { name: 'Select All' }));
+    expect(
+      screen.getByRole('button', { name: 'Deselect All' }),
+    ).toBeInTheDocument();
+    // deselect all
+    fireEvent.click(screen.getByRole('button', { name: 'Deselect All' }));
 
-    // Click on Delete button
-    fireEvent.click(screen.getAllByText('Delete')[0]);
+    // single delete on row 0
+    confirmMock.mockResolvedValueOnce(true);
+    const removeBtn = screen
+      .getByTestId('actions-0')
+      .querySelector('[data-testid="remove-action"]') as HTMLButtonElement;
+    fireEvent.click(removeBtn);
+
+    await waitFor(() => expect(removePermanentData).toHaveBeenCalledWith('1'));
+    expect(localStorage.getItem('recycleBinBackup')).toBeTruthy();
+    expect(localStorage.getItem('recycleBinBackupTime')).toBeTruthy();
+  });
+
+  it('single delete confirm=false -> no call, no backup', async () => {
+    renderWithCtx([makeItem('1')]);
+    confirmMock.mockResolvedValueOnce(false);
+    const removeBtn = screen
+      .getByTestId('actions-0')
+      .querySelector('[data-testid="remove-action"]') as HTMLButtonElement;
+    fireEvent.click(removeBtn);
+
+    await waitFor(() => expect(removePermanentData).not.toHaveBeenCalled());
+    expect(localStorage.getItem('recycleBinBackup')).toBeNull();
+  });
+
+  it('bulk delete confirm=false -> early return (no backup, no calls)', async () => {
+    renderWithCtx([makeItem('1'), makeItem('2')]);
+    // enter selecting
+    fireEvent.click(screen.getByTestId('row-0'));
+    // select all (so button appears)
+    fireEvent.click(screen.getByRole('button', { name: 'Select All' }));
+
+    confirmMock.mockResolvedValueOnce(false);
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Selected' }));
 
     await waitFor(() => {
-      // Expect removePermanentData not to have been called
-      expect(mockDBContext.removePermanentData).not.toHaveBeenCalled();
-
-      // Item should still be present
-      expect(screen.getByText('Item 1')).toBeInTheDocument();
-      expect(screen.queryByText('Client 2')).toBeInTheDocument();
+      expect(removePermanentDataList).not.toHaveBeenCalled();
+      expect(localStorage.getItem('recycleBinBackup')).toBeNull();
     });
   });
 
-  it('handles items without shop_id gracefully', () => {
-    const dbContextWithItemWithoutShopId = {
-      ...mockDBContext,
-      data: {
-        ...mockDBContext.data,
-        deleted: [
-          ...mockDBContext.data.deleted,
-          {
-            id: 'item3',
-            name: 'Item 3',
-            docType: 'Type3',
-            docUpdated: new Date().toISOString(),
-            // No shop_id
-          },
-        ],
-      },
-    };
+  it('bulk delete confirm=true -> chunking + final call, selection cleared, backup set', async () => {
+    const items = Array.from({ length: 300 }, (_, i) =>
+      makeItem(String(i + 1)),
+    );
+    renderWithCtx(items);
 
-    render(
-      <MemoryRouter>
-        <DBContext.Provider
-          value={dbContextWithItemWithoutShopId as unknown as DBContextType}
-        >
-          <ShopContext.Provider value={mockShopContext}>
-            <RecycleBin />
-          </ShopContext.Provider>
-        </DBContext.Provider>
-      </MemoryRouter>,
+    // enter selecting & select all
+    fireEvent.click(screen.getByTestId('row-0'));
+    fireEvent.click(screen.getByRole('button', { name: 'Select All' }));
+
+    confirmMock.mockResolvedValueOnce(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Delete Selected' }));
+
+    await waitFor(() => {
+      expect(removePermanentDataList).toHaveBeenCalledTimes(3);
+      expect(removePermanentDataList.mock.calls[0][0]).toHaveLength(250);
+      expect(removePermanentDataList.mock.calls[1][0]).toHaveLength(50);
+      expect(removePermanentDataList.mock.calls[2][0]).toHaveLength(300);
+    });
+
+    // selection cleared
+    await waitFor(() =>
+      expect(screen.getByTestId('row-0')).toHaveAttribute(
+        'aria-pressed',
+        'false',
+      ),
     );
 
-    // Item without shop_id should be displayed
-    expect(screen.getByText('Item 3')).toBeInTheDocument();
+    const backup = JSON.parse(localStorage.getItem('recycleBinBackup') || '[]');
+    expect(backup).toHaveLength(300);
   });
 
-  it('displays the correct name for items', () => {
-    renderWithProviders(<RecycleBin />);
+  it('restore from backup success -> restores missing only, clears backup, toggles disabled label', async () => {
+    const existing = makeItem('1');
+    renderWithCtx([existing]);
 
-    expect(screen.getByText('Item 1')).toBeInTheDocument();
-    expect(screen.queryByText('Client 2')).toBeInTheDocument();
+    const backupItems = [existing, makeItem('2')];
+    localStorage.setItem('recycleBinBackup', JSON.stringify(backupItems));
+    localStorage.setItem('recycleBinBackupTime', new Date().toISOString());
+
+    // re-mount to trigger backup loader effect
+    const { unmount } = renderWithCtx([existing]);
+    unmount();
+    renderWithCtx([existing]);
+
+    expect(screen.getByText('Backup Available')).toBeInTheDocument();
+
+    confirmMock.mockResolvedValueOnce(true);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Restore from Backup' }),
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Restoring...' }),
+      ).toBeDisabled(),
+    );
+
+    await waitFor(() => {
+      expect(setData).toHaveBeenCalledTimes(1);
+      expect(setData).toHaveBeenCalledWith(
+        'items',
+        expect.objectContaining({ id: '2' }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(localStorage.getItem('recycleBinBackup')).toBeNull();
+      expect(localStorage.getItem('recycleBinBackupTime')).toBeNull();
+      expect(screen.queryByText('Backup Available')).not.toBeInTheDocument();
+    });
+  });
+
+  it('restore from backup cancel -> leaves backup intact, no setData', async () => {
+    renderWithCtx([makeItem('1')]);
+    localStorage.setItem('recycleBinBackup', JSON.stringify([makeItem('9')]));
+    localStorage.setItem('recycleBinBackupTime', new Date().toISOString());
+
+    const { unmount } = renderWithCtx([makeItem('1')]);
+    unmount();
+    renderWithCtx([makeItem('1')]);
+
+    expect(screen.getByText('Backup Available')).toBeInTheDocument();
+
+    confirmMock.mockResolvedValueOnce(false);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Restore from Backup' }),
+    );
+
+    await waitFor(() => {
+      expect(setData).not.toHaveBeenCalled();
+      expect(localStorage.getItem('recycleBinBackup')).toBeTruthy();
+    });
+  });
+
+  it('restore from backup with setData throwing -> hits catch branch, finally re-enables', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    setData.mockRejectedValueOnce(new Error('boom'));
+
+    renderWithCtx([]);
+    localStorage.setItem('recycleBinBackup', JSON.stringify([makeItem('5')]));
+    localStorage.setItem('recycleBinBackupTime', new Date().toISOString());
+
+    const { unmount } = renderWithCtx([]);
+    unmount();
+    renderWithCtx([]);
+
+    confirmMock.mockResolvedValueOnce(true);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Restore from Backup' }),
+    );
+
+    await waitFor(() => expect(errSpy).toHaveBeenCalled()); // catch branch
+    // button returns to enabled state with normal label after finally{}
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Restore from Backup' }),
+      ).toBeEnabled(),
+    );
+    errSpy.mockRestore();
+  });
+
+  it('restore from backup when item has no docType -> warns and skips setData (else-branch)', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    renderWithCtx([]);
+
+    const bad = makeItem('x', { docType: undefined });
+    localStorage.setItem('recycleBinBackup', JSON.stringify([bad]));
+    localStorage.setItem('recycleBinBackupTime', new Date().toISOString());
+
+    const { unmount } = renderWithCtx([]);
+    unmount();
+    renderWithCtx([]);
+
+    confirmMock.mockResolvedValueOnce(true);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Restore from Backup' }),
+    );
+
+    await waitFor(() => expect(warnSpy).toHaveBeenCalled());
+    expect(setData).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('invalid backup JSON -> loader effect clears both keys (catch branch)', () => {
+    localStorage.setItem('recycleBinBackup', '{bad json');
+    localStorage.setItem('recycleBinBackupTime', new Date().toISOString());
+    renderWithCtx([makeItem('1')]);
+
+    expect(localStorage.getItem('recycleBinBackup')).toBeNull();
+    expect(localStorage.getItem('recycleBinBackupTime')).toBeNull();
+  });
+
+  it('selection mode with zero selected renders disabled "Delete Selected"', () => {
+    renderWithCtx([makeItem('1')]);
+    // toggle same row twice: enters selecting, ends with 0 selected
+    fireEvent.click(screen.getByTestId('row-0'));
+    fireEvent.click(screen.getByTestId('row-0'));
+    const btn = screen.getByRole('button', { name: 'Delete Selected' });
+    expect(btn).toBeDisabled();
+  });
+
+  it('row name fallback uses client_name when name is missing', () => {
+    renderWithCtx([
+      makeItem('1', { name: undefined, client_name: 'Client X' }),
+    ]);
+    expect(screen.getByText(/Client X/)).toBeInTheDocument();
   });
 });

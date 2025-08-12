@@ -1,4 +1,5 @@
-import {ServiceCompleteData, ServiceData, serviceStatusList} from '../../src/interfaces/interfaces';
+import type {ServiceCompleteData, ServiceData} from '../../src/interfaces/interfaces';
+import { serviceStatusList} from '../../src/interfaces/interfaces';
 
 
 export const serviceDataList:ServiceData[] = [

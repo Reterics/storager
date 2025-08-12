@@ -1,10 +1,11 @@
 import {DBContext} from '../../src/database/DBContext'
-import {
+import type {
     ContextData, ContextDataCollectionType, ContextDataValueType
 } from "../../src/interfaces/firebase";
 import {defaultContextData} from "./shopData";
-import {Mock, vi} from 'vitest'
-import {StyledSelectOption} from "../../src/interfaces/interfaces.ts";
+import type {Mock} from 'vitest';
+import { vi} from 'vitest'
+import type {StyledSelectOption} from "../../src/interfaces/interfaces.ts";
 
 const DBContextProviderMock = ({children, ctxDataOverride,
     refreshData= vi.fn(),
