@@ -97,4 +97,45 @@ describe('LaborFeeInput', () => {
       expect(mockSetData).not.toHaveBeenCalled();
     });
   });
+
+  it('shows popup on empty/whitespace input', async () => {
+    renderWithContext();
+    const input = screen.getByTestId('laborFee');
+    const button = screen.getByTestId('laborFeeButton');
+
+    fireEvent.change(input, { target: { value: '   ' } });
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(popup).toHaveBeenCalled();
+    });
+  });
+
+  it('rounds net and cost amounts to integers (VAT 27%)', async () => {
+    (confirm as unknown as Mock).mockResolvedValue(true);
+
+    renderWithContext();
+
+    fireEvent.change(screen.getByTestId('laborFee'), {
+      target: { value: '12701' }, // 12701 / 1.27 ≈ 10000.787 -> 10001 after rounding
+    });
+    fireEvent.click(screen.getByTestId('laborFeeButton'));
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith(
+        'transactions',
+        expect.objectContaining({
+          cost: 10001,
+          gross_amount: 12701,
+          document_type: 'receipt',
+          item_type: 'other',
+          net_amount: 10001,
+          payment_method: 'cash',
+          shop_id: ['1'],
+          transaction_type: 'labor',
+          user: 'test@example.com',
+        }),
+      );
+    });
+  });
 });

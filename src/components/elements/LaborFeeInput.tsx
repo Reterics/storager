@@ -38,7 +38,7 @@ export default function LaborFeeInput() {
           );
 
           if (response) {
-            const netPrice = laborFeeNumeric / 1.27;
+            const netPrice = Math.round(laborFeeNumeric / 1.27);
 
             dbContext?.setData('transactions', {
               net_amount: netPrice,
