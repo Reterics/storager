@@ -412,13 +412,24 @@ export default class FirebaseDBModel extends DBModel {
   ): Promise<ContextDataValueType[] | null> {
     if (idList.length === 0) return this.getAll('deleted');
 
-    const batch = writeBatch(this._db);
+    // Firebase has a limit of 500 operations per batch
+    const BATCH_LIMIT = 500;
+    let currentBatch = writeBatch(this._db);
+    let operationCount = 0;
 
     for (const id of idList) {
       const cached = this.getCachedEntry(id, 'deleted');
       if (cached && cached.docType) {
-        batch.delete(doc(this._db, cached.docType as string, id));
+        currentBatch.delete(doc(this._db, cached.docType as string, id));
         this.removeCachedEntry(id, 'deleted');
+        operationCount++;
+        
+        // If we've reached the batch limit, commit the current batch and start a new one
+        if (operationCount >= BATCH_LIMIT) {
+          await currentBatch.commit();
+          currentBatch = writeBatch(this._db);
+          operationCount = 0;
+        }
       } else if (cached) {
         console.error(`Cannot delete ${id}: invalid docType`);
       } else {
@@ -426,7 +437,11 @@ export default class FirebaseDBModel extends DBModel {
       }
     }
 
-    await batch.commit();
+    // Commit any remaining operations
+    if (operationCount > 0) {
+      await currentBatch.commit();
+    }
+    
     this.sync();
     return this.getAll('deleted');
   }
@@ -491,8 +506,10 @@ export default class FirebaseDBModel extends DBModel {
   }
 
   async updateAll(items: ContextDataValueType[], table: string): Promise<void> {
-    const batch = writeBatch(this._db);
-
+    // Firebase has a limit of 500 operations per batch
+    const BATCH_LIMIT = 500;
+    let currentBatch = writeBatch(this._db);
+    let operationCount = 0;
     let modelRef;
 
     for (const item of items) {
@@ -523,7 +540,15 @@ export default class FirebaseDBModel extends DBModel {
         item.docUpdated = new Date().getTime();
       }
 
-      batch.set(modelRef, item, { merge: true });
+      currentBatch.set(modelRef, item, { merge: true });
+      operationCount++;
+
+      // If we've reached the batch limit, commit the current batch and start a new one
+      if (operationCount >= BATCH_LIMIT) {
+        await currentBatch.commit();
+        currentBatch = writeBatch(this._db);
+        operationCount = 0;
+      }
 
       if (item && imageCache) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -537,7 +562,10 @@ export default class FirebaseDBModel extends DBModel {
       );
     }
 
-    await batch.commit();
+    // Commit any remaining operations
+    if (operationCount > 0) {
+      await currentBatch.commit();
+    }
 
     this.sync();
   }
