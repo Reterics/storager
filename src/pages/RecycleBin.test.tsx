@@ -201,8 +201,8 @@ describe('RecycleBin', () => {
     });
   });
 
-  it('bulk delete confirm=true -> chunking + final call, selection cleared, backup set', async () => {
-    const items = Array.from({ length: 300 }, (_, i) =>
+  it('bulk delete confirm=true -> chunking only, selection cleared, backup set', async () => {
+    const items = Array.from({ length: 102 }, (_, i) =>
       makeItem(String(i + 1)),
     );
     renderWithCtx(items);
@@ -215,10 +215,9 @@ describe('RecycleBin', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Delete Selected' }));
 
     await waitFor(() => {
-      expect(removePermanentDataList).toHaveBeenCalledTimes(3);
-      expect(removePermanentDataList.mock.calls[0][0]).toHaveLength(250);
-      expect(removePermanentDataList.mock.calls[1][0]).toHaveLength(50);
-      expect(removePermanentDataList.mock.calls[2][0]).toHaveLength(300);
+      expect(removePermanentDataList).toHaveBeenCalledTimes(2);
+      expect(removePermanentDataList.mock.calls[0][0]).toHaveLength(100);
+      expect(removePermanentDataList.mock.calls[1][0]).toHaveLength(2);
     });
 
     // selection cleared
@@ -230,7 +229,7 @@ describe('RecycleBin', () => {
     );
 
     const backup = JSON.parse(localStorage.getItem('recycleBinBackup') || '[]');
-    expect(backup).toHaveLength(300);
+    expect(backup).toHaveLength(102);
   });
 
   it('restore from backup success -> restores missing only, clears backup, toggles disabled label', async () => {

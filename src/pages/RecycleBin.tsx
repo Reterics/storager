@@ -135,9 +135,9 @@ function RecycleBin() {
       createBackup(selectedItems);
 
       const allIds = selectedItems.map((item) => item.id);
-      const chunkSize = 250;
+      const chunkSize = 100;
 
-      // We delete max 250 in one go, and wait 1 second between each chunk, This is very conservative - avoids all limits.
+      // We delete max 100 in one go, and wait 1 second between each chunk, This is very conservative - avoids all limits.
       for (let i = 0; i < allIds.length; i += chunkSize) {
         const chunk = allIds.slice(i, i + chunkSize);
         await dbContext?.removePermanentDataList(chunk);
@@ -146,11 +146,6 @@ function RecycleBin() {
           await sleep(1000); // wait 1 second between chunks
         }
       }
-
-      // Delete items all together
-      await dbContext?.removePermanentDataList(
-        selectedItems.map((item) => item.id),
-      );
 
       // Clear selection after deletion
       setSelectedIndexes({});
