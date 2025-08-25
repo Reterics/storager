@@ -222,6 +222,10 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
     firebaseModel.enableTransactions = !!settings.enableTransactions;
     firebaseModel.enableLogs = !!settings.enableLogs;
+    if (typeof settings.vatPercent !== 'undefined') {
+      // Configure VAT used for automatic transaction calculations
+      firebaseModel.setVat(settings.vatPercent);
+    }
     setCtxData({
       shops,
       items,

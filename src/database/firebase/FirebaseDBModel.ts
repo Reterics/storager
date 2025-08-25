@@ -114,6 +114,12 @@ export default class FirebaseDBModel extends DBModel {
     this._shopId = id;
   }
 
+  private _vatDivisor = 1.27;
+  setVat(percent?: number) {
+    const p = Number(percent);
+    this._vatDivisor = !Number.isFinite(p) || p <= 0 ? 1.27 : 1 + p / 100;
+  }
+
   logCatch(e: Error) {
     console.error('Failed to log error: ', e);
     this._logFailCount++;
@@ -141,7 +147,7 @@ export default class FirebaseDBModel extends DBModel {
         ? item.price[item.shop_id.findIndex((d) => d === this._shopId)]
         : 0;
 
-    const netPrice = item.net_price || defaultPrice / 1.27; // for VAT: ((item.price || 0) * 0.2126);
+    const netPrice = item.net_price || defaultPrice / this._vatDivisor; // for VAT: ((item.price || 0) * 0.2126);
 
     let trType = transactionType || 'sell';
     if (!transactionType && changes) {
@@ -155,7 +161,7 @@ export default class FirebaseDBModel extends DBModel {
       item_type: table,
       item_id: id || item.id,
       net_amount: netPrice * diff,
-      gross_amount: (defaultPrice || netPrice * 1.27) * diff,
+      gross_amount: (defaultPrice || netPrice * this._vatDivisor) * diff,
       payment_method: 'cash',
       document_type: 'receipt',
       transaction_type: trType,

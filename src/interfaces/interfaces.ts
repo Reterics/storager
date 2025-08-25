@@ -501,6 +501,8 @@ export interface SettingsItems extends GeneralCollectionEntry {
   password?: string;
   useSSL?: boolean;
 
+  vatPercent?: number; // e.g., 27 means 27%
+
   serviceAgreement?: string;
   rentalConditions?: string;
   itemTypes?: string;

@@ -5,6 +5,7 @@ import { useContext, useState } from 'react';
 import { DBContext } from '../../database/DBContext.ts';
 import { useTranslation } from 'react-i18next';
 import { ShopContext } from '../../store/ShopContext.tsx';
+import { getVatDivisor } from '../../utils/tax.ts';
 
 export default function LaborFeeInput() {
   const dbContext = useContext(DBContext);
@@ -38,7 +39,8 @@ export default function LaborFeeInput() {
           );
 
           if (response) {
-            const netPrice = Math.round(laborFeeNumeric / 1.27);
+            const vatDivisor = getVatDivisor(dbContext?.data.settings);
+            const netPrice = Math.round(laborFeeNumeric / vatDivisor);
 
             dbContext?.setData('transactions', {
               net_amount: netPrice,
