@@ -515,6 +515,20 @@ export interface SettingsItems extends GeneralCollectionEntry {
   enableLeasing?: boolean;
   enableInvoiceNotes?: boolean;
   enableExtendedInvoices?: boolean;
+
+  // Optional Hosting info override fields
+  hostingProvider?: string;
+  hostingHq?: string;
+  hostingBranch?: string;
+  hostingTax?: string;
+  hostingVat?: string;
+  hostingReg?: string;
+  hostingAccount?: string;
+  hostingSwift?: string;
+  hostingIban?: string;
+  hostingWebsite?: string;
+  hostingEmail?: string;
+  hostingPhone?: string;
 }
 
 export interface UserData extends GeneralCollectionEntry {

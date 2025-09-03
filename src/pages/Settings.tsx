@@ -20,10 +20,12 @@ import {
 import type { CommonCollectionData } from '../interfaces/firebase.ts';
 import StyledToggle from '../components/elements/StyledToggle.tsx';
 import { modules } from '../database/firebase/config.ts';
+import { hostingDefaults } from '../constants/hosting.ts';
 
 function Settings() {
   const dbContext = useContext(DBContext);
   const { t } = useTranslation();
+  const { t: terms } = useTranslation('terms');
 
   const initialSettings = dbContext?.data.settings || {
     id: '',
@@ -276,6 +278,116 @@ function Settings() {
             </div>
           </div>
         )}
+
+        <div className="md:col-span-2 bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
+          <div className="flex items-center mb-4">
+            <BsBuilding className="text-gray-700 dark:text-gray-300 mr-2 text-xl" />
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              {terms('hosting.title')}
+            </h2>
+          </div>
+
+          <form className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <StyledInput
+                type="text"
+                name="hostingProvider"
+                value={settingsItems.hostingProvider || ''}
+                onChange={changeType}
+                label={terms('hosting.providerLabel')}
+                placeholder={hostingDefaults.provider}
+              />
+              <StyledInput
+                type="text"
+                name="hostingHq"
+                value={settingsItems.hostingHq || ''}
+                onChange={changeType}
+                label={terms('hosting.hqLabel')}
+                placeholder={hostingDefaults.hq}
+              />
+              <StyledInput
+                type="text"
+                name="hostingBranch"
+                value={settingsItems.hostingBranch || ''}
+                onChange={changeType}
+                label={terms('hosting.branchLabel')}
+                placeholder={hostingDefaults.branch}
+              />
+              <StyledInput
+                type="text"
+                name="hostingTax"
+                value={settingsItems.hostingTax || ''}
+                onChange={changeType}
+                label={terms('hosting.taxLabel')}
+                placeholder={hostingDefaults.tax}
+              />
+              <StyledInput
+                type="text"
+                name="hostingVat"
+                value={settingsItems.hostingVat || ''}
+                onChange={changeType}
+                label={terms('hosting.vatLabel')}
+                placeholder={hostingDefaults.vat}
+              />
+              <StyledInput
+                type="text"
+                name="hostingReg"
+                value={settingsItems.hostingReg || ''}
+                onChange={changeType}
+                label={terms('hosting.regLabel')}
+                placeholder={hostingDefaults.reg}
+              />
+              <StyledInput
+                type="text"
+                name="hostingAccount"
+                value={settingsItems.hostingAccount || ''}
+                onChange={changeType}
+                label={terms('hosting.accountLabel')}
+                placeholder={hostingDefaults.account}
+              />
+              <StyledInput
+                type="text"
+                name="hostingSwift"
+                value={settingsItems.hostingSwift || ''}
+                onChange={changeType}
+                label={terms('hosting.swiftLabel')}
+                placeholder={hostingDefaults.swift}
+              />
+              <StyledInput
+                type="text"
+                name="hostingIban"
+                value={settingsItems.hostingIban || ''}
+                onChange={changeType}
+                label={terms('hosting.ibanLabel')}
+                placeholder={hostingDefaults.iban}
+              />
+              <StyledInput
+                type="text"
+                name="hostingWebsite"
+                value={settingsItems.hostingWebsite || ''}
+                onChange={changeType}
+                label={terms('hosting.websiteLabel')}
+                placeholder={hostingDefaults.website}
+              />
+              <StyledInput
+                type="text"
+                name="hostingEmail"
+                value={settingsItems.hostingEmail || ''}
+                onChange={changeType}
+                label={terms('hosting.emailLabel')}
+                placeholder={hostingDefaults.email}
+              />
+              <StyledInput
+                type="text"
+                name="hostingPhone"
+                value={settingsItems.hostingPhone || ''}
+                onChange={changeType}
+                label={terms('hosting.phoneLabel')}
+                placeholder={hostingDefaults.phone}
+              />
+            </div>
+          </form>
+        </div>
       </div>
       {dbContext?.data.currentUser.role === 'admin' && (
         <div className="w-full place-content-center flex flex-row">
