@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { DBContext } from '../database/DBContext.ts';
 import { useTranslation } from 'react-i18next';
 import type { ShopType } from '../interfaces/interfaces.ts';
@@ -14,12 +14,20 @@ import TableViewComponent, {
 } from '../components/elements/TableViewComponent.tsx';
 import TypeModal from '../components/modals/TypeModal.tsx';
 import { downloadAsFile, readJSONFile } from '../utils/general.ts';
+import { typeModalOptions } from '../interfaces/constants.ts';
 
 function Types() {
   const dbContext = useContext(DBContext);
   const { t } = useTranslation();
 
   const [types, setTypes] = useState<ShopType[]>(dbContext?.data.types || []);
+
+  const translatedTypes = useMemo(() => {
+    return typeModalOptions.map((type) => {
+      type.name = t(type.name);
+      return type;
+    });
+  }, [t]);
 
   const [modalTemplate, setModalTemplate] = useState<ShopType | null>(null);
 
@@ -49,7 +57,8 @@ function Types() {
   const tableLines = types.map((type) => {
     return [
       type.name,
-      type.category,
+      translatedTypes.find((t) => t.value === type.category)?.name ||
+        type.category,
       type.translations?.hu || '',
       type.translations?.en || '',
       TableViewActions({

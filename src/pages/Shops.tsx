@@ -156,8 +156,8 @@ function Shops() {
           }
         }}
       />
-      <div className="mt-4 h-80 flex flex-row text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
-        {modalTemplate && (
+      {modalTemplate && (
+        <div className="mt-4 max-w-screen-xl w-full shadow-md self-center">
           <ShopModal
             onClose={() => setModalTemplate(null)}
             onSave={(shop: Shop) => closeShop(shop)}
@@ -165,44 +165,48 @@ function Shops() {
             shop={modalTemplate}
             inPlace={true}
           />
-        )}
-        {importShop && (
-          <ImportShopData
-            onClose={() => setImportShop(null)}
-            shop={importShop}
-            inPlace={false}
-          />
-        )}
-        <MapContainer
-          ref={ref}
-          center={center}
-          zoom={8}
-          scrollWheelZoom={false}
-          style={{ height: '100%', width: '100%', zIndex: '39' }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {shops
-            .filter((s) => s.coordinates instanceof GeoPoint)
-            .map((shop) => (
-              <Marker
-                position={
-                  [
-                    shop.coordinates?.latitude,
-                    shop.coordinates?.longitude,
-                  ] as LatLngTuple
-                }
-              >
-                <Popup>
-                  {shop.name}
-                  <br />
-                  {shop.address || ''}
-                  <br />
-                  {shop.description || ''}
-                </Popup>
-              </Marker>
-            ))}
-        </MapContainer>
-      </div>
+        </div>
+      )}
+      {importShop && (
+        <ImportShopData
+          onClose={() => setImportShop(null)}
+          shop={importShop}
+          inPlace={false}
+        />
+      )}
+      {shops.filter((shop) => shop.coordinates).length ? (
+        <div className="mt-4 h-80 flex flex-row text-sm text-left text-gray-500 dark:text-gray-400 max-w-screen-xl w-full shadow-md self-center">
+          <MapContainer
+            ref={ref}
+            center={center}
+            zoom={8}
+            scrollWheelZoom={false}
+            style={{ height: '100%', width: '100%', zIndex: '39' }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {shops
+              .filter((s) => s.coordinates instanceof GeoPoint)
+              .map((shop) => (
+                <Marker
+                  position={
+                    [
+                      shop.coordinates?.latitude,
+                      shop.coordinates?.longitude,
+                    ] as LatLngTuple
+                  }
+                >
+                  <Popup>
+                    {shop.name}
+                    <br />
+                    {shop.address || ''}
+                    <br />
+                    {shop.description || ''}
+                  </Popup>
+                </Marker>
+              ))}
+          </MapContainer>
+        </div>
+      ) : undefined}
       <div className="flex-1 flex"></div>
     </>
   );

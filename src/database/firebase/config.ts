@@ -1,5 +1,10 @@
 import type { Auth } from 'firebase/auth';
-import { getAuth, initializeAuth, indexedDBLocalPersistence, browserLocalPersistence } from 'firebase/auth';
+import {
+  getAuth,
+  initializeAuth,
+  indexedDBLocalPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
 import FirebaseDBModel from './FirebaseDBModel.ts';
 import type { FirebaseError } from 'firebase/app';
 import STLogger from '../../utils/logger.ts';

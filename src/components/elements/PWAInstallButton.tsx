@@ -17,7 +17,8 @@ export default function PWAInstallButton({
   label = 'Install App',
   onInstalled,
 }: PWAInstallButtonProps) {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {

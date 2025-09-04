@@ -15,8 +15,10 @@ export default function GeneralModal({
   const [throttled, setThrottled] = useState(false);
 
   const formClasses = {
-    inPlace: 'flex flex-col max-h-[58vh] md:max-h-[70vh] overflow-y-auto modalForm',
-    default: 'flex flex-col max-h-[60vh] md:max-h-[72vh] overflow-y-auto modalForm',
+    inPlace:
+      'flex flex-col max-h-[58vh] md:max-h-[70vh] overflow-y-auto modalForm',
+    default:
+      'flex flex-col max-h-[60vh] md:max-h-[72vh] overflow-y-auto modalForm',
   };
 
   if (visible === false) return null;

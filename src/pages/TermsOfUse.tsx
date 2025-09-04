@@ -41,18 +41,53 @@ export default function TermsOfUse() {
       <p className="mb-1">{t('general.phone', { phone })}</p>
 
       <h2 className={sectionTitle}>{t('hosting.title')}</h2>
-      <p className="mb-1 font-medium">{dbContext?.data?.settings?.hostingProvider || hostingDefaults.provider}</p>
-      <p className="mb-1">{t('hosting.hqLabel')}: {dbContext?.data?.settings?.hostingHq || hostingDefaults.hq}</p>
-      <p className="mb-1">{t('hosting.branchLabel')}: {dbContext?.data?.settings?.hostingBranch || hostingDefaults.branch}</p>
-      <p className="mb-1">{t('hosting.taxLabel')}: {dbContext?.data?.settings?.hostingTax || hostingDefaults.tax}</p>
-      <p className="mb-1">{t('hosting.vatLabel')}: {dbContext?.data?.settings?.hostingVat || hostingDefaults.vat}</p>
-      <p className="mb-1">{t('hosting.regLabel')}: {dbContext?.data?.settings?.hostingReg || hostingDefaults.reg}</p>
-      <p className="mb-1">{t('hosting.accountLabel')}: {dbContext?.data?.settings?.hostingAccount || hostingDefaults.account}</p>
-      <p className="mb-1">{t('hosting.swiftLabel')}: {dbContext?.data?.settings?.hostingSwift || hostingDefaults.swift}</p>
-      <p className="mb-1">{t('hosting.ibanLabel')}: {dbContext?.data?.settings?.hostingIban || hostingDefaults.iban}</p>
-      <p className="mb-1">{t('hosting.websiteLabel')}: {dbContext?.data?.settings?.hostingWebsite || hostingDefaults.website}</p>
-      <p className="mb-1">{t('hosting.emailLabel')}: {dbContext?.data?.settings?.hostingEmail || hostingDefaults.email}</p>
-      <p className="mb-1">{t('hosting.phoneLabel')}: {dbContext?.data?.settings?.hostingPhone || hostingDefaults.phone}</p>
+      <p className="mb-1 font-medium">
+        {dbContext?.data?.settings?.hostingProvider || hostingDefaults.provider}
+      </p>
+      <p className="mb-1">
+        {t('hosting.hqLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingHq || hostingDefaults.hq}
+      </p>
+      <p className="mb-1">
+        {t('hosting.branchLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingBranch || hostingDefaults.branch}
+      </p>
+      <p className="mb-1">
+        {t('hosting.taxLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingTax || hostingDefaults.tax}
+      </p>
+      <p className="mb-1">
+        {t('hosting.vatLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingVat || hostingDefaults.vat}
+      </p>
+      <p className="mb-1">
+        {t('hosting.regLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingReg || hostingDefaults.reg}
+      </p>
+      <p className="mb-1">
+        {t('hosting.accountLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingAccount || hostingDefaults.account}
+      </p>
+      <p className="mb-1">
+        {t('hosting.swiftLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingSwift || hostingDefaults.swift}
+      </p>
+      <p className="mb-1">
+        {t('hosting.ibanLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingIban || hostingDefaults.iban}
+      </p>
+      <p className="mb-1">
+        {t('hosting.websiteLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingWebsite || hostingDefaults.website}
+      </p>
+      <p className="mb-1">
+        {t('hosting.emailLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingEmail || hostingDefaults.email}
+      </p>
+      <p className="mb-1">
+        {t('hosting.phoneLabel')}:{' '}
+        {dbContext?.data?.settings?.hostingPhone || hostingDefaults.phone}
+      </p>
 
       <h2 className={sectionTitle}>{t('thirdparty.title')}</h2>
       <p className="mb-1">{t('thirdparty.text1')}</p>

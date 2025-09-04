@@ -429,7 +429,7 @@ export default class FirebaseDBModel extends DBModel {
         currentBatch.delete(doc(this._db, cached.docType as string, id));
         this.removeCachedEntry(id, 'deleted');
         operationCount++;
-        
+
         // If we've reached the batch limit, commit the current batch and start a new one
         if (operationCount >= BATCH_LIMIT) {
           await currentBatch.commit();
@@ -447,7 +447,7 @@ export default class FirebaseDBModel extends DBModel {
     if (operationCount > 0) {
       await currentBatch.commit();
     }
-    
+
     this.sync();
     return this.getAll('deleted');
   }
