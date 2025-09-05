@@ -9,8 +9,10 @@ import {
   getDeviceDebugInfo,
   formatCurrency,
   reduceToRecordById,
+  toSelectOptions,
+  formatDateTimeLocal,
 } from './data';
-import type { CommonCollectionData } from '../interfaces/firebase.ts';
+import type { CommonCollectionData, ContextDataValueType } from '../interfaces/firebase.ts';
 
 describe('utils/data', () => {
   it('should convert Date to user datetime string', () => {
@@ -72,5 +74,39 @@ describe('utils/data', () => {
       { id: 'shop2' },
     ]);
     expect(result).toMatch(/\d{5}/);
+  });
+
+  it('toSelectOptions maps id and selected key to name', () => {
+    const arr: ContextDataValueType[] = [
+      { id: '1', name: 'One', displayName: 'Uno' } as unknown as ContextDataValueType,
+      { id: '2', name: 'Two', displayName: 'Dos' } as unknown as ContextDataValueType,
+    ];
+    const optsDefault = toSelectOptions(arr);
+    expect(optsDefault).toEqual([
+      { name: 'One', value: '1' },
+      { name: 'Two', value: '2' },
+    ]);
+
+    const optsDisplay = toSelectOptions(arr, 'displayName');
+    expect(optsDisplay).toEqual([
+      { name: 'Uno', value: '1' },
+      { name: 'Dos', value: '2' },
+    ]);
+
+    const optsMissing = toSelectOptions([{ id: 'x' } as unknown as ContextDataValueType]);
+    expect(optsMissing).toEqual([{ name: '', value: 'x' }]);
+  });
+
+  it('formatDateTimeLocal formats dates and handles NaN', () => {
+    const date = new Date('2024-06-03T07:08:00Z');
+    const text = formatDateTimeLocal(date);
+    expect(text).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/);
+
+    const ms = Date.parse('2024-06-03T07:08:00Z');
+    const text2 = formatDateTimeLocal(ms);
+    expect(text2).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/);
+
+    // NaN should return '?'
+    expect(formatDateTimeLocal(Number.NaN)).toBe('?');
   });
 });

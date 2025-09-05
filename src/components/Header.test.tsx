@@ -371,4 +371,47 @@ describe('Header', () => {
 
     unmount();
   });
+
+  // Additional tests appended for coverage of specific branches
+  it('loading header shows proper logo per theme', async () => {
+    const { unmount } = renderUI('/', '?page=items');
+    // dark theme -> white logo in loading state
+    (useTheme as unknown as Mock).mockReturnValue({ theme: 'dark' });
+    fireEvent.click(screen.getByTestId('userMenuButton'));
+    fireEvent.click(screen.getByText('Update'));
+    await waitFor(() => expect(screen.getByTestId('loading-spinner')).toBeInTheDocument());
+    const img1 = screen.getByAltText('StorageR Logo');
+    expect(img1).toHaveAttribute('src', '/src/assets/logo_white.svg');
+    unmount();
+
+    // light theme -> normal logo in loading state
+    (useTheme as unknown as Mock).mockReturnValue({ theme: 'light' });
+    renderUI('/', '?page=items');
+    fireEvent.click(screen.getByTestId('userMenuButton'));
+    fireEvent.click(screen.getByText('Update'));
+    await waitFor(() => expect(screen.getByTestId('loading-spinner')).toBeInTheDocument());
+    const img2 = screen.getByAltText('StorageR Logo');
+    expect(img2).toHaveAttribute('src', '/src/assets/logo.svg');
+  });
+
+  it('Leases/Transactions links have inactive styles when not active', () => {
+    // enable features and have a shop so links render
+    shopCtx.shop = { id: 's1', name: 'Shop 1' } as ShopType;
+    dbCtx.data.settings = { ...dbCtx.data.settings, enableLeasing: true, enableTransactions: true };
+
+    renderUI('/', '?page=service');
+
+    // open mobile drawer
+    const toggle = screen.getByRole('button', { name: /open main menu/i });
+    fireEvent.click(toggle);
+
+    // find links and assert they use the inactive style branch (hover:bg... or text-gray-700)
+    const leases = screen.getAllByText('Leases').at(-1)!;
+    const leasesA = leases.closest('a')!;
+    expect(leasesA.className).toMatch(/hover:bg-gray-100|text-gray-700/);
+
+    const tx = screen.getAllByText('Transactions').at(-1)!;
+    const txA = tx.closest('a')!;
+    expect(txA.className).toMatch(/hover:bg-gray-100|text-gray-700/);
+  });
 });
