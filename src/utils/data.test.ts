@@ -12,7 +12,11 @@ import {
   toSelectOptions,
   formatDateTimeLocal,
 } from './data';
-import type { CommonCollectionData, ContextDataValueType } from '../interfaces/firebase.ts';
+import type {
+  CommonCollectionData,
+  ContextDataValueType,
+} from '../interfaces/firebase.ts';
+import type { ServiceData, Shop } from '../interfaces/interfaces.ts';
 
 describe('utils/data', () => {
   it('should convert Date to user datetime string', () => {
@@ -78,8 +82,16 @@ describe('utils/data', () => {
 
   it('toSelectOptions maps id and selected key to name', () => {
     const arr: ContextDataValueType[] = [
-      { id: '1', name: 'One', displayName: 'Uno' } as unknown as ContextDataValueType,
-      { id: '2', name: 'Two', displayName: 'Dos' } as unknown as ContextDataValueType,
+      {
+        id: '1',
+        name: 'One',
+        displayName: 'Uno',
+      } as unknown as ContextDataValueType,
+      {
+        id: '2',
+        name: 'Two',
+        displayName: 'Dos',
+      } as unknown as ContextDataValueType,
     ];
     const optsDefault = toSelectOptions(arr);
     expect(optsDefault).toEqual([
@@ -93,7 +105,9 @@ describe('utils/data', () => {
       { name: 'Dos', value: '2' },
     ]);
 
-    const optsMissing = toSelectOptions([{ id: 'x' } as unknown as ContextDataValueType]);
+    const optsMissing = toSelectOptions([
+      { id: 'x' } as unknown as ContextDataValueType,
+    ]);
     expect(optsMissing).toEqual([{ name: '', value: 'x' }]);
   });
 
@@ -108,5 +122,135 @@ describe('utils/data', () => {
 
     // NaN should return '?'
     expect(formatDateTimeLocal(Number.NaN)).toBe('?');
+  });
+});
+
+describe('utils/data additional coverage', () => {
+  it('generateServiceId uses deleted numeric ids and skips archive (lines 38-40)', () => {
+    const servicedItems = [] as unknown as { id: string }[];
+    const shops = [{ id: 'shop1' }, { id: 'shop2' }];
+    const currentShopId = 'shop2';
+    const deleted = [
+      { id: '00003', docType: 'deleted' },
+      { id: 'abc', docType: 'deleted' },
+      { id: '00005', docType: 'archive' },
+    ] as unknown as ContextDataValueType[];
+
+    const id = generateServiceId(
+      servicedItems as ServiceData[],
+      currentShopId,
+      shops as Shop[],
+      deleted,
+    );
+    expect(id).toMatch(/^\d{5}$/);
+    // With lastNumber based on 3 and shopIndex=1, next id should be 00004
+    expect(id).toBe('00004');
+  });
+
+  it('getChangedFields handles arrays with different lengths (lines 93-94, 104)', () => {
+    const oldObj = { arr: [1] } as unknown as CommonCollectionData;
+    const newObj = { arr: [1, 2] } as unknown as CommonCollectionData;
+    const changes = getChangedFields(oldObj, newObj);
+    expect(changes).toHaveProperty('arr');
+    expect(changes.arr.index).toBe(1);
+    expect(changes.arr.from).toBe('undefined');
+    expect(changes.arr.to).toBe(2);
+  });
+
+  it('getBrowserInfo detects Edge, Firefox, Safari, Opera, Unknown and mobile flag (133-147)', () => {
+    const edgeUA =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.2478.80';
+    const firefoxUA =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0';
+    const safariUA =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Safari/605.1.15';
+    const operaUA = 'OPR/107.0.0.0';
+    const unknownUA = 'SomeBot/1.0';
+    const mobileUA =
+      'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Mobile Safari/537.36';
+
+    const edge = getBrowserInfo(edgeUA);
+    expect(edge.name).toBe('Edge');
+    expect(edge.version).toMatch(/\d+/);
+
+    const ff = getBrowserInfo(firefoxUA);
+    expect(ff.name).toBe('Firefox');
+    expect(ff.version).toMatch(/\d+/);
+
+    const safari = getBrowserInfo(safariUA);
+    expect(safari.name).toBe('Safari');
+    expect(safari.version).toMatch(/\d+/);
+
+    const opera = getBrowserInfo(operaUA);
+    expect(opera.name).toBe('Opera');
+    expect(opera.version).toMatch(/\d+/);
+
+    const unk = getBrowserInfo(unknownUA);
+    expect(unk.name).toBe('Unknown');
+    expect(unk.version).toBe('');
+    expect(unk.isMobile).toBe(false);
+
+    const mob = getBrowserInfo(mobileUA);
+    expect(mob.isMobile).toBe(true);
+  });
+
+  it('getDeviceDebugInfo orientation fallback and hardwareConcurrency fallback (178-184, 187)', () => {
+    const originalScreen = globalThis.screen;
+    const originalOrientation = window.orientation;
+    const originalHW = Object.getOwnPropertyDescriptor(
+      // @ts-expect-error legacy support
+      window.navigator.__proto__ ?? window.navigator,
+      'hardwareConcurrency',
+    );
+
+    // Mock screen without orientation, window.orientation = 90 => landscape
+    globalThis.screen = {
+      width: 1920,
+      height: 1080,
+      availWidth: 1900,
+      availHeight: 1040,
+      orientation: undefined as unknown as ScreenOrientation,
+    } as Screen;
+    (window as typeof globalThis).innerWidth = 1200;
+    (window as typeof globalThis).innerHeight = 800;
+    (window as typeof globalThis).devicePixelRatio = 2;
+    Object.defineProperty(window.navigator, 'hardwareConcurrency', {
+      configurable: true,
+      value: undefined, // trigger fallback to 'unknown'
+    });
+
+    (window as typeof globalThis).orientation = 90;
+    let info = getDeviceDebugInfo();
+    expect(info.screen.orientation).toBe('landscape');
+    expect(info.viewport.innerWidth).toBe(1200);
+    expect(info.devicePixelRatio).toBe(2);
+    expect(info.hardwareConcurrency).toBe('unknown');
+
+    // Now window.orientation = 0 => portrait
+    (window as typeof globalThis).orientation = 0;
+    info = getDeviceDebugInfo();
+    expect(info.screen.orientation).toBe('portrait');
+
+    // Now no window.orientation => unknown
+    (window as typeof globalThis).orientation = undefined as unknown as number;
+    info = getDeviceDebugInfo();
+    expect(info.screen.orientation).toBe('unknown');
+
+    // Restore mocks
+    if (originalHW) {
+      Object.defineProperty(
+        window.navigator,
+        'hardwareConcurrency',
+        originalHW,
+      );
+    }
+    globalThis.screen = originalScreen;
+    (window as typeof globalThis).orientation = originalOrientation;
+  });
+
+  it('formatCurrency handles non-HUF with decimals (207-209)', () => {
+    const eur = formatCurrency(1234.5, 'EUR');
+    // hu-HU locale uses comma as decimal separator; expect EUR code and two decimals
+    expect(eur).toMatch(/^1\s?234,50\s?EUR$/);
   });
 });
