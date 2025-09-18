@@ -4,28 +4,27 @@
 
 ![Preview](./public/img/screenshot.png)
 
-Lightweight Cloud based storage and service management application based on React, Typescript and Tailwind.
+Lightweight cloud-based storage and service management application built with React, TypeScript, and TailwindCSS.
 
 ## Getting started 🚀
 
-### Preparing Cloud Environment ☁️
+### Preparing the Cloud Environment ☁️
 
-In order to have StorageR application functional we need to create a .env file based on our available .env.template
+To run StorageR locally, create a .env file based on the provided .env.template.
 
-We need to create a Google Firebase Project in Google Console for this here: https://console.firebase.google.com/project/
+Create a Google Firebase project in the Firebase console: https://console.firebase.google.com/project/
 
-After you have the access to Firebase Dashboard use the following steps:
+After you have access to the Firebase dashboard, follow these steps:
 
 - Create a Web App
-    - Open **Project settings**
-    - Under Your apps section click the **Add app** button and click to the third **Web App** button
-    - On the next page Add a nickname to your app and click to **Register app** button and then **Continue to console**
-    - Now in the **Your apps** section you can see all of the details you need to put in your **.env** file
+  - Open **Project settings**
+  - Under Your apps section click the **Add app** button and click to the third **Web App** button
+  - On the next page Add a nickname to your app and click to **Register app** button and then **Continue to console**
+  - Now in the **Your apps** section you can see all of the details you need to put in your **.env** file
 - Setup collection Rules
-    - Open Firestore Database in Build Menu
-    - Open Rules tab, and update it in order to have proper connection with your app
-      - **DEV**: You can use the following in _DEV_ environments: ```allow read, write: if request.time < timestamp.date(2050, 11, 30);```
-
+  - Open Firestore Database in Build Menu
+  - Open Rules tab, and update it in order to have proper connection with your app
+    - **DEV**: You can use the following in _DEV_ environments: `allow read, write: if request.time < timestamp.date(2050, 11, 30);`
 
 ### Environment Setup
 
@@ -35,9 +34,13 @@ After you have the access to Firebase Dashboard use the following steps:
 npm install
 ```
 
-2. Create a .env file based on .env.template
+2. Create a .env file from the provided .env.template
+
 ```bash
-cp .env.example .env
+# Windows PowerShell
+copy .env.template .env
+# macOS/Linux
+cp .env.template .env
 ```
 
 3. Setup environment variables based on your GCP Firebase cloud setup
@@ -58,28 +61,40 @@ VITE_FIREBASE_DB_SERVICES=services
 VITE_FIREBASE_DB_COMPLETIONS=completions
 VITE_FIREBASE_DB_SETTINGS=settings
 VITE_FIREBASE_DB_USERS=users
+VITE_FIREBASE_DB_ARCHIVE=archive
+VITE_FIREBASE_DB_INVOICES=invoices
+VITE_FIREBASE_DB_TRANSACTIONS=transactions
+VITE_FIREBASE_DB_LEASES=leases
+VITE_FIREBASE_DB_LEASE_COMPLETIONS=leaseCompletions
 
 VITE_BASENAME=/
 ```
 
 4. Start the development server 🔥
+
 ```bash
-npm dev
+npm run dev
 ```
-It will automatically open [http://localhost:5173](http://localhost:5173) with your primary browser.
+
+Then open http://localhost:5173 in your browser.
 
 5. Build when you are ready
+
 ```bash
-npm build
+npm run build
 ```
 
-
-
+- For test build: `npm run build:test`
+- For production build: `npm run build:prod`
 
 ## Contribute
 
 There are many ways to [contribute](./CONTRIBUTING.md) to StorageR.
-* [Submit bugs](https://github.com/Reterics/storager/issues) and help us verify fixes as they are checked in.
-* Review the [source code changes](https://github.com/Reterics/storager/pulls).
-* [Contribute bug fixes](https://github.com/Reterics/storager/blob/main/CONTRIBUTING.md).
 
+- [Submit bugs](https://github.com/Reterics/storager/issues) and help us verify fixes as they are checked in.
+- Review the [source code changes](https://github.com/Reterics/storager/pulls).
+- [Contribute bug fixes](https://github.com/Reterics/storager/blob/main/CONTRIBUTING.md).
+
+## License
+
+[MIT](./LICENSE) — use freely, modify locally, and share improvements.
