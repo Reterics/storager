@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { DBContext } from '../database/DBContext.ts';
 import { useTranslation } from 'react-i18next';
 import type { Shop } from '../interfaces/interfaces.ts';
@@ -17,6 +17,7 @@ import type {
   ContextDataType,
 } from '../interfaces/firebase.ts';
 import { getIconForDeviceType } from '../utils/typedIcons.tsx';
+import { MiniTopChart } from '../components/elements/MiniTopChart.tsx';
 
 export default function Logs() {
   const dbContext = useContext(DBContext);
@@ -47,6 +48,54 @@ export default function Logs() {
   const [tableLimits, setTableLimits] = useState<number>(100);
   const [shopFilter, setShopFilter] = useState<string>('');
   const [logs, setLogs] = useState<LogEntry[]>(filterItems(shopFilter));
+
+  const last24hData = useMemo(() => {
+    // Align end to nearest 15 minutes
+    const end = new Date();
+    end.setMinutes(Math.floor(end.getMinutes() / 15) * 15, 0, 0);
+
+    const buckets: {
+      label: string;
+      start: number;
+      end: number;
+      count: number;
+    }[] = [];
+
+    // Create 96 buckets (24 hours * 4 per hour)
+    for (let i = 95; i >= 0; i--) {
+      const start = new Date(end);
+      start.setMinutes(end.getMinutes() - i * 15);
+
+      const bucketStart = new Date(start);
+      const bucketEnd = new Date(start);
+      bucketEnd.setMinutes(bucketEnd.getMinutes() + 15);
+
+      const label = `${String(bucketStart.getHours()).padStart(2, '0')}:${String(
+        bucketStart.getMinutes(),
+      ).padStart(2, '0')}`;
+
+      buckets.push({
+        label,
+        start: bucketStart.getTime(),
+        end: bucketEnd.getTime(),
+        count: 0,
+      });
+    }
+
+    for (const log of logs) {
+      const ts = (log.at ?? log.docUpdated) || 0;
+      if (!ts) continue;
+      for (let i = 0; i < buckets.length; i++) {
+        const b = buckets[i];
+        if (ts >= b.start && ts < b.end) {
+          b.count++;
+          break;
+        }
+      }
+    }
+
+    return buckets.map((b) => ({ time: b.label, count: b.count }));
+  }, [logs]);
 
   const selectShopFilter = (shop: string) => {
     setShopFilter(shop);
@@ -171,6 +220,16 @@ Viewport:
         shopFilter={shopFilter}
         setShopFilter={selectShopFilter}
       />
+
+      <div className="flex w-full justify-center mb-2 mt-1">
+        <MiniTopChart
+          data={last24hData}
+          xKey="time"
+          yKey="count"
+          kind="bar"
+          className="text-zinc-700"
+        />
+      </div>
 
       <TableViewComponent
         lines={tableLines}
