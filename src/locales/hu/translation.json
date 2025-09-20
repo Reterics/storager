@@ -249,5 +249,20 @@
   "Qty.": "Db.",
   "All users": "Mindenki",
   "Back": "Vissza",
-  "Registration Number": "Nyilvántartási szám"
+  "Registration Number": "Nyilvántartási szám",
+  "Logs": "Napló",
+  "Entity": "Elem",
+  "Action": "Művelet",
+  "Email / UID": "Email / UID",
+  "Device": "Eszköz",
+  "User Agent": "Böngésző",
+  "Changes": "Változások",
+  "Are you sure you wish to delete this Log?": "Biztosan törlöd az alábbi naplóbejegyzést?",
+  "Showing events for {{bucket}} (15 min window)": "Események megjelenítése {{bucket}} időpontra (15 perces ablak)",
+  "Clear": "Törlés",
+  "No changes": "Nincs változás",
+  "Minden bolt": "Minden bolt",
+  "Logging is not active in the system.": "A naplózás nincs bekapcsolva a rendszerben.",
+  "(Mobile)": "(Mobil)",
+  "(Web)": "(Web)"
 }

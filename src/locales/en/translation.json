@@ -249,5 +249,20 @@
   "Qty.": "Qty.",
   "All users": "All users",
   "Back": "Back",
-  "Registration Number": "Registration Number"
+  "Registration Number": "Registration Number",
+  "Logs": "Logs",
+  "Entity": "Entity",
+  "Action": "Action",
+  "Email / UID": "Email / UID",
+  "Device": "Device",
+  "User Agent": "User Agent",
+  "Changes": "Changes",
+  "Are you sure you wish to delete this Log?": "Are you sure you wish to delete this Log?",
+  "Showing events for {{bucket}} (15 min window)": "Showing events for {{bucket}} (15 min window)",
+  "Clear": "Clear",
+  "No changes": "No changes",
+  "Minden bolt": "All shop",
+  "Logging is not active in the system.": "Logging is not active in the system.",
+  "(Mobile)": "(Mobile)",
+  "(Web)": "(Web)"
 }

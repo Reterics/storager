@@ -49,6 +49,8 @@ export default function Logs() {
   const [shopFilter, setShopFilter] = useState<string>('');
   const [logs, setLogs] = useState<LogEntry[]>(filterItems(shopFilter));
 
+  const [selectedBucket, setSelectedBucket] = useState<string | null>(null);
+
   const last24hData = useMemo(() => {
     // Align end to nearest 15 minutes
     const end = new Date();
@@ -115,6 +117,20 @@ export default function Logs() {
     }
   };
 
+  const visibleLogs = useMemo(() => {
+    if (!selectedBucket) return logs;
+    // selectedBucket is 'HH:MM'
+    return logs.filter((log) => {
+      const ts = (log.at ?? log.docUpdated) || 0;
+      if (!ts) return false;
+      const d = new Date(ts);
+      const label = `${String(d.getHours()).padStart(2, '0')}:${String(
+        d.getMinutes() - (d.getMinutes() % 15),
+      ).padStart(2, '0')}`;
+      return label === selectedBucket;
+    });
+  }, [logs, selectedBucket]);
+
   if (!dbContext?.data.currentUser) {
     return <UnauthorizedComponent />;
   }
@@ -122,7 +138,8 @@ export default function Logs() {
   if (!firebaseModel.isLoggingActive()) {
     return <div>Logging is not active in the system.</div>;
   }
-  const tableLines = logs.map((log) => {
+
+  const tableLines = visibleLogs.map((log) => {
     let entityName = (log.item_name && log.entity) || '';
     if (!log.item_name && log.entity) {
       const [type, id] = log.entity.split('/');
@@ -219,7 +236,21 @@ Viewport:
         setTableLimits={setTableLimits}
         shopFilter={shopFilter}
         setShopFilter={selectShopFilter}
-      />
+      >
+        {selectedBucket && (
+          <div className="flex flex-1 w-full items-center justify-center p-2 pt-1.5 pb-1.5 text-sm border rounded-lg">
+            <span className="mr-2">
+              {t('Showing events for {{bucket}} (15 min window)', { bucket: selectedBucket })}
+            </span>
+            <button
+              className="underline"
+              onClick={() => setSelectedBucket(null)}
+            >
+              {t('Clear')}
+            </button>
+          </div>
+        )}
+      </PageHead>
 
       <div className="flex w-full justify-center mb-2 mt-1">
         <MiniTopChart
@@ -228,6 +259,12 @@ Viewport:
           yKey="count"
           kind="bar"
           className="text-zinc-700"
+          onBarClick={(data: { payload?: { time?: string } }) => {
+            const label = data?.payload?.time || null;
+            setSelectedBucket((prev) =>
+              prev === label ? null : (label ?? null),
+            );
+          }}
         />
       </div>
 

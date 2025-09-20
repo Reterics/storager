@@ -10,12 +10,13 @@ import {
 } from 'recharts';
 import type { TooltipProps } from 'recharts';
 
-type MiniTopChartProps = {
-  data: Array<Record<string, number | string>>;
+type MiniTopChartProps<T> = {
+  data: Array<T>;
   xKey: string;
   yKey: string;
   kind?: 'line' | 'bar';
   className?: string;
+  onBarClick?: (payload: { payload?: T }, index: number) => void;
 };
 
 function formatLabel(label: unknown) {
@@ -63,7 +64,8 @@ export function MiniTopChart({
   yKey,
   kind = 'line',
   className = '',
-}: MiniTopChartProps) {
+  onBarClick,
+}: MiniTopChartProps<Record<string, number | string>>) {
   const commonAxes = (
     <>
       <XAxis
@@ -106,10 +108,12 @@ export function MiniTopChart({
             {commonAxes}
             {commonTooltip}
             <Bar
+              minPointSize={1}
               dataKey={yKey}
               fill="currentColor"
               radius={[2, 2, 0, 0]}
               isAnimationActive={false}
+              onClick={onBarClick}
             />
           </BarChart>
         ) : (
