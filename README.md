@@ -21,10 +21,16 @@ After you have access to the Firebase dashboard, follow these steps:
   - Under Your apps section click the **Add app** button and click to the third **Web App** button
   - On the next page Add a nickname to your app and click to **Register app** button and then **Continue to console**
   - Now in the **Your apps** section you can see all of the details you need to put in your **.env** file
-- Setup collection Rules
-  - Open Firestore Database in Build Menu
-  - Open Rules tab, and update it in order to have proper connection with your app
-    - **DEV**: You can use the following in _DEV_ environments: `allow read, write: if request.time < timestamp.date(2050, 11, 30);`
+- Setup Firebase Rules
+  - Firestore: Use the provided firestore.rules in the project root
+  - Storage: Use the provided storage.rules in the project root
+  - Deploy with Firebase CLI:
+    ```bash
+    firebase login
+    firebase init # choose Firestore and Storage, point to firestore.rules and storage.rules
+    firebase deploy --only firestore:rules,storage
+    ```
+  - For temporary DEV-only testing you can relax rules, but prefer using the provided authenticated rules.
 
 ### Environment Setup
 
