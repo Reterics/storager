@@ -16,6 +16,7 @@ import StyledMultiSelect from '../elements/StyledMultiSelect.tsx';
 import './ServiceModal.css';
 import { DBContext } from '../../database/DBContext.ts';
 import { getTranslatedSelectOptions } from '../../utils/translation.ts';
+import { exportSignatureAsJpeg } from '../../utils/signature.ts';
 
 export default function ServiceModal({
   id,
@@ -55,7 +56,7 @@ export default function ServiceModal({
           alert(t('You must sign before you save.'));
           return false;
         } else if (signaturePad) {
-          service.signature = signaturePad.toDataURL('image/jpeg');
+          service.signature = exportSignatureAsJpeg(signaturePad);
         }
         return onSave(service);
       },

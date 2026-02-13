@@ -203,6 +203,8 @@ export default abstract class DBModel {
     const collection = this.getCached(table);
     if (collection) {
       collection.push(data);
+    } else if (Array.isArray(this._cache[table])) {
+      this._cache[table].push(data);
     } else {
       this._cache[table] = [data];
     }

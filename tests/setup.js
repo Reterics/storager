@@ -27,4 +27,19 @@ beforeAll(() => {
             };
         },
     }));
+
+    vi.mock('react-signature-pad-wrapper', () => {
+        const { forwardRef, useImperativeHandle } = require('react');
+        const SignaturePad = forwardRef((_props, ref) => {
+            useImperativeHandle(ref, () => ({
+                isEmpty: () => true,
+                clear: () => {},
+                toDataURL: () => '',
+                fromDataURL: () => {},
+            }));
+            return require('react').createElement('canvas', { 'data-testid': 'signature-pad' });
+        });
+        SignaturePad.displayName = 'SignaturePad';
+        return { default: SignaturePad };
+    });
 });

@@ -9,6 +9,7 @@ import SignaturePad from 'react-signature-pad-wrapper';
 import GeneralModal from './GeneralModal.tsx';
 import FormRow from '../elements/FormRow.tsx';
 import StyledInput from '../elements/StyledInput.tsx';
+import { exportSignatureAsJpeg } from '../../utils/signature.ts';
 
 export default function LeaseCompletionModal({
   id,
@@ -41,7 +42,7 @@ export default function LeaseCompletionModal({
           alert(t('You must sign before you save.'));
           return false;
         } else if (signaturePad) {
-          formData.signature = signaturePad.toDataURL('image/jpeg');
+          formData.signature = exportSignatureAsJpeg(signaturePad);
         }
 
         return onSave(formData);

@@ -13,6 +13,7 @@ import FormRow from '../elements/FormRow.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
 import StyledMultiSelect from '../elements/StyledMultiSelect.tsx';
 import { DBContext } from '../../database/DBContext.ts';
+import { exportSignatureAsJpeg } from '../../utils/signature.ts';
 
 export default function ServiceCompletionModal({
   id,
@@ -51,7 +52,7 @@ export default function ServiceCompletionModal({
           alert(t('You must sign before you save.'));
           return false;
         } else if (signaturePad) {
-          formData.signature = signaturePad.toDataURL('image/jpeg');
+          formData.signature = exportSignatureAsJpeg(signaturePad);
         }
 
         return onSave(formData);

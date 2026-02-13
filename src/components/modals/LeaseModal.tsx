@@ -13,6 +13,7 @@ import StyledInput from '../elements/StyledInput.tsx';
 import GeneralModal from './GeneralModal.tsx';
 import StyledSelect from '../elements/StyledSelect.tsx';
 import { getTranslatedSelectOptions } from '../../utils/translation.ts';
+import { exportSignatureAsJpeg } from '../../utils/signature.ts';
 
 export default function LeaseModal({
   id,
@@ -46,7 +47,7 @@ export default function LeaseModal({
           alert(t('You must sign before you save.'));
           return false;
         } else if (signaturePad) {
-          lease.signature = signaturePad.toDataURL('image/jpeg');
+          lease.signature = exportSignatureAsJpeg(signaturePad);
         }
         return onSave(lease);
       },

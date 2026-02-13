@@ -342,7 +342,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       item.id = item.docParent;
     }
 
-    console.log('Created document with ID:', item.id, ' in ', key);
+    console.log('Updated document with ID:', item.id, ' in ', key);
 
     if (ctxData) {
       // FirebaseModel above build up the cache, so we need just to refresh data from it here
