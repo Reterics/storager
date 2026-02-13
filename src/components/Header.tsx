@@ -90,6 +90,18 @@ const Header = () => {
         await dbContext?.refreshData('parts');
         await dbContext?.refreshData('users');
         break;
+      case 'invoices':
+        await dbContext?.refreshData('invoices');
+        await dbContext?.refreshData('users');
+        break;
+      case 'leases':
+        await dbContext?.refreshData('leases');
+        await dbContext?.refreshData('users');
+        break;
+      case 'transactions':
+        await dbContext?.refreshData('transactions');
+        await dbContext?.refreshData('users');
+        break;
       case 'service':
       case 'recycle':
         firebaseModel.invalidateCache('deleted');
@@ -97,7 +109,8 @@ const Header = () => {
         firebaseModel.invalidateCache('services');
         firebaseModel.invalidateCache('leaseCompletions');
         firebaseModel.invalidateCache('completions');
-        await dbContext?.refreshData('users');
+        // Refresh without a key triggers a full context reload for these multi-collection pages
+        await dbContext?.refreshData();
         break;
       case 'settings':
         await dbContext?.refreshData('settings');

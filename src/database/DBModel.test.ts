@@ -281,6 +281,15 @@ describe('DBModel', () => {
     model.updateCache('leaseCompletions', [
       { id: 'lc1' } as unknown as CommonCollectionData,
     ]);
+    model.updateCache('logs', [
+      { id: 'lg1' } as unknown as CommonCollectionData,
+    ]);
+    model.updateCache('invoices', [
+      { id: 'inv1' } as unknown as CommonCollectionData,
+    ]);
+    model.updateCache('transactions', [
+      { id: 'tr1' } as unknown as CommonCollectionData,
+    ]);
 
     await model.savePersisted();
     expect(saveToIndexedDB).toHaveBeenCalledWith('shops', expect.anything());
@@ -301,6 +310,12 @@ describe('DBModel', () => {
       'leaseCompletions',
       expect.anything(),
     );
+    expect(saveToIndexedDB).toHaveBeenCalledWith('logs', expect.anything());
+    expect(saveToIndexedDB).toHaveBeenCalledWith('invoices', expect.anything());
+    expect(saveToIndexedDB).toHaveBeenCalledWith(
+      'transactions',
+      expect.anything(),
+    );
     expect(saveToIndexedDB).toHaveBeenCalledWith('ttl', expect.anything());
     expect(saveToIndexedDB).toHaveBeenCalledWith('mtime', expect.anything());
 
@@ -315,13 +330,15 @@ describe('DBModel', () => {
     const saveSpy = vi
       .spyOn(model, 'savePersisted')
       .mockResolvedValue(undefined as unknown as void);
-    // schedule first
+    // First sync call persists immediately (initial load fast-path)
     model.sync(100);
-    // schedule second before firing
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    // Subsequent calls use debounce; second should cancel the first timer
+    model.sync(100);
     model.sync(100);
     // Fast-forward timers
     vi.advanceTimersByTime(120);
-    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(saveSpy).toHaveBeenCalledTimes(2);
   });
 
   it('loadPersisted handles error and does not set cache (covers catch at lines 48-49)', async () => {

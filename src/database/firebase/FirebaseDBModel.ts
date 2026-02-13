@@ -278,6 +278,7 @@ export default class FirebaseDBModel extends DBModel {
   async getAll(
     table: string,
     force?: boolean,
+    coldStartMaxAgeDays?: number,
   ): Promise<CommonCollectionData[]> {
     let after = force ? 0 : this.getMTime(table);
     const now = new Date().getTime();
@@ -297,6 +298,11 @@ export default class FirebaseDBModel extends DBModel {
       return cached || [];
     }
     const receivedData: CommonCollectionData[] = cached || [];
+
+    // On a cold start for large collections, limit to recent documents only
+    if (!after && coldStartMaxAgeDays) {
+      after = now - coldStartMaxAgeDays * 24 * 60 * 60 * 1000;
+    }
 
     try {
       // Apply a condition to only get documents where docUpdated > after the last cache modification

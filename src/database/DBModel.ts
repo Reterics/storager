@@ -10,11 +10,32 @@ export default abstract class DBModel {
   protected _ttl: TTLData;
   protected _mtime: TTLData;
   protected _timeout: NodeJS.Timeout | undefined;
+  private _initialLoadDone = false;
+  private _beforeUnloadBound = false;
 
   protected constructor(options?: { ttl?: TTLData; mtime?: TTLData }) {
     this._cache = {};
     this._ttl = options && options.ttl ? options.ttl : {};
     this._mtime = options && options.mtime ? options.mtime : {};
+    this._bindBeforeUnload();
+  }
+
+  private _bindBeforeUnload() {
+    if (
+      this._beforeUnloadBound ||
+      typeof window === 'undefined' ||
+      typeof navigator === 'undefined'
+    ) {
+      return;
+    }
+    this._beforeUnloadBound = true;
+    window.addEventListener('beforeunload', () => {
+      // Best-effort only: browsers may kill the page before async IndexedDB writes finish.
+      // The primary persistence mechanism is sync() which debounces savePersisted() after
+      // every cache mutation. This handler is a last-resort attempt for unsaved changes
+      // (e.g. data fetched just before the user closes the tab).
+      void this.savePersisted();
+    });
   }
 
   async loadPersisted() {
@@ -40,6 +61,13 @@ export default abstract class DBModel {
         leases: (await loadFromIndexedDB('leases')) as CommonCollectionData[],
         leaseCompletions: (await loadFromIndexedDB(
           'leaseCompletions',
+        )) as CommonCollectionData[],
+        logs: (await loadFromIndexedDB('logs')) as CommonCollectionData[],
+        invoices: (await loadFromIndexedDB(
+          'invoices',
+        )) as CommonCollectionData[],
+        transactions: (await loadFromIndexedDB(
+          'transactions',
         )) as CommonCollectionData[],
       };
       ttl = (await loadFromIndexedDB('ttl')) as TTLData;
@@ -76,6 +104,9 @@ export default abstract class DBModel {
         'leaseCompletions',
         this._cache['leaseCompletions'],
       );
+      await saveToIndexedDB('logs', this._cache['logs']);
+      await saveToIndexedDB('invoices', this._cache['invoices']);
+      await saveToIndexedDB('transactions', this._cache['transactions']);
       await saveToIndexedDB('ttl', this._ttl);
       await saveToIndexedDB('mtime', this._mtime);
     } catch (e) {
@@ -87,6 +118,14 @@ export default abstract class DBModel {
     if (this._timeout) {
       clearTimeout(this._timeout);
     }
+
+    // On first load, persist immediately so a quick refresh doesn't lose the cache
+    if (!this._initialLoadDone) {
+      this._initialLoadDone = true;
+      void this.savePersisted();
+      return;
+    }
+
     this._timeout = setTimeout(() => {
       void this.savePersisted();
     }, ms);

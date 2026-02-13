@@ -19,6 +19,7 @@ const storageTTL = {
   hot: refreshRate.hours * 12,
   warm: refreshRate.hours * 24 * 2,
   cold: refreshRate.hours * 24 * 7,
+  frozen: refreshRate.hours * 24 * 365,
 };
 
 export const modules = {
@@ -61,6 +62,9 @@ export const firebaseModel = new FirebaseDBModel({
     types: storageTTL.cold,
     leases: storageTTL.cold,
     leaseCompletions: storageTTL.cold,
+    logs: storageTTL.frozen,
+    invoices: storageTTL.frozen,
+    transactions: storageTTL.frozen,
   },
   enableLogs: modules.logs,
   transactions: modules.transactions,
@@ -94,8 +98,13 @@ export const firebaseAuthError = _firebaseAuthError;
 export const getCollection = async <T extends ContextDataCollectionType>(
   table: string,
   force?: boolean,
+  coldStartMaxAgeDays?: number,
 ) => {
-  return (await firebaseModel.getAll(table, force)) as unknown as T[];
+  return (await firebaseModel.getAll(
+    table,
+    force,
+    coldStartMaxAgeDays,
+  )) as unknown as T[];
 };
 
 export const getById = (id: string, table: string) => {

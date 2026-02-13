@@ -313,7 +313,7 @@ describe('Header', () => {
             configModule.firebaseModel.invalidateCache,
           ).toHaveBeenCalledWith(k),
         );
-        expect(dbCtx.refreshData).toHaveBeenCalledWith('users');
+        expect(dbCtx.refreshData).toHaveBeenCalledWith();
       });
 
       unmount();
@@ -379,7 +379,9 @@ describe('Header', () => {
     (useTheme as unknown as Mock).mockReturnValue({ theme: 'dark' });
     fireEvent.click(screen.getByTestId('userMenuButton'));
     fireEvent.click(screen.getByText('Update'));
-    await waitFor(() => expect(screen.getByTestId('loading-spinner')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument(),
+    );
     const img1 = screen.getByAltText('StorageR Logo');
     expect(img1).toHaveAttribute('src', '/src/assets/logo_white.svg');
     unmount();
@@ -389,7 +391,9 @@ describe('Header', () => {
     renderUI('/', '?page=items');
     fireEvent.click(screen.getByTestId('userMenuButton'));
     fireEvent.click(screen.getByText('Update'));
-    await waitFor(() => expect(screen.getByTestId('loading-spinner')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument(),
+    );
     const img2 = screen.getByAltText('StorageR Logo');
     expect(img2).toHaveAttribute('src', '/src/assets/logo.svg');
   });
@@ -397,7 +401,11 @@ describe('Header', () => {
   it('Leases/Transactions links have inactive styles when not active', () => {
     // enable features and have a shop so links render
     shopCtx.shop = { id: 's1', name: 'Shop 1' } as ShopType;
-    dbCtx.data.settings = { ...dbCtx.data.settings, enableLeasing: true, enableTransactions: true };
+    dbCtx.data.settings = {
+      ...dbCtx.data.settings,
+      enableLeasing: true,
+      enableTransactions: true,
+    };
 
     renderUI('/', '?page=service');
 

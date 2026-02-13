@@ -41,6 +41,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const shopContext = useContext(ShopContext);
   const [ctxData, setCtxData] = useState<ContextData | null>(null);
   const renderAfterCalled = useRef(false);
+  const contextLoadInFlight = useRef<Promise<void> | null>(null);
 
   const postProcessStoreData = async (array: StoreItem[] | StorePart[]) => {
     if (Array.isArray(array)) {
@@ -81,11 +82,20 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const getContextData = async (cache: boolean = false) => {
-    let users = (await getCollection(
-      firebaseCollections.users,
-      true,
-    )) as UserData[];
+  const getContextData = (): Promise<void> => {
+    // Prevent concurrent full-context loads; if one is in-flight, reuse its promise
+    if (contextLoadInFlight.current) {
+      return contextLoadInFlight.current;
+    }
+    const promise = _getContextDataImpl().finally(() => {
+      contextLoadInFlight.current = null;
+    });
+    contextLoadInFlight.current = promise;
+    return promise;
+  };
+
+  const _getContextDataImpl = async () => {
+    let users = (await getCollection(firebaseCollections.users)) as UserData[];
     let services: ServiceData[] = [];
     let completions: ServiceCompleteData[] = [];
     let settings: SettingsItems = {
@@ -153,6 +163,8 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         logs = modules.logs
           ? ((await getCollection(
               firebaseCollections.logs,
+              false,
+              30,
             )) as unknown as LogEntry[])
           : [];
       }
@@ -216,9 +228,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     await postProcessStoreData(items);
     await postProcessStoreData(parts);
 
-    if (cache) {
-      firebaseModel.sync(0);
-    }
+    firebaseModel.sync(0);
 
     firebaseModel.enableTransactions = !!settings.enableTransactions;
     firebaseModel.enableLogs = !!settings.enableLogs;
@@ -412,12 +422,27 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const refreshData = async (key?: ContextDataType) => {
-    let updateLocalCache = false;
     if (key) {
+      // Only re-fetch the single requested collection instead of all collections
       firebaseModel.invalidateCache(key);
-      updateLocalCache = true;
+      const freshData = await getCollection(firebaseCollections[key]);
+      if (key === 'items' || key === 'parts') {
+        await postProcessStoreData(freshData as StoreItem[] | StorePart[]);
+      }
+      setCtxData((prev) => {
+        if (!prev) return prev;
+        if (key === 'settings') {
+          return {
+            ...prev,
+            settings: (freshData as SettingsItems[])[0] ?? prev.settings,
+          };
+        }
+        return { ...prev, [key]: freshData };
+      });
+      firebaseModel.sync();
+    } else {
+      await getContextData();
     }
-    await getContextData(updateLocalCache);
   };
 
   const updateLatestContext = async (key: ContextDataType) => {
@@ -455,7 +480,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         .finally(() =>
           imageModel.integrityCheck(firebaseModel.getCached('items')),
         )
-        .finally(() => getContextData(true))
+        .finally(() => getContextData())
         .finally(() => firebaseModel.setUser(authContext.user))
         .finally(() => firebaseModel.setShopId(shopContext.shop?.id));
     }
