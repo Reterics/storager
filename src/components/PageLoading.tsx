@@ -1,9 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/logo.svg';
-import LoadingIcon from './elements/LoadingIcon.tsx';
 
-const PageLoading = () => {
+export interface LoadingProgress {
+  current: number;
+  total: number;
+  label: string;
+}
+
+const PageLoading = ({ progress }: { progress?: LoadingProgress }) => {
   const { t } = useTranslation();
+  const percent = progress ? Math.round((progress.current / progress.total) * 100) : 0;
 
   return (
     <div className="page-loading fixed top-0 h-svh w-full bg-gray-50 dark:bg-gray-900 flex flex-col justify-center items-center z-50">
@@ -16,8 +22,17 @@ const PageLoading = () => {
           StorageR
         </a>
 
-        <LoadingIcon />
-        <div className={'font-normal text-xl mt-2'}>{t('Loading')}...</div>
+        <div className="w-64">
+          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <div className="font-normal text-sm mt-2 text-center text-gray-600 dark:text-gray-400">
+            {progress ? t(progress.label) : t('Loading')}...
+          </div>
+        </div>
       </div>
     </div>
   );

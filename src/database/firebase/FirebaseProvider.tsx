@@ -28,6 +28,7 @@ import type {
   UserData,
 } from '../../interfaces/interfaces.ts';
 import PageLoading from '../../components/PageLoading.tsx';
+import type { LoadingProgress } from '../../components/PageLoading.tsx';
 import { DBContext } from '../DBContext.ts';
 import { AuthContext } from '../../store/AuthContext.tsx';
 import { addDoc, collection } from 'firebase/firestore';
@@ -40,6 +41,11 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
   const shopContext = useContext(ShopContext);
   const [ctxData, setCtxData] = useState<ContextData | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState<LoadingProgress>({
+    current: 0,
+    total: 1,
+    label: 'Loading',
+  });
   const renderAfterCalled = useRef(false);
   const contextLoadInFlight = useRef<Promise<void> | null>(null);
 
@@ -95,6 +101,19 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const _getContextDataImpl = async () => {
+    const totalSteps =
+      2 + // users + settings
+      10 + // services, completions, shops, items, parts, archive, types, invoices, postProcess x2
+      (modules.transactions ? 1 : 0) +
+      (modules.leasing ? 2 : 0) +
+      (modules.logs ? 1 : 0);
+    let step = 0;
+    const progress = (label: string) => {
+      step++;
+      setLoadingProgress({ current: step, total: totalSteps, label });
+    };
+
+    progress('Users');
     let users = (await getCollection(firebaseCollections.users)) as UserData[];
     let services: ServiceData[] = [];
     let completions: ServiceCompleteData[] = [];
@@ -132,6 +151,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       } else if (user.role !== 'admin') {
         console.log('User is not an admin, hence we do not load settings');
         users = [user];
+        progress('Settings');
         const settingsRaw = (
           await getCollection<SettingsItems>(firebaseCollections.settings)
         )[0];
@@ -150,6 +170,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
             modules.advancedInvoices && settingsRaw.enableExtendedInvoices,
         };
       } else {
+        progress('Settings');
         settings =
           (
             await getCollection<SettingsItems>(firebaseCollections.settings)
@@ -160,48 +181,60 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         settings.enableLeasing = modules.leasing && settings.enableLeasing;
         settings.enableExtendedInvoices =
           modules.advancedInvoices && settings.enableExtendedInvoices;
-        logs = modules.logs
-          ? ((await getCollection(
-              firebaseCollections.logs,
-              false,
-              30,
-            )) as unknown as LogEntry[])
-          : [];
+        if (modules.logs) {
+          progress('Logs');
+          logs = (await getCollection(
+            firebaseCollections.logs,
+            false,
+            30,
+          )) as unknown as LogEntry[];
+        }
       }
     }
 
     if (user) {
+      progress('services');
       services = (await getCollection(
         firebaseCollections.services,
       )) as ServiceData[];
+      progress('completions');
       completions = (await getCollection(
         firebaseCollections.completions,
       )) as ServiceCompleteData[];
+      progress('shops');
       shops = (await getCollection(firebaseCollections.shops)) as Shop[];
+      progress('items');
       items = (await getCollection(firebaseCollections.items)) as StoreItem[];
+      progress('parts');
       parts = (await getCollection(firebaseCollections.parts)) as StorePart[];
+      progress('archive');
       archive = (await getCollection(
         firebaseCollections.archive,
       )) as ContextDataValueType[];
+      progress('types');
       types = (await getCollection(
         firebaseCollections.types,
       )) as ContextDataValueType[];
+      progress('Invoices');
       invoices = (await getCollection(
         firebaseCollections.invoices,
       )) as InvoiceType[];
-      transactions = modules.transactions
-        ? ((await getCollection(
-            firebaseCollections.transactions,
-          )) as Transaction[])
-        : [];
-      leases = modules.leasing
-        ? ((await getCollection(firebaseCollections.leases)) as Transaction[])
-        : [];
-      leaseCompletions = modules.leasing
-        ? ((await getCollection(
-            firebaseCollections.leaseCompletions,
-          )) as Transaction[])
-        : [];
+      if (modules.transactions) {
+        progress('Transactions');
+        transactions = (await getCollection(
+          firebaseCollections.transactions,
+        )) as Transaction[];
+      }
+      if (modules.leasing) {
+        progress('Leases');
+        leases = (await getCollection(
+          firebaseCollections.leases,
+        )) as Transaction[];
+        progress('completions');
+        leaseCompletions = (await getCollection(
+          firebaseCollections.leaseCompletions,
+        )) as Transaction[];
+      }
     }
 
     if (user?.shop_id?.length) {
@@ -225,7 +258,9 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
+    progress('items');
     await postProcessStoreData(items);
+    progress('parts');
     await postProcessStoreData(parts);
 
     firebaseModel.sync(0);
@@ -507,7 +542,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     >
       {ctxData && ctxData.currentUser && children}
       {ctxData && !ctxData.currentUser && <UnauthorizedComponent />}
-      {!ctxData && <PageLoading />}
+      {!ctxData && <PageLoading progress={loadingProgress} />}
     </DBContext.Provider>
   );
 };
