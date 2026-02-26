@@ -37,6 +37,14 @@ import { imageModel } from './storage.ts';
 import type { LogEntry } from './FirebaseDBModel.ts';
 import UnauthorizedComponent from '../../components/Unauthorized.tsx';
 
+const userIsolatedKeys: ContextDataType[] = [
+  'services',
+  'completions',
+  'invoices',
+  'leases',
+  'leaseCompletions',
+];
+
 export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const authContext = useContext(AuthContext);
   const shopContext = useContext(ShopContext);
@@ -48,6 +56,26 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   });
   const renderAfterCalled = useRef(false);
   const contextLoadInFlight = useRef<Promise<void> | null>(null);
+
+  const filterByOwner = <T,>(
+    key: ContextDataType,
+    data: T[],
+    role?: string,
+  ): T[] => {
+    const userRole = role ?? ctxData?.currentUser?.role;
+    if (
+      userIsolatedKeys.includes(key) &&
+      userRole !== 'admin' &&
+      authContext.user?.uid
+    ) {
+      const uid = authContext.user.uid;
+      return data.filter((item) => {
+        const itemUid = (item as { uid?: string }).uid;
+        return !itemUid || itemUid === uid;
+      });
+    }
+    return data;
+  };
 
   const postProcessStoreData = async (array: StoreItem[] | StorePart[]) => {
     if (Array.isArray(array)) {
@@ -258,6 +286,16 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
+    services = filterByOwner('services', services, user?.role);
+    completions = filterByOwner('completions', completions, user?.role);
+    invoices = filterByOwner('invoices', invoices, user?.role);
+    leases = filterByOwner('leases', leases, user?.role);
+    leaseCompletions = filterByOwner(
+      'leaseCompletions',
+      leaseCompletions,
+      user?.role,
+    );
+
     progress('items');
     await postProcessStoreData(items);
     progress('parts');
@@ -357,6 +395,10 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       return ctxData ? ctxData[key] : null;
     }
 
+    if (userIsolatedKeys.includes(key) && authContext.user?.uid && !item.uid) {
+      item.uid = authContext.user.uid;
+    }
+
     await firebaseModel.update(item, key);
     if (archive) {
       item.docType = key;
@@ -389,7 +431,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
           firebaseModel.enableTransactions =
             !!ctxData.settings.enableTransactions;
         } else {
-          ctxData[key] = cachedData;
+          ctxData[key] = filterByOwner(key, cachedData);
         }
       } else {
         console.warn('Failed to fetch data from local cache');
@@ -420,7 +462,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         if (key === 'settings') {
           ctxData[key] = cachedData[0];
         } else {
-          ctxData[key] = cachedData;
+          ctxData[key] = filterByOwner(key, cachedData);
         }
       } else {
         console.warn('Failed to fetch data from local cache');
@@ -460,10 +502,11 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     if (key) {
       // Only re-fetch the single requested collection instead of all collections
       firebaseModel.invalidateCache(key);
-      const freshData = await getCollection(firebaseCollections[key]);
+      let freshData = await getCollection(firebaseCollections[key]);
       if (key === 'items' || key === 'parts') {
         await postProcessStoreData(freshData as StoreItem[] | StorePart[]);
       }
+      freshData = filterByOwner(key, freshData);
       setCtxData((prev) => {
         if (!prev) return prev;
         if (key === 'settings') {
@@ -483,7 +526,10 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const updateLatestContext = async (key: ContextDataType) => {
     // Validation step
     if (ctxData && key !== 'settings') {
-      ctxData[key] = await getCollection(firebaseCollections[key]);
+      ctxData[key] = filterByOwner(
+        key,
+        await getCollection(firebaseCollections[key]),
+      );
     } else if (ctxData && key === 'settings') {
       const settings = (await getCollection(
         firebaseCollections.settings,

@@ -15,6 +15,7 @@ export interface GeneralCollectionEntry {
   docParent?: string;
   docUpdated?: number;
   deleted?: boolean;
+  uid?: string;
 }
 export interface LoginFormValues {
   email: string;
