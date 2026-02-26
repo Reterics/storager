@@ -279,6 +279,7 @@ export default class FirebaseDBModel extends DBModel {
     table: string,
     force?: boolean,
     coldStartMaxAgeDays?: number,
+    uid?: string,
   ): Promise<CommonCollectionData[]> {
     let after = force ? 0 : this.getMTime(table);
     const now = new Date().getTime();
@@ -312,8 +313,15 @@ export default class FirebaseDBModel extends DBModel {
           ' after ' +
           new Date(after).toISOString().split('T')[0],
       );
-      const q = after
-        ? query(collection(this._db, table), where('docUpdated', '>', after))
+      const conditions = [];
+      if (uid) {
+        conditions.push(where('uid', '==', uid));
+      }
+      if (after) {
+        conditions.push(where('docUpdated', '>', after));
+      }
+      const q = conditions.length
+        ? query(collection(this._db, table), ...conditions)
         : query(collection(this._db, table));
       const querySnapshot = await getDocs(q);
 

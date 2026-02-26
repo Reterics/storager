@@ -99,11 +99,13 @@ export const getCollection = async <T extends ContextDataCollectionType>(
   table: string,
   force?: boolean,
   coldStartMaxAgeDays?: number,
+  uid?: string,
 ) => {
   return (await firebaseModel.getAll(
     table,
     force,
     coldStartMaxAgeDays,
+    uid,
   )) as unknown as T[];
 };
 

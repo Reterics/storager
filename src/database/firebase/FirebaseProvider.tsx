@@ -221,13 +221,21 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (user) {
+      const ownerUid =
+        user.role !== 'admin' ? authContext.user?.uid : undefined;
       progress('services');
       services = (await getCollection(
         firebaseCollections.services,
+        false,
+        undefined,
+        ownerUid,
       )) as ServiceData[];
       progress('completions');
       completions = (await getCollection(
         firebaseCollections.completions,
+        false,
+        undefined,
+        ownerUid,
       )) as ServiceCompleteData[];
       progress('shops');
       shops = (await getCollection(firebaseCollections.shops)) as Shop[];
@@ -246,6 +254,9 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       progress('Invoices');
       invoices = (await getCollection(
         firebaseCollections.invoices,
+        false,
+        undefined,
+        ownerUid,
       )) as InvoiceType[];
       if (modules.transactions) {
         progress('Transactions');
@@ -257,10 +268,16 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         progress('Leases');
         leases = (await getCollection(
           firebaseCollections.leases,
+          false,
+          undefined,
+          ownerUid,
         )) as Transaction[];
         progress('completions');
         leaseCompletions = (await getCollection(
           firebaseCollections.leaseCompletions,
+          false,
+          undefined,
+          ownerUid,
         )) as Transaction[];
       }
     }
@@ -453,6 +470,14 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     key: ContextDataType,
     items: ContextDataValueType[],
   ) => {
+    if (userIsolatedKeys.includes(key) && authContext.user?.uid) {
+      const uid = authContext.user.uid;
+      for (const item of items) {
+        if (!item.uid) {
+          item.uid = uid;
+        }
+      }
+    }
     await firebaseModel.updateAll(items, key);
 
     if (ctxData) {
@@ -498,11 +523,22 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     return [];
   };
 
+  const getOwnerUid = () =>
+    ctxData?.currentUser?.role !== 'admin' ? authContext.user?.uid : undefined;
+
   const refreshData = async (key?: ContextDataType) => {
     if (key) {
       // Only re-fetch the single requested collection instead of all collections
       firebaseModel.invalidateCache(key);
-      let freshData = await getCollection(firebaseCollections[key]);
+      const ownerUid = userIsolatedKeys.includes(key)
+        ? getOwnerUid()
+        : undefined;
+      let freshData = await getCollection(
+        firebaseCollections[key],
+        false,
+        undefined,
+        ownerUid,
+      );
       if (key === 'items' || key === 'parts') {
         await postProcessStoreData(freshData as StoreItem[] | StorePart[]);
       }
@@ -526,9 +562,12 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const updateLatestContext = async (key: ContextDataType) => {
     // Validation step
     if (ctxData && key !== 'settings') {
+      const ownerUid = userIsolatedKeys.includes(key)
+        ? getOwnerUid()
+        : undefined;
       ctxData[key] = filterByOwner(
         key,
-        await getCollection(firebaseCollections[key]),
+        await getCollection(firebaseCollections[key], false, undefined, ownerUid),
       );
     } else if (ctxData && key === 'settings') {
       const settings = (await getCollection(
