@@ -240,7 +240,9 @@ Viewport:
         {selectedBucket && (
           <div className="flex flex-1 w-full items-center justify-center p-2 pt-1.5 pb-1.5 text-sm border rounded-lg">
             <span className="mr-2">
-              {t('Showing events for {{bucket}} (15 min window)', { bucket: selectedBucket })}
+              {t('Showing events for {{bucket}} (15 min window)', {
+                bucket: selectedBucket,
+              })}
             </span>
             <button
               className="underline"

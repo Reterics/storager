@@ -11,9 +11,8 @@ vi.mock('../../utils/indexedDB.ts', () => ({
   saveToIndexedDB: vi.fn(async () => {}),
 }));
 
-const { loadFromIndexedDB, saveToIndexedDB } = await import(
-  '../../utils/indexedDB.ts'
-);
+const { loadFromIndexedDB, saveToIndexedDB } =
+  await import('../../utils/indexedDB.ts');
 
 describe('BackupDBModel', () => {
   let model: BackupDBModel;

@@ -9,7 +9,9 @@ export interface LoadingProgress {
 
 const PageLoading = ({ progress }: { progress?: LoadingProgress }) => {
   const { t } = useTranslation();
-  const percent = progress ? Math.round((progress.current / progress.total) * 100) : 0;
+  const percent = progress
+    ? Math.round((progress.current / progress.total) * 100)
+    : 0;
 
   return (
     <div className="page-loading fixed top-0 h-svh w-full bg-gray-50 dark:bg-gray-900 flex flex-col justify-center items-center z-50">

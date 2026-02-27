@@ -567,7 +567,12 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         : undefined;
       ctxData[key] = filterByOwner(
         key,
-        await getCollection(firebaseCollections[key], false, undefined, ownerUid),
+        await getCollection(
+          firebaseCollections[key],
+          false,
+          undefined,
+          ownerUid,
+        ),
       );
     } else if (ctxData && key === 'settings') {
       const settings = (await getCollection(

@@ -15,8 +15,21 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('../components/elements/PageHead.tsx', () => ({
-  PageHead: ({ title }: { title: React.ReactNode }) => (
-    <div data-testid="pagehead">{title}</div>
+  PageHead: ({
+    title,
+    buttons,
+  }: {
+    title: React.ReactNode;
+    buttons?: { value: React.ReactNode; onClick: () => void }[];
+  }) => (
+    <div data-testid="pagehead">
+      {title}
+      {(buttons || []).map((btn, i) => (
+        <button key={i} onClick={btn.onClick}>
+          {btn.value}
+        </button>
+      ))}
+    </div>
   ),
 }));
 
@@ -103,10 +116,10 @@ describe('RecycleBin', () => {
     localStorage.clear();
   });
 
-  it('no items -> no "Select All" button (items.length branch)', () => {
+  it('no items -> no "Select" button (items.length branch)', () => {
     renderWithCtx([]);
     expect(
-      screen.queryByRole('button', { name: 'Select All' }),
+      screen.queryByRole('button', { name: 'Select' }),
     ).not.toBeInTheDocument();
   });
 
@@ -193,7 +206,7 @@ describe('RecycleBin', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Select All' }));
 
     confirmMock.mockResolvedValueOnce(false);
-    fireEvent.click(screen.getByRole('button', { name: 'Delete Selected' }));
+    fireEvent.click(screen.getByRole('button', { name: /Delete/ }));
 
     await waitFor(() => {
       expect(removePermanentDataList).not.toHaveBeenCalled();
@@ -212,7 +225,7 @@ describe('RecycleBin', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Select All' }));
 
     confirmMock.mockResolvedValueOnce(true);
-    fireEvent.click(screen.getByRole('button', { name: 'Delete Selected' }));
+    fireEvent.click(screen.getByRole('button', { name: /Delete/ }));
 
     await waitFor(() => {
       expect(removePermanentDataList).toHaveBeenCalledTimes(2);
@@ -353,13 +366,28 @@ describe('RecycleBin', () => {
     expect(localStorage.getItem('recycleBinBackupTime')).toBeNull();
   });
 
-  it('selection mode with zero selected renders disabled "Delete Selected"', () => {
+  it('selection mode with zero selected -> no Delete button', () => {
     renderWithCtx([makeItem('1')]);
     // toggle same row twice: enters selecting, ends with 0 selected
     fireEvent.click(screen.getByTestId('row-0'));
     fireEvent.click(screen.getByTestId('row-0'));
-    const btn = screen.getByRole('button', { name: 'Delete Selected' });
-    expect(btn).toBeDisabled();
+    expect(
+      screen.queryByRole('button', { name: /Delete/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('cancel selection -> exits selecting mode and clears selection', () => {
+    renderWithCtx([makeItem('1'), makeItem('2')]);
+    // enter selecting by clicking a row
+    fireEvent.click(screen.getByTestId('row-0'));
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    // cancel
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    // back to browse mode: "Select" button visible, no "Cancel"
+    expect(screen.getByRole('button', { name: 'Select' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Cancel' }),
+    ).not.toBeInTheDocument();
   });
 
   it('row name fallback uses client_name when name is missing', () => {

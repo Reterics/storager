@@ -6,13 +6,10 @@ import { PageHead } from '../components/elements/PageHead.tsx';
 import TableViewComponent, {
   TableViewActions,
 } from '../components/elements/TableViewComponent.tsx';
-import {
-  BsFillTrash3Fill,
-  BsTrash,
-  BsArrowCounterclockwise,
-} from 'react-icons/bs';
+import { BsTrash, BsArrowCounterclockwise } from 'react-icons/bs';
 import { confirm } from '../components/modalExporter.ts';
 import { sleep } from '../utils/general.ts';
+import type { GeneralButtons } from '../interfaces/interfaces.ts';
 
 function RecycleBin() {
   const dbContext = useContext(DBContext);
@@ -111,6 +108,22 @@ function RecycleBin() {
     console.log('Backup created for', itemsToBackup.length, 'items');
   };
 
+  const deleteInChunks = async (ids: string[]) => {
+    const chunkSize = 100;
+
+    for (let i = 0; i < ids.length; i += chunkSize) {
+      const chunk = ids.slice(i, i + chunkSize);
+      await dbContext?.removePermanentDataList(chunk);
+
+      if (i + chunkSize < ids.length) {
+        await sleep(1000);
+      }
+    }
+
+    setSelectedIndexes({});
+    setIsSelecting(false);
+  };
+
   const deletePermanent = async (id: string) => {
     if (await confirm(t('Are you sure you want to delete permanently?'))) {
       // Create backup of the single item
@@ -134,22 +147,29 @@ function RecycleBin() {
       // Create backup before deletion
       createBackup(selectedItems);
 
-      const allIds = selectedItems.map((item) => item.id);
-      const chunkSize = 100;
+      await deleteInChunks(selectedItems.map((item) => item.id));
+    }
+  };
 
-      // We delete max 100 in one go, and wait 1 second between each chunk, This is very conservative - avoids all limits.
-      for (let i = 0; i < allIds.length; i += chunkSize) {
-        const chunk = allIds.slice(i, i + chunkSize);
-        await dbContext?.removePermanentDataList(chunk);
+  const getOldItems = () => {
+    const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    return items.filter((item) => (item.docUpdated as number) < thirtyDaysAgo);
+  };
 
-        if (i + chunkSize < allIds.length) {
-          await sleep(1000); // wait 1 second between chunks
-        }
-      }
+  const wipeOldItems = async () => {
+    const oldItems = getOldItems();
+    if (oldItems.length === 0) return;
 
-      // Clear selection after deletion
-      setSelectedIndexes({});
-      setIsSelecting(false);
+    if (
+      await confirm(
+        t(
+          'Are you sure you want to permanently delete items older than 30 days?',
+        ),
+      )
+    ) {
+      createBackup(oldItems);
+
+      await deleteInChunks(oldItems.map((item) => item.id));
     }
   };
 
@@ -214,56 +234,65 @@ function RecycleBin() {
 
   const selectedCount = Object.values(selectedIndexes).filter(Boolean).length;
 
+  const cancelSelection = () => {
+    setSelectedIndexes({});
+    setIsSelecting(false);
+  };
+
+  const allSelected =
+    items.length > 0 && items.every((_, index) => selectedIndexes[index]);
+
+  const headButtons: GeneralButtons[] = (() => {
+    if (isSelecting && items.length) {
+      const buttons: GeneralButtons[] = [
+        {
+          value: allSelected ? t('Deselect All') : t('Select All'),
+          onClick: toggleSelectAll,
+        },
+      ];
+      if (selectedCount > 0) {
+        buttons.push({
+          value: (
+            <span className="flex items-center -my-1">
+              <BsTrash className="mr-1.5" />
+              {t('Delete') + ` (${selectedCount})`}
+            </span>
+          ),
+          onClick: bulkDeletePermanent,
+        });
+      }
+      buttons.push({
+        value: t('Cancel'),
+        onClick: cancelSelection,
+      });
+      return buttons;
+    }
+    if (items.length > 0) {
+      const buttons = [];
+      if (getOldItems().length > 0) {
+        buttons.push({
+          value: (
+            <span className="flex items-center -my-1">
+              <BsTrash className="mr-1.5" />
+              {t('Wipe 30+ days')}
+            </span>
+          ),
+          onClick: wipeOldItems,
+        });
+      }
+      buttons.push({
+        value: t('Select'),
+        onClick: () => setIsSelecting(true),
+      });
+      return buttons;
+    }
+    return [];
+  })();
+
   return (
     <>
-      <PageHead
-        title={
-          <div className="flex justify-between w-full">
-            <div className="flex items-center">
-              <BsFillTrash3Fill className="mr-2" />
-              {t('Recycle Bin')}
-            </div>
-            <div className="flex items-center">
-              {isSelecting && items.length && (
-                <>
-                  <span className="mr-4 ml-2">
-                    {selectedCount} {t('items selected')}
-                  </span>
-                  <button
-                    onClick={toggleSelectAll}
-                    className="flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 mr-2 transition-colors duration-200"
-                  >
-                    {items.length > 0 &&
-                    items.every((_, index) => selectedIndexes[index])
-                      ? t('Deselect All')
-                      : t('Select All')}
-                  </button>
-                  <button
-                    onClick={bulkDeletePermanent}
-                    disabled={selectedCount === 0}
-                    className={`flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-200 ${
-                      selectedCount === 0
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-red-600 text-white hover:bg-red-700'
-                    }`}
-                  >
-                    <BsTrash className="mr-1.5" />
-                    {t('Delete Selected')}
-                  </button>
-                </>
-              )}
-              {!isSelecting && items.length > 0 && (
-                <button
-                  onClick={toggleSelectAll}
-                  className="ml-2 flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200"
-                >
-                  {t('Select All')}
-                </button>
-              )}
-            </div>
-          </div>
-        }
-      />
+      <PageHead title={t('Recycle Bin')} buttons={headButtons} />
+      <div className="mb-2 mt-1" />
 
       <TableViewComponent
         lines={tableLines}
