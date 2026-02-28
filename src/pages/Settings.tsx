@@ -275,6 +275,23 @@ function Settings() {
                   'Enhanced invoice functionality with additional fields',
                 )}
               />
+
+              <StyledToggle
+                label={t('Shop-based Data Sharing')}
+                name="dataIsolationMode"
+                checked={settingsItems.dataIsolationMode !== 'user'}
+                onChange={(e) => {
+                  const value = e.target.checked ? 'shop' : 'user';
+                  setSettingsItems((prev) => ({
+                    ...prev,
+                    dataIsolationMode: value,
+                  }));
+                  setShouldSave(true);
+                }}
+                description={t(
+                  'When enabled, shop members can see all documents belonging to their shops instead of only their own',
+                )}
+              />
             </div>
           </div>
         )}

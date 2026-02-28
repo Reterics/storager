@@ -61,6 +61,8 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     key: ContextDataType,
     data: T[],
     role?: string,
+    settings?: SettingsItems,
+    userShopIdsOverride?: string[],
   ): T[] => {
     const userRole = role ?? ctxData?.currentUser?.role;
     if (
@@ -68,6 +70,23 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       userRole !== 'admin' &&
       authContext.user?.uid
     ) {
+      const isolationMode =
+        settings?.dataIsolationMode ??
+        ctxData?.settings?.dataIsolationMode ??
+        'shop';
+
+      if (isolationMode === 'shop') {
+        const userShopIds =
+          userShopIdsOverride ?? ctxData?.currentUser?.shop_id;
+        if (userShopIds?.length) {
+          return data.filter((item) => {
+            const itemShop = (item as { docShop?: string }).docShop;
+            return !itemShop || userShopIds.includes(itemShop);
+          });
+        }
+        return data;
+      }
+
       const uid = authContext.user.uid;
       return data.filter((item) => {
         const itemUid = (item as { uid?: string }).uid;
@@ -196,6 +215,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
           enableInvoiceNotes: settingsRaw.enableInvoiceNotes,
           enableExtendedInvoices:
             modules.advancedInvoices && settingsRaw.enableExtendedInvoices,
+          dataIsolationMode: settingsRaw.dataIsolationMode,
         };
       } else {
         progress('Settings');
@@ -221,8 +241,12 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (user) {
+      const isShopMode = (settings.dataIsolationMode ?? 'shop') === 'shop';
       const ownerUid =
-        user.role !== 'admin' ? authContext.user?.uid : undefined;
+        user.role !== 'admin' && !isShopMode
+          ? authContext.user?.uid
+          : undefined;
+
       progress('services');
       services = (await getCollection(
         firebaseCollections.services,
@@ -303,15 +327,15 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       }
     }
 
-    services = filterByOwner('services', services, user?.role);
-    completions = filterByOwner('completions', completions, user?.role);
-    invoices = filterByOwner('invoices', invoices, user?.role);
-    leases = filterByOwner('leases', leases, user?.role);
-    leaseCompletions = filterByOwner(
-      'leaseCompletions',
-      leaseCompletions,
-      user?.role,
-    );
+    const userRole = user?.role as string | undefined;
+    const userShopIds = user?.shop_id as string[] | undefined;
+    const filterOwned = <T,>(key: ContextDataType, data: T[]) =>
+      filterByOwner(key, data, userRole, settings, userShopIds);
+    services = filterOwned('services', services);
+    completions = filterOwned('completions', completions);
+    invoices = filterOwned('invoices', invoices);
+    leases = filterOwned('leases', leases);
+    leaseCompletions = filterOwned('leaseCompletions', leaseCompletions);
 
     progress('items');
     await postProcessStoreData(items);
@@ -415,6 +439,13 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     if (userIsolatedKeys.includes(key) && authContext.user?.uid && !item.uid) {
       item.uid = authContext.user.uid;
     }
+    if (
+      userIsolatedKeys.includes(key) &&
+      !item.docShop &&
+      shopContext.shop?.id
+    ) {
+      item.docShop = shopContext.shop.id;
+    }
 
     await firebaseModel.update(item, key);
     if (archive) {
@@ -472,9 +503,13 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     if (userIsolatedKeys.includes(key) && authContext.user?.uid) {
       const uid = authContext.user.uid;
+      const docShop = shopContext.shop?.id;
       for (const item of items) {
         if (!item.uid) {
           item.uid = uid;
+        }
+        if (!item.docShop && docShop) {
+          item.docShop = docShop;
         }
       }
     }
@@ -523,8 +558,13 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     return [];
   };
 
-  const getOwnerUid = () =>
-    ctxData?.currentUser?.role !== 'admin' ? authContext.user?.uid : undefined;
+  const getOwnerUid = () => {
+    if (ctxData?.currentUser?.role === 'admin') return undefined;
+    const isShopMode =
+      (ctxData?.settings?.dataIsolationMode ?? 'shop') === 'shop';
+    if (isShopMode) return undefined;
+    return authContext.user?.uid;
+  };
 
   const refreshData = async (key?: ContextDataType) => {
     if (key) {

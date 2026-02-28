@@ -16,6 +16,7 @@ export interface GeneralCollectionEntry {
   docUpdated?: number;
   deleted?: boolean;
   uid?: string;
+  docShop?: string;
 }
 export interface LoginFormValues {
   email: string;
@@ -516,6 +517,8 @@ export interface SettingsItems extends GeneralCollectionEntry {
   enableLeasing?: boolean;
   enableInvoiceNotes?: boolean;
   enableExtendedInvoices?: boolean;
+
+  dataIsolationMode?: 'user' | 'shop';
 
   // Optional Hosting info override fields
   hostingProvider?: string;

@@ -272,5 +272,7 @@
   "Minden bolt": "Minden bolt",
   "Logging is not active in the system.": "A naplózás nincs bekapcsolva a rendszerben.",
   "(Mobile)": "(Mobil)",
-  "(Web)": "(Web)"
+  "(Web)": "(Web)",
+  "Shop-based Data Sharing": "Bolt alapú adatmegosztás",
+  "When enabled, shop members can see all documents belonging to their shops instead of only their own": "Ha engedélyezve van, a bolt tagjai az összes, a boltjaikhoz tartozó dokumentumot láthatják a saját dokumentumaik helyett"
 }

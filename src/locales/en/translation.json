@@ -272,5 +272,7 @@
   "Minden bolt": "All shop",
   "Logging is not active in the system.": "Logging is not active in the system.",
   "(Mobile)": "(Mobile)",
-  "(Web)": "(Web)"
+  "(Web)": "(Web)",
+  "Shop-based Data Sharing": "Shop-based Data Sharing",
+  "When enabled, shop members can see all documents belonging to their shops instead of only their own": "When enabled, shop members can see all documents belonging to their shops instead of only their own"
 }
