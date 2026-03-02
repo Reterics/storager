@@ -1,4 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './store/AuthContext.tsx';
 import { InAppLayout } from './layouts/InAppLayout.tsx';
 import Items from './pages/items.tsx';
 import Parts from './pages/Parts.tsx';
@@ -31,6 +33,7 @@ import TransactionsCorePage from './core/pages/TransactionsPage.tsx';
 function QueryRouter() {
   const [searchParams] = useSearchParams();
   const page = searchParams.get('page') || 'shops'; // Default to 'shops' if no page is provided
+  const { user } = useContext(AuthContext);
 
   // Logic to return components based on `page` query parameter
   const renderPage = () => {
@@ -170,7 +173,11 @@ function QueryRouter() {
       case 'signin':
         return <SignInComponent />;
       case 'terms':
-        return (
+        return user ? (
+          <InAppLayout>
+            <TermsOfUse />
+          </InAppLayout>
+        ) : (
           <UserBasedLayout>
             <TermsOfUse />
           </UserBasedLayout>

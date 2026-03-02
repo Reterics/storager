@@ -1,4 +1,4 @@
-import { NavLink, useSearchParams } from 'react-router-dom';
+import { Link, NavLink, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../store/AuthContext.tsx';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -130,7 +130,7 @@ const Header = () => {
       <header className="no-print">
         <nav className="w-full bg-white border-gray-200 dark:bg-gray-900">
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a href="?page=about" className="flex items-center">
+            <Link to="/?page=about" className="flex items-center">
               <img
                 src={isDarkTheme ? logoWhite : logo}
                 width={30}
@@ -142,7 +142,7 @@ const Header = () => {
                 Storage
                 <div className="text-sm pt-1 text">R</div>
               </div>
-            </a>
+            </Link>
 
             <LoadingIcon />
           </div>
@@ -155,7 +155,7 @@ const Header = () => {
     <header className="no-print">
       <nav className="w-full bg-white border-gray-200 dark:bg-gray-900 shadow-sm">
         <div className="max-w-screen-xl flex items-center justify-between mx-auto px-2 py-1 md:p-3">
-          <a href="?page=about" className="flex items-center">
+          <Link to="/?page=about" className="flex items-center">
             <img
               src={isDarkTheme ? logoWhite : logo}
               width={28}
@@ -167,7 +167,7 @@ const Header = () => {
               Storage
               <div className="text-xs md:text-sm pt-1 text">R</div>
             </div>
-          </a>
+          </Link>
 
           <div className="hidden md:flex md:items-center">
             <ul className="font-medium flex flex-row space-x-1 lg:space-x-4 items-center">

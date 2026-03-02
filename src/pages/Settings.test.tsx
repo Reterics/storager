@@ -1,6 +1,7 @@
 import type { ChangeEventHandler } from 'react';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import Settings from './Settings';
 import { DBContext } from '../database/DBContext';
 import { vi, expect, it, beforeEach, describe } from 'vitest';
@@ -82,9 +83,11 @@ describe('Settings Component', () => {
 
   const renderWithProviders = (ui: React.ReactElement) => {
     return render(
-      <DBContext.Provider value={mockDBContext as unknown as DBContextType}>
-        {ui}
-      </DBContext.Provider>,
+      <MemoryRouter>
+        <DBContext.Provider value={mockDBContext as unknown as DBContextType}>
+          {ui}
+        </DBContext.Provider>
+      </MemoryRouter>,
     );
   };
 
@@ -102,11 +105,13 @@ describe('Settings Component', () => {
     };
 
     render(
-      <DBContext.Provider
-        value={dbContextWithoutUser as unknown as DBContextType}
-      >
-        <Settings />
-      </DBContext.Provider>,
+      <MemoryRouter>
+        <DBContext.Provider
+          value={dbContextWithoutUser as unknown as DBContextType}
+        >
+          <Settings />
+        </DBContext.Provider>
+      </MemoryRouter>,
     );
 
     expect(
@@ -197,11 +202,13 @@ describe('Settings Component', () => {
     };
 
     render(
-      <DBContext.Provider
-        value={dbContextWithoutSettings as unknown as DBContextType}
-      >
-        <Settings />
-      </DBContext.Provider>,
+      <MemoryRouter>
+        <DBContext.Provider
+          value={dbContextWithoutSettings as unknown as DBContextType}
+        >
+          <Settings />
+        </DBContext.Provider>
+      </MemoryRouter>,
     );
 
     expect(screen.getByLabelText('Company Name')).toHaveValue('');
@@ -224,6 +231,6 @@ describe('Settings Component', () => {
     const link = screen.getByTestId('settings-terms-link') as HTMLAnchorElement;
     expect(link).toBeInTheDocument();
     expect(link.textContent).toContain('Terms and Conditions');
-    expect(link.getAttribute('href')).toBe('?page=terms');
+    expect(link.getAttribute('href')).toBe('/?page=terms');
   });
 });

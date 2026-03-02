@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { DBContext } from '../database/DBContext.ts';
 import { useTranslation } from 'react-i18next';
 import StyledInput from '../components/elements/StyledInput.tsx';
@@ -441,13 +442,13 @@ function Settings() {
         </div>
       )}
       <div className="w-full flex justify-center mt-4">
-        <a
-          href="?page=terms"
+        <Link
+          to="/?page=terms"
           className="text-zinc-600 dark:text-zinc-400 underline"
           data-testid="settings-terms-link"
         >
           {t('Terms and Conditions')}
-        </a>
+        </Link>
       </div>
     </>
   );
