@@ -96,13 +96,18 @@ export default class ImageDBModel extends DBModel {
 
   async getFileURL(pathAsId: string): Promise<string> {
     if (!this._imageStore[pathAsId]) {
-      const data = await getFileURL(pathAsId);
+      try {
+        const data = await getFileURL(pathAsId);
 
-      this._imageStore[pathAsId] = {
-        id: pathAsId,
-        url: data,
-      };
-      this.sync();
+        this._imageStore[pathAsId] = {
+          id: pathAsId,
+          url: data,
+        };
+        this.sync();
+      } catch (e) {
+        console.warn('Failed to fetch image:', pathAsId, (e as Error).message);
+        return '';
+      }
     }
 
     return this._imageStore[pathAsId].base64 ?? this._imageStore[pathAsId].url;
