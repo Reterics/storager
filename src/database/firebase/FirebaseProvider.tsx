@@ -41,6 +41,7 @@ const userIsolatedKeys: ContextDataType[] = [
   'services',
   'completions',
   'invoices',
+  'transactions',
   'leases',
   'leaseCompletions',
 ];
@@ -309,6 +310,9 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
         progress('Transactions');
         transactions = (await getCollection(
           firebaseCollections.transactions,
+          false,
+          undefined,
+          ownerUid,
         )) as Transaction[];
       }
       if (modules.leasing) {
@@ -358,6 +362,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     services = filterOwned('services', services);
     completions = filterOwned('completions', completions);
     invoices = filterOwned('invoices', invoices);
+    transactions = filterOwned('transactions', transactions);
     leases = filterOwned('leases', leases);
     leaseCompletions = filterOwned('leaseCompletions', leaseCompletions);
 
