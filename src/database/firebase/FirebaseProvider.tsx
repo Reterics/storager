@@ -63,6 +63,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     role?: string,
     settings?: SettingsItems,
     userShopIdsOverride?: string[],
+    userShopNamesOverride?: string[],
   ): T[] => {
     const userRole = role ?? ctxData?.currentUser?.role;
     if (
@@ -78,13 +79,35 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       if (isolationMode === 'shop') {
         const userShopIds =
           userShopIdsOverride ?? ctxData?.currentUser?.shop_id;
+        const userShopNames =
+          userShopNamesOverride ??
+          ctxData?.shops?.map((s) => s.name).filter(Boolean);
         if (userShopIds?.length) {
           return data.filter((item) => {
-            const itemShop = (item as { docShop?: string }).docShop;
-            return !itemShop || userShopIds.includes(itemShop);
+            const itemShop = (item as ContextDataValueType).docShop;
+            if (itemShop) return userShopIds.includes(itemShop);
+
+            // Fallback for legacy data without docShop
+            const itemShopIds = (item as InvoiceType | Transaction).shop_id;
+            if (itemShopIds?.length) {
+              return itemShopIds.some((id) => userShopIds.includes(id));
+            }
+
+            const itemServiceName = (
+              item as
+                | ServiceData
+                | LeaseCompletion
+                | Lease
+                | ServiceCompleteData
+            ).service_name;
+            if (itemServiceName && userShopNames?.length) {
+              return userShopNames.includes(itemServiceName);
+            }
+
+            return false;
           });
         }
-        return data;
+        return [];
       }
 
       const uid = authContext.user.uid;
@@ -329,8 +352,9 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
     const userRole = user?.role as string | undefined;
     const userShopIds = user?.shop_id as string[] | undefined;
+    const userShopNames = shops.map((s) => s.name).filter(Boolean) as string[];
     const filterOwned = <T,>(key: ContextDataType, data: T[]) =>
-      filterByOwner(key, data, userRole, settings, userShopIds);
+      filterByOwner(key, data, userRole, settings, userShopIds, userShopNames);
     services = filterOwned('services', services);
     completions = filterOwned('completions', completions);
     invoices = filterOwned('invoices', invoices);
