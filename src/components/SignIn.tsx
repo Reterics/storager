@@ -4,10 +4,12 @@ import { AuthContext } from '../store/AuthContext.tsx';
 import '../pages/Shops.css';
 import AlertBox from './AlertBox.tsx';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../store/ThemeContext.tsx';
 
 const SignInComponent = () => {
   const { SignIn, loading, error } = useContext(AuthContext);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const theme = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -109,6 +111,18 @@ const SignInComponent = () => {
             </a>
             .
           </p>
+        </div>
+        <div className="flex gap-4 mt-4 text-sm font-light text-gray-500 dark:text-gray-400">
+          <a href="#" className="hover:underline" onClick={() => theme?.toggleTheme()}>
+            {theme?.theme === 'dark' ? t('Light Mode') : t('Dark Mode')}
+          </a>
+          <a
+            href="#"
+            className="hover:underline"
+            onClick={() => i18n.changeLanguage(i18n.language === 'hu' ? 'en' : 'hu')}
+          >
+            {i18n.language === 'hu' ? t('English language') : t('Hungarian language')}
+          </a>
         </div>
       </div>
     </section>
